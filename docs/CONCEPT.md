@@ -2,7 +2,8 @@
 
 > Log every aircraft you spot or fly on, every airport you visit — and earn badges for it.
 
-Version 0.1 · November 2026 · Status: Draft for development kickoff
+Version 0.2 · November 2026 · Status: Draft for development kickoff
+Platforms: native iOS (Swift/SwiftUI) and native Android (Kotlin/Jetpack Compose) on one shared backend
 
 ---
 
@@ -18,6 +19,7 @@ Wingspot is a social logbook for aviation enthusiasts. Users **check in** aircra
 3. **Collection, not just a feed.** The value grows with the user's history: "my types", "my airlines", "my airports", "my registrations".
 4. **Trustworthy progress.** Verified check-ins (GPS, ADS-B, boarding pass) make badges mean something.
 5. **Respect safety and privacy.** Spotting is legally sensitive in some countries; location sharing is opt-in and coarse by default.
+6. **One backend, native clients.** iOS and Android are fully native apps that feel at home on their platform. All business rules (badges, XP, verification, entitlements) live on the server; clients only render, cache and predict. Nothing in the backend may depend on a single platform.
 
 ---
 
@@ -85,7 +87,7 @@ The main check-in. Minimum required data: **aircraft** (by registration *or* by 
 | Role | Optional | Passenger · Crew · Pilot (pilot = separate badge track later). |
 | Photo, note, rating | Optional | Rating here = flight experience 1–5. |
 
-**Fast path: boarding pass scan.** The IATA *BCBP* barcode (PDF417/Aztec/QR) contains name, PNR, from, to, carrier, flight number, date (Julian), seat and class. Scan from camera or a screenshot (Vision framework, fully on-device) → prefilled check-in. The passenger name and PNR are **never stored or uploaded**.
+**Fast path: boarding pass scan.** The IATA *BCBP* barcode (PDF417/Aztec/QR) contains name, PNR, from, to, carrier, flight number, date (Julian), seat and class. Scan from camera or a screenshot, fully on-device (iOS: Vision framework · Android: ML Kit Barcode Scanning, bundled model) → prefilled check-in. The passenger name and PNR are **never stored or uploaded**.
 
 ### 4.3 Airport visit
 Like a venue check-in.
@@ -288,8 +290,9 @@ Anti-cheat rules: rate limit (e.g. max 200 check-ins/hour), impossible-travel de
 - **Home location** is never inferred or shown; profile shows "home airport" only if the user sets it.
 - **Sensitive aircraft:** military, government and blocked (e.g. LADD/PIA, private) registrations: no public live display, optional hiding of registration on public posts.
 - **Country safety notes:** some countries treat photography at airports/military sites as a crime. Show a warning on airports in flagged countries; spotting location pages carry legal notes.
-- **User-generated content (App Store Guideline 1.2):** report & block users, report content, moderation queue, EULA with zero-tolerance policy, filtering of offensive text.
-- **Sign in with Apple** required as soon as any third-party login exists (Guideline 4.8).
+- **User-generated content** (App Store Guideline 1.2, Google Play UGC policy): report & block users, report content, moderation queue, EULA with zero-tolerance policy, filtering of offensive text. One moderation system on the server serves both apps.
+- **Sign-in:** Sign in with Apple, Sign in with Google and email (magic link). On iOS, Sign in with Apple must be offered once Google login exists (Guideline 4.8). Both providers are available on both platforms (Apple via web OAuth on Android), so a user can switch phones and keep their account.
+- **Account deletion:** in-app on both platforms, plus a public web URL for deletion requests (required by Google Play).
 - **Photos:** EXIF GPS stripped from public versions; users keep copyright; license grant to display only.
 - **GDPR:** data export (JSON/CSV), account deletion inside the app (Guideline 5.1.1(v)), minimal analytics.
 - **Naming & branding:** "Wingspot" is your own brand; don't use names, logos or styling of existing apps/sites (e.g. beer check-in apps or Planespotters.net) in store listing or UI. Airline logos are trademarks — use airline names + ICAO codes and neutral colored tail markers instead of real logos unless licensed.
@@ -298,7 +301,9 @@ Anti-cheat rules: rate limit (e.g. max 200 check-ins/hour), impossible-travel de
 
 ## 9. Information architecture & screens
 
-### Tab bar (5 tabs)
+The information architecture is identical on both platforms; the visual implementation follows each platform's conventions (iOS: tab bar, sheets, SF Symbols, Liquid Glass · Android: Material 3 navigation bar, bottom sheets, Material Symbols, dynamic color as an option). Screen names and IDs are shared so analytics, deep links and the spec stay aligned.
+
+### Main navigation (5 destinations)
 1. **Feed** — friends + "near me".
 2. **Explore** — search (reg, type, airline, airport, user), airports near me, trending rare aircraft, map.
 3. **➕ Check in** — center action button → sheet with three options: *Spotted · Flown · Airport*. Long-press = last used mode.
@@ -322,13 +327,19 @@ Anti-cheat rules: rate limit (e.g. max 200 check-ins/hour), impossible-travel de
 | Stats | Charts: check-ins over time, top types/airlines/airports, km per year, heatmap calendar. |
 | Settings | Privacy (default visibility, post delay), units (km/nm/mi), notifications, data export, delete account, Pro. |
 
-### iOS platform features
-- **Widgets:** "Days since last spot", badge progress, year stats; interactive "Start session" widget.
-- **App Intents / Shortcuts / Siri:** "Log D-AIMA in Wingspot", "Start spotting session".
-- **Control Center control** (iOS 18+): quick "Check in" button.
-- **Live Activity:** active spotting session counter on Lock Screen / Dynamic Island; for flown check-ins a flight progress Live Activity (phase 3).
-- **Apple Watch** (phase 3): quick check-in by registration dictation / last-seen types.
-- **Share Extension:** share a photo from Photos → Wingspot check-in with EXIF prefill.
+### Platform features
+
+| Feature | iOS | Android |
+|---|---|---|
+| Home screen widgets | WidgetKit: "days since last spot", badge progress, year stats, interactive "Start session" | Jetpack Glance widgets with the same content |
+| Voice / shortcuts | App Intents, Shortcuts, Siri: "Log D-AIMA in Wingspot" | App Actions / Gemini, static & dynamic app shortcuts |
+| Quick check-in control | Control Center control (iOS 18+) | Quick Settings tile |
+| Ongoing session | Live Activity on Lock Screen / Dynamic Island | Ongoing notification (Live Updates / progress-style notification on Android 16+) |
+| Share a photo into the app | Share Extension | Share intent (`ACTION_SEND` for images) |
+| Watch (phase 3) | watchOS app | Wear OS app |
+| Deep links | Universal Links | Android App Links |
+
+Both platforms register the same link scheme: `https://wingspot.app/u/{username}`, `/c/{checkinId}`, `/a/{icao}`, `/r/{registration}`, `/b/{badgeId}`. The domain hosts both `apple-app-site-association` and `assetlinks.json`, and a lightweight web page for each link so shared links work without the app installed.
 
 ---
 
@@ -346,9 +357,9 @@ The app lives or dies on good aircraft/airport data. Plan for it early.
 | **Flight lookup** (flight number → route, reg) | AeroDataBox (RapidAPI), FlightAware AeroAPI, Cirium (enterprise) | Paid per call → server-side only, cache aggressively, limit for free users. |
 | **Live/historic ADS-B** | adsb.lol (open, ODbL), OpenSky Network API (non-commercial terms — needs a commercial agreement for a paid app), ADS-B Exchange (commercial licensing) | Needed for "What's overhead?" and ADS-B verification. Verify license terms before shipping. |
 | **Sunrise/sunset** | Computed locally (solar position algorithm) | For Night Owl etc., no API needed. |
-| **Weather** | Apple WeatherKit (500k calls/month included) or METAR from aviationweather.gov | Optional badges + nice "conditions" on check-ins (METAR is very on-brand). |
+| **Weather** | METAR from aviationweather.gov, or Apple WeatherKit **REST API** called from the server | Fetched server-side and attached to the check-in, so both apps get the same data. Optional badges + nice "conditions" on check-ins (METAR is very on-brand). |
 
-**On-device database:** ship a compressed SQLite snapshot of airports, types, airlines and the most common ~500k registrations (~20–40 MB) so autocomplete works offline; update via delta downloads weekly.
+**On-device database:** a server-side pipeline builds one compressed SQLite snapshot of airports, types, airlines and the most common ~500k registrations (~20–40 MB), with an FTS5 search index. **The same file is used by both apps** (iOS via GRDB, Android via Room/`SupportSQLiteDatabase` opened from a prepackaged file), downloaded on first launch or bundled, and updated via weekly delta downloads. The schema of this file is versioned (`refdata_schema_version`) and part of the shared contract (§11.5).
 
 ---
 
@@ -356,25 +367,79 @@ The app lives or dies on good aircraft/airport data. Plan for it early.
 
 ### 11.1 Stack recommendation
 
-| Layer | Choice | Why |
-|---|---|---|
-| iOS app | **Swift 6, SwiftUI, iOS 18+** minimum (adopt iOS 26 Liquid Glass where available) | Modern concurrency, Observation, SwiftData stable. |
-| Local persistence | **SwiftData** for user data + outbox; **GRDB/SQLite** read-only for the big reference DB | SwiftData is great for the user's own models; a 500k-row read-only lookup DB is faster & smaller in plain SQLite with FTS5. |
-| Backend | **Supabase** (Postgres + PostGIS, Auth, Storage, Edge Functions, Realtime) | Relational data and geo queries fit Postgres perfectly; badge rules become SQL aggregates; Sign in with Apple supported; open source → no lock-in. |
-| Alternative backend | Firebase (Firestore, Auth, Functions, Storage) | Faster start, but aggregations ("count distinct types for user") and geo queries are awkward in Firestore and cost more at scale. |
-| Images | Supabase Storage + image transformation (or Cloudflare Images) | Thumbnails 400 px, feed 1080 px, original private. |
-| Push | APNs via Edge Function | Badge unlocks, friend activity, salutes. |
-| Analytics / crashes | TelemetryDeck (privacy-friendly) + Xcode Organizer / Sentry | GDPR-friendly. |
-| Payments | StoreKit 2 | Subscriptions. |
+| Layer | iOS | Android | Shared / server |
+|---|---|---|---|
+| Language & UI | **Swift 6, SwiftUI, iOS 18+** (adopt iOS 26 Liquid Glass where available) | **Kotlin, Jetpack Compose, Material 3, minSdk 28** (Android 9+, ~95% of devices) | — |
+| Architecture | MV with `@Observable` stores | MVVM: `ViewModel` + `StateFlow`, Hilt for DI | Same feature modules & naming on both |
+| User data + outbox | SwiftData | Room | Same outbox semantics (§11.2) |
+| Reference DB (read-only) | GRDB + SQLite FTS5 | Room / SQLite FTS5 (prepackaged DB) | **One SQLite file** built by the data pipeline |
+| Background sync | `BGTaskScheduler` + sync on foreground | WorkManager (network constraint, backoff) | Idempotent batch endpoint |
+| Networking | `supabase-swift` + URLSession | `supabase-kt` + Ktor | **OpenAPI spec** for Edge Functions (§11.5) |
+| Auth | Sign in with Apple (native), Google, email | Credential Manager (Google), Apple via web OAuth, email | Supabase Auth: one account, many providers |
+| Camera / barcode | AVFoundation + Vision | CameraX + ML Kit Barcode Scanning | Shared BCBP test fixtures |
+| Maps | MapKit | Google Maps Compose (or MapLibre for one style on both) | Server returns GeoJSON for routes/locations |
+| Push | APNs | Firebase Cloud Messaging (FCM) | One `send-notification` function fans out by platform; FCM can also deliver to APNs if preferred |
+| Purchases | StoreKit 2 | Google Play Billing Library | Server-side `entitlements` table, fed by App Store Server Notifications v2 + Google Real-time Developer Notifications (or RevenueCat) |
+| Analytics / crashes | TelemetryDeck + Sentry | TelemetryDeck + Sentry | **Shared event catalog** (same event names & properties) |
+| Backend | — | — | **Supabase** (Postgres + PostGIS, Auth, Storage, Edge Functions, Realtime) |
+| Images | — | — | Supabase Storage + image transformation; clients upload via signed URLs |
+
+**Why Supabase for two native apps:** it has first-party SDKs for both Swift and Kotlin, keeps all logic in Postgres/Edge Functions where both clients get it for free, and relational data plus PostGIS fit the badge aggregates and geofences.
+**Alternative:** Firebase (Firestore, Auth, Functions) — also cross-platform, but aggregations ("count distinct types for user") and geo queries are awkward in Firestore and cost more at scale. **Not** CloudKit: it ties the social graph to Apple accounts and rules out Android.
+
+### 11.1a Code sharing strategy
+**Decision: two fully native codebases, shared contracts — no shared UI.**
+
+| What | How it is shared |
+|---|---|
+| API | OpenAPI 3.1 spec → generated DTOs/clients for Swift (`swift-openapi-generator`) and Kotlin (`openapi-generator`, kotlinx.serialization) |
+| Database types | `supabase gen types` for direct table access where used; otherwise only via the API |
+| Badge rules | JSON from the server (`GET /badges`); client progress predictors implemented in both languages, validated against shared **golden test files** (input check-ins → expected progress) |
+| BCBP parser | Implemented in Swift and Kotlin, both tested against the same fixture set (real-world anonymized barcodes) |
+| Registration normalization, great-circle distance | Same: two small implementations, one shared test-vector file |
+| Reference data | One SQLite file, one schema |
+| Strings | One source (e.g. XLIFF/JSON in `contracts/i18n`) exported to `Localizable.xcstrings` and `strings.xml` |
+| Design tokens | Colors, spacing, typography, badge art defined once (`contracts/design-tokens.json`, SVG badge art) → exported to Asset Catalog and Compose theme |
+| Analytics | `contracts/analytics-events.yaml` → generated constants for both |
+
+*Option for later:* the pure-logic parts (BCBP, badge predictor, registration rules) are good candidates for **Kotlin Multiplatform** if maintaining two implementations becomes a burden. Start without it — the shared test vectors already guarantee identical behavior and keep the iOS build free of a KMP toolchain.
 
 ### 11.2 App architecture
 
-- **MV (Model-View) with `@Observable` stores** per feature, dependency injection via `Environment`. Keep it simple; no heavy framework needed.
-- **Offline-first sync:** every write goes to SwiftData first with `syncState = .pending` → an `OutboxSyncer` (actor) pushes to the API when online → server returns canonical IDs, verification result and unlocked badges → local record updated, celebration shown (if offline, celebration appears with "badge pending sync").
+Both apps follow the same layered structure and feature split, so a feature spec maps 1:1 to both codebases.
+
+- **iOS:** MV with `@Observable` stores per feature, dependency injection via `Environment`.
+- **Android:** MVVM with `ViewModel` + `StateFlow`, Hilt, Navigation Compose; one Gradle module per feature.
+- **Offline-first sync (identical semantics on both):** every write goes to the local DB first with `syncState = pending` → an outbox syncer (Swift actor / WorkManager worker) pushes batches to `POST /v1/checkins` when online → server returns canonical data, verification result, XP and unlocked badges → local record updated, celebration shown (if offline: "badge pending sync"). Check-in IDs are UUIDv7 generated on the device, so retries are idempotent.
 - Badge evaluation is **server-authoritative**; the client shows *predicted* progress from local data for instant feedback.
+- A user can use iOS and Android with the same account (switching phones, or a phone and a tablet): the server is the source of truth, the local DB is a cache + outbox.
+
+### Repository layout (monorepo)
 
 ```
-Wingspot (Xcode project)
+wingspot/
+├── docs/                     # This concept, feature specs, ADRs
+├── contracts/                # Single source of truth shared by all clients
+│   ├── openapi.yaml          # API contract (versioned /v1)
+│   ├── badge-rules/          # Badge JSON + golden test files
+│   ├── test-vectors/         # BCBP barcodes, registrations, distances
+│   ├── i18n/                 # Strings
+│   ├── design-tokens.json    # Colors, spacing, typography
+│   ├── badge-art/            # SVG badge artwork
+│   └── analytics-events.yaml
+├── backend/
+│   ├── supabase/             # migrations/, functions/ (Edge Functions), seed.sql, config.toml
+│   └── refdata-pipeline/     # Import scripts → Postgres + on-device SQLite snapshot
+├── ios/                      # Xcode project (structure below)
+└── android/                  # Gradle project (structure below)
+```
+
+CI runs per folder (path filters): contract changes trigger codegen and the tests of **both** apps and the backend, so a breaking API change fails before it ships.
+
+### iOS project
+
+```
+ios/Wingspot (Xcode project)
 ├── App/                      # App entry, root TabView, DI container
 ├── Features/
 │   ├── CheckIn/              # Spotted, Flown, Airport flows, Session, BoardingPassScanner
@@ -396,6 +461,28 @@ Wingspot (Xcode project)
 ├── Widgets/                  # WidgetKit + Live Activity extension
 ├── ShareExtension/
 └── Tests/
+```
+
+### Android project
+
+```
+android/ (Gradle, version catalog)
+├── app/                      # Application, MainActivity, NavHost, Hilt setup
+├── feature/
+│   ├── checkin/              # Spotted, Flown, Airport, Session, BoardingPassScanner
+│   ├── feed/  explore/  badges/  profile/
+│   ├── aircraftdetail/  airportdetail/  settings/
+├── core/
+│   ├── model/                # Domain models (Registration, IcaoType, GreatCircle)
+│   ├── refdata/              # Prepackaged SQLite, FTS search, delta updates
+│   ├── database/             # Room entities + outbox
+│   ├── network/              # Generated OpenAPI client, supabase-kt wrapper
+│   ├── bcbp/                 # Boarding pass parser (pure Kotlin, unit tested)
+│   ├── badgeengine/          # Predicted progress
+│   ├── designsystem/         # Compose theme from design tokens, badge renderer
+│   └── sync/                 # WorkManager outbox worker
+├── widget/                   # Glance widgets
+└── wear/                     # Wear OS (phase 3)
 ```
 
 ### 11.3 Server data model (Postgres)
@@ -515,6 +602,54 @@ create table user_badges (user_id uuid references profiles, badge_id text refere
                           progress int, unlocked_at timestamptz, checkin_id uuid references checkins,
                           primary key (user_id, badge_id));
 
+-- Devices & push (one row per installed app instance)
+create type platform as enum ('ios', 'android');
+create table devices (
+  id            uuid primary key,          -- generated by the app on first launch
+  user_id       uuid not null references profiles on delete cascade,
+  platform      platform not null,
+  push_token    text,                      -- APNs token (ios) or FCM token (android)
+  push_env      text,                      -- 'sandbox' | 'production' (APNs only)
+  app_version   text not null,
+  os_version    text,
+  locale        text,
+  last_seen_at  timestamptz default now(),
+  unique (platform, push_token)
+);
+
+-- Notification preferences are per user, not per device
+create table notification_prefs (
+  user_id       uuid primary key references profiles on delete cascade,
+  salutes       boolean default true,
+  comments      boolean default true,
+  new_followers boolean default true,
+  friend_badges boolean default false,
+  wishlist_alerts boolean default false,
+  airport_geofence boolean default false
+);
+
+-- Subscriptions: one entitlement per user, regardless of the store it was bought in
+create type store as enum ('app_store', 'play_store', 'promo');
+create table entitlements (
+  user_id       uuid references profiles on delete cascade,
+  entitlement   text not null,             -- 'pro'
+  store         store not null,
+  product_id    text not null,             -- e.g. 'pro_yearly'
+  original_transaction_id text not null,   -- App Store originalTransactionId / Play purchaseToken
+  status        text not null,             -- active | grace_period | billing_retry | expired | revoked
+  expires_at    timestamptz,
+  auto_renew    boolean,
+  updated_at    timestamptz default now(),
+  primary key (user_id, entitlement, store)
+);
+create table store_events (                 -- raw webhook payloads for audit & replay
+  id            uuid primary key,
+  store         store not null,
+  payload       jsonb not null,
+  received_at   timestamptz default now(),
+  processed_at  timestamptz
+);
+
 create table follows   (follower uuid references profiles, followee uuid references profiles,
                         created_at timestamptz default now(), primary key (follower, followee));
 create table salutes   (user_id uuid references profiles, checkin_id uuid references checkins on delete cascade,
@@ -526,36 +661,60 @@ create table reports   (id uuid primary key, reporter uuid references profiles, 
 create table blocks    (blocker uuid references profiles, blocked uuid references profiles, primary key (blocker, blocked));
 ```
 
-Use **Row Level Security** everywhere: users write only their own rows; reads respect `visibility`, `is_private`, blocks and `post_delay_minutes`. Raw `location` is never exposed through public views.
+Use **Row Level Security** everywhere: users write only their own rows; reads respect `visibility`, `is_private`, blocks and `post_delay_minutes`. Raw `location` is never exposed through public views. `entitlements` and `store_events` are writable only by the service role (webhooks), never by clients.
+
+**Client rule:** apps read simple, public data (profiles, feed views, airports) directly through Supabase with RLS, but **every write with business logic goes through an Edge Function** (check-ins, badges, purchases, reports). This keeps rules in one place instead of two clients.
 
 ### 11.4 Key API operations (Edge Functions / RPC)
 
+All endpoints are versioned under `/v1` and described in `contracts/openapi.yaml`.
+
 | Operation | Description |
 |---|---|
-| `POST /checkins` (batch) | Upsert 1..n check-ins from the outbox (idempotent by client UUID). Returns canonical data, verification level, XP, unlocked badges, progress deltas. |
-| `GET /feed?cursor=` | Friends feed, keyset pagination. |
-| `GET /airports/{id}/activity` | Public recent activity, leaderboards. |
-| `GET /aircraft/lookup?reg=` | Registration lookup incl. unknown → creates `pending` aircraft. |
-| `GET /flights/lookup?number=&date=` | Server-side proxy to flight data provider, cached. |
-| `GET /nearby?lat=&lon=` | ADS-B aircraft near user (Pro, phase 2). |
-| `GET /refdata/delta?since=` | Delta updates for on-device reference DB. |
+| `POST /v1/checkins` (batch) | Upsert 1..n check-ins from the outbox (idempotent by client UUID). Returns canonical data, verification level, XP, unlocked badges, progress deltas. |
+| `GET /v1/feed?cursor=` | Friends feed, keyset pagination. |
+| `GET /v1/airports/{id}/activity` | Public recent activity, leaderboards. |
+| `GET /v1/aircraft/lookup?reg=` | Registration lookup incl. unknown → creates `pending` aircraft. |
+| `GET /v1/flights/lookup?number=&date=` | Server-side proxy to flight data provider, cached; free-tier quota checked against `entitlements`. |
+| `GET /v1/nearby?lat=&lon=` | ADS-B aircraft near user (Pro, phase 2). |
+| `GET /v1/badges` | Badge catalog incl. rule JSON and art URLs (ETag-cached). |
+| `GET /v1/refdata/manifest` · `/v1/refdata/delta?since=` | Current snapshot URL + schema version; delta updates for the on-device DB. |
+| `POST /v1/devices` | Register/refresh a device and its push token (called on launch and token change). |
+| `DELETE /v1/devices/{id}` | Unregister on sign-out. |
+| `GET /v1/me/entitlements` | Current Pro status, valid across both platforms. |
+| `POST /v1/purchases/verify` | Client sends a fresh App Store signed transaction or a Play purchase token right after purchase; server verifies with the store and updates `entitlements`. |
+| `POST /webhooks/app-store` | App Store Server Notifications v2 (renewals, refunds, expiry). |
+| `POST /webhooks/play` | Google Play Real-time Developer Notifications via Pub/Sub push. |
+| `GET /v1/config` | Remote config: minimum supported app version per platform, feature flags, kill switches. |
 | `POST /badges/recompute` (internal) | Batch job after new badge rules / data fixes. |
+
+### 11.5 Cross-platform contract rules
+
+- **Versioning:** breaking changes only in a new API version (`/v2`); `/v1` stays alive until both apps' minimum versions (`/v1/config`) no longer use it. Additive changes (new fields, new badge kinds) must be ignored safely by older clients — unknown badge `kind` or check-in `tag` values are rendered generically, never crash.
+- **Minimum app version:** `/v1/config` returns `min_version` per platform; apps below it show a "please update" screen. Needed because iOS and Android releases ship at different times.
+- **Feature flags:** new features are enabled per platform, so one app can ship a feature before the other without diverging backend behavior.
+- **Push payloads:** one notification model on the server (`type`, `title_key`, `body_args`, `deep_link`), rendered per platform. Localized on the server using the user's `locale` so both apps show identical texts. Send logic: look up the user's `devices`, send APNs to iOS tokens and FCM to Android tokens, delete tokens the stores report as invalid.
+- **Entitlements:** a user who buys Pro on iOS has Pro on Android too (and vice versa). Clients **never** decide Pro status from the local store receipt alone; they ask `/v1/me/entitlements`. The "Manage subscription" link points to the store the purchase was made in.
+- **Time & units:** all timestamps UTC ISO-8601 with the airport's/location's IANA time zone stored next to it (needed for "Early Bird"/"Red-Eye" rules); distances in km on the wire, converted for display.
+- **Images:** clients request a signed upload URL, upload directly to storage, then reference the path in the check-in. HEIC (iOS) is converted to JPEG/AVIF server-side so Android and the web can always display it.
+- **Parity checklist:** every feature spec in `docs/` lists iOS and Android status; a feature counts as "done" for a release only when the platform it targets is done, and the backend never assumes both have it.
 
 ---
 
 ## 12. Visual design direction
 
 - **Tone:** clean "flight deck" feel — dark navy, white, signal orange accent (think cockpit instruments, runway markings), not airline-branded.
-- **Typography:** SF Pro / SF Pro Rounded for badges, **SF Mono** for registrations, ICAO codes and flight numbers (they are codes — show them like codes).
+- **Brand vs. platform:** brand elements (colors, badge art, celebration moments, typography for codes) are identical on both platforms and come from `contracts/design-tokens.json` and `contracts/badge-art/`; controls, navigation and system patterns follow each platform (HIG on iOS, Material 3 on Android).
+- **Typography:** iOS: SF Pro / SF Pro Rounded, **SF Mono** for registrations, ICAO codes and flight numbers. Android: Roboto Flex / system font, **JetBrains Mono or Roboto Mono** for codes. (They are codes — show them like codes on both.)
 - **Badges:** circular/shield patches inspired by **pilot mission patches and airline wings** — each category with its own shape (types = round patch, airports = tag/luggage label, flown = wings, time = clock bezel, events = shield). Leveled badges get a ring/stripe per level (like captain's stripes: 1–4 stripes, then gold).
-- **Celebration:** contrail animation + haptic on badge unlock; respect *Reduce Motion*.
-- **Accessibility:** Dynamic Type everywhere, VoiceOver labels for badges ("Superjumbo badge, unlocked 3 May 2026"), colorblind-safe badge colors (shape + text, not color only).
+- **Celebration:** contrail animation + haptic on badge unlock; respect *Reduce Motion* (iOS) / *Remove animations* (Android).
+- **Accessibility:** Dynamic Type / font scaling everywhere, VoiceOver and TalkBack labels for badges ("Superjumbo badge, unlocked 3 May 2026"), colorblind-safe badge colors (shape + text, not color only).
 
 ---
 
 ## 13. Monetization
 
-Free app with an optional **Wingspot Pro** subscription (e.g. €3.99/month · €29.99/year, family sharing on).
+Free app with an optional **Wingspot Pro** subscription (e.g. €3.99/month · €29.99/year), sold through the App Store (StoreKit 2, Family Sharing on) and Google Play (Play Billing, same product IDs `pro_monthly` / `pro_yearly`, same price points). **Pro is tied to the Wingspot account, not to the store:** bought once, it unlocks Pro on every platform the user signs in on (see §11.5).
 
 | Free | Pro |
 |---|---|
@@ -576,12 +735,16 @@ Later: partnerships with airshows/airports (event badges), spotting-guide conten
 
 ## 14. Roadmap
 
-### Phase 0 — Foundations (2–3 weeks)
-- Xcode project, packages, CI (Xcode Cloud or GitHub Actions + Fastlane).
-- Supabase project, schema, RLS, Sign in with Apple.
-- Reference data pipeline: scripts to import OurAirports, ICAO types, operators, initial registrations → Postgres + generate on-device SQLite.
+**Platform sequencing:** the backend is built platform-neutral from day one, but the clients ship **iOS first, Android second** (a solo/small team should not build two apps in parallel before the core loop is proven). Android starts once the iOS MVP is in TestFlight and the API contract is stable; it targets feature parity with iOS 1.0 rather than chasing the latest iOS features. If you have a second developer, Android can start at Phase 1 against the same contract.
 
-### Phase 1 — MVP (8–10 weeks) → TestFlight
+### Phase 0 — Foundations (2–3 weeks)
+- Monorepo layout (§11.2), `contracts/` with a first `openapi.yaml`, CI with path filters (GitHub Actions; Fastlane for iOS, Gradle Play Publisher for Android later).
+- Supabase project, migrations, RLS, Auth with Apple, Google and email.
+- `devices`, `entitlements` and `/v1/config` from the start, even if only iOS uses them at first.
+- Reference data pipeline: scripts to import OurAirports, ICAO types, operators, initial registrations → Postgres + generate the shared on-device SQLite.
+- Shared test vectors (registrations, distances, BCBP fixtures).
+
+### Phase 1 — iOS MVP (8–10 weeks) → TestFlight
 - Auth, onboarding, profile.
 - Check-in: Spotted (reg/type autocomplete, location, tags, 1 photo), Airport, Flown (manual + **boarding pass scan**).
 - Offline outbox + sync.
@@ -598,16 +761,24 @@ Later: partnerships with airshows/airports (event badges), spotting-guide conten
 - Spotting locations (user-contributed + moderation).
 - Airport leaderboards.
 - Widgets, App Intents.
-- Wingspot Pro (StoreKit 2).
+- Wingspot Pro (StoreKit 2 + server-side entitlements and App Store webhooks).
 - "What's overhead?" (ADS-B) + ADS-B verification (after licensing is settled).
+
+### Phase 2b — Android 1.0 (10–12 weeks, can overlap with Phase 2) → Play closed testing
+- Gradle project (§11.2), design system from shared tokens, generated API client.
+- Port core modules against shared test vectors: registration rules, great-circle, BCBP, badge predictor.
+- Feature parity with iOS 1.0: auth, all check-in types incl. boarding pass scan (ML Kit), offline outbox (Room + WorkManager), badges, feed, profile, airport pages, settings, account deletion.
+- FCM push, Google Play Billing + Real-time Developer Notifications → same `entitlements`.
+- Glance widget, Quick Settings tile, App Links.
+- Google Play requirements: closed test with ≥ 12 testers for 14 days (new personal developer accounts), Data safety form, target the current API level.
 
 ### Phase 3 — Growth
 - Seasonal events & time-limited badges, Year in Review.
 - Wishlists & alerts.
-- Apple Watch app.
-- On-device aircraft type recognition from photos (Core ML; train on community photos with consent).
-- Localization (DE, EN first; then FR, ES, NL, JA).
-- Android / web profile pages (shareable public profile URLs for virality).
+- Apple Watch and Wear OS apps.
+- On-device aircraft type recognition from photos (one model trained on community photos with consent, exported to Core ML for iOS and TensorFlow Lite/LiteRT for Android).
+- Localization (DE, EN first; then FR, ES, NL, JA) from the shared string catalog.
+- Web profile and check-in pages (the deep-link landing pages grown into shareable public profiles for virality).
 
 ---
 
@@ -621,27 +792,35 @@ Later: partnerships with airshows/airports (event badges), spotting-guide conten
 | Check-ins per weekly active user | ≥ 8 |
 | % users with ≥ 1 friend | ≥ 40% |
 | Pro conversion | 3–5% of MAU |
+| Crash-free sessions | ≥ 99.5% on each platform |
+
+All metrics are tracked per platform from the shared event catalog, so iOS and Android can be compared directly.
 
 ---
 
 ## 16. Open questions / decisions to make
 
-1. **Backend:** Supabase (recommended) vs. Firebase vs. CloudKit (CloudKit is free and private but makes social/global features and Android later very hard → not recommended for a social app).
-2. **Registration data licensing:** which sources can be used commercially? Budget for a commercial data source vs. community-built database.
-3. **ADS-B provider & license** for live/verification features.
-4. **Flight lookup provider** and cost per lookup → defines free-tier limits.
-5. **Moderation:** who reviews reports and spotting locations at launch (you alone? community moderators?).
-6. **Pilot logbook** — separate track for private/commercial pilots (hours, PIC)? Could be a strong niche, but out of scope for MVP.
-7. **Name & trademark check** for "Wingspot" in your target markets + App Store name availability.
+1. **Backend:** Supabase (recommended) vs. Firebase. CloudKit is ruled out because of the Android app.
+2. **Android timing:** after the iOS MVP (recommended for a solo developer) or in parallel with a second developer?
+3. **Purchase backend:** own webhook handling for both stores vs. RevenueCat (faster, free up to a revenue threshold, but an extra dependency).
+4. **Kotlin Multiplatform** for the shared pure-logic modules — revisit after Android 1.0 if keeping two implementations in sync becomes painful.
+5. **Maps on Android:** Google Maps (familiar, needs API key/billing) vs. MapLibre (open, can use one map style on both platforms).
+6. **Registration data licensing:** which sources can be used commercially? Budget for a commercial data source vs. community-built database.
+7. **ADS-B provider & license** for live/verification features.
+8. **Flight lookup provider** and cost per lookup → defines free-tier limits.
+9. **Moderation:** who reviews reports and spotting locations at launch (you alone? community moderators?).
+10. **Pilot logbook** — separate track for private/commercial pilots (hours, PIC)? Could be a strong niche, but out of scope for MVP.
+11. **Name & trademark check** for "Wingspot" in your target markets + App Store and Google Play name availability, plus the `wingspot.app` (or similar) domain for deep links.
 
 ---
 
 ## 17. First development steps
 
-1. Create the Xcode project `Wingspot` (iOS 18+, SwiftUI, Swift 6 language mode) with the package structure from §11.2.
-2. Write `WingspotCore` value types + unit tests: `Registration` normalization (country prefixes, e.g. `DAIMA` → `D-AIMA`, `N123AB` stays), `GreatCircle.distance`, `ICAOType`.
-3. Build the `BCBP` parser package with test fixtures (a self-contained, satisfying first module).
-4. Script the reference data import (OurAirports + ICAO types) into an SQLite file and wire up `ReferenceData` with FTS5 search.
+1. Set up the monorepo (`contracts/`, `backend/`, `ios/`, `android/`) from §11.2; leave `android/` as a placeholder for now.
+2. Write the shared test vectors first: registrations (`DAIMA` → `D-AIMA`, `N123AB` stays), great-circle distances, BCBP barcodes. Both apps will be tested against them.
+3. Create the Xcode project `Wingspot` (iOS 18+, SwiftUI, Swift 6 language mode) and implement `WingspotCore` (`Registration`, `GreatCircle`, `ICAOType`) and the `BCBP` parser against the test vectors.
+4. Script the reference data import (OurAirports + ICAO types) into the shared SQLite file and wire up `ReferenceData` with FTS5 search.
 5. Build the Spotted check-in screen against local data only (SwiftData), including the result/celebration screen with client-side badge prediction.
-6. Add Supabase: auth, schema, `POST /checkins`, server badge evaluation.
+6. Add Supabase: migrations, auth (Apple, Google, email), `devices`, `/v1/config`, `POST /v1/checkins` with server badge evaluation — written into `openapi.yaml` first, then implemented.
 7. Feed + profile → first TestFlight with friends from the spotting community.
+8. Once the contract is stable: start the Android project against the same `openapi.yaml`, test vectors and SQLite file.
