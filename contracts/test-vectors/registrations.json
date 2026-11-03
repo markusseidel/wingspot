@@ -1,0 +1,234 @@
+{
+  "description": "Aircraft registration normalization. Input as typed by a user; expected is the canonical form (uppercase, dash after the nationality prefix except for countries that write none, e.g. N, JA, HL). expected null = invalid. country = ISO 3166-1 alpha-2 of the register.",
+  "cases": [
+    {
+      "input": "DAIMA",
+      "expected": "D-AIMA",
+      "country": "DE"
+    },
+    {
+      "input": "d-aima",
+      "expected": "D-AIMA",
+      "country": "DE"
+    },
+    {
+      "input": "D AIMA",
+      "expected": "D-AIMA",
+      "country": "DE"
+    },
+    {
+      "input": " d-aima ",
+      "expected": "D-AIMA",
+      "country": "DE"
+    },
+    {
+      "input": "N123AB",
+      "expected": "N123AB",
+      "country": "US"
+    },
+    {
+      "input": "n-123ab",
+      "expected": "N123AB",
+      "country": "US"
+    },
+    {
+      "input": "HBJNA",
+      "expected": "HB-JNA",
+      "country": "CH"
+    },
+    {
+      "input": "GEUUA",
+      "expected": "G-EUUA",
+      "country": "GB"
+    },
+    {
+      "input": "CFIUA",
+      "expected": "C-FIUA",
+      "country": "CA"
+    },
+    {
+      "input": "CSTJE",
+      "expected": "CS-TJE",
+      "country": "PT"
+    },
+    {
+      "input": "JA8089",
+      "expected": "JA8089",
+      "country": "JP"
+    },
+    {
+      "input": "JA-8089",
+      "expected": "JA8089",
+      "country": "JP"
+    },
+    {
+      "input": "HL7611",
+      "expected": "HL7611",
+      "country": "KR"
+    },
+    {
+      "input": "B6497",
+      "expected": "B-6497",
+      "country": "CN"
+    },
+    {
+      "input": "BHNR",
+      "expected": "B-HNR",
+      "country": "HK"
+    },
+    {
+      "input": "BMAX",
+      "expected": "B-MAX",
+      "country": "MO"
+    },
+    {
+      "input": "B18901",
+      "expected": "B-18901",
+      "country": "TW"
+    },
+    {
+      "input": "9HAEI",
+      "expected": "9H-AEI",
+      "country": "MT"
+    },
+    {
+      "input": "A6EOA",
+      "expected": "A6-EOA",
+      "country": "AE"
+    },
+    {
+      "input": "VHOQA",
+      "expected": "VH-OQA",
+      "country": "AU"
+    },
+    {
+      "input": "RA73123",
+      "expected": "RA-73123",
+      "country": "RU"
+    },
+    {
+      "input": "4XEKA",
+      "expected": "4X-EKA",
+      "country": "IL"
+    },
+    {
+      "input": "PHBXA",
+      "expected": "PH-BXA",
+      "country": "NL"
+    },
+    {
+      "input": "OYKBA",
+      "expected": "OY-KBA",
+      "country": "DK"
+    },
+    {
+      "input": "ECMXV",
+      "expected": "EC-MXV",
+      "country": "ES"
+    },
+    {
+      "input": "FHPJA",
+      "expected": "F-HPJA",
+      "country": "FR"
+    },
+    {
+      "input": "IADMA",
+      "expected": "I-ADMA",
+      "country": "IT"
+    },
+    {
+      "input": "EIDEO",
+      "expected": "EI-DEO",
+      "country": "IE"
+    },
+    {
+      "input": "OELBA",
+      "expected": "OE-LBA",
+      "country": "AT"
+    },
+    {
+      "input": "SPLRA",
+      "expected": "SP-LRA",
+      "country": "PL"
+    },
+    {
+      "input": "TCJJE",
+      "expected": "TC-JJE",
+      "country": "TR"
+    },
+    {
+      "input": "ZSSNA",
+      "expected": "ZS-SNA",
+      "country": "ZA"
+    },
+    {
+      "input": "PRAXH",
+      "expected": "PR-AXH",
+      "country": "BR"
+    },
+    {
+      "input": "9VSKA",
+      "expected": "9V-SKA",
+      "country": "SG"
+    },
+    {
+      "input": "A7BAA",
+      "expected": "A7-BAA",
+      "country": "QA"
+    },
+    {
+      "input": "VTANP",
+      "expected": "VT-ANP",
+      "country": "IN"
+    },
+    {
+      "input": "ZKNZE",
+      "expected": "ZK-NZE",
+      "country": "NZ"
+    },
+    {
+      "input": "",
+      "expected": null
+    },
+    {
+      "input": "D",
+      "expected": null
+    },
+    {
+      "input": "D-",
+      "expected": null
+    },
+    {
+      "input": "D-AI#MA",
+      "expected": null
+    },
+    {
+      "input": "QXYZ",
+      "expected": null
+    },
+    {
+      "input": "QQ123",
+      "expected": null
+    },
+    {
+      "input": "XX-ABC",
+      "expected": null
+    },
+    {
+      "input": "NABC",
+      "expected": null
+    },
+    {
+      "input": "N0123",
+      "expected": null
+    },
+    {
+      "input": "DAIMAAAAAAAA",
+      "expected": null
+    },
+    {
+      "input": "N123456",
+      "expected": null
+    }
+  ]
+}

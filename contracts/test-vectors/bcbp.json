@@ -1,0 +1,93 @@
+{
+  "description": "IATA BCBP (Resolution 792) boarding pass barcodes. Synthetic data only, no real passengers. flightDate is resolved from dayOfYear relative to referenceDate (the scan date). Name and PNR are intentionally not part of the expected output: clients must never store them.",
+  "cases": [
+    {
+      "name": "single leg with conditional data",
+      "barcode": "M1DOE/JANE            EABC123 FRAJFKLH 0400 309Y034K0025 13A>60B0WW6308BLH 29220210123456700LH                    N1PC",
+      "referenceDate": "2026-11-03",
+      "expected": {
+        "version": "6",
+        "legs": [
+          {
+            "from": "FRA",
+            "to": "JFK",
+            "carrier": "LH",
+            "flightNumber": "400",
+            "dayOfYear": 309,
+            "flightDate": "2026-11-05",
+            "compartmentCode": "Y",
+            "seat": "34K"
+          }
+        ]
+      }
+    },
+    {
+      "name": "two legs with security data",
+      "barcode": "M2MUSTERMANN/MAX MR   EXYZ789 DUSMUCLH 2013 045C002A0103 13A>60B0WW6044BLH 29220210123456700LH                    N1PCXYZ789 MUCSINLH 0778 045J007D0042 129220210123456700LH                    N1PC^164AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "referenceDate": "2026-02-13",
+      "expected": {
+        "version": "6",
+        "legs": [
+          {
+            "from": "DUS",
+            "to": "MUC",
+            "carrier": "LH",
+            "flightNumber": "2013",
+            "dayOfYear": 45,
+            "flightDate": "2026-02-14",
+            "compartmentCode": "C",
+            "seat": "2A"
+          },
+          {
+            "from": "MUC",
+            "to": "SIN",
+            "carrier": "LH",
+            "flightNumber": "778",
+            "dayOfYear": 45,
+            "flightDate": "2026-02-14",
+            "compartmentCode": "J",
+            "seat": "7D"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mandatory items only, flight suffix, year rollover",
+      "barcode": "M1SMITH/ALEX          EQWE456 LAXNRTUA 0032A001W021C0007 000",
+      "referenceDate": "2026-12-30",
+      "expected": {
+        "version": null,
+        "legs": [
+          {
+            "from": "LAX",
+            "to": "NRT",
+            "carrier": "UA",
+            "flightNumber": "32A",
+            "dayOfYear": 1,
+            "flightDate": "2027-01-01",
+            "compartmentCode": "W",
+            "seat": "21C"
+          }
+        ]
+      }
+    },
+    {
+      "name": "wrong format code",
+      "barcode": "X1DOE/JANE            EABC123 FRAJFKLH 0400 309Y034K0025 13A>60B0WW6308BLH 29220210123456700LH                    N1PC",
+      "referenceDate": "2026-11-03",
+      "expectedError": "invalidFormatCode"
+    },
+    {
+      "name": "invalid leg count",
+      "barcode": "M0DOE/JANE            EABC123 FRAJFKLH 0400 309Y034K0025 13A>60B0WW6308BLH 29220210123456700LH                    N1PC",
+      "referenceDate": "2026-11-03",
+      "expectedError": "invalidLegCount"
+    },
+    {
+      "name": "truncated",
+      "barcode": "M1DOE/JANE            EABC123 FRAJFKLH 0",
+      "referenceDate": "2026-11-03",
+      "expectedError": "truncated"
+    }
+  ]
+}
