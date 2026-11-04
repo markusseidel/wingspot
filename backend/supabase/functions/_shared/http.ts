@@ -26,8 +26,14 @@ export function subpath(request: Request): string[] {
   return new URL(request.url).pathname.split("/").filter(Boolean).slice(1);
 }
 
+/** Supabase lists publishable keys by name. The legacy anon key covers environments without them. */
+function apiKey(): string {
+  const keys = Deno.env.get("SUPABASE_PUBLISHABLE_KEYS");
+  return keys ? JSON.parse(keys).default : Deno.env.get("SUPABASE_ANON_KEY")!;
+}
+
 function client(authorization?: string): SupabaseClient {
-  return createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, {
+  return createClient(Deno.env.get("SUPABASE_URL")!, apiKey(), {
     auth: { persistSession: false, autoRefreshToken: false },
     global: authorization ? { headers: { Authorization: authorization } } : undefined,
   });
