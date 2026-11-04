@@ -82,8 +82,8 @@ Only you can do these, because they need your accounts, money or judgement.
 
 ### iOS and Android search
 
-- [ ] Find hyphenated names when typed without the hyphen, such as `crj900` and `an124`
-- [ ] Rank large airports first in search, such as `Wien`
+- [x] Find hyphenated names when typed without the hyphen, such as `crj900` and `an124`
+- [x] Rank large airports first in search, such as `Wien`
 - [ ] Handle registrations with no type or airline yet, on check-ins and badges
 
 ### Phase 1: iOS MVP ([PHASE1.md](PHASE1.md))

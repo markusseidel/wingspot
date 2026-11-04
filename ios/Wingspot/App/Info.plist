@@ -4,6 +4,8 @@
 <dict>
 	<key>WingspotAPIBaseURL</key>
 	<string>https://gsfeuxowjymdqbopcpdo.supabase.co/functions</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Wingspot suggests the airport you're at when you check in.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

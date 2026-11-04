@@ -53,10 +53,10 @@ struct CheckInSheet: View {
             .navigationDestination(for: CheckInKind.self) { kind in
                 switch kind {
                 case .spotted:
-                    SpottedCheckInView()
+                    SpottedCheckInView(onDone: { dismiss() })
                 case .flown, .airport:
                     ContentUnavailableView(kind.title, systemImage: kind.systemImage,
-                                           description: Text("Coming in Phase 1."))
+                                           description: Text("Coming in a later milestone."))
                 }
             }
             .toolbar {
@@ -65,6 +65,5 @@ struct CheckInSheet: View {
                 }
             }
         }
-        .presentationDetents([.medium, .large])
     }
 }

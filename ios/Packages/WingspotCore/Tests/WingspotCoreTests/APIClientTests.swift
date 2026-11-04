@@ -41,3 +41,24 @@ private func client(status: Int, body: String) -> APIClient {
         try await client.config()
     }
 }
+
+@Test func manifestDecodesTheContractShape() async throws {
+    let manifest = try await client(status: 200, body: """
+    {"schema_version":2,"data_version":"2026-11-04","url":"https://example.com/r.sqlite","sha256":"abc","size_bytes":12,"extra":true}
+    """).refdataManifest()
+    #expect(manifest == RefdataManifest(
+        schemaVersion: 2, dataVersion: "2026-11-04", url: URL(string: "https://example.com/r.sqlite")!,
+        sha256: "abc", sizeBytes: 12
+    ))
+}
+
+@Test func noPublishedSnapshotIsNotAnError() async throws {
+    let manifest = try await client(status: 404, body: "{}").refdataManifest()
+    #expect(manifest == nil)
+}
+
+@Test func manifestServerErrorsThrow() async throws {
+    await #expect(throws: APIError.unexpectedStatus(500)) {
+        try await client(status: 500, body: "").refdataManifest()
+    }
+}
