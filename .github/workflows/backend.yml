@@ -1,0 +1,44 @@
+name: Backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - 'contracts/**'
+      - '.github/workflows/backend.yml'
+  pull_request:
+    paths:
+      - 'backend/**'
+      - 'contracts/**'
+      - '.github/workflows/backend.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  refdata-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 backend/refdata-pipeline/tests/test_build_refdata.py
+
+  supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 3.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Start local stack
+        run: supabase start --workdir backend -x studio,imgproxy,logflare,vector,mailpit,supavisor,realtime
+      - name: Test database access rules
+        run: supabase test db --workdir backend
+      - name: Test API against the contract
+        working-directory: backend/api-tests
+        run: |
+          npm ci
+          npm test

@@ -1,0 +1,9 @@
+"id","ident","type","name","latitude_deg","longitude_deg","elevation_ft","continent","iso_country","iso_region","municipality","scheduled_service","icao_code","iata_code","gps_code","local_code","home_link","wikipedia_link","keywords"
+1,"EDDF","large_airport","Frankfurt Airport",50.033333,8.570556,364,"EU","DE","DE-HE","Frankfurt am Main","yes","EDDF","FRA","EDDF",,,,
+2,"KJFK","large_airport","John F Kennedy International Airport",40.639801,-73.7789,13,"NA","US","US-NY","New York","yes","KJFK","JFK","KJFK",,,,
+3,"EDDL","large_airport","Düsseldorf Airport",51.289501,6.76678,147,"EU","DE","DE-NW","Düsseldorf","yes","EDDL","DUS","EDDL",,,,
+4,"XX01","small_airport","Fixture Field, North Strip",47.5,11.25,,"EU","DE","DE-BY",,"no",,,,,,,
+5,"XH01","heliport","Fixture Heliport",48.1,11.5,1700,"EU","DE","DE-BY","Fixturestadt","yes",,,,,,,
+6,"XC01","closed","Fixture Closed Airfield",48.2,11.6,1700,"EU","DE","DE-BY",,"no",,,,,,,
+7,"XB01","small_airport","Fixture Bad Latitude",123.4,11.6,1700,"EU","DE","DE-BY",,"no",,,,,,,
+1,"XD01","small_airport","Fixture Duplicate ID",48.3,11.7,1700,"EU","DE","DE-BY",,"no",,,,,,,
