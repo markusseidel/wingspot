@@ -37,8 +37,8 @@ class BuildRefdataTests(unittest.TestCase):
 
     def test_imports_only_usable_airports(self):
         ids = [row[0] for row in self.db.execute("SELECT id FROM airports ORDER BY id")]
-        self.assertEqual(ids, [1, 2, 3, 4, 5])
-        self.assertEqual(self.manifest["counts"]["airports"], 5)
+        self.assertEqual(ids, [1, 2, 3, 4, 5, 8])
+        self.assertEqual(self.manifest["counts"]["airports"], 6)
 
     def test_reports_bad_rows_but_not_closed_airports(self):
         skipped = " ".join(self.manifest["skipped"])
@@ -63,7 +63,7 @@ class BuildRefdataTests(unittest.TestCase):
 
     def test_default_search_needs_iata_or_scheduled_service(self):
         flags = dict(self.db.execute("SELECT id, default_search FROM airports"))
-        self.assertEqual(flags, {1: 1, 2: 1, 3: 1, 4: 0, 5: 1})
+        self.assertEqual(flags, {1: 1, 2: 1, 3: 1, 4: 0, 5: 1, 8: 1})
 
     def test_airport_search(self):
         self.assertEqual(self.search_airports("fra"), ["FRA"])
@@ -74,6 +74,15 @@ class BuildRefdataTests(unittest.TestCase):
     def test_airport_search_ignores_diacritics(self):
         self.assertEqual(self.search_airports("dusseldorf"), ["DUS"])
         self.assertEqual(self.search_airports("düsseldorf"), ["DUS"])
+
+    def test_airport_search_finds_keywords(self):
+        self.assertEqual(self.search_airports("munich"), ["MUC"])
+        self.assertEqual(self.search_airports("münchen"), ["MUC"])
+        self.assertEqual(self.search_airports("munchen"), ["MUC"])
+        self.assertEqual(self.search_airports("strauss"), ["MUC"])
+
+    def test_blank_keywords_become_null(self):
+        self.assertIsNone(self.one("SELECT keywords FROM airports WHERE id = 1")[0])
 
     def test_aircraft_type_search(self):
         rows = self.db.execute(
@@ -91,15 +100,15 @@ class BuildRefdataTests(unittest.TestCase):
 
     def test_records_versions(self):
         meta = dict(self.db.execute("SELECT key, value FROM meta"))
-        self.assertEqual(meta, {"refdata_schema_version": "1", "data_version": "test-1"})
-        self.assertEqual(self.one("PRAGMA user_version")[0], 1)
+        self.assertEqual(meta, {"refdata_schema_version": "2", "data_version": "test-1"})
+        self.assertEqual(self.one("PRAGMA user_version")[0], 2)
 
     def test_manifest_describes_the_file(self):
         written = json.loads((self.tmp / "out" / "manifest.json").read_text(encoding="utf-8"))
         self.assertEqual(written, self.manifest)
         data = (self.tmp / "out" / "refdata.sqlite").read_bytes()
         self.assertEqual(written["size_bytes"], len(data))
-        self.assertEqual(written["schema_version"], 1)
+        self.assertEqual(written["schema_version"], 2)
         self.assertRegex(written["sha256"], "^[0-9a-f]{64}$")
 
     def test_build_is_deterministic(self):
@@ -144,6 +153,37 @@ class InvalidInputTests(unittest.TestCase):
 
         self.assertEqual((out / "refdata.sqlite").read_bytes(), before)
         self.assertFalse((out / "refdata.sqlite.tmp").exists())
+
+    def keywords_file(self, text):
+        path = self.tmp / "keywords.csv"
+        path.write_text(text, encoding="utf-8")
+        return path
+
+    def test_curated_keywords_are_added_and_searchable(self):
+        path = self.keywords_file("icao_code,keywords\nEDDM,Bayern-Flughafen\neddf,lowercase code\nXXXX,Nowhere\n")
+        out = self.tmp / "out"
+        manifest = build_refdata.build(AIRPORTS, build_refdata.DEFAULT_TYPES_PATH, out, "test", path)
+
+        db = sqlite3.connect(out / "refdata.sqlite")
+        self.addCleanup(db.close)
+        keywords = db.execute("SELECT keywords FROM airports WHERE icao = 'EDDM'").fetchone()[0]
+        self.assertEqual(keywords, "Franz Josef Strauss Airport, Flughafen München Franz Josef Strauß, Bayern-Flughafen")
+        found = db.execute("SELECT rowid FROM airports_fts WHERE airports_fts MATCH 'bayern'").fetchall()
+        self.assertEqual(found, [(8,)])
+        self.assertEqual(manifest["unmatched_keywords"], ["XXXX", "eddf"])
+
+    def test_duplicate_curated_keywords_fail(self):
+        path = self.keywords_file("icao_code,keywords\nEDDM,One\nEDDM,Two\n")
+        with self.assertRaisesRegex(build_refdata.InputError, "duplicate airport: EDDM"):
+            build_refdata.build(AIRPORTS, build_refdata.DEFAULT_TYPES_PATH, self.tmp / "out", "test", path)
+
+    def test_curated_keywords_seed_is_well_formed(self):
+        rows = build_refdata._rows(build_refdata.DEFAULT_KEYWORDS_PATH, build_refdata.KEYWORD_COLUMNS)
+        codes = [row["icao_code"] for row in rows]
+        self.assertEqual(codes, sorted(set(codes)))
+        for row in rows:
+            self.assertRegex(row["icao_code"], "^[A-Z0-9]{4}$")
+            self.assertTrue(row["keywords"])
 
     def test_duplicate_aircraft_type_fails(self):
         types = self.tmp / "types.csv"
