@@ -1,17 +1,17 @@
 # Graph Report - wingspot  (2026-11-04)
 
 ## Corpus Check
-- 49 files · ~22,807 words
+- 52 files · ~23,326 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 8 file(s) not represented in the graph (top: (none) 2, .csv 2, .toml 1)
+- Unclassified: 10 file(s) not represented in the graph (top: (none) 3, .csv 2, .toml 1)
 
 ## Summary
-- 422 nodes · 645 edges · 16 communities (13 shown, 3 thin omitted)
-- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 31 edges (avg confidence: 0.9)
+- 451 nodes · 699 edges · 18 communities (14 shown, 4 thin omitted)
+- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 32 edges (avg confidence: 0.89)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `8792b0ca`
+- Built from commit: `4707f912`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -28,15 +28,17 @@
 - ios.yml
 - BuildRefdataTests
 - Swift Package Manifests
-- backend.yml
+- steps
 - contracts.yml
 - Reference data pipeline
 - CLAUDE.md
+- BCBPError
+- .mcp.json
 
 ## God Nodes (most connected - your core abstractions)
 1. `BuildRefdataTests` - 21 edges
 2. `build()` - 16 edges
-3. `base` - 15 edges
+3. `base` - 16 edges
 4. `Registration` - 12 edges
 5. `DistanceVector` - 12 edges
 6. `CheckInKind` - 11 edges
@@ -50,12 +52,12 @@
   README.md → docs/CONCEPT.md
 - `contracts/test-vectors` --implements--> `Shared Test Vectors`  [INFERRED]
   contracts/README.md → docs/CONCEPT.md
+- `.body` --calls--> `SpottedCheckInView`  [INFERRED]
+  ios/Wingspot/Features/CheckIn/CheckInSheet.swift → ios/Wingspot/Features/CheckIn/SpottedCheckInView.swift
 - `Android App (Kotlin / Jetpack Compose)` --conceptually_related_to--> `Android Project Structure`  [INFERRED]
   android/README.md → docs/CONCEPT.md
 - `Contracts Folder` --references--> `Design Tokens (contracts/design-tokens.json)`  [EXTRACTED]
   contracts/README.md → docs/CONCEPT.md
-- `Wingspot Repository` --implements--> `Monorepo Layout`  [INFERRED]
-  README.md → docs/CONCEPT.md
 
 ## Import Cycles
 - None detected.
@@ -65,19 +67,19 @@
 - **Offline Check-in Sync Flow** — docs_concept_outbox_sync, docs_concept_post_v1_checkins, docs_concept_checkins_table, docs_concept_badge_engine, docs_concept_client_badge_predictor [EXTRACTED 1.00]
 - **Shared Contract Artifacts** — contracts_readme_contracts, docs_concept_openapi_spec, docs_concept_shared_test_vectors, docs_concept_design_tokens, docs_concept_on_device_database [EXTRACTED 1.00]
 
-## Communities (16 total, 3 thin omitted)
+## Communities (18 total, 4 thin omitted)
 
 ### Community 0 - "iOS Project Configuration"
 Cohesion: 0.05
-Nodes (44): ASSETCATALOG_COMPILER_APPICON_NAME, ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME, CODE_SIGN_STYLE, CURRENT_PROJECT_VERSION, GENERATE_INFOPLIST_FILE, INFOPLIST_KEY_CFBundleDisplayName, INFOPLIST_KEY_UIApplicationSceneManifest_Generation, INFOPLIST_KEY_UILaunchScreen_Generation (+36 more)
+Nodes (45): ASSETCATALOG_COMPILER_APPICON_NAME, ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME, CODE_SIGN_STYLE, CURRENT_PROJECT_VERSION, GENERATE_INFOPLIST_FILE, INFOPLIST_FILE, INFOPLIST_KEY_CFBundleDisplayName, INFOPLIST_KEY_UIApplicationSceneManifest_Generation (+37 more)
 
 ### Community 1 - "BCBP Parser Internals"
-Cohesion: 0.07
-Nodes (18): Foundation, FieldScanner, String, .droppingLeadingZeros, Substring, .trimmed, BCBPError, .code (+10 more)
+Cohesion: 0.06
+Nodes (18): Foundation, FieldScanner, String, .droppingLeadingZeros, Substring, .trimmed, BoardingPass, Leg (+10 more)
 
 ### Community 2 - "App Shell and Navigation"
 Cohesion: 0.06
-Nodes (28): AppTab, badges, checkIn, explore, feed, profile, RootView, .body (+20 more)
+Nodes (25): AppTab, badges, checkIn, explore, feed, profile, RootView, .body (+17 more)
 
 ### Community 3 - "Product Features and Contracts"
 Cohesion: 0.05
@@ -88,8 +90,8 @@ Cohesion: 0.09
 Nodes (17): ajv, assertError(), assertMatches(), spec, status, devDependencies, ajv@8.17.1, ajv-formats@3.0.1 (+9 more)
 
 ### Community 5 - "Test Vectors and Decoding"
-Cohesion: 0.09
-Nodes (22): BCBP, BCBPVector, .testDescription, BCBPVectors, Expected, Leg, GeoCoordinate, GreatCircle (+14 more)
+Cohesion: 0.10
+Nodes (19): BCBP, BCBPVector, .testDescription, BCBPVectors, Expected, Leg, GeoCoordinate, GreatCircle (+11 more)
 
 ### Community 6 - "http.ts"
 Cohesion: 0.30
@@ -100,14 +102,14 @@ Cohesion: 0.40
 Nodes (5): Airport Visit Check-in, Batch Mode Spotting Session, Flown Check-in, Spotted Check-in, Spotting Locations
 
 ### Community 8 - "build_refdata.py"
-Cohesion: 0.12
+Cohesion: 0.11
 Nodes (8): _airport(), build(), InputError, _load_airports(), _load_types(), main(), _rows(), InvalidInputTests
 
 ### Community 9 - "ios.yml"
 Cohesion: 0.09
 Nodes (23): runs-on, steps, jobs, app, packages, package, name, on (+15 more)
 
-### Community 12 - "backend.yml"
+### Community 12 - "steps"
 Cohesion: 0.09
 Nodes (23): jobs, refdata-pipeline, supabase, name, on, pull_request, push, permissions (+15 more)
 
@@ -119,28 +121,32 @@ Nodes (15): jobs, openapi, name, on, pull_request, push, runs-on, steps (+7 more
 Cohesion: 0.40
 Nodes (4): Build, Data sources, Reference data pipeline, Test
 
+### Community 16 - "BCBPError"
+Cohesion: 0.08
+Nodes (19): BCBPError, .code, invalidField, invalidFormatCode, invalidLegCount, truncated, APIClient, APIError (+11 more)
+
 ## Ambiguous Edges - Review These
 - `Shared Deep Link Scheme` → `GET /v1/config`  [AMBIGUOUS]
   docs/CONCEPT.md · relation: conceptually_related_to
 
 ## Knowledge Gaps
-- **39 isolated node(s):** `.trimmed`, `.droppingLeadingZeros`, `invalidFormatCode`, `invalidLegCount`, `truncated` (+34 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 152 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **43 isolated node(s):** `.trimmed`, `.droppingLeadingZeros`, `invalidFormatCode`, `invalidLegCount`, `truncated` (+38 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 163 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `String` connect `BCBP Parser Internals` to `App Shell and Navigation`, `Test Vectors and Decoding`?**
-  _High betweenness centrality (0.057) - this node is a cross-community bridge._
+- **Why does `String` connect `BCBP Parser Internals` to `BCBPError`, `App Shell and Navigation`, `Test Vectors and Decoding`?**
+  _High betweenness centrality (0.065) - this node is a cross-community bridge._
 - **What connects `.trimmed`, `.droppingLeadingZeros`, `invalidFormatCode` to the rest of the system?**
-  _39 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _43 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `iOS Project Configuration` be split into smaller, more focused modules?**
-  _Cohesion score 0.046464646464646465 - nodes in this community are weakly interconnected._
-- **Why does `Registration` connect `Test Vectors and Decoding` to `BCBP Parser Internals`, `App Shell and Navigation`?**
-  _High betweenness centrality (0.017) - this node is a cross-community bridge._
+  _Cohesion score 0.04541062801932367 - nodes in this community are weakly interconnected._
+- **Why does `Registration` connect `BCBP Parser Internals` to `App Shell and Navigation`, `Test Vectors and Decoding`?**
+  _High betweenness centrality (0.018) - this node is a cross-community bridge._
 - **Should `BCBP Parser Internals` be split into smaller, more focused modules?**
-  _Cohesion score 0.06693877551020408 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06458635703918723 - nodes in this community are weakly interconnected._
 - **Why does `CheckInKind` connect `App Shell and Navigation` to `BCBP Parser Internals`?**
   _High betweenness centrality (0.016) - this node is a cross-community bridge._
 

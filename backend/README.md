@@ -36,6 +36,9 @@ Implemented endpoints: `/v1/config`, `/v1/devices`, `/v1/me/entitlements` and `/
 
 ## Before going live
 
-- Create the hosted project, then link it and deploy the migrations and functions.
+- Set up custom SMTP. Supabase's built-in email only delivers to project team members, so nobody else can sign up without it.
 - Add the Apple and Google credentials and enable both providers in [`config.toml`](supabase/config.toml). Only email sign-in is enabled for now.
-- Turn on email confirmation, which is off for local development.
+- Add `https://wingspot.site/auth/callback` to the allowed redirect URLs once the domain is registered and serves Universal Links.
+- Move the Edge Functions off the legacy anon key before the end of 2026.
+
+Email confirmation is on in the hosted project and off for local development. Never run `supabase config push`: it would copy local auth settings to the hosted project.

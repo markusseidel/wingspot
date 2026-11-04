@@ -339,7 +339,7 @@ The information architecture is identical on both platforms; the visual implemen
 | Watch (phase 3) | watchOS app | Wear OS app |
 | Deep links | Universal Links | Android App Links |
 
-Both platforms register the same link scheme: `https://wingspot.app/u/{username}`, `/c/{checkinId}`, `/a/{icao}`, `/r/{registration}`, `/b/{badgeId}`. The domain hosts both `apple-app-site-association` and `assetlinks.json`, and a lightweight web page for each link so shared links work without the app installed.
+Both platforms register the same link scheme: `https://wingspot.site/u/{username}`, `/c/{checkinId}`, `/a/{icao}`, `/r/{registration}`, `/b/{badgeId}`. The domain hosts both `apple-app-site-association` and `assetlinks.json`, and a lightweight web page for each link so shared links work without the app installed.
 
 ---
 
@@ -810,7 +810,7 @@ All metrics are tracked per platform from the shared event catalog, so iOS and A
 8. **Flight lookup provider** and cost per lookup → defines free-tier limits.
 9. **Moderation:** who reviews reports and spotting locations at launch (you alone? community moderators?).
 10. **Pilot logbook** — separate track for private/commercial pilots (hours, PIC)? Could be a strong niche, but out of scope for MVP.
-11. **Name & trademark check** for "Wingspot" in your target markets + App Store and Google Play name availability, plus the `wingspot.app` (or similar) domain for deep links.
+11. **Name & trademark check** for "Wingspot" in your target markets + App Store and Google Play name availability, plus the `wingspot.site` domain for deep links.
 
 ---
 
