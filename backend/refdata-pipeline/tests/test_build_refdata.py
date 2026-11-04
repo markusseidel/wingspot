@@ -9,6 +9,7 @@ TESTS_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(TESTS_DIR.parent))
 
 import build_refdata  # noqa: E402
+import postgres_import  # noqa: E402
 
 AIRPORTS = TESTS_DIR / "fixtures" / "airports.csv"
 
@@ -199,6 +200,61 @@ class InvalidInputTests(unittest.TestCase):
     def test_empty_data_version_fails(self):
         with self.assertRaises(build_refdata.InputError):
             build_refdata.build(AIRPORTS, build_refdata.DEFAULT_TYPES_PATH, self.tmp / "out", "")
+
+
+class PostgresImportTests(unittest.TestCase):
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.tmp = Path(directory.name)
+        build_refdata.build(AIRPORTS, build_refdata.DEFAULT_TYPES_PATH, self.tmp / "snapshot", "test")
+        self.snapshot = self.tmp / "snapshot" / "refdata.sqlite"
+        self.out = self.tmp / "sql"
+
+    def files(self):
+        return sorted(self.out.glob("*.sql"))
+
+    def test_splits_airports_into_batches_after_the_types(self):
+        counts = postgres_import.write_batches(self.snapshot, self.out, batch_size=4)
+        self.assertEqual(counts["airports"], 6)
+        self.assertEqual(counts["batches"], 3)
+        self.assertEqual([path.name for path in self.files()], ["0000.sql", "0001.sql", "0002.sql"])
+        self.assertIn("insert into public.aircraft_types", self.files()[0].read_text(encoding="utf-8"))
+        self.assertIn("insert into public.airports", self.files()[1].read_text(encoding="utf-8"))
+
+    def test_writes_location_as_longitude_then_latitude(self):
+        postgres_import.write_batches(self.snapshot, self.out)
+        sql = self.files()[1].read_text(encoding="utf-8")
+        self.assertIn("'SRID=4326;POINT(8.570556 50.033333)'::extensions.geography", sql)
+
+    def test_updates_existing_rows_but_not_other_columns(self):
+        postgres_import.write_batches(self.snapshot, self.out)
+        sql = self.files()[1].read_text(encoding="utf-8")
+        self.assertIn("on conflict (id) do update set icao = excluded.icao", sql)
+        self.assertNotIn("geofence", sql)
+        self.assertNotIn("is_island", sql)
+
+    def test_escapes_text_and_keeps_nulls(self):
+        self.assertEqual(postgres_import._literal("O'Hare"), "'O''Hare'")
+        self.assertEqual(postgres_import._literal(None), "null")
+        self.assertEqual(postgres_import._literal(13), "13")
+
+    def test_replaces_old_batches(self):
+        postgres_import.write_batches(self.snapshot, self.out, batch_size=1)
+        postgres_import.write_batches(self.snapshot, self.out)
+        self.assertEqual(len(self.files()), 2)
+
+    def test_rejects_another_schema_version(self):
+        other = self.tmp / "other.sqlite"
+        db = sqlite3.connect(other)
+        db.execute("PRAGMA user_version = 1")
+        db.close()
+        with self.assertRaisesRegex(postgres_import.InputError, "schema version 1"):
+            postgres_import.write_batches(other, self.out)
+
+    def test_rejects_missing_snapshot(self):
+        with self.assertRaisesRegex(postgres_import.InputError, "not found"):
+            postgres_import.write_batches(self.tmp / "missing.sqlite", self.out)
 
 
 if __name__ == "__main__":
