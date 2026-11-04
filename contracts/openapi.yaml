@@ -12,12 +12,14 @@ info:
       unknown values without crashing, so these fields are not declared as enums.
     - Timestamps are UTC ISO-8601.
 servers:
+  - url: https://gsfeuxowjymdqbopcpdo.supabase.co/functions
+    description: Hosted Supabase Edge Functions.
   - url: '{baseUrl}'
-    description: Supabase Edge Functions. `/v1/config` resolves to `{baseUrl}/v1/config`.
+    description: Local Supabase Edge Functions. `/v1/config` resolves to `{baseUrl}/v1/config`.
     variables:
       baseUrl:
         default: http://localhost:54321/functions
-        description: Local Supabase default. The production host is not decided yet.
+        description: Local Supabase default.
 tags:
   - name: config
     description: Remote configuration

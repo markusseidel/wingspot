@@ -27,6 +27,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.wingspot.ios
         GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_FILE: Wingspot/App/Info.plist
         INFOPLIST_KEY_CFBundleDisplayName: Wingspot
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
