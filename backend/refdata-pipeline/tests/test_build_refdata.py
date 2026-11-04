@@ -9,6 +9,7 @@ TESTS_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(TESTS_DIR.parent))
 
 import build_refdata  # noqa: E402
+import faa_aircraft_types  # noqa: E402
 import postgres_import  # noqa: E402
 
 AIRPORTS = TESTS_DIR / "fixtures" / "airports.csv"
@@ -93,7 +94,7 @@ class BuildRefdataTests(unittest.TestCase):
         rows = self.db.execute(
             "SELECT count(*) FROM aircraft_types_fts WHERE aircraft_types_fts MATCH 'family:737'"
         ).fetchone()
-        self.assertEqual(rows[0], 2)  # B38M, B738
+        self.assertGreaterEqual(rows[0], 2)  # at least B38M, B738
 
     def test_registration_tables_exist_but_are_empty(self):
         self.assertEqual(self.one("SELECT count(*) FROM aircraft")[0], 0)
@@ -132,7 +133,7 @@ class BuildRefdataTests(unittest.TestCase):
         self.assertGreater(len(rows), 0)
         for code, wtc, engines in rows:
             self.assertRegex(code, "^[A-Z0-9]{2,4}$")
-            self.assertIn(wtc, {"L", "M", "H", "J"})
+            self.assertIn(wtc, {"L", "M", "H", "J", None})
             self.assertGreater(engines, 0)
 
 
@@ -200,6 +201,134 @@ class InvalidInputTests(unittest.TestCase):
     def test_empty_data_version_fails(self):
         with self.assertRaises(build_refdata.InputError):
             build_refdata.build(AIRPORTS, build_refdata.DEFAULT_TYPES_PATH, self.tmp / "out", "")
+
+
+ORDER_TEXT = """
+=== PAGE 1 ===
+Appendix A. Decode - contents only
+A333 Fixed-wing 9J/H Heavy B III 8 NOT, Read From Contents
+=== PAGE 2 ===
+06/12/2025 JO 7360.1K
+Appendix A
+A-3
+Type
+Designator Class
+WTC CWT SRS LAHSO MANUFACTURER, Model
+A333 Fixed-wing 2J/H Heavy B III 8 AIRBUS, A-330-300
+A10* Fixed-wing 2J/L Medium G III FAIRCHILD (1), A-10 Thunderbolt 2
+FAIRCHILD (1), OA-10 Thunderbolt 2
+A359 Fixed-wing 2J/H Heavy B III 9
+AIRBUS, A-350-900 XWB
+AIRBUS. ACJ-350-900
+C172 Fixed-wing 1P/S Light I I 1
+AVIONES COLOMBIA, 172
+CESSNA, 172
+CESSNA, 172 Skyhawk
+A25 @Fixed-wing 1P/S Light I I AEROPRACT, A-25 Breeze
+AG60 @Fixed-wing 4T/ Medium III CAIGA, AG-600 Kunlong
+MDNT Powered-lift 12E/S I III ARCHER, Midnight
+B350 Fixed-wing 2T/S+ Light/Medium H II BEECH, B300
+EC35 Helicopter 2T/S Light I I AIRBUS HELICOPTERS, EC-135
+NONE Fixed-wing 1P/S Light I I
+GANT Fixed-wing CT/S+ Medium H III FAIREY, Gannet
+ODD1 Fixed-wing strange row
+ZZZZ (any manufacturer), Aircraft type not (yet) assigned a designator
+stray text
+"""
+
+
+class FaaAircraftTypesTests(unittest.TestCase):
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.tmp = Path(directory.name)
+        self.overrides = self.tmp / "overrides.csv"
+        self.overrides.write_text(
+            "icao_code,manufacturer,model,family,engine_type,engine_count,wtc\n"
+            "A333,Airbus,A330-300,,,,\n"
+            "GANT,Fairey,Gannet,,turboprop,2,\n",
+            encoding="utf-8",
+        )
+        self.families = self.tmp / "families.csv"
+        self.families.write_text("icao_code,family\nA333,A330\nGONE,Nothing\n", encoding="utf-8")
+
+    def generate(self, spreadsheet=None):
+        rows, report = faa_aircraft_types.generate(ORDER_TEXT, self.overrides, self.families, spreadsheet or {})
+        return {row["icao_code"]: row for row in rows}, report
+
+    def test_reads_rows_with_the_model_on_later_lines(self):
+        rows, _ = self.generate()
+        self.assertEqual(rows["A359"]["model"], "A-350-900 XWB")
+        self.assertEqual(rows["A359"]["engine_count"], "2")
+        self.assertEqual(rows["A359"]["wtc"], "H")
+
+    def test_prefers_the_most_listed_maker(self):
+        rows, _ = self.generate()
+        self.assertEqual((rows["C172"]["manufacturer"], rows["C172"]["model"]), ("Cessna", "172"))
+
+    def test_removes_the_manufacturer_marker(self):
+        rows, _ = self.generate()
+        self.assertEqual(rows["A10"]["manufacturer"], "Fairchild")
+
+    def test_reads_amphibians_missing_columns_and_many_engines(self):
+        rows, _ = self.generate()
+        self.assertIn("A25", rows)
+        self.assertEqual(rows["AG60"]["wtc"], "M")
+        self.assertEqual(rows["MDNT"]["engine_count"], "12")
+        self.assertEqual(rows["MDNT"]["engine_type"], "electric")
+
+    def test_helicopters_use_the_helicopter_engine_type(self):
+        rows, _ = self.generate()
+        self.assertEqual(rows["EC35"]["engine_type"], "helicopter")
+
+    def test_reports_ambiguous_values_instead_of_guessing(self):
+        rows, report = self.generate()
+        self.assertEqual(rows["B350"]["wtc"], "")
+        self.assertIn("B350", report["undecided"]["wtc"])
+
+    def test_overrides_and_families_win_and_only_where_filled(self):
+        rows, _ = self.generate()
+        self.assertEqual(rows["A333"]["model"], "A330-300")
+        self.assertEqual(rows["A333"]["engine_type"], "jet")
+        self.assertEqual(rows["A333"]["family"], "A330")
+        self.assertEqual(rows["GANT"]["engine_count"], "2")
+
+    def test_reports_what_it_could_not_use(self):
+        rows, report = self.generate()
+        self.assertNotIn("NONE", rows)
+        self.assertEqual(report["dropped_no_name"], ["NONE"])
+        self.assertEqual(report["unparsed_rows"], ["ODD1 Fixed-wing strange row"])
+        self.assertEqual(report["unattached_lines"], ["stray text"])
+        self.assertEqual(report["special"], ["ZZZZ"])
+        self.assertEqual(report["families_not_in_output"], ["GONE"])
+
+    def test_skips_contents_pages(self):
+        rows, _ = self.generate()
+        self.assertEqual(rows["A333"]["engine_count"], "2")
+
+    def test_uses_the_spreadsheet_model_and_reports_conflicts(self):
+        sheet = {"C172": {"Manufacturer": "CESSNA", "Model_FAA": "Cessna Skyhawk 172", "Num_Engines": "2",
+                          "Physical_Class_Engine": "Jet", "ICAO_WTC": "Heavy"},
+                 "XTRA": {"Manufacturer": "X", "Model_FAA": "X 1"}}
+        rows, report = self.generate(sheet)
+        self.assertEqual(rows["C172"]["model"], "Skyhawk 172")
+        conflicts = report["conflicts_with_spreadsheet"]
+        self.assertEqual(len(conflicts["engine_count"]), 1)
+        self.assertEqual(len(conflicts["engine_type"]), 1)
+        self.assertEqual(len(conflicts["wtc"]), 1)
+        self.assertEqual(report["spreadsheet_not_in_order"], ["XTRA"])
+
+    def test_needs_appendix_a(self):
+        with self.assertRaisesRegex(faa_aircraft_types.InputError, "Appendix A not found"):
+            faa_aircraft_types.generate("nothing", self.overrides, self.families, {})
+
+    def test_duplicate_override_fails(self):
+        self.overrides.write_text(
+            "icao_code,manufacturer,model,family,engine_type,engine_count,wtc\nA333,A,B,,,,\nA333,A,B,,,,\n",
+            encoding="utf-8",
+        )
+        with self.assertRaisesRegex(faa_aircraft_types.InputError, "duplicate type: A333"):
+            self.generate()
 
 
 class PostgresImportTests(unittest.TestCase):
