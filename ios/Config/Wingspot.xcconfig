@@ -1,0 +1,5 @@
+// The backend's publishable key. Sign-in needs it. Without it the app still works, but can't sign in.
+// Set it in Local.xcconfig, next to this file, which git ignores:
+//   WINGSPOT_PUBLISHABLE_KEY = <key from the Supabase dashboard>
+WINGSPOT_PUBLISHABLE_KEY =
+#include? "Local.xcconfig"

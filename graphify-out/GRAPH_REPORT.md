@@ -1,30 +1,30 @@
 # Graph Report - wingspot  (2026-11-04)
 
 ## Corpus Check
-- 80 files · ~33,772 words
+- 90 files · ~37,813 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 15 file(s) not represented in the graph (top: .csv 5, (none) 3, .xcstrings 2)
+- Unclassified: 16 file(s) not represented in the graph (top: .csv 5, (none) 3, .xcstrings 2)
 
 ## Summary
-- 758 nodes · 1365 edges · 49 communities (41 shown, 8 thin omitted)
-- Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 81 edges (avg confidence: 0.87)
+- 928 nodes · 1770 edges · 51 communities (43 shown, 8 thin omitted)
+- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 142 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `84e5a12d`
+- Built from commit: `23d89eb0`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - base
-- Sendable
-- AppTab
+- Decodable
+- RootView
 - Android Project Structure
 - api.test.js
-- BCBPError
+- AccountStore
 - http.ts
 - Airport Visit Check-in
-- faa_aircraft_types.py
+- build
 - ios.yml
 - BuildRefdataTests
 - Swift Package Manifests
@@ -32,51 +32,53 @@
 - contracts.yml
 - Reference data pipeline
 - CLAUDE.md
-- WingspotApp
+- AccountError
 - .mcp.json
-- String
-- FaaAircraftTypesTests
-- GeoCoordinate
+- .init
+- faa_aircraft_types.py
+- Foundation
 - ReferenceDatabase
 - CheckInResultView
-- Foundation
+- Sendable
 - Build work
-- Registration
-- CodingKeys
-- RegistrationVector
-- DistanceVector
+- String
+- WingspotCore
+- View
+- .sendSignInLink
 - SpottedCheckInView
-- SpottedResult
+- ProfileEditorView
 - ReferenceSearchView
-- NationalityPrefix
-- Cross-platform Contract Rules
 - Airport
+- Cross-platform Contract Rules
+- AircraftType
 - Check-in Verification Levels
 - Wingspot Repository
-- project.yml
+- Wingspot
 - CheckInKind
 - options
 - packages
 - Supabase
-- PlaceholderScreen
+- .body
 - Code Sharing Strategy (Native Codebases, Shared Contracts)
 - Wingspot
-- Leg
+- ProfileDetailsView
 - Badge System
-- test
+- .fts
 - check-strings.sh
+- RealSnapshotTests
+- project.yml
 
 ## God Nodes (most connected - your core abstractions)
-1. `GeoCoordinate` - 24 edges
-2. `BuildRefdataTests` - 23 edges
-3. `SpottedCheckInView` - 22 edges
-4. `build()` - 20 edges
-5. `Registration` - 20 edges
-6. `SpottedDraft` - 18 edges
-7. `base` - 18 edges
-8. `Airport` - 16 edges
-9. `write_batches()` - 15 edges
-10. `FaaAircraftTypesTests` - 15 edges
+1. `AccountStore` - 30 edges
+2. `FakeBackend` - 29 edges
+3. `Profile` - 27 edges
+4. `GeoCoordinate` - 24 edges
+5. `BuildRefdataTests` - 23 edges
+6. `SpottedCheckInView` - 22 edges
+7. `build()` - 20 edges
+8. `Registration` - 20 edges
+9. `AccountError` - 19 edges
+10. `SpottedDraft` - 18 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `BCBP Swift Package` --implements--> `BCBP Parser`  [INFERRED]
@@ -98,19 +100,19 @@
 - **Offline Check-in Sync Flow** — docs_concept_outbox_sync, docs_concept_post_v1_checkins, docs_concept_checkins_table, docs_concept_badge_engine, docs_concept_client_badge_predictor [EXTRACTED 1.00]
 - **Shared Contract Artifacts** — contracts_readme_contracts, docs_concept_openapi_spec, docs_concept_shared_test_vectors, docs_concept_design_tokens, docs_concept_on_device_database [EXTRACTED 1.00]
 
-## Communities (49 total, 8 thin omitted)
+## Communities (51 total, 8 thin omitted)
 
 ### Community 0 - "base"
 Cohesion: 0.12
 Nodes (17): ASSETCATALOG_COMPILER_APPICON_NAME, ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME, CODE_SIGN_STYLE, CURRENT_PROJECT_VERSION, GENERATE_INFOPLIST_FILE, INFOPLIST_FILE, INFOPLIST_KEY_CFBundleDisplayName, INFOPLIST_KEY_UIApplicationSceneManifest_Generation (+9 more)
 
-### Community 1 - "Sendable"
-Cohesion: 0.21
-Nodes (9): BCBP, BCBPVector, .testDescription, BCBPVectors, Expected, Leg, MinimumVersion, RefdataManifest (+1 more)
+### Community 1 - "Decodable"
+Cohesion: 0.06
+Nodes (26): BCBP, CodingKeys, displayName, homeAirport, id, username, ProfileDetails, ProfileRow (+18 more)
 
-### Community 2 - "AppTab"
-Cohesion: 0.22
-Nodes (8): AppTab, badges, checkIn, explore, feed, profile, RootView, .tabSelection
+### Community 2 - "RootView"
+Cohesion: 0.18
+Nodes (9): AppTab, badges, checkIn, explore, feed, profile, RootView, .isSetupPresented (+1 more)
 
 ### Community 3 - "Android Project Structure"
 Cohesion: 0.25
@@ -120,9 +122,9 @@ Nodes (7): Android App (Kotlin / Jetpack Compose), Android Project Structure, ba
 Cohesion: 0.09
 Nodes (17): ajv, assertError(), assertMatches(), spec, status, devDependencies, ajv@8.17.1, ajv-formats@3.0.1 (+9 more)
 
-### Community 5 - "BCBPError"
-Cohesion: 0.16
-Nodes (8): BCBPError, .code, invalidField, invalidFormatCode, invalidLegCount, truncated, BoardingPass, BCBPTests
+### Community 5 - "AccountStore"
+Cohesion: 0.08
+Nodes (11): AccountBackend, AccountStore, .needsProfileSetup, .profile, UnconfiguredAccountBackend, Profile, .hasChosenUsername, SupabaseAccountBackend (+3 more)
 
 ### Community 6 - "http.ts"
 Cohesion: 0.28
@@ -132,9 +134,9 @@ Nodes (16): invalid(), isOptionalText(), register(), unregister(), validate(), a
 Cohesion: 0.40
 Nodes (5): Airport Visit Check-in, Batch Mode Spotting Session, Flown Check-in, Spotted Check-in, Spotting Locations
 
-### Community 8 - "faa_aircraft_types.py"
-Cohesion: 0.05
-Nodes (28): _airport(), build(), _curated_keywords(), InputError, _load_airports(), _load_types(), main(), _rows() (+20 more)
+### Community 8 - "build"
+Cohesion: 0.07
+Nodes (16): _airport(), build(), _curated_keywords(), InputError, _load_airports(), _load_types(), main(), _rows() (+8 more)
 
 ### Community 9 - "ios.yml"
 Cohesion: 0.09
@@ -152,69 +154,73 @@ Nodes (15): jobs, openapi, name, on, pull_request, push, runs-on, steps (+7 more
 Cohesion: 0.25
 Nodes (7): Build, Data sources, Load into Postgres, Publish, Reference data pipeline, Test, Update aircraft types
 
-### Community 16 - "WingspotApp"
+### Community 16 - "AccountError"
+Cohesion: 0.05
+Nodes (41): AccountError, invalidEmail, invalidLink, invalidUsername, notConfigured, offline, tooManyRequests, unknown (+33 more)
+
+### Community 18 - ".init"
+Cohesion: 0.14
+Nodes (6): FieldScanner, Substring, .trimmed, BoardingPass, Leg, BCBPTests
+
+### Community 19 - "faa_aircraft_types.py"
 Cohesion: 0.09
-Nodes (15): CheckInError, missingAircraft, APIClient, APIError, unexpectedStatus, client(), configDecodesTheContractShape(), configIgnoresUnknownFields() (+7 more)
+Nodes (13): choose_name(), _csv_rows(), generate(), InputError, _keyed(), main(), maker_name(), parse_order() (+5 more)
 
-### Community 18 - "String"
-Cohesion: 0.36
-Nodes (5): FieldScanner, String, .droppingLeadingZeros, Substring, .trimmed
-
-### Community 20 - "GeoCoordinate"
-Cohesion: 0.08
-Nodes (19): CoreLocation, RealSnapshotTests, anExactAirportCodeComesFirst(), anExactTypeCodeComesFirst(), database(), emptyOrSymbolOnlySearchesFindNothing(), findsHyphenatedNamesHoweverTheyAreTyped(), findsTypesByMakerAndModel() (+11 more)
+### Community 20 - "Foundation"
+Cohesion: 0.07
+Nodes (24): CoreLocation, Foundation, GRDB, TestVectors, Fixture, anExactAirportCodeComesFirst(), anExactTypeCodeComesFirst(), database() (+16 more)
 
 ### Community 21 - "ReferenceDatabase"
 Cohesion: 0.08
-Nodes (22): CryptoKit, ReferenceDatabase, ReferenceDataError, checksumMismatch, downloadFailed, insecureURL, sizeMismatch, unsupportedSchema (+14 more)
+Nodes (24): CryptoKit, ReferenceDatabase, ReferenceDataError, checksumMismatch, downloadFailed, insecureURL, sizeMismatch, unsupportedSchema (+16 more)
 
 ### Community 22 - "CheckInResultView"
 Cohesion: 0.22
 Nodes (5): CheckInResultView, .body, .detail, .headline, .isFirstTime
 
-### Community 23 - "Foundation"
-Cohesion: 0.06
-Nodes (26): Foundation, GRDB, TestVectors, CheckInStore, LocalCheckIn, SyncState, pending, aCheckInWithoutAircraftIsRejected() (+18 more)
+### Community 23 - "Sendable"
+Cohesion: 0.10
+Nodes (22): AircraftTypeChoice, CheckInStore, History, firstTime, seenBefore, Place, SpottedDraft, .hasAircraft (+14 more)
 
 ### Community 24 - "Build work"
 Cohesion: 0.08
-Nodes (23): Before each milestone, Decisions, Milestones, Phase 1 plan: iOS MVP to first TestFlight, Accounts and services, After Phase 1, Backend, Before real users sign up (+15 more)
+Nodes (24): Before each milestone, Decisions, Milestones, Phase 1 plan: iOS MVP to first TestFlight, Accounts and services, After Phase 1, Backend, Before real users sign up (+16 more)
 
-### Community 25 - "Registration"
-Cohesion: 0.17
-Nodes (7): AircraftTypeChoice, Place, SpottedDraft, .hasAircraft, checkInsSurviveReopeningTheStore(), Registration, .description
-
-### Community 26 - "CodingKeys"
+### Community 25 - "String"
 Cohesion: 0.22
-Nodes (8): CodingKeys, dataVersion, featureFlags, minimumVersion, schemaVersion, sha256, sizeBytes, url
+Nodes (3): String, .droppingLeadingZeros, NationalityPrefix
 
-### Community 27 - "RegistrationVector"
-Cohesion: 0.32
-Nodes (4): RegistrationTests, RegistrationVector, .testDescription, RegistrationVectors
+### Community 26 - "WingspotCore"
+Cohesion: 0.18
+Nodes (8): Account, Observation, OSLog, Persistence, ReferenceData, SwiftData, SwiftUI, WingspotCore
 
-### Community 28 - "DistanceVector"
-Cohesion: 0.36
-Nodes (5): DistanceVector, .testDescription, DistanceVectors, Point, .coordinate
+### Community 27 - "View"
+Cohesion: 0.14
+Nodes (7): SignInLinkAlert, View, EmailSignInView, .body, .form, OnboardingView, .body
+
+### Community 28 - ".sendSignInLink"
+Cohesion: 0.18
+Nodes (4): EmailAddress, Username, ProfileRulesTests, .normalizedUsername
 
 ### Community 29 - "SpottedCheckInView"
-Cohesion: 0.21
-Nodes (6): SpottedCheckInView, .body, .canSave, .hasInput, .registration, .status
+Cohesion: 0.19
+Nodes (7): NearestKey, SpottedCheckInView, .body, .canSave, .hasInput, .registration, .status
 
-### Community 30 - "SpottedResult"
-Cohesion: 0.43
-Nodes (4): History, firstTime, seenBefore, SpottedResult
+### Community 30 - "ProfileEditorView"
+Cohesion: 0.18
+Nodes (7): State, loading, signedIn, signedOut, ProfileEditorView, .airportLabel, .body
 
 ### Community 31 - "ReferenceSearchView"
-Cohesion: 0.20
+Cohesion: 0.19
 Nodes (8): AirportSearchView, .body, ReferenceSearchView, .body, .placeholder, TypeSearchView, .body, .form
 
 ### Community 33 - "Cross-platform Contract Rules"
 Cohesion: 0.22
 Nodes (10): Live and Historic ADS-B Data, Shared Deep Link Scheme, devices Table, entitlements Table, Flight Lookup Provider, GET /v1/config, GET /v1/me/entitlements, Unified Push Notification Model (+2 more)
 
-### Community 34 - "Airport"
-Cohesion: 0.24
-Nodes (6): AircraftType, .id, .name, Airport, .code, NearestKey
+### Community 34 - "AircraftType"
+Cohesion: 0.40
+Nodes (3): AircraftType, .id, .name
 
 ### Community 35 - "Check-in Verification Levels"
 Cohesion: 0.24
@@ -224,9 +230,9 @@ Nodes (9): aircraft Table, airports Table, Anti-cheat Rules, checkins Table, Ope
 Cohesion: 0.27
 Nodes (10): BCBP Parser, Boarding Pass Scan, IATA BCBP Barcode, iOS Project Structure, Monorepo Layout, WingspotCore Module, BCBP Swift Package, Wingspot Repository (+2 more)
 
-### Community 37 - "project.yml"
-Cohesion: 0.25
-Nodes (7): name, config, schemes, Wingspot, settings, targets, run
+### Community 37 - "Wingspot"
+Cohesion: 0.20
+Nodes (10): targets, config, schemes, Wingspot, package, config, targets, build (+2 more)
 
 ### Community 38 - "CheckInKind"
 Cohesion: 0.20
@@ -237,14 +243,14 @@ Cohesion: 0.29
 Nodes (7): iOS, options, bundleIdPrefix, createIntermediateGroups, deploymentTarget, developmentLanguage, knownRegions
 
 ### Community 40 - "packages"
-Cohesion: 0.22
-Nodes (9): path, packages, BCBP, Persistence, ReferenceData, WingspotCore, path, path (+1 more)
+Cohesion: 0.18
+Nodes (11): path, path, packages, Account, BCBP, Persistence, ReferenceData, WingspotCore (+3 more)
 
 ### Community 41 - "Supabase"
 Cohesion: 0.25
 Nodes (8): refdata-pipeline, Supabase Backend Project, CloudKit (Ruled Out), Firebase (Alternative), On-device SQLite Snapshot, Row Level Security, Safety, Privacy and Legal Rules, Supabase
 
-### Community 42 - "PlaceholderScreen"
+### Community 42 - ".body"
 Cohesion: 0.25
 Nodes (5): .body, CheckInSheet, .body, PlaceholderScreen, .body
 
@@ -253,41 +259,45 @@ Cohesion: 0.43
 Nodes (6): Contracts Folder, contracts/test-vectors, Design Tokens (contracts/design-tokens.json), Kotlin Multiplatform (Later Option), OpenAPI Spec (contracts/openapi.yaml), Shared Test Vectors
 
 ### Community 44 - "Wingspot"
-Cohesion: 0.22
-Nodes (9): targets, package, Wingspot, build, dependencies, platform, settings, sources (+1 more)
+Cohesion: 0.20
+Nodes (10): Debug, Release, package, Wingspot, configFiles, dependencies, platform, settings (+2 more)
+
+### Community 45 - "ProfileDetailsView"
+Cohesion: 0.25
+Nodes (7): AirportKey, ProfileDetailsView, .body, ProfileScreen, .body, .profileMissing, .signedOut
 
 ### Community 46 - "Badge System"
 Cohesion: 0.40
 Nodes (5): Badge System, Core Loop (See, Check In, Reward, Social), Friends and Social Feed, User Level and XP, Wingspot App Concept
 
-### Community 47 - "test"
+### Community 50 - "project.yml"
 Cohesion: 0.50
-Nodes (4): package, config, targets, test
+Nodes (3): name, settings, targets
 
 ## Ambiguous Edges - Review These
 - `Shared Deep Link Scheme` → `GET /v1/config`  [AMBIGUOUS]
   docs/CONCEPT.md · relation: conceptually_related_to
 
 ## Knowledge Gaps
-- **70 isolated node(s):** `PDFKit`, `.trimmed`, `.droppingLeadingZeros`, `invalidFormatCode`, `invalidLegCount` (+65 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 261 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **93 isolated node(s):** `PDFKit`, `invalidEmail`, `invalidUsername`, `usernameTaken`, `invalidLink` (+88 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 303 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `String` connect `String` to `NationalityPrefix`, `Sendable`, `Airport`, `BCBPError`, `CheckInKind`, `PlaceholderScreen`, `Leg`, `WingspotApp`, `GeoCoordinate`, `ReferenceDatabase`, `CheckInResultView`, `Foundation`, `Registration`, `CodingKeys`, `RegistrationVector`, `DistanceVector`, `SpottedCheckInView`, `SpottedResult`?**
-  _High betweenness centrality (0.099) - this node is a cross-community bridge._
-- **Are the 6 inferred relationships involving `GeoCoordinate` (e.g. with `aSavedCheckInWaitsForSync()` and `.suggestsFrankfurtOnTheAirportFence()`) actually correct?**
-  _`GeoCoordinate` has 6 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `PDFKit`, `.trimmed`, `.droppingLeadingZeros` to the rest of the system?**
-  _70 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `String` connect `String` to `Decodable`, `AccountStore`, `AccountError`, `.init`, `Foundation`, `ReferenceDatabase`, `CheckInResultView`, `Sendable`, `View`, `.sendSignInLink`, `SpottedCheckInView`, `ProfileEditorView`, `Airport`, `AircraftType`, `CheckInKind`, `.body`, `ProfileDetailsView`, `.fts`, `RealSnapshotTests`?**
+  _High betweenness centrality (0.150) - this node is a cross-community bridge._
+- **Are the 13 inferred relationships involving `AccountStore` (e.g. with `.aBadLinkKeepsTheUserSignedOutAndReportsIt()` and `.aSignInLinkSignsInAndAsksForAUsername()`) actually correct?**
+  _`AccountStore` has 13 INFERRED edges - model-reasoned connections that need verification._
+- **What connects `PDFKit`, `invalidEmail`, `invalidUsername` to the rest of the system?**
+  _93 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `base` be split into smaller, more focused modules?**
   _Cohesion score 0.11764705882352941 - nodes in this community are weakly interconnected._
-- **Why does `Foundation` connect `Foundation` to `Sendable`, `BCBPError`, `WingspotApp`, `String`, `GeoCoordinate`, `ReferenceDatabase`?**
-  _High betweenness centrality (0.021) - this node is a cross-community bridge._
-- **Should `api.test.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.0873015873015873 - nodes in this community are weakly interconnected._
+- **Why does `Foundation` connect `Foundation` to `Decodable`, `AccountStore`, `.fts`, `AccountError`, `.init`, `ReferenceDatabase`, `Sendable`, `WingspotCore`, `.sendSignInLink`?**
+  _High betweenness centrality (0.025) - this node is a cross-community bridge._
+- **Should `Decodable` be split into smaller, more focused modules?**
+  _Cohesion score 0.06028368794326241 - nodes in this community are weakly interconnected._
 
 ### Low-confidence Hints
 _AMBIGUOUS edges — the extractor was unsure. Verify before acting on these._

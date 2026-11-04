@@ -105,6 +105,12 @@ public struct ReferenceDatabase: Sendable {
         }
     }
 
+    public func airport(id: Int) async throws -> Airport? {
+        try await queue.read { db in
+            try Row.fetchOne(db, sql: "SELECT * FROM airports WHERE id = ?", arguments: [id]).map(Self.airport)
+        }
+    }
+
     /// The airport someone at this position is most likely at: the nearest one with an IATA code or scheduled
     /// service within 15 km, otherwise any nearby airfield within 5 km. Heliports don't count.
     public func nearestAirport(to position: GeoCoordinate) async throws -> Airport? {

@@ -68,3 +68,10 @@ func findsHyphenatedNamesHoweverTheyAreTyped(text: String) async throws {
     let atSea = GeoCoordinate(latitude: 0, longitude: 0)
     #expect(try await database().nearestAirport(to: atSea) == nil)
 }
+
+@Test func findsAnAirportByID() async throws {
+    let database = try database()
+    let frankfurt = try #require(try await database.searchAirports("FRA").first)
+    #expect(try await database.airport(id: frankfurt.id) == frankfurt)
+    #expect(try await database.airport(id: -1) == nil)
+}

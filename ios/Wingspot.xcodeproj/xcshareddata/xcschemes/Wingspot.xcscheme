@@ -83,6 +83,17 @@
                ReferencedContainer = "container:Packages/Persistence">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "AccountTests"
+               BuildableName = "AccountTests"
+               BlueprintName = "AccountTests"
+               ReferencedContainer = "container:Packages/Account">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>

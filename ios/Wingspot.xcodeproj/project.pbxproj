@@ -8,15 +8,21 @@
 
 /* Begin PBXBuildFile section */
 		000638736A7D21777E5468DC /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 181278D0BAEE1C7A36510BCE /* Localizable.xcstrings */; };
+		0937BA0BF1EBF4732DA23138 /* ProfileEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E6559EBEC52E59BEEFE94D /* ProfileEditorView.swift */; };
 		10748D50CE99239391EE4B98 /* WingspotCore in Frameworks */ = {isa = PBXBuildFile; productRef = FA9C4D07C08E909754DE9B4F /* WingspotCore */; };
+		1427422ED2866AC007958D1A /* AccountMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4D48FF8AE3EC90CE9EB299 /* AccountMessages.swift */; };
+		14963B1634A245DD5F21D19F /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = FE4DDF37937E81A62EB60AB5 /* Account */; };
 		1878E11AE259B4D66AF3B0F4 /* BCBP in Frameworks */ = {isa = PBXBuildFile; productRef = 84545F5C809788F8A6A927A8 /* BCBP */; };
 		2009AC27E2FC13DC4C52C220 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17369D1192D4BAF9721962FE /* RootView.swift */; };
 		39383DB2983A80C96D05EA39 /* ReferenceSearchViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */; };
 		3B16BBB37412D38A89E454BD /* PlaceholderScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87BF659DFCBC4828CF78129 /* PlaceholderScreen.swift */; };
+		3C72654BC1F78F3B175048F2 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA53E0B6C7D19C0B128FFE6 /* OnboardingView.swift */; };
 		3FF4DDD01D1F79267517DE35 /* ReferenceData in Frameworks */ = {isa = PBXBuildFile; productRef = 16B4602119380A191047210F /* ReferenceData */; };
 		63920812D725A2EE33A89EC1 /* WingspotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E61A661480E1ED65178DE4B /* WingspotApp.swift */; };
 		666833BB5AA51A95401FAE68 /* CheckInSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */; };
 		761F6B7BD8870311AFC02EBB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D8FB2291C9A4A75529A9461 /* Assets.xcassets */; };
+		A08C4CA8904388F960BBA71F /* ProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD2433D565B1E9974F334CA /* ProfileScreen.swift */; };
+		A165396CBFC567234392EE1F /* EmailSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA65F3D7DF5E25F2228C346 /* EmailSignInView.swift */; };
 		B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B545FD209FC2942BD45E71 /* CheckInResultView.swift */; };
 		C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A035100ED13735493AF7BF1 /* LocationProvider.swift */; };
 		CF3807277F1FDA241609254C /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 5B2EB62437C5BE2130BABF23 /* Persistence */; };
@@ -25,19 +31,26 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0BA65F3D7DF5E25F2228C346 /* EmailSignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSignInView.swift; sourceTree = "<group>"; };
 		17369D1192D4BAF9721962FE /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		181278D0BAEE1C7A36510BCE /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		2A600D9AC1C5768A9B274FA0 /* ReferenceData */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ReferenceData; path = Packages/ReferenceData; sourceTree = SOURCE_ROOT; };
 		41CBBBAF8DD8DAC4FD7390E9 /* SpottedCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpottedCheckInView.swift; sourceTree = "<group>"; };
+		45BFC3E5CAEEFABF9A34E20E /* Wingspot.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Wingspot.xcconfig; sourceTree = "<group>"; };
 		48B545FD209FC2942BD45E71 /* CheckInResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInResultView.swift; sourceTree = "<group>"; };
 		4ACF37D630CFB0FFE9E1E133 /* Wingspot.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Wingspot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D8FB2291C9A4A75529A9461 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		626F450EEAB4D94771419C27 /* Account */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Account; path = Packages/Account; sourceTree = SOURCE_ROOT; };
 		65CF500EAA7D99B499377459 /* BCBP */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BCBP; path = Packages/BCBP; sourceTree = SOURCE_ROOT; };
+		6CA53E0B6C7D19C0B128FFE6 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		6E61A661480E1ED65178DE4B /* WingspotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WingspotApp.swift; sourceTree = "<group>"; };
+		6FD2433D565B1E9974F334CA /* ProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileScreen.swift; sourceTree = "<group>"; };
 		76B04C14C68A65FD24C0D6DD /* WingspotCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = WingspotCore; path = Packages/WingspotCore; sourceTree = SOURCE_ROOT; };
 		9A035100ED13735493AF7BF1 /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
 		A47349EC0A6768BA0A1C2F6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceSearchViews.swift; sourceTree = "<group>"; };
+		BF4D48FF8AE3EC90CE9EB299 /* AccountMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountMessages.swift; sourceTree = "<group>"; };
+		C2E6559EBEC52E59BEEFE94D /* ProfileEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditorView.swift; sourceTree = "<group>"; };
 		C87BF659DFCBC4828CF78129 /* PlaceholderScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderScreen.swift; sourceTree = "<group>"; };
 		DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInSheet.swift; sourceTree = "<group>"; };
 		E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
@@ -53,6 +66,7 @@
 				1878E11AE259B4D66AF3B0F4 /* BCBP in Frameworks */,
 				3FF4DDD01D1F79267517DE35 /* ReferenceData in Frameworks */,
 				CF3807277F1FDA241609254C /* Persistence in Frameworks */,
+				14963B1634A245DD5F21D19F /* Account in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,9 +95,22 @@
 			path = CheckIn;
 			sourceTree = "<group>";
 		};
+		35AC3558947BFD2E26464CD0 /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				BF4D48FF8AE3EC90CE9EB299 /* AccountMessages.swift */,
+				0BA65F3D7DF5E25F2228C346 /* EmailSignInView.swift */,
+				6CA53E0B6C7D19C0B128FFE6 /* OnboardingView.swift */,
+				C2E6559EBEC52E59BEEFE94D /* ProfileEditorView.swift */,
+				6FD2433D565B1E9974F334CA /* ProfileScreen.swift */,
+			);
+			path = Account;
+			sourceTree = "<group>";
+		};
 		3BDC1570A716DBB398F81241 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				35AC3558947BFD2E26464CD0 /* Account */,
 				1EC26DAEA056854F28F4B7EE /* CheckIn */,
 				87951F4E74954155B4CA1844 /* Common */,
 			);
@@ -103,10 +130,19 @@
 		628D5F429C1B6E92B5C4F2A0 = {
 			isa = PBXGroup;
 			children = (
+				6CD5D74B214966A34C588B92 /* Config */,
 				9B22C9354BAD38E4DD2F124D /* Packages */,
 				3C52C432FA97D62907501392 /* Wingspot */,
 				EB652108C1D4DDAA7B6F5B8A /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		6CD5D74B214966A34C588B92 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				45BFC3E5CAEEFABF9A34E20E /* Wingspot.xcconfig */,
+			);
+			path = Config;
 			sourceTree = "<group>";
 		};
 		78EF8102C6206FC55B54ED0A /* App */ = {
@@ -130,6 +166,7 @@
 		9B22C9354BAD38E4DD2F124D /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				626F450EEAB4D94771419C27 /* Account */,
 				65CF500EAA7D99B499377459 /* BCBP */,
 				F4D2C07FCB6185F02199297F /* Persistence */,
 				2A600D9AC1C5768A9B274FA0 /* ReferenceData */,
@@ -167,6 +204,7 @@
 				84545F5C809788F8A6A927A8 /* BCBP */,
 				16B4602119380A191047210F /* ReferenceData */,
 				5B2EB62437C5BE2130BABF23 /* Persistence */,
+				FE4DDF37937E81A62EB60AB5 /* Account */,
 			);
 			productName = Wingspot;
 			productReference = 4ACF37D630CFB0FFE9E1E133 /* Wingspot.app */;
@@ -197,6 +235,7 @@
 			mainGroup = 628D5F429C1B6E92B5C4F2A0;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				3285D7E1CD05D56C390D3DCE /* XCLocalSwiftPackageReference "Packages/Account" */,
 				279064D1BC54781C09C1D862 /* XCLocalSwiftPackageReference "Packages/BCBP" */,
 				C23F9A0B1A1C5F48C3B840EB /* XCLocalSwiftPackageReference "Packages/Persistence" */,
 				018D0233CAC3CAD1AFE01157 /* XCLocalSwiftPackageReference "Packages/ReferenceData" */,
@@ -230,10 +269,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1427422ED2866AC007958D1A /* AccountMessages.swift in Sources */,
 				B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */,
 				666833BB5AA51A95401FAE68 /* CheckInSheet.swift in Sources */,
+				A165396CBFC567234392EE1F /* EmailSignInView.swift in Sources */,
 				C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */,
+				3C72654BC1F78F3B175048F2 /* OnboardingView.swift in Sources */,
 				3B16BBB37412D38A89E454BD /* PlaceholderScreen.swift in Sources */,
+				0937BA0BF1EBF4732DA23138 /* ProfileEditorView.swift in Sources */,
+				A08C4CA8904388F960BBA71F /* ProfileScreen.swift in Sources */,
 				39383DB2983A80C96D05EA39 /* ReferenceSearchViews.swift in Sources */,
 				2009AC27E2FC13DC4C52C220 /* RootView.swift in Sources */,
 				F9804A44218F27F9FAC0B571 /* SpottedCheckInView.swift in Sources */,
@@ -246,6 +290,7 @@
 /* Begin XCBuildConfiguration section */
 		404759116CE3EBA1B4D1891F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 45BFC3E5CAEEFABF9A34E20E /* Wingspot.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -271,6 +316,7 @@
 		};
 		649DDE6D4D670994DA5C0CE4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 45BFC3E5CAEEFABF9A34E20E /* Wingspot.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -449,6 +495,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/BCBP;
 		};
+		3285D7E1CD05D56C390D3DCE /* XCLocalSwiftPackageReference "Packages/Account" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/Account;
+		};
 		AE26864BE26CA075DC5101C9 /* XCLocalSwiftPackageReference "Packages/WingspotCore" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/WingspotCore;
@@ -475,6 +525,10 @@
 		FA9C4D07C08E909754DE9B4F /* WingspotCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WingspotCore;
+		};
+		FE4DDF37937E81A62EB60AB5 /* Account */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Account;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -1,3 +1,4 @@
+import Account
 import OSLog
 import Persistence
 import ReferenceData
@@ -11,6 +12,7 @@ private let logger = Logger(subsystem: "site.wingspot.ios", category: "backend")
 struct WingspotApp: App {
     private let modelContainer: ModelContainer
     @State private var referenceData: ReferenceDataStore
+    @State private var account = Self.makeAccount()
 
     init() {
         do {
@@ -25,9 +27,11 @@ struct WingspotApp: App {
         WindowGroup {
             RootView()
                 .environment(referenceData)
+                .environment(account)
                 .modelContainer(modelContainer)
                 .task { await referenceData.prepare() }
                 .task { await loadRemoteConfig() }
+                .task { await account.start() }
                 .onOpenURL(perform: handleLink)
         }
     }
@@ -54,6 +58,22 @@ struct WingspotApp: App {
         }
     }
 
+    private static func makeAccount() -> AccountStore {
+        var url = Bundle.main.object(forInfoDictionaryKey: "WingspotSupabaseURL") as? String
+        var key = Bundle.main.object(forInfoDictionaryKey: "WingspotPublishableKey") as? String
+        #if DEBUG
+        // Lets development sign in against the local backend.
+        let environment = ProcessInfo.processInfo.environment
+        url = environment["WINGSPOT_SUPABASE_URL"] ?? url
+        key = environment["WINGSPOT_PUBLISHABLE_KEY"] ?? key
+        #endif
+        guard let url = url.flatMap(URL.init(string:)), let key, !key.isEmpty else {
+            logger.notice("No backend key in this build, so sign-in is off")
+            return AccountStore(backend: UnconfiguredAccountBackend())
+        }
+        return AccountStore(backend: SupabaseAccountBackend(url: url, publishableKey: key))
+    }
+
     private func loadRemoteConfig() async {
         guard let client = Self.apiClient else { return }
         do {
@@ -64,13 +84,12 @@ struct WingspotApp: App {
         }
     }
 
-    /// Sign-in isn't built yet, so email links only open the app. Never log the full URL:
-    /// it can carry sign-in tokens.
+    /// Never log the full URL: it can carry sign-in codes.
     private func handleLink(_ url: URL) {
-        guard url.scheme == "wingspot", url.host == "auth-callback" else {
-            logger.notice("Ignored an unknown link")
-            return
+        Task {
+            if await !account.handle(url) {
+                logger.notice("Ignored an unknown link")
+            }
         }
-        logger.info("Opened from an auth link")
     }
 }

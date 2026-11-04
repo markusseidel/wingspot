@@ -26,5 +26,8 @@ graphify-out/.graphify_labels.json.sig
 graphify-out/.graphify_labels.pending.json
 graphify-out/20*/
 
+# Local iOS settings, such as the backend key
+ios/Config/Local.xcconfig
+
 # Node
 node_modules/
