@@ -15,6 +15,17 @@ python3 build_refdata.py --airports /tmp/airports.csv --out /tmp/refdata --data-
 
 This writes `refdata.sqlite` and `manifest.json` to the output folder. Rows that can't be used are listed in the manifest under `skipped` and don't stop the build. Curated keywords for an airport that isn't in the data are listed under `unmatched_keywords`. A missing column does stop it, and any existing database is kept.
 
+## Load into Postgres
+
+Check-ins reference airports and aircraft types by the IDs in the snapshot, so load each snapshot into Postgres **before** publishing it. Otherwise an app could send an ID the server doesn't have. Run these from `backend/`, linked to the hosted project:
+
+```bash
+python3 refdata-pipeline/postgres_import.py --snapshot /tmp/refdata/refdata.sqlite --out /tmp/refdata/sql
+for file in /tmp/refdata/sql/*.sql; do supabase db query --remote --file "$file" --yes > /dev/null || break; done
+```
+
+The batches only add or update rows, so they're safe to rerun. Airports that leave a later snapshot stay in Postgres, because check-ins may reference them.
+
 ## Publish
 
 Run these from `backend/`, linked to the hosted project. Set `V` to the build's data version. Each snapshot gets its own path, because apps may still be using an older one.
