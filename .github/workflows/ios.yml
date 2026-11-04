@@ -1,0 +1,41 @@
+name: iOS
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ios/**'
+      - 'contracts/**'
+      - '.github/workflows/ios.yml'
+  pull_request:
+    paths:
+      - 'ios/**'
+      - 'contracts/**'
+      - '.github/workflows/ios.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  packages:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [WingspotCore, BCBP]
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift test --package-path ios/Packages/${{ matrix.package }}
+
+  app:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: xcodebuild -version
+      - name: Build app
+        run: >
+          xcodebuild build
+          -project ios/Wingspot.xcodeproj
+          -scheme Wingspot
+          -destination 'generic/platform=iOS Simulator'
+          CODE_SIGNING_ALLOWED=NO
