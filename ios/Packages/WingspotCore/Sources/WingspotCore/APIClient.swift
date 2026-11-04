@@ -17,6 +17,30 @@ public struct RemoteConfig: Decodable, Equatable, Sendable {
     }
 }
 
+/// The `RefdataManifest` schema in contracts/openapi.yaml.
+public struct RefdataManifest: Decodable, Equatable, Sendable {
+    public let schemaVersion: Int
+    public let dataVersion: String
+    public let url: URL
+    public let sha256: String
+    public let sizeBytes: Int
+
+    public init(schemaVersion: Int, dataVersion: String, url: URL, sha256: String, sizeBytes: Int) {
+        self.schemaVersion = schemaVersion
+        self.dataVersion = dataVersion
+        self.url = url
+        self.sha256 = sha256
+        self.sizeBytes = sizeBytes
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case schemaVersion = "schema_version"
+        case dataVersion = "data_version"
+        case url, sha256
+        case sizeBytes = "size_bytes"
+    }
+}
+
 public enum APIError: Error, Equatable {
     case unexpectedStatus(Int)
 }
@@ -44,5 +68,15 @@ public struct APIClient: Sendable {
             throw APIError.unexpectedStatus(status)
         }
         return try JSONDecoder().decode(RemoteConfig.self, from: data)
+    }
+
+    /// `GET /v1/refdata/manifest`. Returns `nil` if no snapshot has been published yet.
+    public func refdataManifest() async throws -> RefdataManifest? {
+        let request = URLRequest(url: baseURL.appending(path: "v1/refdata/manifest"))
+        let (data, response) = try await transport(request)
+        let status = (response as? HTTPURLResponse)?.statusCode ?? 200
+        if status == 404 { return nil }
+        if status != 200 { throw APIError.unexpectedStatus(status) }
+        return try JSONDecoder().decode(RefdataManifest.self, from: data)
     }
 }

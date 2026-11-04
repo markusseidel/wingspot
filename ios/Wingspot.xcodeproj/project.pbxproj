@@ -10,24 +10,34 @@
 		10748D50CE99239391EE4B98 /* WingspotCore in Frameworks */ = {isa = PBXBuildFile; productRef = FA9C4D07C08E909754DE9B4F /* WingspotCore */; };
 		1878E11AE259B4D66AF3B0F4 /* BCBP in Frameworks */ = {isa = PBXBuildFile; productRef = 84545F5C809788F8A6A927A8 /* BCBP */; };
 		2009AC27E2FC13DC4C52C220 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17369D1192D4BAF9721962FE /* RootView.swift */; };
+		39383DB2983A80C96D05EA39 /* ReferenceSearchViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */; };
 		3B16BBB37412D38A89E454BD /* PlaceholderScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87BF659DFCBC4828CF78129 /* PlaceholderScreen.swift */; };
+		3FF4DDD01D1F79267517DE35 /* ReferenceData in Frameworks */ = {isa = PBXBuildFile; productRef = 16B4602119380A191047210F /* ReferenceData */; };
 		63920812D725A2EE33A89EC1 /* WingspotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E61A661480E1ED65178DE4B /* WingspotApp.swift */; };
 		666833BB5AA51A95401FAE68 /* CheckInSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */; };
 		761F6B7BD8870311AFC02EBB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D8FB2291C9A4A75529A9461 /* Assets.xcassets */; };
+		B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B545FD209FC2942BD45E71 /* CheckInResultView.swift */; };
+		C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A035100ED13735493AF7BF1 /* LocationProvider.swift */; };
+		CF3807277F1FDA241609254C /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 5B2EB62437C5BE2130BABF23 /* Persistence */; };
 		F9804A44218F27F9FAC0B571 /* SpottedCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CBBBAF8DD8DAC4FD7390E9 /* SpottedCheckInView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		17369D1192D4BAF9721962FE /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		2A600D9AC1C5768A9B274FA0 /* ReferenceData */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ReferenceData; path = Packages/ReferenceData; sourceTree = SOURCE_ROOT; };
 		41CBBBAF8DD8DAC4FD7390E9 /* SpottedCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpottedCheckInView.swift; sourceTree = "<group>"; };
+		48B545FD209FC2942BD45E71 /* CheckInResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInResultView.swift; sourceTree = "<group>"; };
 		4ACF37D630CFB0FFE9E1E133 /* Wingspot.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Wingspot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D8FB2291C9A4A75529A9461 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		65CF500EAA7D99B499377459 /* BCBP */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BCBP; path = Packages/BCBP; sourceTree = SOURCE_ROOT; };
 		6E61A661480E1ED65178DE4B /* WingspotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WingspotApp.swift; sourceTree = "<group>"; };
 		76B04C14C68A65FD24C0D6DD /* WingspotCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = WingspotCore; path = Packages/WingspotCore; sourceTree = SOURCE_ROOT; };
+		9A035100ED13735493AF7BF1 /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
 		A47349EC0A6768BA0A1C2F6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceSearchViews.swift; sourceTree = "<group>"; };
 		C87BF659DFCBC4828CF78129 /* PlaceholderScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderScreen.swift; sourceTree = "<group>"; };
 		DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInSheet.swift; sourceTree = "<group>"; };
+		F4D2C07FCB6185F02199297F /* Persistence */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Persistence; path = Packages/Persistence; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +47,8 @@
 			files = (
 				10748D50CE99239391EE4B98 /* WingspotCore in Frameworks */,
 				1878E11AE259B4D66AF3B0F4 /* BCBP in Frameworks */,
+				3FF4DDD01D1F79267517DE35 /* ReferenceData in Frameworks */,
+				CF3807277F1FDA241609254C /* Persistence in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,7 +66,10 @@
 		1EC26DAEA056854F28F4B7EE /* CheckIn */ = {
 			isa = PBXGroup;
 			children = (
+				48B545FD209FC2942BD45E71 /* CheckInResultView.swift */,
 				DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */,
+				9A035100ED13735493AF7BF1 /* LocationProvider.swift */,
+				BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */,
 				41CBBBAF8DD8DAC4FD7390E9 /* SpottedCheckInView.swift */,
 			);
 			path = CheckIn;
@@ -110,6 +125,8 @@
 			isa = PBXGroup;
 			children = (
 				65CF500EAA7D99B499377459 /* BCBP */,
+				F4D2C07FCB6185F02199297F /* Persistence */,
+				2A600D9AC1C5768A9B274FA0 /* ReferenceData */,
 				76B04C14C68A65FD24C0D6DD /* WingspotCore */,
 			);
 			path = Packages;
@@ -142,6 +159,8 @@
 			packageProductDependencies = (
 				FA9C4D07C08E909754DE9B4F /* WingspotCore */,
 				84545F5C809788F8A6A927A8 /* BCBP */,
+				16B4602119380A191047210F /* ReferenceData */,
+				5B2EB62437C5BE2130BABF23 /* Persistence */,
 			);
 			productName = Wingspot;
 			productReference = 4ACF37D630CFB0FFE9E1E133 /* Wingspot.app */;
@@ -172,6 +191,8 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				279064D1BC54781C09C1D862 /* XCLocalSwiftPackageReference "Packages/BCBP" */,
+				C23F9A0B1A1C5F48C3B840EB /* XCLocalSwiftPackageReference "Packages/Persistence" */,
+				018D0233CAC3CAD1AFE01157 /* XCLocalSwiftPackageReference "Packages/ReferenceData" */,
 				AE26864BE26CA075DC5101C9 /* XCLocalSwiftPackageReference "Packages/WingspotCore" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -200,8 +221,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */,
 				666833BB5AA51A95401FAE68 /* CheckInSheet.swift in Sources */,
+				C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */,
 				3B16BBB37412D38A89E454BD /* PlaceholderScreen.swift in Sources */,
+				39383DB2983A80C96D05EA39 /* ReferenceSearchViews.swift in Sources */,
 				2009AC27E2FC13DC4C52C220 /* RootView.swift in Sources */,
 				F9804A44218F27F9FAC0B571 /* SpottedCheckInView.swift in Sources */,
 				63920812D725A2EE33A89EC1 /* WingspotApp.swift in Sources */,
@@ -404,6 +428,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		018D0233CAC3CAD1AFE01157 /* XCLocalSwiftPackageReference "Packages/ReferenceData" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/ReferenceData;
+		};
 		279064D1BC54781C09C1D862 /* XCLocalSwiftPackageReference "Packages/BCBP" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/BCBP;
@@ -412,9 +440,21 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/WingspotCore;
 		};
+		C23F9A0B1A1C5F48C3B840EB /* XCLocalSwiftPackageReference "Packages/Persistence" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/Persistence;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		16B4602119380A191047210F /* ReferenceData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ReferenceData;
+		};
+		5B2EB62437C5BE2130BABF23 /* Persistence */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Persistence;
+		};
 		84545F5C809788F8A6A927A8 /* BCBP */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BCBP;
