@@ -9,9 +9,9 @@ See the full app concept in [docs/CONCEPT.md](docs/CONCEPT.md).
 | Folder | Content |
 |---|---|
 | `docs/` | App concept |
-| `contracts/` | Shared test vectors (and later API spec, badge rules, design tokens) used by all clients |
+| `contracts/` | API spec, reference database schema and shared test vectors (and later badge rules, design tokens) used by all clients |
 | `ios/` | iOS app (SwiftUI) and local Swift packages `WingspotCore` and `BCBP` |
-| `backend/` | Supabase backend (planned) |
+| `backend/` | Supabase backend (database, access rules, Edge Functions) and reference data pipeline |
 | `android/` | Android app (planned) |
 
 ## iOS development
