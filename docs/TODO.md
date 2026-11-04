@@ -29,6 +29,18 @@ Only you can do these, because they need your accounts, money or judgement.
 - [ ] Publish a privacy policy and Impressum on `wingspot.site`, in German and English (before Milestone 9)
 - [ ] Create Google sign-in credentials (after the first TestFlight)
 
+### First TestFlight install on your iPhone
+
+For sign-in to work in this build, also do the SMTP and redirect URL tasks above.
+
+- [ ] Confirm your Apple Developer membership shows as active
+- [ ] Sign in to Xcode with your Apple ID (Settings > Accounts)
+- [ ] Decide whether to commit the publishable key. Otherwise put it in `ios/Config/Local.xcconfig` before archiving
+- [ ] Create the app in App Store Connect, with the bundle ID `site.wingspot.ios`. The ID can't be changed afterwards
+- [ ] Archive in Xcode and upload with Distribute App > TestFlight Internal Only
+- [ ] Create an internal testing group in App Store Connect, then add yourself and the build
+- [ ] Install the TestFlight app on your iPhone and install Wingspot
+
 ### Before real users sign up
 
 - [ ] Turn on leaked password protection in Supabase
@@ -40,6 +52,7 @@ Only you can do these, because they need your accounts, money or judgement.
 - [ ] Try the offline Spotted check-in in real airplane mode on an iPhone, including a first launch with no network
 - [ ] Review the German text in each milestone before it merges
 - [ ] Try email sign-in on an iPhone against hosted, from the real email to the signed-in app
+- [ ] Check the dark and tinted app icons on an iPhone Home Screen
 
 ### Small housekeeping
 
@@ -87,6 +100,12 @@ Only you can do these, because they need your accounts, money or judgement.
   - [ ] Update the signup test script, which still uses the anon key
   - [ ] Briefly deactivate the anon key and test
   - [ ] Remove the to-do from `backend/README.md`
+
+### TestFlight setup
+
+- [ ] Set the Apple Team ID in the iOS project (needs your Team ID)
+- [ ] Declare that the app only uses standard encryption, so TestFlight doesn't ask for each build
+- [ ] Raise the build number for each upload
 
 ### iOS and Android search
 
