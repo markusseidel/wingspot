@@ -33,7 +33,7 @@ Only you can do these, because they need your accounts, money or judgement.
 ### Small housekeeping
 
 - [ ] Add `.claude/settings.local.json` to `.gitignore`
-- [ ] Archive the finished session "Move Edge Functions off the legacy anon key"
+- [x] Archive the finished session "Move Edge Functions off the legacy anon key"
 
 ## Decisions still open
 
