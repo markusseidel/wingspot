@@ -21,8 +21,11 @@ Only you can do these, because they need your accounts, money or judgement.
 
 - [x] Buy the domain `wingspot.site`
 - [ ] Set up custom email sending (SMTP). Supabase's built-in email only reaches project team addresses and is heavily rate-limited
+- [ ] Join the Apple Developer Program (before Milestone 2)
+- [ ] Choose the final app ID: `app.wingspot.ios` today, `site.wingspot.ios` suggested (before Milestone 2)
 - [ ] Create Apple sign-in credentials
-- [ ] Create Google sign-in credentials
+- [ ] Publish a privacy policy and Impressum on `wingspot.site` (before Milestone 9)
+- [ ] Create Google sign-in credentials (after the first TestFlight)
 
 ### Before real users sign up
 
@@ -39,9 +42,10 @@ Only you can do these, because they need your accounts, money or judgement.
 
 ### Needed for check-ins (Phase 1)
 
-- [ ] Who may change a registration's type or operator once it's entered? Suggestion: each user's entry stays on their own check-ins at first
-- [ ] Do user-entered registrations reach other users' devices? Suggestion: share one only once several users agree
-- [ ] Who reviews reports at launch? (concept §16, question 9)
+- [x] Who may change a registration's type or operator once it's entered? Each user's entry stays on their own check-ins at launch
+- [x] Do user-entered registrations reach other users' devices? Not at launch. Sharing by agreement can come later
+- [x] Who reviews reports at launch? The project owner (concept §16, question 9)
+- [ ] What to do about aircraft types if ICAO hasn't answered by Milestone 9, because hosted has only 22
 
 ### Needed later
 
@@ -67,9 +71,10 @@ Only you can do these, because they need your accounts, money or judgement.
 
 ### Backend
 
-- [ ] Add a server route for user-entered registrations (apps can't write to `aircraft` today)
-- [ ] Change the `aircraft.data_status` default, which is `verified`. User entries must be `user_submitted`
-- [ ] Add indexes for the 17 unindexed foreign keys when building the check-in API
+- [ ] Create `aircraft` rows from `POST /v1/checkins` (apps can't write to `aircraft` today)
+- [x] Change the `aircraft.data_status` default to `user_submitted`
+- [x] Add indexes for the 17 unindexed foreign keys
+- [ ] Deploy that migration to hosted, with the next approved deploy
 - [ ] Confirm the live functions use the publishable key, before legacy anon keys end at the end of 2026:
   - [ ] Update the signup test script, which still uses the anon key
   - [ ] Briefly deactivate the anon key and test
@@ -81,17 +86,17 @@ Only you can do these, because they need your accounts, money or judgement.
 - [ ] Rank large airports first in search, such as `Wien`
 - [ ] Handle registrations with no type or airline yet, on check-ins and badges
 
-### Phase 1: iOS MVP (concept §14)
+### Phase 1: iOS MVP ([PHASE1.md](PHASE1.md))
 
-- [ ] Auth, onboarding and profile
-- [ ] Check-ins: Spotted, Airport and Flown, including boarding pass scan
-- [ ] Offline outbox and sync
-- [ ] Badge engine with about 40 launch badges, XP, levels and the celebration screen
-- [ ] Profile: stats, collection lists, badges tab and airports map
-- [ ] Follow, feed, salutes, comments, report and block
-- [ ] Airport detail page
-- [ ] Settings, privacy controls, account deletion and data export
-- [ ] First TestFlight
+- [ ] Milestone 1: offline Spotted check-in
+- [ ] Milestone 2: sign-in and profile
+- [ ] Milestone 3: sync
+- [ ] Milestone 4: badges and XP
+- [ ] Milestone 5: Airport and Flown check-ins, boarding pass scan, one photo
+- [ ] Milestone 6: your profile
+- [ ] Milestone 7: social
+- [ ] Milestone 8: airport page and settings
+- [ ] Milestone 9: first TestFlight
 
 ### After Phase 1
 

@@ -69,7 +69,7 @@ The main check-in. Minimum required data: **aircraft** (by registration *or* by 
 | Date & time | Auto | From photo EXIF if a photo is attached. |
 | Phase | Optional | Landing · Takeoff · Taxi · Parked · Overhead · Display (airshow) · Museum/static. |
 | Tags | Optional | Special livery · Retro livery · First visit to airport · Go-around · Night · Military · Cargo · Bizjet · Rare. |
-| Photo(s) | Optional | Up to 4 (Pro: 10). Original EXIF kept privately, stripped publicly. |
+| Photo(s) | Optional | Up to 4 (Pro: 10). The phone removes location data and uploads a JPEG, and originals aren't stored. |
 | Note | Optional | Free text, 500 chars. |
 | Rating | Optional | 1–5 "spot quality" (light, angle, distance) — a personal score for the moment, not for the aircraft. |
 
@@ -537,7 +537,7 @@ create table aircraft (
   livery        text,                    -- 'standard' | 'special' | 'retro'
   livery_name   text,
   is_sensitive  boolean default false,
-  data_status   text default 'verified'  -- verified | pending | user_submitted
+  data_status   text default 'user_submitted'  -- verified | pending | user_submitted
 );
 
 -- User data
@@ -674,7 +674,7 @@ All endpoints are versioned under `/v1` and described in `contracts/openapi.yaml
 | `POST /v1/checkins` (batch) | Upsert 1..n check-ins from the outbox (idempotent by client UUID). Returns canonical data, verification level, XP, unlocked badges, progress deltas. |
 | `GET /v1/feed?cursor=` | Friends feed, keyset pagination. |
 | `GET /v1/airports/{id}/activity` | Public recent activity, leaderboards. |
-| `GET /v1/aircraft/lookup?reg=` | Registration lookup incl. unknown → creates `pending` aircraft. |
+| `GET /v1/aircraft/lookup?reg=` | Registration lookup. Read-only, because `POST /v1/checkins` creates missing aircraft. |
 | `GET /v1/flights/lookup?number=&date=` | Server-side proxy to flight data provider, cached; free-tier quota checked against `entitlements`. |
 | `GET /v1/nearby?lat=&lon=` | ADS-B aircraft near user (Pro, phase 2). |
 | `GET /v1/badges` | Badge catalog incl. rule JSON and art URLs (ETag-cached). |
@@ -805,10 +805,10 @@ All metrics are tracked per platform from the shared event catalog, so iOS and A
 3. **Purchase backend:** own webhook handling for both stores vs. RevenueCat (faster, free up to a revenue threshold, but an extra dependency).
 4. **Kotlin Multiplatform** for the shared pure-logic modules — revisit after Android 1.0 if keeping two implementations in sync becomes painful.
 5. **Maps on Android:** Google Maps (familiar, needs API key/billing) vs. MapLibre (open, can use one map style on both platforms).
-6. **Registration data licensing:** decided. Registrations are user-entered, with no commercial data source (§10). Still open: who may change a registration's type or operator once it's entered, and whether those entries reach other users' devices.
+6. **Registration data licensing:** decided. Registrations are user-entered, with no commercial data source (§10). At launch, a user's type and operator stay on their own check-ins, and the shared `aircraft` row holds only the registration ([PHASE1.md](PHASE1.md)). Still open: sharing entries once several users agree.
 7. **ADS-B provider & license** for live/verification features.
 8. **Flight lookup provider** and cost per lookup → defines free-tier limits.
-9. **Moderation:** who reviews reports and spotting locations at launch (you alone? community moderators?).
+9. **Moderation:** decided for launch: the project owner reviews reports. Community moderators can come later.
 10. **Pilot logbook** — separate track for private/commercial pilots (hours, PIC)? Could be a strong niche, but out of scope for MVP.
 11. **Name & trademark check** for "Wingspot" in your target markets + App Store and Google Play name availability, plus the `wingspot.site` domain for deep links.
 
