@@ -15,6 +15,17 @@ python3 build_refdata.py --airports /tmp/airports.csv --out /tmp/refdata --data-
 
 This writes `refdata.sqlite` and `manifest.json` to the output folder. Rows that can't be used are listed in the manifest under `skipped` and don't stop the build. Curated keywords for an airport that isn't in the data are listed under `unmatched_keywords`. A missing column does stop it, and any existing database is kept.
 
+## Publish
+
+Run these from `backend/`, linked to the hosted project. Set `V` to the build's data version. Each snapshot gets its own path, because apps may still be using an older one.
+
+```bash
+V=2026-11-04
+supabase storage cp /tmp/refdata/refdata.sqlite ss:///refdata/$V/refdata.sqlite --remote --experimental --content-type application/vnd.sqlite3
+```
+
+Download the file from `https://<project-ref>.supabase.co/storage/v1/object/public/refdata/$V/refdata.sqlite` and compare its SHA-256 with `manifest.json`. Then add a row to `refdata_snapshots` with the manifest's values, so the API never points at a missing file. `/v1/refdata/manifest` returns the newest row.
+
 ## Data sources
 
 | Table | Source | Status |
