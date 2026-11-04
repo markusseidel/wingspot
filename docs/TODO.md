@@ -5,7 +5,8 @@ Last updated: 2026-11-04. Tick items off as you finish them.
 ## Do next
 
 - [x] Send the licensing email to ICAO (draft at the end of this file)
-- [ ] Start Phase 1 (iOS MVP)
+- [x] Start Phase 1 (iOS MVP)
+- [ ] Start Milestone 2 (sign-in and profile), after choosing the app ID and joining the Apple Developer Program
 
 ## Your tasks
 
@@ -32,6 +33,10 @@ Only you can do these, because they need your accounts, money or judgement.
 - [ ] Turn on leaked password protection in Supabase
 - [ ] Click a real confirmation email link from start to finish (not tested yet)
 - [ ] Delete the test account you created on hosted
+
+### Testing
+
+- [ ] Try the offline Spotted check-in in real airplane mode on an iPhone, including a first launch with no network
 
 ### Small housekeeping
 
@@ -88,7 +93,7 @@ Only you can do these, because they need your accounts, money or judgement.
 
 ### Phase 1: iOS MVP ([PHASE1.md](PHASE1.md))
 
-- [ ] Milestone 1: offline Spotted check-in
+- [x] Milestone 1: offline Spotted check-in
 - [ ] Milestone 2: sign-in and profile
 - [ ] Milestone 3: sync
 - [ ] Milestone 4: badges and XP
