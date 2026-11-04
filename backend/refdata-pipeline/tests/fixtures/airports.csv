@@ -7,3 +7,4 @@
 6,"XC01","closed","Fixture Closed Airfield",48.2,11.6,1700,"EU","DE","DE-BY",,"no",,,,,,,
 7,"XB01","small_airport","Fixture Bad Latitude",123.4,11.6,1700,"EU","DE","DE-BY",,"no",,,,,,,
 1,"XD01","small_airport","Fixture Duplicate ID",48.3,11.7,1700,"EU","DE","DE-BY",,"no",,,,,,,
+8,"EDDM","large_airport","Munich Airport",48.353802,11.7861,1487,"EU","DE","DE-BY","Munich","yes","EDDM","MUC","EDDM",,,,"Franz Josef Strauss Airport, Flughafen München Franz Josef Strauß"
