@@ -1,0 +1,24 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "NSLocationWhenInUseUsageDescription": {
+      "comment": "Location permission prompt",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wingspot schlägt dir beim Check-in den Flughafen vor, an dem du gerade bist."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wingspot suggests the airport you're at when you check in."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

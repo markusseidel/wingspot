@@ -3,9 +3,9 @@ import SwiftUI
 
 /// A searchable list that picks one item from the reference database.
 private struct ReferenceSearchView<Item: Identifiable & Hashable & Sendable, Row: View>: View {
-    let title: String
-    let prompt: String
-    let clearTitle: String
+    let title: LocalizedStringKey
+    let prompt: LocalizedStringKey
+    let clearTitle: LocalizedStringKey
     @Binding var selection: Item?
     let search: @Sendable (ReferenceDatabase, String) async throws -> [Item]
     @ViewBuilder let row: (Item) -> Row
@@ -81,7 +81,7 @@ struct AirportSearchView: View {
 
     var body: some View {
         ReferenceSearchView(
-            title: "Airport", prompt: "FRA, Frankfurt, Wien", clearTitle: "No airport",
+            title: "Airport", prompt: "FRA, Frankfurt, Vienna", clearTitle: "No airport",
             selection: $selection, search: { try await $0.searchAirports($1) }
         ) { airport in
             HStack {

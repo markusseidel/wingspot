@@ -2,9 +2,9 @@ import SwiftUI
 
 /// Stand-in for screens that are built in later phases.
 struct PlaceholderScreen: View {
-    let title: String
+    let title: LocalizedStringKey
     let systemImage: String
-    let message: String
+    let message: LocalizedStringKey
 
     var body: some View {
         NavigationStack {

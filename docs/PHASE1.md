@@ -33,8 +33,7 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
 
 | Before | Needed |
 |---|---|
-| Milestone 2 | Apple Developer Program membership |
-| Milestone 2 | Final app ID. It's `app.wingspot.ios` today, and `site.wingspot.ios` is suggested. It can't be changed once the app is in App Store Connect |
+| Milestone 2 | Apple sign-in credentials, for the app ID `site.wingspot.ios` |
 | Milestone 9 | Custom email sending, so sign-up emails reach testers, in German and English |
 | Milestone 9 | Leaked password protection turned on in Supabase |
 | Milestone 9 | Privacy policy and Impressum on `wingspot.site`, in German and English |

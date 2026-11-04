@@ -1,0 +1,428 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "%@, registered in %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, registriert in %2$@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, registered in %2$@"
+          }
+        }
+      }
+    },
+    "A flight you were on": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Flug, auf dem du warst"
+          }
+        }
+      }
+    },
+    "A388, Boeing 737, CRJ900": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A388, Boeing 737, CRJ900"
+          }
+        }
+      }
+    },
+    "Aircraft and airport search needs one download while online. You can still check in by registration.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Suche nach Flugzeugen und Flughäfen braucht einmalig einen Download mit Internetverbindung. Du kannst trotzdem per Registrierung einchecken."
+          }
+        }
+      }
+    },
+    "Aircraft type": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flugzeugtyp"
+          }
+        }
+      }
+    },
+    "Airport": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flughafen"
+          }
+        }
+      }
+    },
+    "An aircraft you have seen": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Flugzeug, das du gesehen hast"
+          }
+        }
+      }
+    },
+    "An airport you are at": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Flughafen, an dem du gerade bist"
+          }
+        }
+      }
+    },
+    "Badges": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Badges"
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abbrechen"
+          }
+        }
+      }
+    },
+    "Check in": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check-in"
+          }
+        }
+      }
+    },
+    "Check in another": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weiterer Check-in"
+          }
+        }
+      }
+    },
+    "Check-ins from people you follow will appear here.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hier erscheinen Check-ins von Leuten, denen du folgst."
+          }
+        }
+      }
+    },
+    "Coming in a later app version.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kommt in einer späteren App-Version."
+          }
+        }
+      }
+    },
+    "Couldn't save this check-in": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check-in konnte nicht gespeichert werden"
+          }
+        }
+      }
+    },
+    "Done": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fertig"
+          }
+        }
+      }
+    },
+    "Downloading aircraft and airport data.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flugzeug- und Flughafendaten werden geladen."
+          }
+        }
+      }
+    },
+    "Earn badges for the aircraft you spot and fly.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sammle Badges für die Flugzeuge, die du spottest und mit denen du fliegst."
+          }
+        }
+      }
+    },
+    "Enter a registration, or choose a type if you couldn't read it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib eine Registrierung ein oder wähle einen Typ, falls du sie nicht lesen konntest."
+          }
+        }
+      }
+    },
+    "Explore": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entdecken"
+          }
+        }
+      }
+    },
+    "FRA, Frankfurt, Vienna": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FRA, Frankfurt, Wien"
+          }
+        }
+      }
+    },
+    "Feed": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed"
+          }
+        }
+      }
+    },
+    "First time seeing this one!": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum ersten Mal gesehen!"
+          }
+        }
+      }
+    },
+    "Flown": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geflogen"
+          }
+        }
+      }
+    },
+    "Last time at %@, %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zuletzt in %1$@, %2$@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last time at %1$@, %2$@"
+          }
+        }
+      }
+    },
+    "Last time on %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zuletzt am %@"
+          }
+        }
+      }
+    },
+    "No airport": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein Flughafen"
+          }
+        }
+      }
+    },
+    "None": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keiner"
+          }
+        }
+      }
+    },
+    "Not a valid registration yet": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine gültige Registrierung"
+          }
+        }
+      }
+    },
+    "Not downloaded yet": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch nicht geladen"
+          }
+        }
+      }
+    },
+    "OK": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        }
+      }
+    },
+    "Optional": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional"
+          }
+        }
+      }
+    },
+    "Please try again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bitte versuche es noch einmal."
+          }
+        }
+      }
+    },
+    "Profile": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil"
+          }
+        }
+      }
+    },
+    "Registration, e.g. DAIMA": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registrierung (DAIMA)"
+          }
+        }
+      }
+    },
+    "Remove type": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Typ entfernen"
+          }
+        }
+      }
+    },
+    "Search aircraft, airports and spotters.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suche nach Flugzeugen, Flughäfen und Spottern."
+          }
+        }
+      }
+    },
+    "Search works offline after one download while online.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Suche funktioniert offline, sobald die Daten einmal mit Internetverbindung geladen wurden."
+          }
+        }
+      }
+    },
+    "Seen for the %@ time": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum %@ Mal gesehen"
+          }
+        }
+      }
+    },
+    "Spotted": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gespottet"
+          }
+        }
+      }
+    },
+    "Your stats, collection and map.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Statistiken, Sammlung und Karte."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

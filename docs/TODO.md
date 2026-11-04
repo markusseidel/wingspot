@@ -6,7 +6,7 @@ Last updated: 2026-11-04. Tick items off as you finish them.
 
 - [x] Send the licensing email to ICAO (draft at the end of this file)
 - [x] Start Phase 1 (iOS MVP)
-- [ ] Start Milestone 2 (sign-in and profile), after choosing the app ID and joining the Apple Developer Program
+- [ ] Finish Milestone 2 (sign-in and profile)
 
 ## Your tasks
 
@@ -22,8 +22,8 @@ Only you can do these, because they need your accounts, money or judgement.
 
 - [x] Buy the domain `wingspot.site`
 - [ ] Set up custom email sending (SMTP). Supabase's built-in email only reaches project team addresses and is heavily rate-limited
-- [ ] Join the Apple Developer Program (before Milestone 2)
-- [ ] Choose the final app ID: `app.wingspot.ios` today, `site.wingspot.ios` suggested (before Milestone 2)
+- [x] Join the Apple Developer Program (before Milestone 2)
+- [x] Choose the final app ID: `site.wingspot.ios`
 - [ ] Create Apple sign-in credentials
 - [ ] Publish a privacy policy and Impressum on `wingspot.site`, in German and English (before Milestone 9)
 - [ ] Create Google sign-in credentials (after the first TestFlight)
@@ -94,8 +94,8 @@ Only you can do these, because they need your accounts, money or judgement.
 
 ### German and English
 
-- [ ] Add a string catalog and German to the iOS project (start of Milestone 2)
-- [ ] Translate Milestone 1's text, including plain `String` values that SwiftUI won't translate automatically (start of Milestone 2)
+- [x] Add a string catalog and German to the iOS project (start of Milestone 2)
+- [x] Translate Milestone 1's text, including plain `String` values that SwiftUI won't translate automatically (start of Milestone 2)
 - [ ] Store badge names and descriptions by language (Milestone 4)
 - [ ] Send sign-up emails in the user's language. First confirm that Supabase email templates can do this (before Milestone 9)
 - [ ] Write the TestFlight text in both languages (Milestone 9)

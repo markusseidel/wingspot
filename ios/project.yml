@@ -1,7 +1,9 @@
 # Generate Wingspot.xcodeproj with: xcodegen generate (run in ios/)
 name: Wingspot
 options:
-  bundleIdPrefix: app.wingspot
+  bundleIdPrefix: site.wingspot
+  developmentLanguage: en
+  knownRegions: [en, de]
   deploymentTarget:
     iOS: "18.0"
   createIntermediateGroups: true
@@ -31,8 +33,10 @@ targets:
       - package: Persistence
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: app.wingspot.ios
+        PRODUCT_BUNDLE_IDENTIFIER: site.wingspot.ios
         GENERATE_INFOPLIST_FILE: YES
+        LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+        SWIFT_EMIT_LOC_STRINGS: YES
         INFOPLIST_FILE: Wingspot/App/Info.plist
         INFOPLIST_KEY_CFBundleDisplayName: Wingspot
         INFOPLIST_KEY_UILaunchScreen_Generation: YES

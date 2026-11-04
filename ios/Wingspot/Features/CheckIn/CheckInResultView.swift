@@ -45,7 +45,7 @@ struct CheckInResultView: View {
         .sensoryFeedback(.success, trigger: result.id)
     }
 
-    private var headline: String {
+    private var headline: LocalizedStringResource {
         switch result.history {
         case .firstTime:
             "First time seeing this one!"
@@ -54,10 +54,13 @@ struct CheckInResultView: View {
         }
     }
 
-    private var detail: String? {
+    private var detail: LocalizedStringResource? {
         guard case .seenBefore(_, let lastSeen, let lastPlace) = result.history else { return nil }
         let date = lastSeen.formatted(date: .abbreviated, time: .omitted)
-        return lastPlace.map { "Last time at \($0), \(date)" } ?? "Last time on \(date)"
+        if let lastPlace {
+            return "Last time at \(lastPlace), \(date)"
+        }
+        return "Last time on \(date)"
     }
 
     private static func ordinal(_ number: Int) -> String {

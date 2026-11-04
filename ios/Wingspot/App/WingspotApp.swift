@@ -5,7 +5,7 @@ import SwiftData
 import SwiftUI
 import WingspotCore
 
-private let logger = Logger(subsystem: "app.wingspot.ios", category: "backend")
+private let logger = Logger(subsystem: "site.wingspot.ios", category: "backend")
 
 @main
 struct WingspotApp: App {
