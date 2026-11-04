@@ -1,23 +1,2700 @@
 icao_code,manufacturer,model,family,engine_type,engine_count,wtc
+A002,Irkut,A-002,,piston,1,L
+A1,Douglas,A-1 Skyraider,,piston,1,M
+A10,Fairchild,A10,,jet,2,M
+A109,Agusta,A-109,,helicopter,2,L
+A119,Agusta,A-119 Koala,,helicopter,1,L
+A122,Aerotec,A-122 Uirapuru,,piston,1,L
+A124,Antonov,AN-124 Ruslan,An-124,jet,4,H
+A129,Agusta,A-129 Mangusta,,helicopter,2,L
+A139,Agustawestland,AW-139,,helicopter,2,L
+A140,Antonov,An-140,,turboprop,2,M
+A148,Antonov,An-148,An-148,jet,2,M
+A149,Agusta,AW-149,,helicopter,2,M
+A158,Antonov,An-158,,jet,2,M
+A169,Agustawestland,AW-169,,helicopter,2,L
+A178,Antonov,An-178,,jet,2,M
+A189,Agustawestland,AW-189,,helicopter,2,M
+A19,Aeropract,A-19,,piston,1,L
 A19N,Airbus,A319neo,A320,jet,2,M
+A20,Douglas,A-20 Havoc,,piston,2,M
+A205,Oskbes-Mai,MAI-205,,piston,1,L
+A20J,Schleicher,ASW-20J,,jet,1,L
 A20N,Airbus,A320neo,A320,jet,2,M
+A21,Aeropract,A-21 Solo,,piston,1,L
+A210,Aquila,A-210,,piston,1,L
+A211,Alfa-M,A-211,,piston,1,L
 A21N,Airbus,A321neo,A320,jet,2,M
+A22,Sadler,A-22 Piranha,,piston,1,L
+A223,Oskbes-Mai,MAI-223 Kityonok,,piston,1,L
+A225,Antonov,An-225 Mriya,,jet,6,H
+A23,Aeropract,A-23 Dragon,,piston,1,L
+A25,Aeropract,A-25 Breeze,,piston,1,L
+A251,Aviatik-Alyans,Aleks-251,,piston,2,L
+A27,Aeropract,A-27,,piston,1,L
+A270,Aero,Ae-270 Propjet,,turboprop,1,L
+A29,Avantage,A-29,,piston,1,L
+A2RT,Kazan,Ansat 2RT,,helicopter,2,L
+A3,Douglas,A-3 Skywarrior,,jet,2,M
+A306,Airbus,A300 B4-600,A300,jet,2,H
+A30B,Airbus,A300-B2,A300,jet,2,H
+A31,Avantage,A-31 Spectrum,,piston,1,L
+A310,Airbus,A310,A310,jet,2,H
+A318,Airbus,A318,A320,jet,2,M
 A319,Airbus,A319,A320,jet,2,M
 A320,Airbus,A320,A320,jet,2,M
 A321,Airbus,A321,A320,jet,2,M
+A32E,Schleicher,ASG-32EL,,electric,1,L
+A32P,Schleicher,ASG-32Mi,,piston,1,L
+A33,Aeropract,A-33,,piston,1,L
+A332,Airbus,A330-200,A330,jet,2,H
 A333,Airbus,A330-300,A330,jet,2,H
+A337,Airbus,A330-700 - Beluga XL,A330,jet,2,H
+A338,Airbus,A330-800,A330,jet,2,H
+A339,Airbus,A330-900,A330,jet,2,H
+A33E,Schleicher,AS-33Me,,electric,1,L
+A33P,Schleicher,AS-33Es,,piston,1,L
+A342,Airbus,A340-200,A340,jet,4,H
+A343,Airbus,A340-300,A340,jet,4,H
+A345,Airbus,A340-500,A340,jet,4,H
+A346,Airbus,A340-600,A340,jet,4,H
+A34E,Schleicher,AS-34Me,,electric,1,L
+A35,Avantage,A-35 Scanner,,piston,1,L
 A359,Airbus,A350-900,A350,jet,2,H
 A35K,Airbus,A350-1000,A350,jet,2,H
+A37,Cessna,318D Dragonfly,,jet,2,L
 A388,Airbus,A380-800,A380,jet,4,J
+A3ST,Airbus,A-300ST Beluga,,jet,2,H
+A4,McDonnell Douglas,A-4 Skyhawk,,jet,1,M
+A400,Airbus,A400M Atlas,,turboprop,4,H
+A411,Oskbes-Mai,MAI-411,,piston,2,L
+A5,Icon,A-5,,piston,1,L
+A50,Beriev,A-50,,jet,4,H
+A500,Adam,A-500,,piston,2,L
+A504,Avro,504,,piston,1,L
+A6,Grumman,A-6 Intruder,,jet,2,M
+A600,Rotorway,A-600 Talon,,helicopter,1,L
+A660,Ayres,S-2R-T660 Turbo Thrush,,turboprop,1,L
+A700,Adam,A-700 AdamJet,,jet,2,L
+A743,Antonov,An-74-300,,jet,2,M
+A748,Hawker Siddeley,C-91,,turboprop,2,M
+A890,Aviatika,MAI-890,,piston,1,L
+A9,North American Rockwell,A-9 Quail Commander,,piston,1,L
+A900,Aviatika,MAI-900 Acrobat,,piston,1,L
+A910,Aviatika,MAI-910,,piston,1,L
+AA1,Grumman American,American AA1,,piston,1,L
+AA37,Aeropract,A-37,,piston,2,L
+AA5,Grumman American,American AA5,,piston,1,L
+AAT3,Aero,AT-3,,piston,1,L
+AAT4,Aero,AT-4,,piston,1,L
+AB11,Aero Boero,AB-115,,piston,1,L
+AB15,Aero Boero,AB-150,,piston,1,L
+AB18,Aero Boero,AB-180,,piston,1,L
+AB95,Aero Boero,AB-95,,piston,1,L
+AC10,Fd-Composites,ArrowCopter,,piston,1,L
+AC11,Rockwell,Commander 112,,piston,1,L
+AC31,Avicopter,AC-311,,helicopter,1,L
+AC33,Avicopter,AC-313,,helicopter,3,M
+AC4,Light Wing,AC-4,,piston,1,L
+AC50,Aero,Commander 500,,piston,2,L
+AC52,Aero,Commander 520,,piston,2,L
+AC56,Aero,Commander 560,,piston,2,L
+AC5A,Nanjing,AC-500 Aircar,,piston,1,L
+AC5M,Aviastroitel,AC-5M,,piston,1,L
+AC68,Aero,Commander 680FP,,piston,2,L
+AC6L,North American Rockwell,Aero Commander 680FL,,piston,2,L
+AC72,Aero,Commander 720 Alti Cruiser,,piston,2,L
+AC80,North American Rockwell,Rockwell Commander Turbo 680,,turboprop,2,L
+AC90,Gulfstream Aerospace,690 Commander 690,,turboprop,2,L
+AC95,Gulfstream Aerospace,Jetprop Commander 1000,,turboprop,2,L
+ACAM,Leza,Air Cam,,piston,2,L
+ACAR,Auster,J-5B Autocar,,piston,1,L
+ACED,Powell,P-70 Acey Deucy,,piston,1,L
+ACR2,Acro Sport,Acro-Sport 2,,piston,1,L
+ACRD,Avia,Accord,,piston,2,L
+ACRO,Acro Sport,Acro-Sport 1,,piston,1,L
+ACSR,Victa,Aircruiser,,piston,1,L
+AD20,Beijing Keyuan,AD-200,,piston,1,L
+ADEL,Ustinov,Adel,,piston,1,L
+ADVE,Auster,J-5 Adventurer,,piston,1,L
+ADVN,Adventure AIR,Adventurer,,piston,1,L
+AE45,LET,Aero 45,,piston,2,L
+AEA1,American Eagle,A-1,,piston,1,L
+AERK,Aeronca,CF Scout,,piston,1,L
+AEST,Piper,Aero Star,,piston,2,L
+AFOX,Halley,Apollo Fox,,piston,1,L
+AG02,Gatard,AG-02 Poussin,,piston,1,L
+AG04,Gatard,AG-04 Pigeon,,piston,1,L
+AG1,Halley,Apollo AG-1 Gyro,,piston,1,L
+AG10,Caiga,AG-100,,piston,1,L
+AG14,Anderson-Greenwood,14,,piston,1,L
+AG60,Caiga,AG-600 Kunlong,,turboprop,4,M
+AGSH,Aero Gare,Sea Hawker,,piston,1,L
+AI10,Ikar,Ai-10 Ikar,,piston,1,L
+AIGT,Auster,J-5F Aiglet Trainer,,piston,1,L
+AIRD,Beagle,A-109 Airedale,,piston,1,L
+AIRL,Aeronix,Airelle,,piston,2,L
+AJ27,Comac,ARJ-21-700,,jet,2,M
+AJET,AOI,Alpha Jet,,jet,2,M
+AKNC,Baykar,Bayraktar Akıncı,,turboprop,2,L
+AKOY,Lisa,Akoya,,piston,1,L
+AKRO,Stephens,Akro,,piston,1,L
+ALBU,Aviation Development,Alaskan Bushmaster,,piston,1,L
+ALC1,Altair Coelho,AC-11,,piston,1,L
+ALGR,Fantasy AIR,Allegro,,piston,1,L
+ALH,Hindustan,ALH Dhruv,,helicopter,2,L
+ALIG,Arion,LS-1 Lightning,,piston,1,L
+ALIZ,Breguet,1050 Alizé,,turboprop,1,M
+ALO2,SUD,SA-318 Alouette 2,,helicopter,1,L
+ALO3,Hindustan,SA-316 Chetak,,helicopter,1,L
+ALPI,Auster,J-5Q Alpine,,piston,1,L
+ALSL,Airlony,Skylane,,piston,1,L
+ALTO,Direct FLY,Alto,,piston,1,L
+AM3,Aerfer-Aermacchi,AM-3,,piston,1,L
+AMX,AMX,A-1,,jet,1,M
+AN12,Antonov,AN-12,,turboprop,4,M
+AN2,Aicsa,An-2,,piston,1,L
+AN22,Antonov,An-22 Antheus,,turboprop,4,H
+AN24,Xian,Y-7-100,,turboprop,2,M
+AN26,Antonov,An-26,,turboprop,2,M
+AN28,PZL-Mielec,An-28,,turboprop,2,L
+AN3,Antonov,An-3,,turboprop,1,L
+AN30,Antonov,An-30,,turboprop,2,M
+AN32,Antonov,An-32,,turboprop,2,M
+AN38,Antonov,An-38,,turboprop,2,M
+AN70,Antonov,An-70,,turboprop,4,M
+AN72,Antonov,AN-74-100/200,,jet,2,M
+AN8,Antonov,An-8,,turboprop,2,M
+ANDR,Millioud,Andromède,,piston,1,L
+ANGL,Angel,44 Angel,,piston,2,L
+ANKA,TAI,Anka,,piston,1,L
+ANSN,Avro,652 Anson,,piston,2,L
+ANST,Kazan,Ansat,,helicopter,2,L
+AP20,Aeroprakt,A-20,,piston,1,L
+AP22,Aeroprakt,A-22,,piston,1,L
+AP24,Aeroprakt,A-24 Viking,,piston,1,L
+AP26,Aeroprakt,A-26 Twin Vista,,piston,2,L
+AP28,Aeroprakt,A-28 Victor,,piston,2,L
+AP32,Aeroprakt,A-32 Vixxen,,piston,1,L
+AP36,Aeroprakt,A-36 Vulcan,,piston,2,L
+APM2,Issoire,APM-20 Lionceau,,piston,1,L
+APM3,Issoire,APM-30 Lion,,piston,1,L
+APM4,Issoire,APM-40 Simba,,piston,1,L
+APUP,Aeropup,Aeropup,,piston,1,L
+AR1,Silverlight,AR-1 American Ranger 1,,piston,1,L
+AR11,Aeronca,11 Chief,,piston,1,L
+AR15,Aeronca,15 Sedan,,piston,1,L
+AR50,Aeronca,50 Chief,,piston,1,L
+AR5T,Aeronca,50 Tandem,,piston,1,L
+AR65,Aeronca,65 Super Chief,,piston,1,L
+AR6T,Aeronca,60 Tandem,,piston,1,L
+ARCE,Schempp-Hirth,Arcus E,,electric,1,L
+ARCP,Schempp-Hirth,Arcus M,,piston,1,L
+ARES,Rutan,151 Ares,,jet,1,L
+ARV1,ARV,ARV-1 Super 2,,piston,1,L
+ARVA,IAI,101 Arava,,turboprop,2,L
+ARWF,Arrow,F Sport,,piston,1,L
+AS02,FFA,AS-202-15 Bravo,,piston,1,L
+AS14,Schleicher,ASK-14,,piston,1,L
+AS16,Schleicher,ASK-16,,piston,1,L
+AS20,Schleicher,ASW-20TOP,,piston,1,L
+AS21,Schleicher,ASK-21Mi,,piston,1,L
+AS22,Schleicher,ASW-22BE,,piston,1,L
+AS24,Schleicher,ASW-24E,,piston,1,L
+AS25,Schleicher,ASH-25E,,piston,1,L
+AS26,Schleicher,ASH-26E,,piston,1,L
+AS28,Schleicher,ASW-28E,,piston,1,L
+AS29,Schleicher,ASG-29E,,piston,1,L
+AS2T,FFA,AS-202-32TP Turbine Bravo,,turboprop,1,L
+AS30,Schleicher,ASH-30Mi,,piston,1,L
+AS31,Schleicher,ASH-31Mi,,piston,1,L
+AS32,Aerospatiale,AS-332B Super Puma,,helicopter,2,M
+AS3B,Aerospatiale,AS-332L2 Super Puma Mk2,,helicopter,2,M
+AS50,Airbus Helicopters,AS-350 Ecureuil,,helicopter,1,L
+AS55,Eurocopter,AS-355 Ecureuil 2,,helicopter,2,L
+AS65,Aerospatiale,AS-365 Dauphin 2,,helicopter,2,L
+AS80,Starck,AS-80 Holiday,,piston,1,L
+ASDR,Wild,Ascender,,piston,1,L
+ASO4,Asso Aerei,Asso 4 Whisky,,piston,1,L
+ASO5,Asso Aerei,Asso 5 Champion,,piston,1,L
+ASOX,Asso Aerei,Asso 10 Jewel,,piston,1,L
+ASTO,Tecnam,Astore,,piston,1,L
+ASTR,IAI,Astra 1125,,jet,2,M
+AT1,Antoniewski,AT-1,,piston,1,L
+AT2P,AIR Tractor,AT-250,,piston,1,L
+AT3,Aidc,AT-3 Tzu-Chung,,jet,2,M
+AT3P,AIR Tractor,AT-300,,piston,1,L
+AT3T,AIR Tractor,Tractor AT-402,,turboprop,1,L
+AT43,ATR,42-300/320,ATR 42,turboprop,2,M
+AT44,ATR,ATR-42-400,,turboprop,2,M
+AT45,ATR,42-500,ATR 42,turboprop,2,M
+AT46,ATR,42-600,ATR 42,turboprop,2,M
+AT5P,AIR Tractor,AT-501,,piston,1,L
+AT5T,AIR Tractor,Tractor AT-503,,turboprop,1,L
+AT6T,AIR Tractor,AT-602 Air Tractor,,turboprop,1,L
+AT72,ATR,ATR-72-201/202,ATR 72,turboprop,2,M
+AT73,ATR,72-211/212,ATR 72,turboprop,2,M
+AT75,ATR,ATR-72-500,ATR 72,turboprop,2,M
 AT76,ATR,ATR 72-600,ATR 72,turboprop,2,M
+AT8T,AIR Tractor,Tractor AT-802,,turboprop,1,
+ATAC,Aircraft Technologies,Acro 1,,piston,1,L
+ATIS,Aircraft Technologies,Atlantis,,piston,1,L
+ATL,Robin,ATL,,piston,1,L
+ATLA,Dassault,1150 Atlantic,,turboprop,2,M
+ATP,British Aerospace,ATP,,turboprop,2,M
+ATTL,Euronef,ATTL-1,,piston,1,L
+AU11,Beagle-Auster,E-3 Auster AOP11,,piston,1,L
+AUJ2,Auster,J-2 Arrow,,piston,1,L
+AUJ4,Auster,J-4 Archer,,piston,1,L
+AURA,Sunward,SA60 Aurora,,piston,1,L
+AUS3,Taylorcraft,Auster 3,,piston,1,L
+AUS4,Taylorcraft,Auster 4,,piston,1,L
+AUS5,Auster,Auster 5,,piston,1,L
+AUS6,Auster,6A,,piston,1,L
+AUS7,Auster,Auster T7,,piston,1,L
+AUS9,Auster,Auster AOP9,,piston,1,L
+AV68,Alpla,AVO-68 Samburo,,piston,1,L
+AVAM,Avid,Avid Amphibian,,piston,1,L
+AVID,Airdale,Avid Flyer,,piston,1,L
+AVIN,Avro,594 Avian,,piston,1,L
+AVTR,Aero Adventure,Aventura 2,,piston,1,L
+AXE,Skyfly,Axe,,electric,8,L
+B06,Bell,406,,helicopter,1,L
+B06T,Bell,206LT TwinRanger,,helicopter,2,L
+B1,Rockwell,B-1 Lancer,,jet,4,H
+B103,Beriev,Be-103 Bekas,,piston,2,L
+B105,MBB,BO-105,,helicopter,2,L
+B13,Akaflieg Berlin,B-13,,piston,1,L
+B14A,Bellanca,14 Cruisair,,piston,1,L
+B14B,Downer,14 Bellanca 260,,piston,1,L
+B14C,Bellanca,14 Bellanca 260A,,piston,1,L
+B150,Winner,B-150,,helicopter,1,L
+B17,Boeing,B-17 Flying Fortress,,piston,4,M
+B18T,Beech,18 (Turbo),,turboprop,2,L
+B190,Beech,1900/C-12J,,turboprop,2,M
+B2,Northrop,B-2 Spirit,,jet,4,H
+B209,Bolkow,BO-209 Monsun,,piston,1,L
+B21,Northrop Grumman,B-21 Raider,,jet,2,H
+B212,Bell,212,,helicopter,2,L
+B214,Bell,214A Isfahan,,helicopter,1,M
+B222,Bell,222,,helicopter,2,L
+B23,Douglas,B-23 Dragon,,piston,2,M
+B230,Bell,230,,helicopter,2,L
+B23E,BRM Aero,Bristell B23 Energic,,electric,1,L
+B24,Consolidated,B-24 Liberator,,piston,4,M
+B25,North American,B-25 Mitchell,,piston,2,M
+B26,Douglas,A-26 Invader,,piston,2,M
+B26M,Martin,179 Marauder,,piston,2,M
+B29,Boeing,B-29 Superfortress,,piston,4,M
+B305,Brantly,305,,helicopter,1,L
+B350,Beech,Super King Air 350,,turboprop,2,
+B360,Yakovlev Aircraft,Bear 360,,piston,1,L
+B36T,Allison,36 Turbine Bonanza,,turboprop,1,L
+B37M,Boeing,737 MAX 7,737,jet,2,M
 B38M,Boeing,737 MAX 8,737,jet,2,M
+B39M,Boeing,737 MAX 9,737,jet,2,M
+B3XM,Boeing,737 MAX 10,737,jet,2,M
+B407,Bell,407,,helicopter,1,L
+B412,Bell,412,,helicopter,2,L
+B427,Bell,427,,helicopter,2,L
+B429,Bell,429 GlobalRanger,,helicopter,2,L
+B430,Bell,430,,helicopter,2,L
+B461,British Aerospace,BAe 146-100,,jet,4,M
+B462,British Aerospace,BAe 146 -200,,jet,4,M
+B463,British Aerospace,BAe-146-300,,jet,4,M
+B47G,Bell,47D,,helicopter,1,L
+B47J,Bell,47J Ranger,,helicopter,1,L
+B47T,Soloy,Bell 47,,helicopter,1,L
+B505,Bell,505 Jet Ranger X,,helicopter,1,L
+B52,Boeing,B-52 Stratofortress,,jet,8,H
+B525,Bell,525 Relentless,,helicopter,2,M
+B58T,Beech,58P Pressurized Baron,,piston,2,L
+B60,Boisavia,B-60 Mercurey,,piston,1,L
+B609,Agustawestland,AW-609,,turboprop,2,M
+B60T,Beech,60 Royal Turbine Duke,,turboprop,2,L
+B701,Boeing,707-100,,jet,4,M
+B703,Boeing,707-300,,jet,4,H
+B712,Boeing,717-200,717,jet,2,M
+B720,Boeing,720,,jet,4,M
+B721,Boeing,727-100 (C-22),727,jet,3,M
+B722,Boeing,727-200,727,jet,3,M
+B732,Boeing,737-200/VC96,737,jet,2,M
+B733,Boeing,737-300,737,jet,2,M
+B734,Boeing,737-400,737,jet,2,M
+B735,Boeing,737-500,737,jet,2,M
+B736,Boeing,737-600,737,jet,2,M
+B737,Boeing,737-700,737,jet,2,M
 B738,Boeing,737-800,737,jet,2,M
+B739,Boeing,737-900,737,jet,2,M
+B741,Boeing,747-100,747,jet,4,H
+B742,Boeing,747-200,747,jet,4,H
+B743,Boeing,747-300,747,jet,4,H
 B744,Boeing,747-400,747,jet,4,H
 B748,Boeing,747-8,747,jet,4,H
+B74R,Boeing,747SR,747,jet,4,H
+B74S,Boeing,747SP,747,jet,4,H
+B752,Boeing,757-200,757,jet,2,M
+B753,Boeing,757-300,757,jet,2,M
+B762,Boeing,767-200,767,jet,2,H
+B763,Boeing,767-300,767,jet,2,H
+B764,Boeing,767-400,767,jet,2,H
 B772,Boeing,777-200,777,jet,2,H
+B773,Boeing,777-300,777,jet,2,H
+B778,Boeing,777-8,777,jet,2,H
+B779,Boeing,777-9,777,jet,2,H
+B77L,Boeing,777-200LRF/LR,777,jet,2,H
 B77W,Boeing,777-300ER,777,jet,2,H
 B788,Boeing,787-8,787,jet,2,H
 B789,Boeing,787-9,787,jet,2,H
+B78X,Boeing,787-10 Dreamliner,787,jet,2,H
+BA11,BAC,111 One-Eleven,,jet,2,M
+BABY,Canadian Home Rotors,Baby Belle,,helicopter,1,L
+BARC,Buethe,Barracuda,,piston,1,L
+BASS,Beagle,B-206,,piston,2,L
+BBAT,Bradley,BA-100 Aerobat,,piston,1,L
+BBIR,Hovey,Beta Bird,,piston,1,L
+BCA3,Buhl,CA-3 Sport Airsedan,,piston,1,L
+BCAT,Grumman,F8F Bearcat,,piston,1,L
+BCMP,Avipro,Bearhawk Companion,,piston,1,L
+BCS1,Airbus,A220-100,A220,jet,2,M
+BCS3,Airbus,A220-300,A220,jet,2,M
+BD10,Peregrine,PJ-2 Falcon,,jet,1,L
+BD17,Bede,BD-17 Nuggett,,piston,1,L
+BD4,Bede,BD-4,,piston,1,L
+BD5,Bede,BD-5B Micro,,piston,1,L
+BD5J,Alturair,BD-5J Micro,,jet,1,L
+BD5T,Bd-Micro,BD-5T Micro,,turboprop,1,L
+BDOG,Scottish Aviation,Fpl61,,piston,1,L
+BE10,Beech,King Air 100,,turboprop,2,L
+BE12,Beriev,Be-12 Tchaika,,turboprop,2,M
+BE17,Beech,17 Staggerwing,,piston,1,L
+BE18,Beech,18,,piston,2,L
+BE19,Beech,B19 Musketeer,,piston,1,L
+BE20,Beech,200 Super King,,turboprop,2,
+BE22,Beechcraft,220 Denali,,turboprop,1,L
+BE23,Beech,23 Sundowner,,piston,1,L
+BE24,Beech,24 Sierra,,piston,1,L
+BE30,Beech,Raytheon 300 Super King Air,,turboprop,2,L
+BE32,Beriev,Be-30,,turboprop,2,M
+BE33,Beech,Bonanza 33,,piston,1,L
+BE35,Beech,Bonanza 35,,piston,1,L
+BE36,Beech,Bonanza 36,,piston,1,L
+BE40,Beech,Raytheon/Beech Beechjet 400/T-1 Jayhawk,,jet,2,M
+BE4W,Raytheon,400XPR Beechjet,,jet,2,M
+BE50,Beech,Beechcraft 50 Twin Bonanza,,piston,2,L
+BE55,Beech,Baron 55,,piston,2,L
+BE56,Beech,56 Turbo Baron,,piston,2,L
+BE58,Beech,58 Baron,,piston,2,L
+BE60,Beech,60 Duke,,piston,2,L
+BE65,Beech,65 Queen Air,,piston,2,L
+BE70,Beech,70 Queen Air,,piston,2,L
+BE76,Beech,76 Duchess,,piston,2,L
+BE77,Beech,77 Skipper,,piston,1,L
+BE80,Beech,BE-80 Queen Air,,piston,2,L
+BE88,Beech,88 Queen Air,,piston,2,L
+BE95,Beech,Beechcraft 95 Travel Air,,piston,2,L
+BE99,Beech,Airliner 99,,turboprop,2,L
+BE9L,Beech,King Air 90,,turboprop,2,L
+BE9T,Beech,F90 King Air,,turboprop,2,L
+BEA5,Avipro,Bearhawk 5,,piston,1,L
+BEAR,Avipro,Bearhawk,,piston,1,L
+BELF,Short,SC-5 Belfast,,turboprop,4,M
+BER2,Beriev,Be-200 Altair,,jet,2,M
+BER4,Beriev,A-40 Albatross,,jet,2,M
+BETA,Rollason,Beta,,piston,1,L
+BEVR,Asap,Beaver,,piston,1,L
+BF19,Podesva,Bf-109G-2,,piston,1,L
+BFIT,Bristol,F-2B Fighter,,piston,1,L
+BILO,Pena,Bilouis,,piston,1,L
+BIPL,EAA,Biplane,,piston,1,L
+BIRD,Taylor,TA-2 Bird,,piston,1,L
+BISC,Bilsam,Sky Cruiser,,piston,1,L
+BK17,Eurocopter-Kawasaki,BK-117B,,helicopter,2,L
+BKUT,Berkut,Berkut,,piston,1,L
+BL11,Bleriot,11,,piston,1,L
+BL17,Bellanca,Viking,,piston,1,L
+BL19,Aviabellanca,19 Skyrocket,,piston,1,L
+BL8,Bellanca,8 Scout,,piston,1,L
+BLBU,Ameur,Altania,,piston,1,L
+BLCF,Boeing,747-400LCF Dreamlifter,,jet,4,H
+BLEN,Bristol,149 Blenheim,,piston,2,L
+BLKS,Aircraft Spruce,Baby Lakes,,piston,1,L
+BLSA,Avipro,Bearhawk LSA,,piston,1,L
+BM6,Maranda,BM-6 Lark,,piston,1,L
+BMAN,AAK,Bushman,,piston,1,L
+BN2P,Britten-Norman,BN-2 Islander,,piston,2,L
+BN2T,Britten-Norman,BN-2T Defender 4000,,turboprop,2,L
+BO40,Boeing,40,,piston,1,L
+BOLT,Steen,Skybolt,,piston,1,L
+BOOM,Rutan,202 Boomerang,,piston,2,L
+BPAT,Avipro,Bearhawk Patrol,,piston,1,L
+BPUM,BDC Aero,Puma,,piston,1,L
+BR14,Breguet,14 Replica,,piston,1,L
+BR23,BRM Aero,Bristell B23,,piston,1,L
+BR54,Barnett,BRC-540,,piston,1,L
+BR60,Brumby,600,,piston,1,L
+BR61,Brumby,610 Evolution,,piston,1,L
+BR8,BRM Aero,Bristell B8,,piston,1,L
+BRAV,Tecnam,P-2004 Bravo,,piston,1,L
+BRB2,Brantly,B-2,,helicopter,1,L
+BREZ,Aerostyle,Breezer,,piston,1,L
+BROU,MAX Holste,MH-1521 Broussard,,piston,1,L
+BS60,Beech-Sferma,60 Marquis,,turboprop,2,L
+BSTP,Bell,214ST SuperTransport,,helicopter,2,M
+BSWN,Dronamics,Black Swan,,piston,1,L
+BT36,Beech,36 Bonanza,,piston,1,L
+BT7,Boeing,BTX-1,,jet,1,M
+BTB2,Baykar,Bayraktar TB-2,,piston,1,L
+BTB3,Baykar,Bayraktar TB-3,,piston,1,L
+BTUB,Kimbrel,Dormoy Bathtub,,piston,1,L
+BU20,Aircraft Hydro-Forming,Bushmaster 2000,,piston,3,L
+BU31,Dornier,DoBü-131 Jungmann,,piston,1,L
+BU33,Bitz,Bü-133 Jungmeister,,piston,1,L
+BU81,Zlin,C-106,,piston,1,L
+BUC,Hawker Siddeley,Buccaneer,,jet,2,M
+BUCA,Advanced Aeromarine,Mallard,,piston,1,L
+BUSH,Rainbow Skyreach,BushCat,,piston,1,L
+BW60,Blackwing,BW-600,,piston,1,L
+BW6T,Blackwing,BW-635,,piston,1,L
+BX2,Brandli,BX-2 Cherry,,piston,1,L
+C02T,AJI,Turbo Star 402,,turboprop,2,L
+C04T,Cessna,404 (turbine),,turboprop,2,L
+C06T,Cessna,206 (turbine),,turboprop,1,L
+C07T,Cessna,207 (turbine),,turboprop,1,L
+C1,Kawasaki,C-1,,jet,2,M
+C101,CASA,A-36 Halcón,,jet,1,L
+C10T,Advanced Aircraft,Spirit 750,,turboprop,1,L
+C119,Fairchild,C-119 Flying Boxcar,,piston,2,M
+C120,Cessna,120,,piston,1,L
+C123,Fairchild,C-123 Provider,,piston,2,M
+C130,Lockheed,130 Hercules,,turboprop,4,M
+C135,Boeing,NC-13,,jet,4,H
+C140,Cessna,140,,piston,1,L
+C14T,AJI,Turbo Star 414,,turboprop,2,L
+C15,McDonnell Douglas,YC-15,,jet,4,M
+C150,Cessna,150,,piston,1,L
+C152,Cessna,152,,piston,1,L
+C160,Transall,C-160,,turboprop,2,M
+C162,Cessna,162 Skycatcher,,piston,1,L
+C17,Boeing,Globemaster 3,,jet,4,H
+C170,Cessna,170,,piston,1,L
+C172,Cessna,Skyhawk 172/Cutlass,,piston,1,L
+C175,Cessna,175,,piston,1,L
+C177,Cessna,177 Cardinal,,piston,1,L
+C180,Cessna,180 Skywagon,,piston,1,L
+C182,Cessna,Skylane 182,,piston,1,L
+C185,Cessna,185 Skywagon,,piston,1,L
+C188,Cessna,188,,piston,1,L
+C190,Cessna,190,,piston,1,L
+C195,Cessna,195,,piston,1,L
+C2,Grumman,C-2 Greyhound,,turboprop,2,M
+C205,Cessna,205,,piston,1,L
+C206,Cessna,206 Stationair,,piston,1,L
+C207,Cessna,207 Stationair 7,,piston,1,L
+C208,Cessna,208 Caravan 1,,turboprop,1,L
+C210,Cessna,210 Centurion,,piston,1,L
+C212,CASA,Aviocar,,turboprop,2,M
+C21T,Riley,Turbine Eagle 421,,turboprop,2,L
+C22J,Caproni Vizzola,C-22J Ventura,,jet,2,L
+C240,Cessna,TTx Model T240,,piston,1,L
+C25A,Cessna,Citation CJ2,,jet,2,L
+C25B,Cessna,Citation CJ3,,jet,2,L
+C25C,Cessna,Citation CJ4,,jet,2,M
+C25M,Cessna,Citation M2,,jet,2,L
+C270,Caudron,C-270 Luciole,,piston,1,L
+C27J,Alenia Aermacchi,C-27J Spartan,,turboprop,2,M
+C295,CASA,C-105 Amazonas,,turboprop,2,M
+C303,Cessna,303 Crusader,,piston,2,L
+C306,Cea-Ufmg,CB-10 Triathlon,,piston,1,L
+C309,Cea-Ufmg,CEA-309 Mehari,,piston,1,L
+C30J,Lockheed Martin,C-130J Super Hercules ; Lockheed,,turboprop,4,M
+C310,Cessna,310,,piston,2,L
+C311,Cea-Ufmg,CEA-311 Anequim,,piston,1,L
+C320,Cessna,320 Skyknight,,piston,2,L
+C335,Cessna,335,,piston,2,L
+C336,Cessna,336 Skymaster,,piston,2,L
+C337,Cessna,337 Super Skymaster,,piston,2,L
+C340,Cessna,340,,piston,2,L
+C365,EKW,C-3605,,turboprop,1,L
+C402,Cessna,401/402,,piston,2,L
+C404,Cessna,404 Titan,,piston,2,L
+C408,Cessna,408 SkyCourier,,turboprop,2,L
+C411,Cessna,411,,piston,2,L
+C414,Cessna,Chancellor 414,,piston,2,L
+C42,Ikarus,C-42,,piston,1,L
+C421,Cessna,Golden Eagle 421,,piston,2,L
+C425,Cessna,425 Corsair,,turboprop,2,L
+C441,Cessna,Conquest,,turboprop,2,L
+C46,Curtiss,C-46 Commando,,piston,2,M
+C500,Cessna,500/Citation I,,jet,2,L
+C501,Cessna,1SP,,jet,2,L
+C510,Cessna,Citation Mustang,,jet,2,L
+C525,Cessna,CitationJet/CJ1,,jet,2,L
+C550,Cessna,Citation II/Bravo,,jet,2,L
+C551,Cessna,Citation II/SP,,jet,2,L
+C55B,Cessna,Citation Bravo,,jet,2,L
+C560,Cessna,Citation V/Ultra/Encore,,jet,2,M
+C56X,Cessna,Excel/XLS,,jet,2,M
+C5M,Lockheed,C-5 Super Galaxy,,jet,4,H
+C650,Cessna,III/VI/VII,,jet,2,M
+C680,Cessna,Citation Sovereign,,jet,2,M
+C68A,Cessna,Citation Latitude,,jet,2,M
+C700,Cessna,Citation Longitude,,jet,2,M
+C72R,Cessna,172RG Cutlass RG,,piston,1,L
+C750,Cessna,Citation X,,jet,2,M
+C77R,Cessna,177 Cardinal RG,,piston,1,L
+C82,Fairchild,C-82 Packet,,piston,2,M
+C82R,Cessna,Skylane RG,,piston,1,L
+C82S,Cessna,T182 Turbo Skylane,,piston,1,L
+C82T,Cessna,TR182 Turbo Skylane RG,,piston,1,L
+C919,Comac,C-919,,jet,2,M
+C97,Boeing,C-97 Stratofreighter,,piston,4,M
+CA12,Comp AIR,CA-12 Comp Air 12,,turboprop,1,L
+CA19,Commonwealth,CA-13 Boomerang,,piston,1,L
+CA1P,Aerocomp,CA-10 Comp Air 10,,piston,1,L
+CA1T,Aerocomp,CA-10T Comp Air 10T,,turboprop,1,L
+CA25,Commonwealth,CA-25 Winjeel,,piston,1,L
+CA3,Aerocomp,CA-3 Comp Air 3,,piston,1,L
+CA4,Aerocomp,CA-4 Comp Air 4,,piston,1,L
+CA41,Corvus,CA-41 Racer,,piston,1,L
+CA6,Aerocomp,CA-6 Comp Air 6,,piston,1,L
+CA61,Cvjetkovic,CA-61 Mini Ace,,piston,1,L
+CA65,Cvjetkovic,CA-65 Skyfly,,piston,1,L
+CA7P,Aerocomp,CA-7P Comp Air 7P,,piston,1,L
+CA7T,Aerocomp,CA-7SLX Comp Air 7SLX,,turboprop,1,L
+CA8,Aerocomp,CA-8 Comp Air 8,,turboprop,1,L
+CA9,Comp AIR,CA-9 Comp Air 9,,turboprop,1,L
+CABI,Universal Composite,Carbon Bird,,turboprop,1,L
+CABN,Paramount,Cabinaire,,piston,1,L
+CAD2,Class,Bush Caddy R-120,,piston,1,L
+CAD4,Class,Bush Caddy L-160,,piston,1,L
+CAML,Sopwith,Camel,,piston,1,L
+CAMP,Grega,GN-1 Aircamper,,piston,1,L
+CAN4,Campana,AN-4,,piston,1,L
+CAPL,Capella,Capella,,piston,1,L
+CAR,Aerocad,Aerocar,,piston,1,L
+CARV,Aviation Traders,ATL-98 Carvair,,piston,4,M
+CASS,Cassutt,Special,,piston,1,L
+CAT,Canadian Vickers,A-10 Catalina,,piston,2,M
+CAT1,Creative Flight,MPA Aerocat SR,,piston,1,L
+CAT2,Creative Flight,MPA Aerocat TR,,piston,2,L
+CAW,Cessna,AW,,piston,1,L
+CB1,Hatz,CB-1 Biplane,,piston,1,L
+CC11,CUB Crafters,CC-11 Carbon Cub,,piston,1,L
+CC19,CUB Crafters,CC-19 NXCub,,piston,1,L
+CD2,Claudius Dornier,CD-2 Seastar,,turboprop,2,L
+CDC6,Cessna,DC-6,,piston,1,L
+CDUS,Autogyro,Calidus,,piston,1,L
+CDW1,Chilton,DW-1,,piston,1,L
+CE15,Chernov,Che-15,,piston,1,L
+CE22,Hydroplane,Che-22 Corvette,,piston,2,L
+CE23,Chernov,Che-23,,piston,1,L
+CE25,Chernov,Che-25,,piston,2,L
+CE27,Chernov,Che-27,,piston,2,L
+CE43,Cerva,CE-43 Guepard,,piston,1,L
+CEL5,Otto,Celera 500L,,piston,1,L
+CELR,Mirage,Celerity,,piston,1,L
+CENT,Found,100 Centennial,,piston,1,L
+CFRE,Colyaer,Freedom,,piston,1,L
+CG3,Caudron,G-3,,piston,1,L
+CGAN,Colyaer,Gannet,,piston,1,L
+CH1,Aidc,A-CH-1 Chung-Tsing,,turboprop,1,L
+CH10,Zenair,CH-100 Mono-Z,,piston,1,L
+CH12,Cicaré,CH-12,,helicopter,1,L
+CH14,Cicaré,CH-14 Aguilucho,,helicopter,1,L
+CH15,Zenair,CH-150 Acro-Z,,piston,1,L
+CH18,Zenair,CH-180 Super Acro-Z,,piston,1,L
+CH20,Heintz,CH-200 Zénith,,piston,1,L
+CH25,Zenair,CH-250 Zénith,,piston,1,L
+CH2T,AMD,CH-2000 Alarus,,piston,1,L
+CH3,Chrislea,CH-3 Skyjeep,,piston,1,L
+CH30,Zenair,CH-300 Tri-Z,,piston,1,L
+CH40,Champion,402 Lancer,,piston,2,L
+CH50,Zenair,CH-50 Mini Zénith,,piston,1,L
+CH60,Roland,601 Zodiac,,piston,1,L
+CH62,Zenair,CH-620 Gemini,,piston,2,L
+CH64,Zenair,CH-640 Zodiac,,piston,1,L
+CH65,AMD,CH-650 Zodiac,,piston,1,L
+CH7,Heli-Sport,CH-7 Kompress,,helicopter,1,L
+CH70,Roland,701 Stol,,piston,1,L
+CH75,AMD,CH-750 Cruzer,,piston,1,L
+CH7A,Aeronca,7AC,,piston,1,L
+CH7B,Bellanca,7GCBC Citabria,,piston,1,L
+CH80,Jordan Aerospace,CH-8000 Hawk 1,,piston,1,L
+CHAN,Cadcor,Chanute,,piston,1,L
+CHCS,Alpaero,Choucas,,piston,1,L
+CHIC,Podesva,Chico,,piston,1,L
+CHIF,Pawnee,Chief,,helicopter,1,L
+CHIN,Asap,Chinook,,piston,1,L
+CHIP,Leger,Super-Chipmunk,,piston,1,L
+CHR1,Elmwood,CA-05 Christavia Mk1,,piston,1,L
+CHR4,Elmwood,CH-8 Christavia Mk4,,piston,1,L
+CHSY,Chayair,Sycamore,,piston,1,L
+CICA,Hydroplane,Cicada,,piston,2,L
+CJ1,Corby,CJ-1 Starlet,,piston,1,L
+CJ6,Hongdu,BT-6,,piston,1,L
+CKUO,Aidc,F-CK-1 Ching-Kuo,,jet,2,M
+CL2P,Canadair,CL-215,,piston,2,M
+CL2T,Canadair,CL-215T,,turboprop,2,M
+CL30,Bombardier,(Canadair) Challenger 300,,jet,2,M
+CL35,Bombardier,Challenger 350,,jet,2,M
+CL41,Canadair,41 Tutor,,jet,1,L
+CL4G,Canadair,CL-44-O Guppy,,turboprop,4,M
+CL60,Canadair,Challenger 600/601/604,,jet,2,M
+CLA,Callair,A-2,,piston,1,L
+CLB1,Aero Commander,B-1 Ag Commander,,piston,1,L
+CLBR,Fisher,Celebrity,,piston,1,L
+CLD2,Rotortec,Cloud Dancer 2,,piston,1,L
+CLDS,Rearwin,8090 Cloudster,,piston,1,L
+CLON,Autogyro,Cavalon,,piston,1,L
+CMA3,Colyaer,Martin 3,,piston,1,L
+CMAS,Cessna,C-145 Airmaster,,piston,1,L
+CMD1,AIR Command,Commander 147,,piston,1,L
+CMDE,AIR Command,Commander Elite Side-by-Side,,piston,1,L
+CMDT,AIR Command,Commander Elite Tandem,,piston,1,L
+CN12,Circa,Nieuport 12-7/8,,piston,1,L
+CN35,CASA,CN-235,,turboprop,2,M
+CNBR,BAC,Canberra,,jet,2,M
+CNDR,General Avia,F-20TP Condor,,turboprop,2,L
+CNUK,Fleet,80 Canuck,,piston,1,L
+CO50,Cobalt,Co-50 Valkyrie,,piston,1,L
+COAR,Cobra,Arrow,,piston,1,L
+COBR,Deborde-Rolland,Cobra,,piston,1,L
+COL3,Cessna,Lancair LC-40 Columbia 300,,piston,1,L
+COL4,Cessna,Lancair LC-41 Columbia 400,,piston,1,L
+COLT,Texas Aircraft,Colt,,piston,1,L
+COMU,Helicom,H-1 Commuter,,helicopter,1,L
+CONI,Lockheed,C-121 Constellation,,piston,4,M
+COOT,Aerocad,Coot,,piston,1,L
+CORO,Corvus,CA-21 Phantom,,piston,1,L
+CORR,Sivel,SD-27 Corriedale,,piston,1,L
+CORS,Chance Vought,AU Corsair,,piston,1,M
+CORV,Wolfsberg,Corvus,,piston,2,L
+COUG,Acro Sport,Cougar,,piston,1,L
+COUR,Helio,U-10 Super Courier,,piston,1,L
+COY2,Rand,S-6 Coyote 2,,piston,1,L
+COZJ,Co-Z,CozyJet,,jet,1,L
+COZY,Aerocad,AeroCanard,,piston,1,L
+CP10,Akrotech Europe,CAP-10,,piston,1,L
+CP13,Piel,CP-1310 Super Emeraude,,piston,1,L
+CP20,Caarp,CAP-20,,piston,1,L
+CP21,Mudry,CAP-21,,piston,1,L
+CP22,Akrotech Europe,CAP-222,,piston,1,L
+CP23,Mudry,CAP-230,,piston,1,L
+CP30,Piel,CP-30 Emeraude,,piston,1,L
+CP32,Piel,CP-320 Super Emeraude,,piston,1,L
+CP60,Piel,CP-60 Diamant,,piston,1,L
+CP65,Porterfield,CP-65 Collegiate,,piston,1,L
+CP75,Piel,CP-70 Béryl,,piston,1,L
+CP80,Piel,CP-80 Zéphir,,piston,1,L
+CP90,Piel,CP-90 Pinocchio 2,,piston,1,L
+CPNA,Pena,Capena,,piston,1,L
+CPUP,Culp,Sopwith Pup,,piston,1,L
+CR10,Dyn'aero,CR-100,,piston,1,L
+CRBN,Curtiss,50 Robin,,piston,1,L
+CRER,Rans,S-7 Courier,,piston,1,L
+CRES,NEW Zealand,Cresco,,turboprop,1,L
+CRIO,Microleve,Corsario,,piston,1,L
+CRJ1,Canadair,CRJ-100,CRJ,jet,2,M
+CRJ2,Canadair,CRJ-200,CRJ,jet,2,M
+CRJ7,Canadair,CRJ-700,CRJ,jet,2,M
 CRJ9,Bombardier,CRJ-900,CRJ,jet,2,M
+CRJX,Bombardier,CL-600 Regional Jet CRJ-1000,CRJ,jet,2,M
+CRUZ,Czaw,SportCruiser,,piston,1,L
+CT4,Pacific Aerospace,CT-4 Airtrainer,,piston,1,L
+CTAH,Rainbow,Cheetah,,piston,1,L
+CTLN,FLY Synthesis,Catalina,,piston,1,L
+CUB2,Aces High,Cuby 2,,piston,1,L
+CUCA,Culver,LAR Cadet,,piston,1,L
+CUDA,Lancair,NLA-275 Barracuda,,piston,1,L
+CULP,Culp,Special,,piston,1,L
+CULV,Culver,V,,piston,1,L
+CULX,Fisher Aero,Culex,,piston,2,L
+CVLP,Convair,CV-440 Metropolitan,,piston,2,M
+CVLT,Convair,"CV-580/600/640, C-131H",,turboprop,2,M
+CX30,Beta,CX-300,,electric,1,
+CX5,Thatcher,CX-5,,piston,1,L
+CYGT,Hawker,Cygnet,,piston,1,L
+D1,Derringer,New Derringer,,piston,2,L
+D11,Jodel,D-11,,piston,1,L
+D139,Dorna,D-139 Blue Bird,,piston,1,L
+D140,Jodel,D-140 Abeille,,piston,1,L
+D150,Jodel,D-150 Mascaret,,piston,1,L
+D18,Jodel,D-18,,piston,1,L
+D201,D'apuzzo,D-201 Sportwing,,piston,1,L
+D21,Fokker,D-21 Replica,,piston,1,L
+D228,Dornier,228,,turboprop,2,L
+D25,NEW Standard,D-25,,piston,1,L
+D250,Centre EST,DR-200,,piston,1,L
+D253,Centre EST,DR-253 Regent,,piston,1,L
+D28D,Dornier,128-2 Skyservant,,piston,2,L
+D28T,Dornier,128-6 Turbo Skyservant,,turboprop,2,L
+D31,Druine,D-31 Turbulent,,piston,1,L
+D328,Dornier,328 Series,,turboprop,2,M
+D39,Akaflieg Darmstadt,D-39,,piston,1,L
+D4,Auster,D-4,,piston,1,L
+D5,Beagle,D-5,,piston,1,L
+D5TU,Druine,D-5 Turbi,,piston,1,L
+D6,Auster,D-6,,piston,1,L
+D6CR,Druine,D-60 Condor,,piston,1,L
+D7,Fokker,D-7 Replica,,piston,1,L
+D8,Fokker,D-8 Replica,,piston,1,L
+DA2,Davis,DA-2,,piston,1,L
+DA36,Diamond,DA-36 E-Star,,electric,1,L
+DA40,Diamond,Star DA40,,piston,1,L
+DA42,Diamond,Twin Star,,piston,2,L
+DA5,Davis,DA-5,,piston,1,L
+DA50,Diamond,DA-50,,piston,1,L
+DA62,Diamond,DA-62,,piston,2,L
+DAHU,Pena,Dahu,,piston,1,L
+DAKH,Fisher,Dakota Hawk,,piston,1,L
+DAL1,Spezio,DAL-1 Tuholer,,piston,1,L
+DAL4,Dallach,D-4 Fascination,,piston,1,L
+DAL5,Dallach,D-5 Evolution,,piston,1,L
+DART,Parrish,Dart,,piston,1,L
+DC10,McDonnell Douglas,Boeing (Douglas) DC 10-10/30/40,DC-10,jet,3,H
+DC2,Douglas,DC-2,,piston,2,M
+DC3,Douglas,DC 3,,piston,2,M
+DC3S,Douglas,Super DC-3,,piston,2,M
+DC3T,Professional Aviation,"Basler, BT-67 Turbo 67",,turboprop,2,M
+DC4,Douglas,C-54 Skymaster,,piston,4,M
+DC6,Douglas,DC 6,,piston,4,M
+DC7,Douglas,DC-7,,piston,4,M
+DC85,Douglas,DC-8-50,,jet,4,H
+DC86,Douglas,DC-8-60,,jet,4,H
+DC87,Douglas,DC-8-70,,jet,4,H
+DC91,Douglas,DC 9-10,,jet,2,M
+DC92,Douglas,DC-9-20,,jet,2,M
+DC93,Douglas,DC 9-30,,jet,2,M
+DC94,Douglas,DC-9-40,,jet,2,M
+DC95,Douglas,DC 9-50,,jet,2,M
+DDUC,Bakeng,Double Duce,,piston,1,L
+DEAG,Amax,Double Eagle,,piston,1,L
+DEFI,Rutan,40 Defiant,,piston,2,L
+DELF,Lyavin,Delfin,,piston,1,L
+DFL6,Damoure-Fabre,DFL-6 Saphir,,piston,1,L
+DFLY,Slipstream,Dragonfly,,piston,1,L
+DG15,Howard,DGA-15,,piston,1,L
+DG1T,DG Flugzeugbau,DG-1000M,,piston,1,L
+DG40,Glaser-Dirks,DG-400,,piston,1,L
+DG50,Glaser-Dirks,DG-500M,,piston,1,L
+DG60,Glaser-Dirks,DG-600M,,piston,1,L
+DG80,DG Flugzeugbau,DG-800,,piston,1,L
+DH2T,De Havilland Canada,DHC-2 Mk3 Turbo Beaver,,turboprop,1,L
+DH3T,De Havilland Canada,DHC-3 Turbo Otter,,turboprop,1,L
+DH4T,De Havilland Canada,DHC-4 Turbo Caribou,,turboprop,2,M
+DH60,de Havilland,DH-60 Moth,,piston,1,L
+DH80,de Havilland,DH-80 Puss Moth,,piston,1,L
+DH82,de Havilland,DH-82 Queen Bee,,piston,1,L
+DH83,de Havilland,DH-83 Fox Moth,,piston,1,L
+DH84,de Havilland,DH-84 Dragon,,piston,2,L
+DH85,de Havilland,DH-85 Leopard Moth,,piston,1,L
+DH87,de Havilland,DH-87 Hornet Moth,,piston,1,L
+DH88,de Havilland,DH-88 Comet Replica,,piston,2,L
+DH89,de Havilland,DH-89 Dragon Rapide,,piston,2,L
+DH8A,De Havilland Canada,DeHavilland Canada DHC8-100,Dash 8,turboprop,2,M
+DH8B,De Havilland Canada,DeHavilland Canada DHC8-200,Dash 8,turboprop,2,M
+DH8C,De Havilland Canada,DeHavilland Canada Dash 8/DHC8-300,Dash 8,turboprop,2,M
 DH8D,De Havilland Canada,Dash 8-400,Dash 8,turboprop,2,M
+DH90,de Havilland,DH-90 Dragonfly,,piston,2,L
+DH94,de Havilland,DH-94 Moth Minor,,piston,1,L
+DHA3,DE Havilland Australia,DHA-3 Drover,,piston,3,L
+DHC1,de Havilland,DHC-1 Chipmunk,,piston,1,L
+DHC2,De Havilland Canada,DeHavilland Canada 2 Mk1 Beaver,,piston,1,L
+DHC3,De Havilland Canada,DHC-3 Otter,,piston,1,L
+DHC4,De Havilland Canada,C-7 Caribou,,piston,2,M
+DHC5,De Havilland Canada,C-115 Buffalo,,turboprop,2,M
+DHC6,De Havilland Canada,DeHavilland Canada Twin Otter,,turboprop,2,L
+DHC7,De Havilland Canada,DeHavilland Canada DHC-7,,turboprop,4,M
+DIES,Pennec-Lucas,Dieselis,,piston,1,L
+DIMO,Diamond,HK-36 Eco Dimona,,piston,1,L
+DISC,Schempp-Hirth,Discus 2CT,,piston,1,L
+DJET,Diamond,DJ-1 D-Jet,,jet,1,L
+DJIN,Sud-Ouest,Djinn,,helicopter,1,L
+DLH2,Lange,E-1 Antares DLR-H2,,electric,1,L
+DNGO,Aeroric,Dingo,,turboprop,1,L
+DO27,Dornier,Do-27,,piston,1,L
+DO28,Dornier,Do-28A,,piston,2,L
+DOCX,Kovach-Elmendorf,ES-3 Doc's RX,,piston,1,L
+DON,Unikomtranso,Don,,piston,1,L
+DOVE,de Havilland,DH-104 Devon,,piston,2,L
+DR1,Fokker,Dr-1 Replica,,piston,1,L
+DR10,Centre EST,DR-100 Ambassadeur,,piston,1,L
+DR22,Centre EST,DR-220 2+2,,piston,1,L
+DR30,Robin,DR-300,,piston,1,L
+DR40,Robin,DR-400 2+2,,piston,1,L
+DRAG,Crae,Dragon Fly,,helicopter,1,L
+DRIF,Austflight,Drifter,,piston,1,L
+DRTG,Culver,Dart G,,piston,1,L
+DSA1,Smith,DSA-1 Miniplane,,piston,1,L
+DSK,Killingsworth,DSK-1 Hawk,,piston,1,L
+DSLK,Driggs,Skylark,,piston,1,L
+DT45,Diamond,DART-450,,turboprop,1,L
+DTA1,Verhees,D-1 Delta,,piston,1,L
+DTA2,Verhees,D-2 Delta,,piston,1,L
+DUB2,Dubna,2 Osa,,piston,1,L
+DUCE,Bakeng,Deuce,,piston,1,L
+DUOD,Schempp-Hirth,Duo Discus T,,piston,1,L
+DUR5,Durand,Mk5,,piston,1,L
+DV1,Dova,DV-1 Skylark,,piston,1,L
+DV2,Dova,DV-2 Infinity,,piston,1,L
+DV20,Diamond,20 Katana,,piston,1,L
+DW1,Bellanca,DW-1 Eagle,,piston,1,L
+DWD2,Dewoitine,D-26,,piston,1,L
+DYH2,Dynali,H-2,,helicopter,1,L
+DYH3,Dynali,H-3 EasyFlyer,,helicopter,1,L
+E110,Embraer,EMB110 Bandeirante,,turboprop,2,L
+E120,Embraer,Brasilia EMB 120,,turboprop,2,M
+E121,Embraer,EC-9 Xingu,,turboprop,2,L
+E135,Embraer,ERJ 135/140/Legacy,ERJ,jet,2,M
+E145,Embraer,ERJ-145,ERJ,jet,2,M
+E170,Embraer,170,E-Jet,jet,2,M
 E190,Embraer,E190,E-Jet,jet,2,M
+E195,Embraer,195,E-Jet,jet,2,M
+E2,Grumman,E-2 Daya,,turboprop,2,M
+E200,Extra,EA-200,,piston,1,L
+E230,Extra,EA-230,,piston,1,L
+E275,Embraer,ERJ-190-500,,jet,2,M
+E290,Embraer,190-E2,E-Jet,jet,2,M
+E295,Embraer,195-E2,E-Jet,jet,2,M
+E29E,Binder,EB-29DE,,electric,1,L
+E2CB,Taylor,E-2 Cub,,piston,1,L
+E300,Extra,EA-300,,piston,1,L
+E314,Embraer,A-29,,turboprop,1,L
+E350,Cessna,E350,,turboprop,1,L
+E35L,Embraer,135BJ Legacy 600,ERJ,jet,2,M
+E390,Embraer,C-390 Millennium,,jet,2,M
+E3CF,Boeing,E-3A (CFM56) Sentry,,jet,4,H
+E3TF,Boeing,E-3A (TF33) Sentry,,jet,4,H
+E400,Extra,EA-400,,piston,1,L
+E45X,Embraer,ERJ 145 XR,ERJ,jet,2,M
+E500,Extra,EA-500,,turboprop,1,L
+E50P,Embraer,500 Phenom 100,,jet,2,L
+E530,Cessna,E530 Scorpion,,jet,2,M
+E545,Embraer,EMB-545 Legacy 450,,jet,2,M
+E550,Embraer,Legacy 500/Praetor 600,,jet,2,M
+E55P,Embraer,Phenom 300,,jet,2,M
+E6,Boeing,E-6 Mercury,,jet,4,H
+E737,Boeing,737-700 AEWC,,jet,2,M
+E75L,Embraer,175 long wing,E-Jet,jet,2,M
+E75S,Embraer,175 short wing,E-Jet,jet,2,M
+E767,Boeing,E-767,,jet,2,H
+EA40,Eclipse,Eclipse 400,,jet,1,L
+EA50,Eclipse,500,,jet,2,L
+EAEA,Grosso,Easy Eagle,,piston,1,L
+EAGL,Aviat,Eagle,,piston,1,L
+EAGT,Ameagle,American Eaglet,,piston,1,L
+EAGX,Eagle Aircraft,Eagle 100,,piston,1,L
+EB29,Binder,EB-29,,piston,1,L
+EBOY,FMA,20 El Boyero,,piston,1,L
+EC20,Airbus Helicopters,EC-120 Colibri,,helicopter,1,L
+EC25,Airbus Helicopters,EC-225 Super Puma Mk2+,,helicopter,2,M
+EC30,Airbus Helicopters,EC-130,,helicopter,1,L
+EC35,Airbus Helicopters,EC-135,,helicopter,2,L
+EC45,Airbus Helicopters-Kawasaki,BK-117C-2,,helicopter,2,L
+EC55,Airbus Helicopters,EC-155,,helicopter,2,L
+EC6,Croses,EC-6 Criquet,,piston,1,L
+EC75,Airbus Helicopters-Harbin,EC-175,,helicopter,2,M
+ECHO,Tecnam,P-92 Eaglet,,piston,1,L
+EDGE,Zivko,Edge 540,,piston,1,L
+EDGT,Zivko,Edge 540 T,,piston,1,L
+EF2,BYE Aerospace,eFlyer 2,,electric,1,L
+EFAN,Airbus,E-Fan,,electric,2,L
+EFOX,Aerotrek,A-220,,piston,1,L
+EFUS,Magnus,MG-11 eFusion,,electric,1,L
+EGL3,Rotorway,Eagle 300T,,helicopter,1,L
+EGRT,Grob,D-500 Egrett 2,,turboprop,1,L
+EH10,Agustawestland,AW-101,,helicopter,3,M
+EL10,ELA Aviacion,ELA-10 Eclipse,,piston,1,L
+EL20,Elitar,IE-202,,piston,1,L
+ELA7,ELA Aviacion,ELA-07,,piston,1,L
+ELF,Parnall,Elf,,piston,1,L
+ELIT,AIR,Epic Elite,,jet,2,L
+ELPS,Explorer,Ellipse,,piston,1,L
+ELSP,A2 CZ,Ellipse Spirit,,piston,1,L
+ELST,Putzer,Elster,,piston,1,L
+ELTO,Continental Copters,El Tomcat,,helicopter,1,L
+ELTR,Elitar,IE-101 Elitar,,piston,1,L
+EM10,Marganski,EM-10 Bielik,,jet,1,L
+EM11,Marganski,EM-11 Orka,,piston,2,L
+EN28,Enstrom,280 Shark,,helicopter,1,L
+EN48,Enstrom,480,,helicopter,1,L
+EP9,Edgar Percival,EP-9,,piston,1,L
+EPER,Epervier,Epervier,,piston,1,L
+EPIC,AIR,Epic Dynasty,,turboprop,1,L
+EPX1,Epervier,X-1,,piston,1,L
+ERAC,Dickey,E-Racer,,piston,1,L
+ERCO,Erco,Ercoupe 415,,piston,1,L
+ES11,Aviotecnica,ES-101 Exec,,helicopter,1,L
+ES13,Clifford Aeroworks,Spad 13 80%,,piston,1,L
+ESCA,AIR,Epic Escape,,turboprop,1,L
+ESCP,Just,Escapade,,piston,1,L
+ETA,Binder,Eta,,piston,1,L
+ETAR,Dassault,Etendard 4,,jet,1,M
+EUFI,Alenia,Eurofighter 2000,,jet,2,M
+EUPA,Europa,Europa,,piston,1,L
+EURT,FFT,Eurotrainer 2000,,piston,1,L
+EV55,Evektor,EV-55 Outback,,turboprop,2,L
+EV97,Evektor,EV-97 EuroStar,,piston,1,L
+EVAN,Evangel,4500 Evangel,,piston,2,L
+EVIC,AIR,Epic Victory,,jet,1,L
+EVOP,Lancair,Evolution Piston,,piston,1,L
+EVOT,Lancair,Evolution Turbine,,turboprop,1,L
+EVSS,Evektor,SportStar,,piston,1,L
+EX5T,AEA,Explorer 500T,,turboprop,1,L
+EXEC,Huzhou Taixiang,Exec,,helicopter,1,L
+EXEJ,Rotorway,JetExec,,helicopter,1,L
+EXNG,Extra,NG,,piston,1,L
+EXPL,McDonnell Douglas,MD-900 Combat Explorer,,helicopter,2,L
+EXPR,Express,90,,piston,1,L
+EZFL,Aerocomp,E-Z Flyer,,piston,1,L
+EZFT,Blue Yonder,Twin E-Z Flyer,,piston,2,L
+EZHV,Blue Yonder,E-Z Harvard,,piston,1,L
+EZKC,Blue Yonder,E-Z King Cobra,,piston,1,L
+F1,Mitsubishi,F-1,,jet,2,M
+F100,Fokker,100,,jet,2,M
+F104,Lockheed,F-104 Starfighter,,jet,1,M
+F117,Lockheed,F-117 Night Hawk,,jet,2,M
+F13,Junkers,F-13 Replica,,piston,1,L
+F14,Grumman,F-14 Tomcat,,jet,2,M
+F15,McDonnell Douglas,Boeing F-15 Eagle,,jet,2,M
+F156,Morane-Saulnier,MS-500 Criquet,,piston,1,L
+F16,General Dynamics,Lockheed F-16 Fighting Falcon,,jet,1,M
+F18H,McDonnell Douglas,F/A 18 Hornet,,jet,2,M
+F18S,Boeing,FA-18E/F Super Hornet,,jet,2,M
+F1FV,Avion,F-1 Favorit,,piston,1,L
+F2,Mitsubishi,F-2,,jet,1,M
+F22,Lockheed Martin,Martin L-645 Raptor,,jet,2,M
+F260,Siai-Marchetti,SF-260,,piston,1,L
+F26T,Aermacchi,SF-260T,,turboprop,1,L
+F27,Fokker,C-31 Friendship,,turboprop,2,M
+F28,Fokker,F-28 Fellowship,,jet,2,M
+F2TH,Dassault,Falcon 2000,,jet,2,M
+F30,Golden Avio,F-30 Brio,,piston,1,L
+F35,Lockheed Martin,F-35A Lightning 2,,jet,1,M
+F3F,Grumman,F3F Replica,,piston,1,L
+F4,IAI,F-4 Kurnass 2000,,jet,2,M
+F402,Falcon AIR,Falcon 402,,turboprop,1,L
+F406,Cessna,Reims-Cessna F406 Caravan II,,turboprop,2,L
+F41E,Aerosamara,F-41 El'brus,,piston,2,L
+F421,Falcon AIR,Falcon 421,,turboprop,1,L
+F5,Northrop,F-5 Azarakhsh,,jet,2,M
+F50,Fokker,50,,turboprop,2,M
+F5SA,Iriaf,S-100 Saeghe,,jet,2,M
+F60,Fokker,60,,turboprop,2,M
+F600,Siai-Marchetti,SF-600 Canguro,,turboprop,2,L
+F7,Fokker,F-7 Replica,,piston,1,L
+F70,Fokker,70,,jet,2,M
+F8,Chance Vought,F8 Crusader,,jet,1,M
+F86,Canadair,CL-13 Sabre,,jet,1,M
+F8L,Aeromere,F-8L Falco,,piston,1,L
+F900,Dassault,Falcon 900,,jet,3,M
+F9F,Grumman,F9F Panther,,jet,1,M
+FA01,Fläming AIR,FA-01 Saphir,,piston,1,L
+FA02,Fläming AIR,FA-02 Smaragd VLA,,piston,1,L
+FA03,Fläming AIR,FA-03 Smaragd TMG,,piston,1,L
+FA04,Fläming AIR,FA-04 Peregrine,,piston,1,L
+FA10,Dassault,Falcon/Mystère 10,,jet,2,M
+FA11,Fairchild,F-11 Husky,,piston,1,L
+FA20,Dassault,Falcon/Mystère 20,,jet,2,M
+FA24,Fairchild,F-24 Argus,,piston,1,L
+FA50,Dassault,Falcon/Mystère 50,,jet,3,M
+FA62,Fairchild,M-62 Cornell,,piston,1,L
+FA6X,Dassault,Falcon 6X,,jet,2,M
+FA7X,Dassault,Falcon 7X,,jet,3,M
+FA8X,Dassault,Falcon 8X,,jet,3,M
+FAET,Atec,321 Faeta,,piston,1,L
+FALC,American Aircraft,Falcon XP,,piston,1,L
+FALM,Miles,M-3 Falcon Major,,piston,1,L
+FANL,Rhein,FL-1 Fanliner,,piston,1,L
+FANT,Rhein,Fantrainer,,turboprop,1,L
+FB1A,Bowers,Fly Baby 1A,,piston,1,L
+FB1B,Bowers,Fly Baby 1B,,piston,1,L
+FB5,Euro-Fly,FB-5 Star Light,,piston,1,L
+FBA2,Found,FBA-2,,piston,1,L
+FC1,Chengdu,FC-1 Xiaolong,,jet,1,M
+FD2E,Flight Design,F-2e,,electric,1,L
+FDCT,Flight Design,Design CT,,piston,1,L
+FDF2,Flight Design,F-2,,piston,1,L
+FDMC,Flight Design,MC,,piston,1,L
+FE51,Fighter Escort Wings,P-51,,piston,1,L
+FEST,Aerostar,01 Festival,,piston,1,L
+FFLY,Fairey,Firefly,,piston,1,L
+FG01,Farigoux,FG-01 Origan,,piston,1,L
+FGT,Midwest Aerosport,Formula GT,,piston,1,L
+FH11,Rogerson Hiller,RH-1100 Hornet,,helicopter,1,L
+FIBO,Starfire,Firebolt Convertible,,piston,1,L
+FIKD,Fike,D,,piston,1,L
+FIKE,Fike,E,,piston,1,L
+FINC,Fleet,10,,piston,1,L
+FJ10,Aerostar,FJ-100,,jet,2,L
+FJR3,Fajr,F-3,,piston,1,L
+FK12,B & F Technik,FK-12 Comet,,piston,1,L
+FK14,B & F Technik,FK-14 Polaris,,piston,1,L
+FK9,B & F Technik,FK-9,,piston,1,L
+FL3,Avia,L-3 Aviastarlet,,piston,1,L
+FL53,Meteor,FL-53,,piston,1,L
+FL54,Meteor,FL-54,,piston,1,L
+FL55,Meteor,FL-55,,piston,1,L
+FLAM,Dassault,MD-311 Flamant,,piston,2,L
+FLCO,Finmeccanica,Falco,,piston,1,L
+FLE2,Fleet,2,,piston,1,L
+FLE7,Fleet,7,,piston,1,L
+FLIZ,Flitzer,Z-1 Flitzer,,piston,1,L
+FLSH,Euro-Fly,Flash,,piston,1,L
+FLSS,Flyer,Flyer NG,,piston,1,L
+FM25,Flying Machines,FM-250 Vampire,,piston,1,L
+FMGO,AAK,Flamingo,,piston,1,L
+FN33,Nardi,FN-333 Riviera,,piston,1,L
+FNKB,Akron,Funk B,,piston,1,L
+FOOF,Stewart,JD-2 Foo Fighter,,piston,1,L
+FORT,Fleet,60 Fort,,piston,1,L
+FOUG,Potez,CM-170R Magister,,jet,2,L
+FOX,Skyfox,CA-25 Gazelle,,piston,1,L
+FOXT,Team Tango,Foxtrot-4,,piston,1,L
+FRBD,Northrop Grumman,H-03 Firebird,,piston,1,L
+FREE,Cabrinha,423 Free Spirit,,piston,1,L
+FREL,Aerospatiale,SA-321 Super Frelon,,helicopter,3,M
+FRNT,SKY Raider,Frontier,,piston,1,L
+FRON,Frontier,Frontier MD-2,,piston,1,L
+FS51,Falconar,SAL P-51D Mustang,,piston,1,L
+FT30,NAI,FT-300,,piston,1,L
+FU24,AIR Parts,Fletcher FU-24,,piston,1,L
+FURY,Hawker,Fury,,piston,1,L
+FUSI,Magnus,MA-213 Fusion 213,,piston,1,L
+FW02,Flywhale,FW-02 Flywhale,,piston,1,L
+FW44,FMA,Fw-44 Stieglitz,,piston,1,L
+FW90,Flug Werk,Fw-190 Replica,,piston,1,L
+FWSB,Fleetwings,F-4 Sea Bird,,piston,1,L
+FX1,Innovaviation,FX-1,,piston,1,L
+G1,G1 Aviation,G-1,,piston,1,L
+G103,Grob,G-103C Twin 3SL,,piston,1,L
+G109,Grob,G-109,,piston,1,L
+G115,Grob,G-115,,piston,1,L
+G120,Grob,G-120,,piston,1,L
+G12T,Grob,G-120TP,,turboprop,1,L
+G140,Grob,G-140TP,,turboprop,1,L
+G150,Gulfstream Aerospace,G150,,jet,2,M
+G159,Grumman,G-159 Gulfstream 1,,turboprop,2,M
+G15T,Grob,G-115T Acro,,piston,1,L
+G160,Grob,G-160 Ranger,,turboprop,1,L
+G164,Grumman American,American G164,,piston,1,L
+G180,General Aircraft,G1-80 Skyfarer,,piston,1,L
+G200,Akrotech,G-200,,piston,1,L
+G202,Akrotech,G-202,,piston,1,L
+G21,Grumman,G-21A Goose,,piston,2,L
+G21M,Mckinnon,G-21C Goose,,piston,4,L
+G21T,Mckinnon,G-21E Turbo Goose,,turboprop,2,L
+G222,Alenia,C-27A Spartan,,turboprop,2,M
+G250,Gulfstream Aerospace,Gulfstream G250,,jet,2,M
+G280,Gulfstream Aerospace,G280,,jet,2,M
+G2CA,Guimbal,G-2 Cabri,,helicopter,1,L
+G2GL,Soko,G-2 Galeb,,jet,1,L
+G2T1,Great Lakes,2T-1 Sport,,piston,1,L
+G3,Remos,G-3 Mirage,,piston,1,L
+G44,Grumman,G-44 Widgeon,,piston,2,L
+G46,Fiat,G-46,,piston,1,L
+G4SG,Soko,G-4 Super Galeb,,jet,1,L
+G59,Fiat,G-59,,piston,1,L
+G64T,Schweizer,G-164 Ag-Cat Turbine,,turboprop,1,L
+G70,Groppo,G-70,,piston,1,L
+G73,Grumman,G-73 Mallard,,piston,2,L
+G73T,Frakes,G-73T Turbo Mallard,,turboprop,2,L
+G800,Grinvalds,G-801 Orion,,piston,1,L
+G91,Fiat,G-91R,,jet,1,L
+G96,Grumman,C-1 Trader,,piston,2,M
+G97,SAI,G-97 Spotter,,piston,1,L
+GA10,Gippsaero,GA-10,,turboprop,1,L
+GA20,Gippsland,GA-200 Fatman,,piston,1,L
+GA4C,Gulfstream Aerospace,G-7 Gulfstream G400,,jet,2,M
+GA5C,Gulfstream Aerospace,Aerospace Gulfstream G7-G500,,jet,2,M
+GA6C,Gulfstream Aerospace,Aerospace Gulfstream G7-G600,,jet,2,M
+GA7,Grumman American,Gulfstream American GA7,,piston,2,L
+GA7C,Gulfstream Aerospace,G-8 Gulfstream G700,,jet,2,M
+GA8,Gippsaero,GA-8 Airvan,,piston,1,L
+GA8C,Gulfstream Aerospace,G-8 Gulfstream G800,,jet,2,M
+GABR,Blackshape,Bk-160 Gabriel,,piston,1,L
+GALX,IAI,1126 Galaxy/Gulfstream G200,,jet,2,M
+GANT,Fairey,Gannet,,turboprop,2,M
+GAUN,Gloster,Gauntlet,,piston,1,L
+GAVI,Aero Mercantil,358 Gavilan,,piston,1,L
+GAZL,Soko,H-45 Partizan,,helicopter,1,L
+GB1,Game Composites,GB-1 GameBird,,piston,1,L
+GBSP,Beets,GB Special,,piston,1,L
+GC1,Globe,GC-1 Swift,,piston,1,L
+GDUK,Ellison-Mahon,Gweduck,,piston,2,L
+GEMI,Miles,M-65 Gemini,,piston,2,L
+GENI,IFB,E-Genius,,electric,1,L
+GEPE,Aero Services,Guêpe,,piston,1,L
+GJ11,Hongdu,GJ-11 Sharp Sword,,jet,1,M
+GL5T,Bombardier,BD-700 Global 5000,,jet,2,M
+GL7T,Bombardier,BD-700 Global 7500,,jet,2,M
+GLAD,Gloster,Gladiator,,piston,1,L
+GLAS,Glasair,Glasair,,piston,1,L
+GLEX,Bombardier,BD-700 Global Express,,jet,2,M
+GLF2,Grumman,Gulfstream II,,jet,2,M
+GLF3,Gulfstream Aerospace,III,,jet,2,M
+GLF4,Gulfstream Aerospace,IV/G400,,jet,2,M
+GLF5,Gulfstream Aerospace,V,,jet,2,M
+GLF6,Gulfstream Aerospace,G650,,jet,2,M
+GLSP,NEW Glasair,Sportsman 2+2,,piston,1,L
+GLST,Glasair,GlaStar,,piston,1,L
+GLTU,Stoddard-Hamilton,Turbine Glasair,,turboprop,1,L
+GM17,Intracom,GM-17 Viper,,turboprop,1,L
+GMGC,Ibis,Grand Magic,,piston,1,L
+GNAT,Folland,Fo-144 Gnat,,jet,1,L
+GOBU,Butterfly,Golden Butterfly,,piston,1,L
+GOLF,Tecnam,P-96 Golf,,piston,1,L
+GOOS,Quikkit,Glass Goose,,piston,1,L
+GP1,Jihlavan,Skyleader GP One,,piston,1,L
+GP3,Osprey,GP-3 Osprey 2,,piston,1,L
+GP4,Osprey,GP-4,,piston,1,L
+GPRO,Genevation,GenPro,,piston,1,L
+GR51,Cameron,P-51G Grand 51,,turboprop,1,L
+GRFN,Griffon Aero,Griffon,,piston,1,L
+GRIF,Canada AIR RV,Griffin,,piston,1,L
+GRIZ,Aerotek,Turbo Grizzly,,turboprop,1,L
+GSIS,Slipstream,Genesis,,piston,1,L
+GSPN,Grob,G-180 SPn Utility Jet,,jet,2,L
+GUEP,Aero Services,Guepard,,piston,1,L
+GURI,Aeromot,AMT-600 Guri,,piston,1,L
+GX,Remos,GX,,piston,1,L
+GY10,Gardan,GY-100 Bagheera,,piston,1,L
+GY20,CAB,GY-20 Minicab,,piston,1,L
+GY30,CAB,GY-30 Supercab,,piston,1,L
+GY80,Gardan,GY-80 Horizon,,piston,1,L
+H111,CASA,2-111,,piston,2,M
+H12T,Hiller,UH-12E3T,,helicopter,1,L
+H160,Airbus Helicopters,H-160,,helicopter,2,L
+H2,Kaman,K-20 Seasprite,,helicopter,2,L
+H202,Hb-Aircraft,HB-202 Fledger,,piston,1,L
+H207,Hb-Flugtechnik,HB-207 Alfa,,piston,1,L
+H21,Vertol,42 Work Horse,,helicopter,1,L
+H25A,Hawker Siddeley,HS 125-1/2/3/400/600,,jet,2,M
+H25B,British Aerospace,BAe HS 125/700-800/Hawker 800,,jet,2,M
+H25C,British Aerospace,BAe/Raytheon HS 125-1000,,jet,2,M
+H269,Schweizer,269,,helicopter,1,L
+H40,Hoffmann,H-40,,piston,1,L
+H43A,Kaman,H-43A,,helicopter,1,L
+H43B,Kaman,HH-43B Huskie,,helicopter,1,L
+H46,Boeing Vertol,107,,helicopter,2,M
+H47,Boeing Vertol,114,,helicopter,2,M
+H500,Hughes,369,,helicopter,1,L
+H53,Sikorsky,CH-53A Sea Stallion,,helicopter,2,M
+H53S,Sikorsky,CH-53E Super Stallion,,helicopter,3,M
+H60,Sikorsky,AH-60 Black Hawk,,helicopter,2,M
+H64,McDonnell Douglas,AH-64 Apache,,helicopter,2,M
+HA2,Hollmann,HA-2 Sportster,,piston,1,L
+HA31,Hindustan,HA-31 Basant,,piston,1,L
+HA4T,Raytheon,Hawker 4000,,jet,2,M
+HAHU,Sindlinger,HH-1 Hawker Hurricane,,piston,1,L
+HAR,McDonnell Douglas,AV-8 Harrier,,jet,1,M
+HAW3,Groen,H2X Hawk 3,,piston,1,L
+HAWK,British Aerospace,BAe T-45 Goshawk,,jet,1,
+HB21,Brditschka,HB-21 Hobbylifter,,piston,1,L
+HB23,Brditschka,HB-23 Hobbyliner,,piston,1,L
+HB3,Brditschka,HB-3,,piston,1,L
+HCAT,Grumman,F6F Hellcat,,piston,1,L
+HD34,Hurel-Dubois,HD-34,,piston,2,M
+HDJT,Honda,HA-420 HondaJet,,jet,2,L
+HEAD,Stewart,JD-1 Headwind,,piston,1,L
+HERN,de Havilland,DH-114 Heron,,piston,4,L
+HF20,HFB,HFB-320 Hansa,,jet,2,M
+HI27,Hirth,Hi-27 Acrostar,,piston,1,L
+HIGH,Just,JA20 Highlander,,piston,1,L
+HIND,Hawker,Hind,,piston,1,L
+HL2,Lambach,HL-2 Replica,,piston,1,L
+HLD4,Halberstadt,D-4 Replica,,piston,1,L
+HM38,Falconar,HM-380 Ladybug,,piston,1,L
+HN70,Nicollier,HN-700 Menestrel 2,,piston,1,L
+HORN,Wallerkowski,Hornisse,,piston,1,L
+HORZ,Fisher,Horizon,,piston,1,L
+HR10,Robin,HR-100 President,,piston,1,L
+HR20,Robin,HR-200,,piston,1,L
+HRM9,Elbit,Hermes 900,,piston,1,L
+HRNT,AAK,Hornet,,piston,1,L
+HROC,Harmon,Rocket,,piston,1,L
+HRON,IAI,Harfang,,piston,1,L
+HSMT,Rotorsmart,HeliSmart,,helicopter,1,L
+HT16,Hindustan,HJT-16 Kiran,,jet,1,L
+HT2,Hindustan,HT-2,,piston,1,L
+HT36,Hindustan,HJT-36 Sitara,,jet,1,L
+HT40,Hindustan,HTT-40,,turboprop,1,L
+HU1,Shenyang Sailplane,HU-1 Seagull,,piston,1,L
+HU2,Shenyang Sailplane,HU-2 Petrel,,piston,1,L
+HUCO,Bell,209 HueyCobra,,helicopter,1,L
+HUML,Hummel,Hummel Bird,,piston,1,L
+HUNT,Hawker,Hunter,,jet,1,M
+HURI,Hawker,Hurricane,,piston,1,L
+HURK,TAI,TT-32 Hürkuş,,turboprop,1,L
+HUSK,Aviat,Huskey,,piston,1,L
+HW4P,Groen,Hawk 4,,piston,1,L
+HW4T,Groen,Jet Hawk 4T,,turboprop,1,L
+HX2,Helowerks,HX-2 Wasp,,helicopter,1,L
+HYPR,P&M Aviation,HypR,,piston,1,L
+I103,Ilyushin,Il-103,,piston,1,L
+I112,Ilyushin,Il-112,,turboprop,2,M
+I114,Ilyushin,Il-114,,turboprop,2,M
+I115,Aisa,I-115,,piston,1,L
+I11B,Aisa,I-11B Peque,,piston,1,L
+I153,Polikarpov,I-153,,piston,1,L
+I15B,Polikarpov,I-15bis,,piston,1,L
+I16,Polikarpov,I-16,,piston,1,L
+I22,PZL-Mielec,I-22 Iryda,,jet,1,M
+I23,Instytut Lotnictwa,I-23 Manager,,piston,1,L
+I3,Interavia,I-3,,piston,1,L
+I66,Iannotta,I-66 San Francisco,,piston,1,L
+IA46,Dinfia,IA-46 Ranquel,,piston,1,L
+IA58,FMA,IA-58 Pucará,,turboprop,2,L
+IA63,FMA,AT-63 Pampa,,jet,1,L
+IFUR,Isaacs,Fury,,piston,1,L
+IL14,Avia,Av-14,,piston,2,M
+IL18,Ilyushin,Il-18,,turboprop,4,M
+IL28,Harbin,H-5,,jet,2,M
+IL38,Ilyushin,Il-38,,turboprop,4,M
+IL62,Ilyushin,Il-62,,jet,4,H
+IL76,Ilyushin,IL 76,,jet,4,H
+IL86,Ilyushin,Il-86,,jet,4,H
+IL96,Ilyushin,Il-96,,jet,4,H
+IMPU,Impulse,Impulse,,piston,1,L
+INCQ,Inpaer,Conquest,,piston,1,L
+INEC,Inpaer,Excel,,piston,1,L
+INEX,Inpaer,Explorer,,piston,1,L
+INTG,Aura Aero,Integral R,,piston,1,L
+ION,ION,Ion,,piston,1,L
+IP06,IPE,IPE-06 Curucaca,,piston,1,L
+IP10,IPE,IPE-010,,piston,1,L
+IP26,Ipai,IPAI-26 Tuca,,piston,1,L
+IP6A,IPE,IPE-06A,,piston,1,L
+IPAN,Embraer,EMB-200 Ipanema,,piston,1,L
+IR22,ICA,IAR-822,,piston,1,L
+IR23,ICA,IAR-823,,piston,1,L
+IR24,ICA,IAR-824,,piston,1,L
+IR25,ICA,IAR-825TP Triumf,,turboprop,1,L
+IR27,Bucuresti,IAR-827 Dacic,,piston,1,L
+IR28,ICA,IAR-28MA,,piston,1,L
+IR46,IAR,IAR-46 Katty,,piston,1,L
+IR99,Avioane,IAR-109 Swift,,jet,1,L
+IRBS,Kubicek,M-4 Irbis,,piston,1,L
+IS2,Instytut Lotnictwa,IS-2,,helicopter,1,L
+IS28,IAR,IS-28M2,,piston,1,L
+ISAT,Aerojames,01 Isatis,,piston,1,L
+ISPT,Isaacs,Spitfire,,piston,1,L
+J1,Auster,J-1 Aiglet,,piston,1,L
+J10,Chengdu,F-10,,jet,1,M
+J177,Aerodynos,JA-177 Evolution,,piston,1,L
+J2,Piper,J-2 Cub,,piston,1,L
+J20,Chengdu,J-20,,jet,2,M
+J3,Piper,J-3 Cub,,piston,1,L
+J300,Alms,J-300 Joker,,piston,1,L
+J328,Fairchild Dornier,Dornier 328 Jet,,jet,2,M
+J4,Piper,J-4 Cub Coupe,,piston,1,L
+J400,Jihlavan,JA-400 Skyleader 400,,piston,1,L
+J40E,Zall Jihlavan,JA-400 Skyleader 400 Electric,,electric,1,L
+J4B2,Barnett,J4B2,,piston,1,L
+J5,Piper,AE Cub Cruiser,,piston,1,L
+J600,Jihlavan,JA-600 Rapid 600,,piston,1,L
+J8A,Shenyang,J-8A,,jet,2,M
+J8B,Shenyang,F-8T,,jet,2,M
+JAB2,Jabiru,Jabiru J160,,piston,1,L
+JAB4,Jabiru,Jabiru J200,,piston,1,L
+JABI,Jabiru,Jabiru J120,,piston,1,L
+JACE,ACE,Junior Ace,,piston,1,L
+JAG2,JAG Helicopter,JAG,,helicopter,1,L
+JAGR,Hindustan,Jaguar,,jet,2,M
+JAJ5,Alpha,J-5 Marco,,piston,1,L
+JAJ6,J & AS,J-6 Fregata,,piston,1,L
+JANU,Schempp-Hirth,Janus BM,,piston,1,L
+JARO,Jackaroo,Thruxton Jackaroo,,piston,1,L
+JAS4,Joby,JAS-4,,electric,6,L
+JAST,Soko,IJ-21 Jastreb,,jet,1,L
+JB15,Oberlerchner,JOB-15,,piston,1,L
+JC01,Coupe,JC-01,,piston,1,L
+JC02,Coupe,JC-02,,piston,1,L
+JCOM,Aero Commander,1121 Jet Commander,,jet,2,M
+JCRU,Aasi,Jetcruzer,,turboprop,1,L
+JD2,Dyke,JD-2 Delta,,piston,1,L
+JDOE,American Homebuilts,John Doe,,piston,1,L
+JE2,Eich,JE-2 Gyroplane,,piston,1,L
+JFOX,Airo,1,,piston,1,L
+JH7,Xian,FBC-1 Flying Leopard,,jet,2,M
+JK05,Ekolot,JK-05 Beetle,,piston,1,L
+JL9,Guizhou,FTC-2000 Shanying,,jet,1,M
+JN76,Caudron,CR-760 Cyclone Replica,,piston,1,L
+JPM1,Marie,JPM-01 Medoc,,piston,1,L
+JPRO,BAC,145 Jet Provost,,jet,1,L
+JRC1,Chalard,JRC-01 Julcar,,piston,1,L
+JRO,DTA,J-RO,,piston,1,L
+JS1J,Jonker,JS-1 Revelation (jet),,jet,1,L
+JS2J,Jonker,JS-2 Revenant (jet),,jet,1,L
+JS2P,Jonker,JS-2 Revenant (piston),,piston,1,L
+JS3,Century,Jetstream 3,,turboprop,2,L
+JS31,British Aerospace,BAe 3100 Jetstream 31,,turboprop,2,
+JS32,British Aerospace,BAe Jetstream super 31,,turboprop,2,M
+JS3E,Jonker,JS-3 Rapture (electric),,electric,1,L
+JS3J,Jonker,JS-3 Rapture (jet),,jet,1,L
+JS41,British Aerospace,BAe Jetstream 41,,turboprop,2,M
+JSX,Sonex,JSX SubSonex,,jet,1,L
+JT2,Taylor,JT-2 Titch,,piston,1,L
+JU52,CASA,352L,,piston,3,M
+JUN1,Kaminskas,RK-1 Jungster 1,,piston,1,L
+JUN2,Kaminskas,RK-2 Jungster 2,,piston,1,L
+JUNR,Andreasson,BA-7,,piston,1,L
+JUPI,Lammer Geyer,Jupiter,,piston,1,L
+K100,Daher,Kodiak 100,,turboprop,1,L
+K126,ICA,Ka-126,,helicopter,1,L
+K209,Fama,K-209 KISS,,helicopter,1,L
+K226,Kamov,Ka-226 Sergei,,helicopter,2,L
+K35E,Boeing,KC-135E Stratotanker,,jet,4,H
+K35R,Boeing,KC-135 Stratotanker,,jet,4,H
+K50,Korea Aerospace,A-50 Golden Eagle,,jet,1,M
+K51,Kovács,K-51 Peregrino,,piston,1,L
+K8,Hongdu,JL-8,,jet,1,L
+K900,Daher,Kodiak 200,,turboprop,1,L
+KA25,Kamov,Ka-25,,helicopter,2,M
+KA26,Kamov,Ka-26,,helicopter,2,L
+KA27,Kamov,HH-32,,helicopter,2,M
+KA50,Kamov,Ka-50 Black Shark,,helicopter,2,M
+KA52,Kamov,Ka-52 Alligator,,helicopter,2,M
+KA62,Kamov,Ka-60 Kasatka,,helicopter,2,L
+KAAN,TAI,TF Kaan,,jet,2,M
+KAK1,Kieger,AK-1,,piston,1,L
+KAK3,Junkers Profly,Junka,,piston,1,L
+KAT3,Khrunichev,AT-3,,turboprop,1,L
+KATB,Kari,Twinbee,,piston,2,L
+KATR,Aerosamara,Katran,,piston,1,L
+KC2,Kawasaki,C-2,,jet,2,H
+KE3,Boeing,KE-3,,jet,4,H
+KEHA,Kestrel,Float Hawk,,piston,1,L
+KELA,Keleher,Lark,,piston,1,L
+KELD,Kelly,D,,piston,1,L
+KERO,Rearwin,2000 Ken-Royce,,piston,1,L
+KEST,Farnborough,F-1 Kestrel,,turboprop,1,L
+KF21,Korea Aerospace,KF-21 Boramae,,jet,2,M
+KFAB,Kitplanes FOR Africa,Bushbaby,,piston,1,L
+KFAS,Kitplanes FOR Africa,Safari,,piston,1,L
+KFIR,IAI,Kfir,,jet,1,M
+KFIS,Anderson,EA-1 Kingfisher,,piston,1,L
+KH4,Kawasaki,KH-4,,helicopter,1,L
+KIS2,Tri-R,KIS TD,,piston,1,L
+KIS4,Pulsar,Super Cruiser,,piston,1,L
+KITH,Bourdon,Kitty Hawk,,piston,1,L
+KITI,Mitchell-Procter,Kittiwake,,piston,1,L
+KIWI,TWI,Kiwi,,piston,1,L
+KK60,Kari-Keen,60 Coupe,,piston,1,L
+KL07,Bolkow,BO-207,,piston,1,L
+KL10,Flight Design-Vessel,KLA-100,,piston,1,L
+KL25,Klemm,L-25,,piston,1,L
+KL35,Klemm,Kl-35,,piston,1,L
+KLBR,Kolb,King Kolbra,,piston,1,L
+KM2,Fuji,KM-2,,piston,1,L
+KMAX,Kaman,K-1200 K-Max,,helicopter,1,L
+KNTW,Payne,Knight Twister,,piston,1,L
+KOLL,Kolb,Laser,,piston,1,L
+KP2,Jihlavan,KP-2 Rapid 200,,piston,1,L
+KP5,Jihlavan,KP-5 Rapid 500,,piston,1,L
+KR1,Rand,KR-1,,piston,1,L
+KR2,Rand,KR-2,,piston,1,L
+KR21,Fairchild,KR-21,,piston,1,L
+KR30,Ekolot,KR-030 Topaz,,piston,1,L
+KR31,Fairchild,KR-31,,piston,1,L
+KR34,Fairchild,KR-34,,piston,1,L
+KRAG,Soko,J-20 Kraguj,,piston,1,L
+KRAH,Rock,Krähe,,piston,1,L
+KRIC,Flsz,DK-1 Der Kricket,,piston,1,L
+KSTK,Phoenix-Aviacor,M-12 Kasatik,,piston,2,L
+KT1,Korea Aerospace,KA-1 Woong-Bee,,turboprop,1,L
+KTOO,Amax,J-6 Karatoo,,piston,1,L
+KZ2,SAI,KZ-2 Kupe,,piston,1,L
+KZ3,SAI,KZ-3,,piston,1,L
+KZ4,SAI,KZ-4,,piston,2,L
+KZ7,SAI,KZ-7 Laerke,,piston,1,L
+KZ8,SAI,KZ-8,,piston,1,L
+KZLA,Baykar,Bayraktar Kızılelma,,jet,1,M
+L10,Lockheed,L-10 Electra,,piston,2,L
+L101,Lockheed,L-1011 TriStar,,jet,3,H
+L11,Luscombe,11A Sedan,,piston,1,L
+L11E,Luscombe,11E,,piston,1,L
+L12,Lockheed,C-40 Electra Junior,,piston,2,L
+L13,Convair,L-13,,piston,1,L
+L13M,LET,L-13 Blanik (single-engine conversions),,piston,1,L
+L13S,Aerotechnik,L-13S Super Vivat,,piston,1,L
+L14,Lockheed,L-14 Hudson,,piston,2,M
+L15,Hongdu,L-15 Lieying,,jet,2,M
+L159,Aero,L-159,,jet,1,M
+L18,Lockheed,C-56 Lodestar,,piston,2,M
+L181,Associated AIR,Liberty 181,,piston,1,L
+L188,Lockheed,L-188 Electra,,turboprop,4,M
+L200,LET,L-200 Morava,,piston,2,L
+L29,Aero,L-29 Delfin,,jet,1,L
+L29A,Lockheed,L-1329 Jetstar 6,,jet,4,M
+L29B,Lockheed,Jetstar 2/731,,jet,4,M
+L37,Lockheed,B-34 Lexington,,piston,2,M
+L380,Lederlin,380 Ladybug,,piston,1,L
+L39,Aero,L-139 Albatros,,jet,1,L
+L4,Chaika,L-4,,piston,2,L
+L40,Orličan,L-40 Meta Sokol,,piston,1,L
+L410,LET,L-410 Turbolet,,turboprop,2,L
+L5,Stinson,L5 Sentinel,,piston,1,L
+L59,Aero,L-59,,jet,1,L
+L6,Aerovolga,L-6,,piston,2,L
+L60,Orličan,K-60 Brigadyr,,piston,1,L
+L610,LET,L-610,,turboprop,2,M
+L70,Valmet,L-70 Miltrainer,,piston,1,L
+L8,Luscombe,8,,piston,1,L
+L90,Aermacchi,M-290TP Redigo,,turboprop,1,L
+LA25,Lake,LA-250 Renegade,,piston,1,L
+LA4,Lake,LA-4,,piston,1,L
+LA60,Aermacchi,AL-60,,piston,1,L
+LA6T,Aermacchi,AL-60 Turbine Grizzly,,turboprop,1,L
+LA8,Aerovolga,LA-8 Flagman,,piston,2,L
+LACO,Laven,LACO-125,,piston,1,L
+LAE1,Lange,E-1 Antares 20E,,electric,1,L
+LAKR,Laser,Akro Z,,piston,1,L
+LAKX,Aeroplastika,LAK-X,,piston,1,L
+LAMA,Hindustan,SA-315 Cheetah,,helicopter,1,L
+LANC,Avro,683 Lancaster,,piston,4,M
+LAR1,Flaris,LAR-1,,jet,1,L
+LARK,North American Rockwell,100 Lark Commander,,piston,1,L
+LAST,Utva,N-63 Lasta,,piston,1,L
+LBUG,Lightning BUG,Lightning Bug,,piston,1,L
+LCA,ADA,LCA Tejas,,jet,1,M
+LCB,Laird,LC-1B Commercial,,piston,1,L
+LCH,Hindustan,LCH,,helicopter,2,L
+LCR,Laird,LC-R Speedwing,,piston,1,L
+LEG2,Lancair,Legacy,,piston,1,L
+LEGD,Performance,Legend,,piston,1,L
+LESP,Lancair,Lancair ES-P,,piston,1,L
+LEVI,Tapanee,Levitation 4,,piston,1,L
+LGEZ,Rutan,61 Long-EZ,,piston,1,L
+LGND,Aeropilot,L-600,,piston,1,L
+LH10,LH Aviation,LH-10 Ellipse,,piston,1,L
+LIBE,Liberty,Bellaire,,piston,1,L
+LION,Griffon,Lionheart,,piston,1,L
+LJ23,Lear JET,Bombardier Learjet 23,,jet,2,L
+LJ24,Lear JET,Bombardier Learjet 24,,jet,2,L
+LJ25,Lear JET,Bombardier Learjet 25,,jet,2,L
+LJ28,Gates Learjet,28,,jet,2,L
+LJ31,Learjet,Bombardier Learjet 31,,jet,2,M
+LJ35,Learjet,Bombardier Learjet 35/36,,jet,2,M
+LJ40,Learjet,40,,jet,2,M
+LJ45,Learjet,Bombardier Learjet 45,,jet,2,M
+LJ55,Learjet,Bombardier Learjet 55,,jet,2,M
+LJ60,Learjet,Bombardier Learjet 60,,jet,2,M
+LJ70,Learjet,70,,jet,2,M
+LJ75,Learjet,75,,jet,2,M
+LK17,LAK,LAK-17AT,,piston,1,L
+LK19,LAK,LAK-19T,,piston,1,L
+LK20,LAK,LAK-20M,,piston,1,L
+LK7E,LAK,LAK-17 FES,,electric,1,L
+LM5,Lombardi,LM-5 Aviastar,,piston,1,L
+LM5X,Light Miniature,LM-5 Super Cub,,piston,1,L
+LM7,Lombardi,LM-7,,piston,1,L
+LMC1,Chasle,LMC-1 Sprintair,,piston,1,L
+LMK1,Cata,LMK-1 Oryx,,piston,1,L
+LN27,Falcomposite,LN-27 Furio,,piston,1,L
+LN3,Flygfabriken,LN-3 Seagull,,piston,1,L
+LNC2,Lancair,Lancair 200,,piston,1,L
+LNC4,Lancair,IV,,piston,1,L
+LNCE,Lancair,Lancair ES,,piston,1,L
+LNP4,Lancair,PropJet IV,,turboprop,1,L
+LNT4,Lancair,Sentry 4T,,turboprop,1,L
+LOCA,Aerolab,LoCamp,,piston,1,L
+LOVE,Loving-Wayne,WR-1 Love,,piston,1,L
+LP1,Lopresti,LP-1 Fury,,piston,1,L
+LR2T,Load Ranger,2000,,helicopter,1,L
+LS10,DG Flugzeugbau,LS-10ST,,piston,1,L
+LS2,HAT,LS-2,,piston,1,L
+LS8,DG Flugzeugbau,LS-8ST,,piston,1,L
+LS9,Rolladen-Schneider,LS-9,,piston,1,L
+LSTR,Custom Flight,Lite Star,,piston,1,L
+LTNG,BAC,Lightning,,jet,2,M
+LUL5,Lucas,L-5,,piston,1,L
+LUL6,Lucas,L-6,,piston,1,L
+LUL7,Lucas,L-7,,piston,1,L
+LUL8,Lucas,L-8,,piston,1,L
+LV51,Laviasa,LAV-51 Master,,piston,1,L
+LW20,Howard Hughes,Australian LightWing Speed SP-2000,,piston,1,L
+LW40,Howard Hughes,Australian LightWing Speed SP-4000,,piston,1,L
+LWIN,Howard Hughes,Austalian LightWing Sport 2000,,piston,1,L
+LX32,Lilienthal,100,,piston,1,L
+LX34,Lilienthal,X-34 Bekas,,piston,1,L
+LXR,Elixir,Elixir,,piston,1,L
+LYNX,Westland,AH-11 Super Lynx,,helicopter,2,L
+LYSA,National Steel,Lysander,,piston,1,L
+M10,Aerostar,90,,piston,1,L
+M101,Myasishchev,M-101 Expedition,,turboprop,1,L
+M106,Lambert,M-106 Mission,,piston,1,L
+M108,Lambert,M-108 Mission,,piston,1,L
+M110,Aviat,110 Special,,piston,1,L
+M15,PZL-Mielec,M-15 Belphegor,,jet,1,L
+M17,Myasishchev,M-17 Stratosfera,,jet,1,M
+M18,AII,AVA-303,,piston,1,L
+M18T,Melex,T-45 Turbine Dromader,,turboprop,1,L
+M2,Kubicek,M-2 Scout,,piston,1,L
+M200,Aero Commander,200 Commander 200,,piston,1,L
+M203,Myasishchev,M-203 Barsuk,,piston,1,L
+M20P,Mooney,M-20C Ranger,,piston,1,L
+M20T,Mooney,M20K Encore/M20M Bravo,,piston,1,L
+M21,PZL-Mielec,M-21 Dromader Mini,,piston,1,L
+M212,Lambert,M-212 Mission,,piston,1,L
+M22,Mooney,M-22,,piston,1,L
+M24,PZL-Mielec,M-24 Dromader Super,,piston,1,L
+M26,PZL-Mielec,M-26 Air Wolf,,piston,1,L
+M28,PZL-Mielec,C-145,,turboprop,2,
+M2HK,Miles,M-2 Hawk Major,,piston,1,L
+M308,German Bianco,MB-308,,piston,1,L
+M326,Embraer,AT-26 Xavante,,jet,1,L
+M339,Aermacchi,MB-339,,jet,1,L
+M345,Leonardo,M-345,,jet,1,L
+M346,Aermacchi,M-346 Master,,jet,2,M
+M360,Aircraft Technologies,Meyer-360,,piston,1,L
+M36J,Matra,M-360 Jupiter,,piston,2,L
+M4,Maule,M-4,,piston,1,L
+M404,Martin,404,,piston,2,M
+M5,Maule,M-5,,piston,1,L
+M55,Myasishchev,M-55 Geophysica,,jet,2,M
+M6,Maule,M-6 Super Rocket,,piston,1,L
+M600,Piper,PA-46-600TP M600,,turboprop,1,L
+M7,Maule,M-7-235 Orion,,piston,1,L
+M700,Piper,PA-46-701TP M700 Fury,,turboprop,1,L
+M74,Texas Helicopter,M-74 Wasp,,helicopter,1,L
+M7T,Maule,M-7-420,,turboprop,1,L
+M8,Maule,M-8,,piston,1,L
+M9,Maule,M-9,,piston,1,L
+MA1,Emair,MA-1 Paymaster,,piston,1,L
+MA5,Marquart,MA-5 Charger,,piston,1,L
+MA60,Xian,MA-60,,turboprop,2,M
+MA6H,Xian,MA-60H,,turboprop,2,M
+MAGC,Eagle Aviation,EA-100,,piston,1,L
+MAGI,Miles,M-14 Magister,,piston,1,L
+MAGN,Airdale,Magnum,,piston,1,L
+MAJR,Falconar,Cubmajor,,piston,1,L
+MAKO,Lancair,NLA-450 Mako,,piston,1,L
+MAMB,Melbourne,MA-2 Mamba,,piston,1,L
+MAME,Aerocomp,Merlin,,piston,1,L
+MARS,Martin,170 Mars,,piston,4,M
+MAVR,AEA,Maverick,,piston,1,L
+MC01,Montaer,MC-01,,piston,1,L
+MC10,Colomban,MC-10 Cricri,,piston,2,L
+MC23,Irkut,MC-21-300,,jet,2,M
+MC45,Meyers,MAC-145,,piston,1,L
+MC90,Monocoupe,90,,piston,1,L
+MCOU,Chris Tena,Mini Coupe,,piston,1,L
+MCOY,Montana,Coyote,,piston,1,L
+MCR1,Dyn'aero,Lafayette 1 Sportster,,piston,1,L
+MCR4,Dyn'aero,Lafayette 4 Revolution,,piston,1,L
+MCRR,Dyn'aero,MCR-R180,,piston,1,L
+MCUL,Kimball,McCullocoupe,,piston,1,L
+MD11,McDonnell Douglas,MD-11,MD-11,jet,3,H
+MD3,SME,MD-3 AeroTiga,,piston,1,L
+MD3R,Gryf,MD-3 Rider,,piston,1,L
+MD52,McDonnell Douglas,AH-6J,,helicopter,1,L
+MD60,Boeing,MD-600N,,helicopter,1,L
+MD81,Boeing,(Douglas) MD 81,MD-80,jet,2,M
+MD82,Boeing,(Douglas) MD 82,MD-80,jet,2,M
+MD83,Boeing,(Douglas) MD 83,MD-80,jet,2,M
+MD87,Boeing,(Douglas) MD 87,MD-80,jet,2,M
+MD88,Boeing,(Douglas) MD 88,MD-80,jet,2,M
+MD90,Boeing,(Douglas) MD 90,MD-90,jet,2,M
+MDNT,Archer,Midnight,,electric,12,
+ME08,Nord,1000,,piston,1,L
+ME09,Hispano,HA-1112 Buchon,,piston,1,L
+ME62,Legend Flyers,Me-262,,jet,2,L
+MEAD,Mead,Adventure,,piston,1,L
+MEL2,Garrison,Melmoth 2,,piston,1,L
+MERK,Aviaton,Merkury,,piston,2,L
+MESS,Miles,M-38 Messenger,,piston,1,L
+METR,Armstrong Whitworth,Meteor,,jet,2,M
+MEXP,Merlin,Explorer,,piston,1,L
+MF10,Malmo,MFI-10 Vipan,,piston,1,L
+MF17,Pakistan,Mushshak,,piston,1,L
+MG15,PZL-Mielec,LiM-1,,jet,1,L
+MG17,Shenyang,F-5,,jet,1,L
+MG19,Shenyang,F-6,,jet,2,M
+MG21,Chengdu,F-7,,jet,1,M
+MG23,Mikoyan,MiG-23,,jet,1,M
+MG25,Mikoyan,MiG-25,,jet,2,M
+MG29,Mikoyan,MiG-29,,jet,2,M
+MG31,Mapo,MiG-31,,jet,2,M
+MG44,Mikoyan,MiG 1-44,,jet,2,M
+MGAT,Mapo,MiG-AT,,jet,1,L
+MGIC,Kaiser,Magic,,piston,1,L
+MGNM,Aviation Enterprises,Magnum,,piston,1,L
+MGUL,Percival,E Mew Gull,,piston,1,L
+MH20,Mitsubishi,MH-2000,,helicopter,2,L
+MH46,Aerosette,MH-46 Eclipse,,piston,1,L
+MI10,MIL,Mi-10,,helicopter,2,M
+MI14,MIL,Mi-14,,helicopter,2,M
+MI2,PZL-Swidnik,Mi-2,,helicopter,2,L
+MI24,MIL,AH-2 Sabre,,helicopter,2,M
+MI26,MIL,Mi-26,,helicopter,2,M
+MI28,MIL,Mi-28,,helicopter,2,M
+MI34,MIL,Mi-34,,helicopter,1,L
+MI38,MIL,Mi-38,,helicopter,2,M
+MI4,Harbin,Z-5,,helicopter,1,L
+MI6,MIL,Mi-22,,helicopter,2,M
+MI8,MIL,Mi-17,,helicopter,2,M
+MIDR,Acba,ACBA-8 Midour 2,,piston,1,L
+MIMP,Aerocad,Mini-Imp,,piston,1,L
+MIMU,Bushby,MM-1 Midget Mustang,,piston,1,L
+MIR2,Dassault,Mirage 2000,,jet,1,M
+MIRA,Dassault,F-103 Mirage 3,,jet,1,M
+MITE,Mooney,M-18 Mite,,piston,1,L
+MJ10,Jurca,MJ-10 Spit,,piston,1,L
+MJ12,Jurca,MJ-12 P-40,,piston,1,L
+MJ1H,Jurca,MJ-100 Spitfire Replica,,piston,1,L
+MJ2,Jurca,MJ-2 Tempête,,piston,1,L
+MJ4,Jurca,MJ-4 Shadow,,piston,1,L
+MJ5,Jurca,MJ-5 Sirocco,,piston,1,L
+MJ51,Jurca,MJ-51 Spérocco,,piston,1,L
+MJ53,Jurca,MJ-53 Autan,,piston,1,L
+MJ7,Boeve,P-51 Mustang,,piston,1,L
+MJ77,Jurca,MJ-77 Gnatsum,,piston,1,L
+MJ8,Jurca,MJ-8 1-Nine-0,,piston,1,L
+MJ80,Jurca,MJ-80 Focke-Wulf Fw-190 Replica,,piston,1,L
+MJ9,Jurca,MJ-9,,piston,1,L
+MJ90,Jurca,MJ-90 Messerschmitt Bf-109 Replica,,piston,1,L
+MLER,Alanne,Moottori-Lerche,,piston,1,L
+MM14,Magni,M-14 Scout,,piston,1,L
+MM16,Magni,M-16 Tandem Trainer,,piston,1,L
+MM19,Magni,M-19 Shark,,piston,1,L
+MM21,Magni,M-21,,piston,1,L
+MM22,Magni,M-22 Voyager,,piston,1,L
+MM24,Magni,M-24 Orion,,piston,1,L
+MMAX,MAD MAX Aero,Mad Max,,piston,1,L
+MMUT,Mara Wing,1-L Malamut,,piston,1,L
+MNEX,Norman,Nordic 8 Mini Explorer,,piston,1,L
+MOCU,Culp,MonoCulp,,piston,1,L
+MOGO,Kinetic,Mountain Goat,,piston,1,L
+MOL1,Molniya,1,,piston,1,L
+MON2,Montanair,2180 Spirit,,piston,1,L
+MONA,Miles,M-17 Monarch,,piston,1,L
+MONI,Monnett,Moni,,piston,1,L
+MOR2,Varga,2150 Kachina,,piston,1,L
+MOSP,Mong,Sport,,piston,1,L
+MOSQ,de Havilland,DH-98 Mosquito,,piston,2,M
+MOTO,Humbert,Moto Du Ciel,,piston,1,L
+MP02,Aero-Kros,MP-02 Czajka,,piston,1,L
+MP20,Plan,MP-205 Busard,,piston,1,L
+MR25,Murphy,SR-2500 Super Rebel,,piston,1,L
+MR35,Murphy,SR-3500 Moose,,piston,1,L
+MR3T,Murphy,SR-3500 T-Moose,,turboprop,1,L
+MRAI,Monnett,Monerai P,,piston,1,L
+MRF1,Dassault,Mirage F1,,jet,1,M
+MRMD,CSA,Mermaid,,piston,1,L
+MRTN,Mirage,Marathon,,piston,1,L
+MS1,Mysky,MS-1,,piston,1,L
+MS23,Morane-Saulnier,MS-230,,piston,1,L
+MS31,Morane-Saulnier,MS-315,,piston,1,L
+MS73,Morane-Saulnier,MS-733 Alcyon,,piston,1,L
+MS76,Dinfia,MS-760 Paris,,jet,2,L
+MSAI,Morane-Saulnier,AI,,piston,1,L
+MSQ2,Backcountry,Mackey SQ-2,,piston,1,L
+MT,Autogyro,MT-03,,piston,1,L
+MT2,Mitsubishi,T-2,,jet,2,M
+MU2,Mitsubishi,Marquise/Solitaire,,turboprop,2,L
+MU23,Akaflieg Munchen,Mü-23 Saurier,,piston,1,L
+MU30,Mitsubishi,Diamond/MU300 Diamond,,jet,2,M
+MUS2,Bushby,M-2 Mustang 2,,piston,1,L
+MVN1,Mven,1 Fermer,,piston,1,L
+MVRK,Phoenix,Maverick,,piston,1,L
+MX10,Aeroandina,MXP-100 Aventura,,piston,1,L
+MX1T,World Aircraft,Sentinel,,piston,1,L
+MX2,MX Aircraft,MX-2,,piston,1,L
+MX58,Aeroandina,MXP-158 Embera,,piston,1,L
+MX65,Aerotec,MXP-650 Amigo,,piston,1,L
+MX80,Aeroandina,MXP-800 Fantasy,,piston,1,L
+MXS,MX Aircraft,MXS,,piston,1,L
+MY12,Mylius,MY-102 Tornado,,piston,1,L
+MY13,Mylius,MY-103 Mistral,,piston,1,L
+MYA4,Myasishchev,3M,,jet,4,H
+MYS4,Dassault,MD-454A Mystère 4A,,jet,1,M
+N110,Nord,1100 Noralpha,,piston,1,L
+N120,Nord,1200 Norecrin,,piston,1,L
+N219,Dirgantara Indonesia,N-219 Nurtanio,,turboprop,2,M
+N250,Nusantara,N-250,,turboprop,2,M
+N260,MAX Holste,MH-260 Super Broussard,,turboprop,2,M
+N262,Aerospatiale,Mohawk 298,,turboprop,2,M
+N3,Nostalgair,N-3 Citabriette,,piston,1,L
+N320,Nord,3202,,piston,1,L
+N340,Nord,3400,,piston,1,L
+N3N,Naval Aircraft Factory,N3N,,piston,1,L
+N5,Hongdu,N-5,,piston,1,L
+NA40,Unis,NA-40 Bongo,,helicopter,2,L
+NAL2,NAL,NALLA-2 Hansa,,piston,1,L
+NARN,Korea Aerospace,KC-100 Naraon,,piston,1,L
+NAVI,North American,American Navion,,piston,1,L
+NC85,Nord,NC-854,,piston,1,L
+ND1T,NDN,NDN-1T Turbo Firecracker,,turboprop,1,L
+NDAC,Normand Dube,Aerocruiser,,piston,1,L
+NDAT,Normand Dube,Aerocruiser Turbo 450,,piston,1,L
+NDIC,Norman,Nordic 2,,piston,1,L
+NFEX,Nf-Aircraft,Explorer,,turboprop,1,L
+NG4,Roko Aero,NG-4,,piston,1,L
+NG5,BRM Aero,Bristell E-LSA,,piston,1,L
+NH90,NHI,Hkp 14,,helicopter,2,M
+NI28,Nieuport,28 Replica,,piston,1,L
+NIBB,Aviamilano,F-14 Nibbio,,piston,1,L
+NIMB,Schempp-Hirth,Nimbus 2M,,piston,1,L
+NIPR,Avions Fairey,T-66 Nipper,,piston,1,L
+NM5,NAL,NM-5,,piston,1,L
+NMCU,Enaer,ECH-02 Namcu,,piston,1,L
+NNJA,Best OFF,Nynja,,piston,1,L
+NOMA,GAF,N-2 Nomad,,turboprop,2,L
+NORA,Nord,2501 Noratlas,,piston,2,M
+NORS,Noorduyn,C-64 Norseman,,piston,1,L
+NPOR,Redfern,Nieuport 17,,piston,1,L
+NST6,Custom Flight,North Star 6 Galaxie,,piston,1,L
+NSTR,Custom Flight,North Star,,piston,1,L
+NT10,Nuwaco,T-10,,piston,1,L
+NXT,Nemesis,NXT,,piston,1,L
+O1,Cessna,305 Bird Dog,,piston,1,L
+O3,Lockheed,YO-3,,piston,1,L
+OCNR,Tissot-Charbonnier,TC-120 Océanair,,piston,1,L
+OH1,Kawasaki,OH-1,,helicopter,2,L
+OKHO,Aero-Astra,Okhotnik,,piston,1,L
+OM1,Morrisey,OM-1 Bravo,,piston,1,L
+OMAG,O'neill,Magnum,,piston,1,L
+OMGA,Isae,Omega,,piston,1,L
+OMLA,Omac,Laser 300,,turboprop,1,L
+OMSD,Atec,Omsider,,piston,1,L
+ONE,Gogetair,G-600,,piston,1,L
+ONEX,Sonex,Onex,,piston,1,L
+OPCA,Brooklands,OA-7 Optica Scout,,piston,1,L
+OR10,Orion,10,,piston,1,L
+OR12,Orion,SK-12,,piston,2,L
+OSCR,Partenavia,P-64 Oscar,,piston,1,L
+OVOD,Vitek,Ovod,,piston,1,L
+OZZI,Buchanan,BAC-204 Ozzie Mozzie,,piston,1,L
+P06T,Tecnam,P-2006T,,piston,2,L
+P1,Kawasaki,P-1,,jet,4,M
+P100,Pottier,P-100,,piston,1,L
+P130,Pottier,P-130 Bleu Citron,,piston,1,L
+P136,Piaggio,P-136,,piston,2,L
+P148,Piaggio,P-148,,piston,1,L
+P149,Focke-Wulf,FWP-149,,piston,1,L
+P180,Piaggio,P-180 Avanti,,turboprop,2,L
+P18T,Smith Aviation,PA-18T Super Cub,,turboprop,1,L
+P19,Aviamilano,P-19 Scricciolo,,piston,1,L
+P1HH,Piaggio,P-1HH Hammerhead,,turboprop,2,L
+P2,Lockheed,L-426 Neptune,,piston,2,M
+P208,Tecnam,P-2008,,piston,1,L
+P210,Riley,Super P210,,piston,1,L
+P212,Tecnam,P-2012 Traveller,,piston,2,L
+P220,Antoniewski,P-220S-AT2,,piston,1,L
+P230,Pottier,P-230 Panda,,piston,1,L
+P27,Gryf,P-27 Skyster,,piston,1,L
+P270,Pottier,P-270 Amster,,piston,1,L
+P28A,Piper,Cherokee,,piston,1,L
+P28B,Piper,Turbo Dakota,,piston,1,L
+P28R,Piper,Cherokee Arrow,,piston,1,L
+P28S,Piper,PA-28R-201T Turbo Arrow,,piston,1,L
+P28T,Piper,28T Arrow 4,,piston,1,L
+P28U,Aicsa,PA-28RT-201T Turbo Arrow 4,,piston,1,L
+P3,Lockheed,P-3 Orion,,turboprop,4,M
+P32R,Piper,PA-32R Lance/ Saratoga SP,,piston,1,L
+P32T,Piper,32T Turbo Lance 2,,piston,1,L
+P337,Cessna,P337 Pressurized Skymaster,,piston,2,L
+P38,Lockheed,F-5 Lightning,,piston,2,M
+P39,Bell,P-39 Airacobra,,piston,1,L
+P40,Curtiss,P-40 Kittyhawk,,piston,1,L
+P46T,Piper,Malibu Meridian,,turboprop,1,L
+P47,Republic,F-47 Thunderbolt,,piston,1,M
+P4Y,Convair,P4Y Privateer,,piston,4,M
+P50,Pottier,P-50 Bouvreuil,,piston,1,L
+P51,North American,American Mustang,,piston,1,L
+P57,Partenavia,P-57 Fachiro 2,,piston,1,L
+P60,Pottier,P-60 Minacro,,piston,1,L
+P61,Northrop,P-61 Black Widow,,piston,2,M
+P63,Bell,P-63 Kingcobra,,piston,1,L
+P66P,Piaggio,P-166,,piston,2,L
+P66T,Piaggio,P-166DL3,,turboprop,2,L
+P68,Partenavia,Vulcan Air P68,,piston,2,L
+P68T,Partenavia,AP-68TP-300 Spartacus,,turboprop,2,L
+P70,Pottier,P-70,,piston,1,L
+P750,Pacific Aerospace,Aerospace P-750 Xstol,,turboprop,1,L
+P8,Boeing,P-8 Poseidon,,jet,2,M
+P80,Pottier,P-80,,piston,1,L
+P82,North American,F-82 Twin Mustang,,piston,2,M
+PA11,Piper,PA-11 Cub Special,,piston,1,L
+PA12,Piper,12 Supercruiser,,piston,1,L
+PA14,Piper,PA-14 Family Cruiser,,piston,1,L
+PA15,Piper,PA-15 Vagabond,,piston,1,L
+PA16,Piper,PA-16 Clipper,,piston,1,L
+PA17,Piper,PA-17 Vagabond,,piston,1,L
+PA18,Piper,18 Super Cub,,piston,1,L
+PA20,Piper,PA-20 Pacer,,piston,1,L
+PA22,Piper,22 Tri-Pacer,,piston,1,L
+PA23,Piper,PA-23-150/160 Apache,,piston,2,L
+PA24,Piper,PA-24 Comanche,,piston,1,L
+PA25,Piper,PA-25 Pawnee,,piston,1,L
+PA27,Piper,Aztec,,piston,2,L
+PA30,Piper,PA-30 Turbo Twin Comanche/Turbo Twin Comanche,,piston,2,L
+PA31,Piper,Navajo PA-31,,piston,2,L
+PA32,Piper,Cherokee Six,,piston,1,L
+PA34,Piper,PA-34 Seneca,,piston,2,L
+PA36,Piper,PA-36 Pawnee Brave,,piston,1,L
+PA38,Piper,Tomahawk PA38,,piston,1,L
+PA44,Piper,Seminole,,piston,2,L
+PA46,Piper,Malibu,,piston,1,L
+PACE,Bellanca,31 Senior Skyrocket,,piston,1,L
+PAGO,Alms,ADV-01 Papango,,piston,1,L
+PANT,Rotec,Panther 2,,piston,1,L
+PAR1,Paradise,P-1,,piston,1,L
+PAR4,Paradise,P-4,,piston,1,L
+PARL,Pietenpol,Aerial,,piston,1,L
+PAT2,Atac,Patriot 2,,piston,1,L
+PAT4,Piper,PA-31T3-500 T-1040,,turboprop,2,L
+PAUL,Neiva,56 Paulistinha,,piston,1,L
+PAV4,Carter,PAV-4,,piston,1,L
+PAY1,Piper,Cheyenne 1,,turboprop,2,L
+PAY2,Piper,Cheyenne 2,,turboprop,2,L
+PAY3,Piper,PA-42-720 Cheyenne 3,,turboprop,2,L
+PAY4,Piper,Cheyenne 400,,turboprop,2,L
+PC12,Pilatus,PC-12,,turboprop,1,L
+PC21,Pilatus,PC-21,,turboprop,1,L
+PC24,Pilatus,PC-24,,jet,2,M
+PC6P,Pilatus,PC-6 Porter,,piston,1,L
+PC6T,Pilatus,PC-6A Turbo-Porter,,turboprop,1,L
+PC7,Pilatus,AT-92 Turbo Trainer,,turboprop,1,L
+PC9,Pilatus,PC-9,,turboprop,1,L
+PCA2,Pitcairn-Cierva,PCA-2,,piston,1,L
+PDIG,Vstol,SST-2000 Pairadigm,,piston,2,L
+PECR,Pro-Composites,Personal Cruiser,,piston,1,L
+PEGA,General Avia,F-20 Pegaso,,piston,2,L
+PEGZ,Pegase Aero,Pegazair,,piston,1,L
+PELI,Flyer,Pelican,,piston,1,L
+PEMB,Hunting,P-66 Pembroke,,piston,2,L
+PETL,Aero Itba,Petrel,,piston,1,L
+PETR,Edra,Paturi,,piston,1,L
+PGEE,Holcomb,Perigee,,piston,1,L
+PGK1,Western,PGK-1 Hirondelle,,piston,1,L
+PHIL,Vtol Aircraft,Phillicopter,,helicopter,1,L
+PHIX,Phenix,Phenix,,piston,1,L
+PHNX,Freedom,Phoenix,,piston,1,L
+PIAE,Pipistrel,Alpha Electro,,electric,1,L
+PIAT,Pipistrel,Alpha Trainer,,piston,1,L
+PICO,General Avia,F-15 Delfino,,piston,1,L
+PILL,Enaer,ECH-51 Pillán,,piston,1,L
+PINO,General Avia,F-22 Pinguino,,piston,1,L
+PIPA,Pipistrel,Panthera,,piston,1,L
+PISI,Pipistrel,Sinus,,piston,1,L
+PIT4,Pipistrel,Taurus Electro G4,,electric,1,L
+PITA,Pipistrel,Taurus 503,,piston,1,L
+PITE,Pipistrel,Taurus Electro,,electric,1,L
+PIVE,Pipistrel,Velis Electro,,electric,1,L
+PIVI,Pipistrel,Explorer,,piston,1,L
+PK11,PIK,PIK-11 Tumppu,,piston,1,L
+PK15,PIK,PIK-15 Hinu,,piston,1,L
+PK18,PIK,PIK-18 Sytky,,piston,1,L
+PK20,Issoire,PIK-20E,,piston,1,L
+PK21,PIK,PIK-21 Super Sytky,,piston,1,L
+PK23,PIK,PIK-23 Suhinu,,piston,1,L
+PK25,PIK,PIK-25 Varttimarkka,,piston,1,L
+PKAN,Uetz,U-3M Pelikan,,piston,1,L
+PL1,Pazmany,PL-1 Laminar,,piston,1,L
+PL12,Transavia,PL-12 Airtruk,,piston,1,L
+PL2,Pazmany,PL-2,,piston,1,L
+PL4,Pazmany,PL-4,,piston,1,L
+PL9,Pazmany,PL-9 Stork,,piston,1,L
+PLUS,Taylorcraft,Auster 1,,piston,1,L
+PNR2,Alpi,Pioneer 200,,piston,1,L
+PNR3,Alpi,Pioneer 300,,piston,1,L
+PNR4,Alpi,Pioneer 400,,piston,1,L
+PNTH,Sport Performance,Panther,,piston,1,L
+PO2,CSS,CSS-13,,piston,1,L
+PO60,Potez,60 Sauterelle,,piston,1,L
+POLI,Alvarez,Polliwagen,,piston,1,L
+PONY,Reda,Pony,,piston,1,L
+PP2,Pilatus,P-2,,piston,1,L
+PP3,Pilatus,P-3,,piston,1,L
+PPRO,Hunting,P-56 Provost,,piston,1,L
+PRBP,Howard Hughes,Pocket Rocket PR-Bipe,,piston,1,L
+PRBR,Howard Hughes,Pocket Rocket PR-Breeze,,piston,1,L
+PRCE,Percival,P-57 Sea Prince,,piston,2,L
+PREN,Percival,P-40 Prentice,,piston,1,L
+PRET,GM&T,Pretty Flight,,piston,1,L
+PREX,Private Explorer,Private Explorer,,piston,1,L
+PRIM,Blackshape,Bk-100 Prime,,piston,1,L
+PRM1,Hawker Beechcraft,Raytheon Premier 1/390 Premier 1,,jet,2,L
+PROC,Percival,P-28 Proctor,,piston,1,L
+PROT,CSA,Parrot,,piston,1,L
+PROW,Prowler,Jaguar,,piston,1,L
+PRPR,Howard Hughes,Pocket Rocket PR-582,,piston,1,L
+PRTS,Rutan,281 Proteus,,jet,2,L
+PRXT,Private Explorer,T-Explorer,,turboprop,1,L
+PSTM,Podesva,Stearman,,piston,1,L
+PSW4,PZL-Swidnik,AW-009,,helicopter,1,L
+PT21,Pottier,P-210 Coati,,piston,1,L
+PT22,Ryan,PT-22 Recruit,,piston,1,L
+PT70,Pottier,P-170,,piston,1,L
+PT80,Pottier,P-180,,piston,1,L
+PTMS,Kimball,S-12 Macho Stinker,,piston,1,L
+PTRL,Nash,Petrel,,piston,1,L
+PTS1,Aerotek,Pitts S-1 Special,,piston,1,L
+PTS2,Aerotek,Pitts S-2 Special,,piston,1,L
+PTSS,Aviat,S-1-11 Super Stinker,,piston,1,L
+PUL6,Pulsar,Super Pulsar 600,,piston,1,L
+PULR,P&M Aviation,PulsR,,piston,1,L
+PULS,Pulsar,Pulsar,,piston,1,L
+PUMA,Aerospatiale,CH-33 Puma,,helicopter,2,L
+PUP,Beagle,B-121 Pup,,piston,1,L
+PURS,Rans,S-11 Pursuit,,piston,1,L
+PUSH,Prescott,Pusher,,piston,1,L
+PVTR,Privateer,Privateer,,turboprop,1,L
+PZ01,Lipnur,PZL-101 Gawron,,piston,1,L
+PZ02,Pzl-Okecie,PZL-102 Kos,,piston,1,L
+PZ04,Pzl-Okecie,PZL-104 Wilga 35,,piston,1,L
+PZ05,Pzl-Okecie,PZL-105 Flaming,,piston,1,L
+PZ06,Pzl-Okecie,PZL-106A Kruk,,piston,1,L
+PZ12,Pzl-Okecie,PZL-112 Junior,,piston,1,L
+PZ26,Agrolot,PZL-126 Mrówka,,piston,1,L
+PZ3T,Pzl-Okecie,PZL-130 Orlik,,turboprop,1,L
+PZ4M,Pzl-Okecie,PZL-104M Wilga 2000,,piston,1,L
+PZ6T,Pzl-Okecie,PZL-106AT Turbo Javelin,,turboprop,1,L
+Q01,Reiner Stemme,Q-01,,piston,1,L
+Q1,General Atomics,MQ-1 Gray Eagle,,piston,1,L
+Q25,Boeing,MQ-25 Stingray,,jet,1,M
+Q28,Boeing Australia,MQ-28 Ghost Bat,,jet,1,L
+Q4,Northrop Grumman,EQ-4 Global Hawk,,jet,1,M
+Q5,Hongdu,A-5,,jet,2,M
+Q58,Kratos,XQ-58 Valkyrie,,jet,1,L
+Q9,General Atomics,MQ-9 Guardian,,turboprop,1,L
+QAIL,Aerosport,Quail,,piston,1,L
+QALT,FMP,Qualt,,piston,1,L
+QIC2,Quickie,Quickie Q2,,piston,1,L
+QINT,Schempp-Hirth,Quintus,,piston,1,L
+QR01,Quercy,CQR-01,,piston,1,L
+QUAS,Aeroalcool,Quasar Lite,,piston,1,L
+QUIC,Quickie,Quickie,,piston,1,L
+R100,Robin,R-1180 Aiglon,,piston,1,L
+R109,Aircraft Spruce,DR-109 Rhino,,piston,1,L
+R11,Rupert,R-11,,piston,1,L
+R12,Rupert,R-12 Vimana,,piston,1,L
+R135,Boeing,RC-135,,jet,4,H
+R185,Johnson,Rocket 125,,piston,1,L
+R2,SAU,R-02 Robert,,piston,1,L
+R200,Robin,R-2100 Super Club,,piston,1,L
+R22,Robinson,R-22,,helicopter,1,L
+R300,Robin,R-300,,piston,1,L
+R4,Sikorsky,H-4 Hoverfly,,helicopter,1,L
+R44,Robinson,R-44 Astro,,helicopter,1,L
+R66,Robinson,R-66,,helicopter,1,L
+R721,Boeing,727-100RE Super 27,,jet,3,M
+R722,Boeing,727-200RE Super 27,,jet,3,M
+R90F,Ruschmeyer,R-90-230FG,,piston,1,L
+R90R,Ruschmeyer,MF-85,,piston,1,L
+R90T,Ruschmeyer,R-90-420AT,,turboprop,1,L
+RA14,Maranda,BM-1 Loisirs,,piston,1,L
+RA17,Adam,RA-17,,piston,1,L
+RAF2,Rotary AIR Force,RAF-2000,,piston,1,L
+RAID,SKY Raider,Super Sky Raider,,piston,1,L
+RAIL,Aerosport,Rail,,piston,1,L
+RALL,Socata,Gabier,,piston,1,L
+RANG,Navion,Rangemaster,,piston,1,L
+RARO,Altitude,P-85,,piston,1,L
+RAV3,Ravin,Ravin 300,,piston,1,L
+RAV5,Ravin,Ravin 500,,piston,1,L
+RAZM,Saint Germain,Raz-Mut,,piston,1,L
+RBEL,Murphy,Elite,,piston,1,L
+RC3,Republic,RC-3 Seabee,,piston,1,L
+RC70,Rockwell,700 Commander 700,,piston,2,L
+RCAL,Murphy,Radical,,piston,1,L
+RD03,Duruble,RD-03 Edelweiss,,piston,1,L
+RD20,Denize,RD-20 Raid Driver,,piston,1,L
+RDH2,Redfern,DH-2,,piston,1,L
+RELI,Stinson,AT-19 Reliant,,piston,1,L
+RENE,Murphy,Renegade,,piston,1,L
+REV6,Groen,Revcon 6G,,turboprop,1,L
+RF10,Aeromot,AMT-100 Ximango,,piston,1,L
+RF3,Alpavia,RF-3,,piston,1,L
+RF4,Alpavia,RF-4,,piston,1,L
+RF47,ARC Atlantique,RF-47,,piston,1,L
+RF5,Fournier,RF-5,,piston,1,L
+RF6,Slingsby,T-3 Firefly,,piston,1,L
+RF9,ABS,RF-9,,piston,1,L
+RFAL,Dassault,Rafale,,jet,2,M
+RGNT,Neiva,C-42 Regente,,piston,1,L
+RISN,Porto,Risen,,piston,1,L
+RJ03,Junqua,RJ-03 Ibis,,piston,1,L
+RJ1H,Avro,RJ-100 Avroliner,,jet,4,M
+RJ70,Ai(r),RJ-70 Avroliner,,jet,4,M
+RJ85,Avro,RJ-85 Avroliner,,jet,4,M
+RK5,Kalinauskas,RK-5,,piston,1,L
+RLU1,RLU,RLU-1 Breezy,,piston,1,L
+RMOU,Hillberg,EH1-01 Rotormouse,,helicopter,1,L
+RNGR,DAC,RangeR,,piston,1,L
+RODS,Aircraft Spruce,DR-107 One Design,,piston,1,L
+ROND,Ambrosini,F-4 Rondone,,piston,1,L
+ROSE,Maupin,Windrose,,piston,1,L
+RP1,Mitsubishi,RP-1,,helicopter,2,L
+RPUP,Little Wing,LW-4 Roto-Pup,,piston,1,L
+RS12,Rans,S-12 Airaile,,piston,1,L
+RS18,Sportavia-Pützer,RS-180 Sportsman,,piston,1,L
+RS20,Rans,S-20 Raven,,piston,1,L
+RS21,Rans,S-21 Outbound,,piston,1,L
+RTA4,Rtaf,RTAF-4 Chandra,,piston,1,L
+RUBI,Scintex,ML-250 Rubis,,piston,1,L
+RV10,Van's,RV-10,,piston,1,L
+RV12,Van's,RV-12,,piston,1,L
+RV14,Van's,RV-14,,piston,1,L
+RV15,Van's,RV-15,,piston,1,L
+RV3,Van's,RV-3,,piston,1,L
+RV4,Van's,RV-4,,piston,1,L
+RV4T,Van's,RV-4T,,turboprop,1,L
+RV6,Aiep,Air Beetle,,piston,1,L
+RV7,Van's,RV-7,,piston,1,L
+RV8,Van's,RV-8,,piston,1,L
+RV9,Van's,RV-9,,piston,1,L
+RVAL,Denel,AH-2 Rooivalk,,helicopter,2,M
+RVST,Rupert,VimanaSteel,,piston,1,L
+RW19,Ragwing,RW-19 Stork,,piston,1,L
+RW20,Ragwing,RW-20 Stork,,piston,1,L
+RW22,Ragwing,RW-22 Tiger Moth,,piston,1,L
+RW26,Ragwing,RW-26 Special 2,,piston,1,L
+RW3,Rhein,RW-3 Multoplane,,piston,1,L
+RYSA,Progress,Rysachok,,turboprop,2,L
+RYST,Ryan,PT-20,,piston,1,L
+S05F,Siai-Marchetti,S-205-18F,,piston,1,L
+S05R,Siai-Marchetti,S-205-18R,,piston,1,L
+S1,Interstate,L-6 Cadet,,piston,1,L
+S10,Stinson,105,,piston,1,L
+S107,Spratt,107,,piston,1,L
+S108,Stinson,108 Voyager,,piston,1,L
+S10S,Stemme,S-10,,piston,1,L
+S11,Fokker,S-11 Instructor,,piston,1,L
+S12,Spencer,S-12 Air Car,,piston,1,L
+S122,Skyline,Pchelka,,piston,2,L
+S12S,Stemme,S-12 Twin Voyager,,piston,1,L
+S15S,Stemme,S-15,,piston,1,L
+S15U,Safran,S-15 Patroller,,piston,1,L
+S160,Sunward,SA160,,piston,1,L
+S200,Sipa,S-200 Minijet,,jet,1,L
+S202,Sgau,S-202,,piston,2,L
+S208,Siai-Marchetti,S-208,,piston,1,L
+S21,Macdonald,S-21,,piston,1,L
+S211,Padc,S-211,,jet,1,L
+S223,CASA,223 Flamingo,,piston,1,L
+S22T,Cirrus,SR-22 Turbo,,piston,1,L
+S274,Irgc,Shahed 274,,helicopter,1,L
+S278,Hesa,Shahed 278,,helicopter,1,L
+S285,Hesa,Shahed 285,,helicopter,1,L
+S2P,Grumman,G-89 Tracker,,piston,2,M
+S2T,IMP,P-16 Turbo Tracker,,turboprop,2,M
+S3,Lockheed,L-394 Viking,,jet,2,M
+S330,Schweizer,269D 330,,helicopter,1,L
+S355,Scaled,355 Firebird,,piston,1,L
+S360,Aerospatiale,SA-360 Dauphin,,helicopter,1,L
+S37,Sukhoi,S-37 Berkut,,jet,2,M
+S38,Sikorsky,S-38 Replica,,piston,2,L
+S39,Sikorsky,S-39,,piston,1,L
+S4,Arctic,S-4 Privateer,,piston,1,L
+S400,Sgau,S-400 Kapitan,,piston,2,L
+S401,Scaled,401 Sierra,,jet,1,L
+S434,Sikorsky,S-434,,helicopter,1,L
+S45,Partenair,S-45 Mystere,,piston,1,L
+S450,Aero-East-Europe,SILA-450,,piston,1,L
+S51,Sikorsky,H-5,,helicopter,1,L
+S51D,Stewart,S-51D,,piston,1,L
+S52,Sikorsky,HO5S,,helicopter,1,L
+S55P,Sikorsky,CH-19,,helicopter,1,L
+S55T,Sikorsky,S-55T,,helicopter,1,L
+S58P,Sikorsky,CH-34 Chocktaw,,helicopter,1,L
+S58T,Sikorsky,S-58DT,,helicopter,1,L
+S6,Stemme,S-6,,piston,1,L
+S601,Aerospatiale,SN-601 Corvette,,jet,2,L
+S61,Sikorsky,CH-124 Sea King,,helicopter,2,M
+S61R,Sikorsky,CH-3,,helicopter,2,M
+S62,Sikorsky,HH-52 Seaguard,,helicopter,1,L
+S64,Sikorsky,CH-54 Tarhe,,helicopter,2,M
+S65C,Aerospatiale,SA-365C Dauphin 2,,helicopter,2,L
+S716,Stratos,714,,jet,1,L
+S76,Sikorsky,AUH-76,,helicopter,2,L
+S900,Sipa,S-901,,piston,1,L
+S92,Sikorsky,CH-148 Cyclone,,helicopter,2,M
+S97,Sikorsky,S-97 Raider,,helicopter,1,L
+SA02,K & S,SA-102.5 Cavalier,,piston,1,L
+SA03,K & S,SA-103 Cavalier,,piston,1,L
+SA04,K & S,SA-104 Cavalier,,piston,1,L
+SA05,K & S,SA-105 Super Cavalier,,piston,1,L
+SA10,Stolp,SA-100 Starduster,,piston,1,L
+SA11,Stits,SA-11 Playmate,,piston,1,L
+SA2,ICP,SA-2 Rampage,,piston,1,L
+SA20,Beriev,SA-20,,piston,1,L
+SA3,Stits,SA-3 Playboy,,piston,1,L
+SA30,Stolp,SA-300 Starduster Too,,piston,1,L
+SA37,Schweizer,RG-8 Condor,,piston,1,L
+SA38,Schweizer,RU-38A Twin Condor,,piston,2,L
+SA50,Stolp,SA-500 Starlet,,piston,1,L
+SA6,Stits,SA-6 Flut-R-Bug,,piston,1,L
+SA6E,Sreya,SA-6 Envoy,,turboprop,1,L
+SA7,Stits,SA-7 Sky-Coupe,,piston,1,L
+SA70,Stolp,SA-700 Acroduster,,piston,1,L
+SA75,Stolp,SA-750 Acroduster Too,,piston,1,L
+SA8T,Schweizer,RU-38B Twin Condor,,turboprop,2,L
+SAB2,Arnet Pereyra,Sabre 2,,piston,1,L
+SABA,Paravar Pars,Saba,,piston,1,L
+SABW,Azalea,Saberwing,,piston,1,L
+SACE,ACE,Super Ace,,piston,1,L
+SACR,Smith,Acro Advanced,,piston,1,L
+SAFF,Halsted,Saffire,,piston,1,L
+SAH1,FLS,Sprint,,piston,1,L
+SAKO,Rans,S-10 Sakota,,piston,1,L
+SALB,Skygear,Albatross,,piston,1,L
+SAM,SAM Aircraft,Sam,,piston,1,L
+SAND,Short,S-25 Sandringham,,piston,4,M
+SAPH,Piel,CP-1320 Saphir,,piston,1,L
+SASH,Shark Aircraft,Shark,,piston,2,L
+SASP,Supermarine Aircraft,Spitfire Mk25,,piston,1,L
+SASY,Protech,PT-2 ProStar,,piston,1,L
+SATA,Hispano,HA-200 Saeta,,jet,2,L
+SAVA,Sadler,Vampire,,piston,1,L
+SAVG,Alms,Callao,,piston,1,L
+SB05,Saab,105,,jet,2,L
+SB1,Sikorsky,S-100 Defiant,,helicopter,2,M
+SB20,Saab,2000,,turboprop,2,M
+SB29,Saab,29,,jet,1,M
+SB32,Saab,32 Lansen,,jet,1,M
+SB35,Saab,35 Draken,,jet,1,M
+SB37,Saab,37 Viggen,,jet,1,M
+SB39,Saab,39 Gripen,,jet,1,M
+SB7,Seabird,SB-7 Seeker,,piston,1,L
+SB91,DE Schelde,91 Safir,,piston,1,L
+SBD,Douglas,A-24 Dauntless,,piston,1,L
+SBLS,Slipstream,SkyBlaster,,piston,2,L
+SBM3,E & K,SBM-03 Kos,,piston,1,L
+SBOY,Interplane,Skyboy,,piston,1,L
+SBR1,North American Rockwell,American Rockwell Sabre 40/60,,jet,2,M
+SBR2,North American Rockwell,American Rockwell Sabre 75,,jet,2,M
+SC01,FFT,SC-01 Speed Canard,,piston,1,L
+SC7,Short,Skyvan SC7,,turboprop,2,L
+SCAM,Aerosport,Scamp,,piston,1,L
+SCEP,Slipstream,Scepter,,piston,1,L
+SCII,Sport Copter,SportCopter 2,,piston,1,L
+SCOM,Airdale,Comet,,piston,1,L
+SCOR,Rotorway,Scorpion,,helicopter,1,L
+SCOU,Westland,Scout,,helicopter,1,L
+SCRO,Akaflieg Munchen,Mü-30 Schlacro,,piston,1,L
+SCTR,Flaglor,Scooter,,piston,1,L
+SCUB,Aero Kuhlmann,Scub,,piston,1,L
+SCW1,Scwal,101,,piston,1,L
+SD2,Spacek,SD-2 SportMaster,,piston,1,L
+SD26,Skydancer,SD-260,,piston,1,L
+SD4,Tomark,SD-4 Viper,,piston,1,L
+SDUS,Stolp,Super Starduster,,piston,1,L
+SE5A,RAF,SE-5A,,piston,1,L
+SE5R,Replica Plans,SE-5A Replica,,piston,1,L
+SEAT,Seawind,Turbine Seawind,,turboprop,1,L
+SEAW,Seawind,Seawind,,piston,1,L
+SERA,Servoplant,Aerocraft,,piston,1,L
+SF2,Hapi,SF-2 Cygnet,,piston,1,L
+SF23,Scheibe,SF-23 Sperling,,piston,1,L
+SF24,Scheibe,SF-24 Motorspatz,,piston,1,L
+SF25,Scheibe,SF-25 Falke,,piston,1,L
+SF27,Scheibe,SF-27M,,piston,1,L
+SF28,Scheibe,SF-28 Tandem Falke,,piston,1,L
+SF31,Sportavia-Pützer,SFS-31 Milan,,piston,1,L
+SF32,Scheibe,SF-32,,piston,1,L
+SF34,Saab,SF 340,,turboprop,2,M
+SF35,Scheibe,SF-35,,piston,1,L
+SF36,Scheibe,SF-36,,piston,1,L
+SF50,Cirrus,Vision SF50,,jet,1,L
+SG37,Schweizer,SGM-2-37,,piston,1,L
+SG70,Glass,SG-70 STOLGlass,,piston,1,L
+SG92,Technoavia,SM-92T Turbo Finist,,turboprop,1,L
+SGRA,Prestige,Storm Rally,,piston,1,L
+SGUP,Aero Spacelines,377SGT Super Guppy,,turboprop,4,M
+SH09,Kopter,SH-09,,helicopter,1,L
+SH33,Short,Shorts 330,,turboprop,2,M
+SH36,Short,Shorts 360,,turboprop,2,M
+SH4,Silvercraft,SH-4,,helicopter,1,L
+SH5,Harbin,PS-5,,turboprop,4,M
+SHAC,Avro,696 Shackleton,,piston,4,M
+SHAK,Freedom Master,FM-2 Air Shark,,piston,1,L
+SHAW,Armstrong Whitworth,Sea Hawk,,jet,1,M
+SHEA,Seaflight,Shearwater,,piston,1,L
+SHEK,Rans,S-16 Shekari,,piston,1,L
+SHER,Sherpa,Sherpa,,piston,1,L
+SHOE,Mercury,Shoestring,,piston,1,L
+SHOP,Salvay-Stark,Skyhopper,,piston,1,L
+SHOR,Higher Class,Super Hornet,,piston,1,L
+SHRK,Shark Aero,Shark,,piston,1,L
+SHRT,Sherpa,Sherpa K-650T,,turboprop,1,L
+SIDE,Smyth,S Sidewinder,,piston,1,L
+SIGM,Elitar,Sigma,,piston,1,L
+SILH,Lunds Tekniske,SA-60 Silhouette,,piston,1,L
+SIR2,Rhein,Sirius 2,,piston,1,L
+SIRA,Tecnam,P-2002,,piston,1,L
+SJ30,Emivest,SJ-30,,jet,2,L
+SK10,Skyeton,K-10 Swift,,piston,1,L
+SK70,Starkraft,SK-700,,piston,2,L
+SKAR,III,Sky Arrow,,piston,1,L
+SKIF,Aerolites,AeroSkiff,,piston,1,L
+SKIM,Colonial,C-1 Skimmer,,piston,1,L
+SKRA,Best OFF,Sky Ranger,,piston,1,L
+SKYC,OMA SUD,Skycar,,piston,2,L
+SKYO,Skyote Aeromarine,Skyote,,piston,1,L
+SKYR,Rearwin,175 Skyranger,,piston,1,L
+SL1,Star-Lite,SL-1 Star-Lite,,piston,1,L
+SL39,Mapo,SL-39,,piston,1,L
+SL90,Aviotechnica,SL-90 Leshii,,piston,1,L
+SLCH,Scaled,351 Stratolaunch,,jet,6,H
+SLG2,Sonaca,S-2,,piston,1,L
+SLG4,Airplane Factory,Sling 4,,piston,1,L
+SLH4,Sling Aircraft,Sling 4 High Wing,,piston,1,L
+SLK3,Slick,360,,piston,1,L
+SLK5,Slick,540,,piston,1,L
+SM01,Stern-Mallick,SM-01 Vega,,piston,1,L
+SM19,Siai-Marchetti,SM-1019,,turboprop,1,L
+SM20,Technoavia,SM-2000,,turboprop,1,L
+SM60,Stinson,SM-6000 Tri-Motor,,piston,3,L
+SM92,Moravan,Zlin Z-400 Rhino,,piston,1,L
+SMAX,Airmax,M-22 SeaMax,,piston,1,L
+SMB2,Dassault,Super Mystère B2,,jet,1,M
+SNAD,Calumet,636 Snobird Adventurer,,piston,1,L
+SNAP,Dallair,FR-01 Snap,,piston,1,L
+SNGY,Ciac,Synergy,,piston,1,L
+SNOS,VSR,SR-1 Snoshoo,,piston,1,L
+SNS2,Sorrell,SNS-2 Guppy,,piston,1,L
+SNS7,Sorrell,SNS-7 Hiperbipe,,piston,1,L
+SNS9,Sorrell,SNS-9 EXP-2,,piston,1,L
+SNTA,Airsport,Sonata,,piston,1,L
+SOK2,Soko,2,,piston,1,L
+SOKL,Mráz,M-1 Sokol,,piston,1,L
+SOL1,Solar Impulse,1,,electric,4,L
+SOL2,Solar Impulse,2,,electric,4,L
+SOLI,Rutan,77 Solitaire,,piston,1,L
+SONX,Sonex,Sonex,,piston,1,L
+SORA,ACS,ACS-100 Sora,,piston,1,L
+SP20,Micco,SP-20,,piston,1,L
+SP33,Spectrum,S-33 Independence,,jet,2,L
+SP55,Technoavia,SP-55,,piston,1,L
+SP6E,Sauser,P-6E Replica,,piston,1,L
+SP7,Spartan,7 Executive,,piston,1,L
+SP91,Technoavia,SP-91 Slava,,piston,1,L
+SP95,Technoavia,SP-95,,piston,1,L
+SPA2,Stark-Trefethen,Sport-Aire 2,,piston,1,L
+SPAR,III,Speed Arrow,,piston,1,L
+SPDR,Rearwin,6000 Speedster,,piston,1,L
+SPEL,Loehle,Spitfire Elite,,piston,1,L
+SPGY,Aircraft Designs,Sportster Gyro,,piston,1,L
+SPHA,American Autogyro,SparrowHawk,,piston,1,L
+SPIR,Questair,Spirit,,piston,1,L
+SPIT,Supermarine,Seafire,,piston,1,L
+SPKR,TL Ultralight,Sparker,,piston,1,L
+SPOR,Amax,Sport 1700,,piston,1,L
+SPR2,Carlson,Sparrow 2,,piston,1,L
+SPRT,Practavia,Sprite,,piston,1,L
+SPST,Rearwin,7000 Sportster,,piston,1,L
+SPUP,Sopwith,Pup,,piston,1,L
+SQ2T,Glassic,SQ-2000,,piston,1,L
+SQES,Innovation,SkyQuest,,piston,2,L
+SR01,Eurodisplay,SR-01 Magic,,piston,1,L
+SR20,Cirrus,SR-20,,piston,1,L
+SR22,Cirrus,SR 22,,piston,1,L
+SRAC,Sport Racer,Sport Racer,,piston,1,L
+SRAI,Great Lakes,Sonerai,,piston,1,L
+SRAS,D'apuzzo,D-260 Senior Aero Sport,,piston,1,L
+SRAY,Dornier,S-Ray 007,,piston,1,L
+SREY,Progressive Aerodyne,SeaRey,,piston,1,L
+SS2,Rutan,339 Space Ship Two,,rocket,1,M
+SS2P,Ayres,S-2R-600 Thrush,,piston,1,L
+SS2T,Ayres,S-2R-G Turbo Thrush,,turboprop,1,L
+SSAB,North American,F-100 Super Sabre,,jet,1,M
+SSC,Butterfly,Super Sky Cycle,,piston,1,L
+SSTL,Just,JA30 SuperSTOL,,piston,1,L
+SSTM,SG Aviation,Sea Storm,,piston,1,L
+ST1,Phillips,ST-1 Speedtwin,,piston,2,L
+ST10,Socata,ST-10 Diplomate,,piston,1,L
+ST3,Stearman,C-3,,piston,1,L
+ST30,Panzl,S-330,,piston,1,L
+ST4,Stearman,4 Junior Speedmail,,piston,1,L
+ST6,Stearman,6 Cloudboy,,piston,1,L
+ST60,Staudacher,S-600,,piston,1,L
+ST75,Boeing,75 Kaydet,,piston,1,L
+ST87,Stern,ST-87 Europlane,,piston,1,L
+STAL,Aircraft Designs,Stallion,,piston,1,L
+STAR,Beech,2000 Starship,,turboprop,2,L
+STAT,Aircraft Designs,Turbine Stallion,,turboprop,1,L
+STCH,FLY Synthesis,Storch,,piston,1,L
+STFF,Statler,Firefly,,piston,1,L
+STG2,Rans,S-18 Stinger 2,,piston,1,L
+STIL,Terzi,T-9 Stiletto,,piston,1,L
+STLN,Helio,AU-24 Stallion,,turboprop,1,L
+STOR,Storch Aviation,SS-4 Storch,,piston,1,L
+STR2,Strojnik,S-2,,piston,1,L
+STRA,Striplin,Lone Ranger,,piston,1,L
+STRE,TL Ultralight,Stream,,piston,1,L
+STRI,Sopwith,Triplane Replica,,piston,1,L
+STRK,BAC,167 Strikemaster,,jet,1,L
+STRM,SG Aviation,Storm,,piston,1,L
+STST,CFM,SA-2 Star Streak,,piston,1,L
+SU17,Sukhoi,Su-17,,jet,1,M
+SU24,Sukhoi,Su-24,,jet,2,M
+SU25,Sukhoi,Su-25,,jet,2,M
+SU26,Sukhoi,Su-26,,piston,1,L
+SU27,Sukhoi,J-11,,jet,2,M
+SU29,Sukhoi,Su-29,,piston,1,L
+SU31,Sukhoi,Su-31,,piston,1,L
+SU38,Sukhoi,Su-38,,piston,1,L
+SU57,Sukhoi,Su-57,,jet,2,M
+SU7,Sukhoi,Su-7,,jet,1,M
+SU80,Sukhoi,Su-80,,turboprop,2,M
+SU95,Sukhoi,Superjet 100-95,SSJ,jet,2,M
+SUBA,Fuji,FA-200 Aero Subaru,,piston,1,L
+SUCO,Bell,209 SuperCobra,,helicopter,2,M
+SUNV,Fokker,Super Universal,,piston,1,L
+SURN,Korea Aerospace,KUH-1 Surion,,helicopter,2,M
+SURU,IPT,IPT-16 Surubim,,piston,1,L
+SUSO,Vstol,SS-2000 Super Solution,,piston,1,L
+SV4,Aiaa,SV-4,,piston,1,L
+SVNH,Aerotec,MXP-740 Savannah,,piston,1,L
+SW18,Skywood,SW-18 Teddy,,piston,1,L
+SW2,Swearingen,SA-26 Merlin 2,,turboprop,2,L
+SW3,Fairchild Swearingen,Swearingen SA-226T/TB Merlin 3,,turboprop,2,L
+SW4,Fairchild Swearingen,Swearingen SA-227AT Merlin 4,,turboprop,2,
+SWAK,Warner,Revolution 1,,piston,1,L
+SWAT,Bharat,LT-1 Swati,,piston,1,L
+SWFT,Scaled,400 Swift,,jet,1,L
+SWIN,S-Wing,S-Wing,,piston,1,L
+SWOR,Blackburn,Swordfish,,piston,1,L
+SX30,Swearingen,SX-300,,piston,1,L
+SYCA,Bristol,171 Sycamore,,helicopter,1,L
+SYMP,OMF,OMF-100 Symphony,,piston,1,L
+SYNC,FLY Synthesis,Syncro,,piston,1,L
+SZ45,SZD,SZD-45 Ogar,,piston,1,L
+SZ9M,SZD,SZD-9bis Bocian M-2000,,piston,1,L
+T1,Fuji,T-1,,jet,1,L
+T10,Tmm-Avia,T-10 Avia-Tor,,piston,1,L
+T101,Aeroprogress,T-101 Grach,,turboprop,1,L
+T134,Tupolev,Tu-134,,jet,2,M
+T154,Tupolev,Tu-154,,jet,3,M
+T160,Tupolev,Tu-160,,jet,4,H
+T18,Classic Sport,S-18,,piston,1,L
+T19,THK,T-19 Speedfire,,piston,1,L
+T2,North American,T-2 Buckeye,,jet,2,L
+T204,Tupolev,Tu-204,,jet,2,M
+T206,Cessna,T206 Stationair TC,,piston,1,L
+T210,Cessna,T210 Turbo Centurion,,piston,1,L
+T211,Indus,T-11 Sky Skooter,,piston,1,L
+T22M,Tupolev,Tu-22M,,jet,2,M
+T250,Anderson-Greenwood,51,,piston,1,L
+T28,North American,American T-28 Trojan,,piston,1,L
+T30,Terzi,T-30 Katana,,piston,1,L
+T33,Lockheed,AT-33,,jet,1,M
+T334,Tupolev,Tu-334,,jet,2,M
+T34P,Beech,T-34/45 Mentor,,piston,1,L
+T34T,Beech,T-34C Turbo Mentor,,turboprop,1,L
+T35,Temco,T-35 Buckaroo,,piston,1,L
+T37,Cessna,318A,,jet,2,L
+T38,Northrop,T-38 Talon,,jet,2,L
+T4,Kawasaki,T-4,,jet,2,M
+T40,Turner,T-40,,piston,1,L
+T411,Khrunichev,T-411 Aist,,piston,1,L
+T415,Khrunichev,T-415 Snegir,,piston,1,L
+T419,Khrunichev,AT-419 Strekoza,,piston,1,L
+T5,Fuji,KM-2D,,turboprop,1,L
+T50,Cessna,AT-17 Bobcat,,piston,2,L
+T51,Titan,T-51 Mustang,,piston,1,L
+T6,North American,American T-6 Texan,,piston,1,L
+T7,Fuji,T-7,,turboprop,1,L
+TA15,Taylorcraft,15 Foursome,,piston,1,L
+TA16,Thurston,TA-16 Seafire,,piston,1,L
+TA20,Taylorcraft,20 Ranchwagon,,piston,1,L
+TAA1,Scaled,TAA-1,,piston,1,L
+TAGO,Team Tango,Tango-2,,piston,1,L
+TAIL,Wittman,W-10 Tailwind,,piston,1,L
+TAMP,Socata,TB-9 Tampico,,piston,1,L
+TARO,Anahuac,Tauro,,piston,1,L
+TARR,Pelegrin,Tarragon,,piston,1,L
+TAYA,Taylorcraft,A,,piston,1,L
+TAYB,Taylorcraft,BC,,piston,1,L
+TAYD,Taylorcraft,DC,,piston,1,L
+TB05,AMC,Texas Bullet 205,,piston,1,L
+TB20,Socata,TB-20 Trinidad,,piston,1,L
+TB21,Socata,TB-21 Trinidad TC,,piston,1,L
+TB30,Aerospatiale,TB-30 Epsilon,,piston,1,L
+TB31,Socata,TB-31 Omega,,turboprop,1,L
+TBEE,United Consultant,UC-1 Twin Bee,,piston,2,L
+TBM,Grumman,G-40 Avenger,,piston,1,M
+TBM7,Socata,TBM-700/700A,,turboprop,1,L
+TBM8,Socata,TBM-850,,turboprop,1,L
+TBM9,Socata,TBM-900,,turboprop,1,L
+TBR3,Golden Circle,T-Bird 2 Cargo,,piston,1,L
+TC2,Aero Mirage,TC-2,,piston,1,L
+TCAT,Grumman,F7F Tigercat,,piston,2,M
+TCOU,Helio,H-500 Twin Courier,,piston,2,L
+TD1,Taiwan Dancer,TD-1,,piston,1,L
+TD2,Turbine Design,TD-2 Tempest,,turboprop,1,L
+TD3,Taiwan Dancer,TD-3 Alluvion Legend,,piston,1,L
+TEAL,Schweizer,TSC-1 Teal,,piston,1,L
+TERM,Smith,Termite,,piston,1,L
+TERR,Foxcon,Terrier,,piston,1,L
+TEX2,Raytheon,Texan 2,,turboprop,1,L
+TEXA,FLY Synthesis,Texan,,piston,1,L
+TF19,Taylorcraft,19 Sportsman,,piston,1,L
+TF21,Taylor Kits,T-Kraft,,piston,1,L
+TF22,Taylorcraft,F-22 Classic,,piston,1,L
+TFK2,Ams-Flight,Carat,,piston,1,L
+TFOC,Thunder Wings,Focke-Wulf Fw-190,,piston,1,L
+TFUN,TWI,Taifun,,piston,1,L
+TIAD,Trike Icaros,Adventure,,piston,1,L
+TIGR,Airbus Helicopters,EC-665 Tiger,,helicopter,2,L
+TIJU,Avions Fairey,Tipsy Junior,,piston,1,L
+TIPB,Avions Fairey,Tipsy B,,piston,1,L
+TJET,Maverick,TJ-1500 Leader,,jet,2,L
+TL20,TL Ultralight,TL-2000 Sting,,piston,1,L
+TL30,TL Ultralight,TL-3000 Sirius,,piston,1,L
+TLEG,Legend,Turbine Legend,,turboprop,1,L
+TM5,TM Aircraft,TM-5,,piston,1,L
+TMOT,Fisher,R-80 Tiger Moth,,piston,1,L
+TMUS,Papa 51,Thunder Mustang,,piston,1,L
+TNAV,Camair,480 Twin Navion,,piston,2,L
+TNDR,Dream,Tundra,,piston,1,L
+TOBA,Socata,TB-10 Tobago,,piston,1,L
+TOOT,Meyer,Little Toot,,piston,1,L
+TOR,Aeritalia,Tornado,,jet,2,M
+TOUR,Aesl,Airtourer,,piston,1,L
+TOXO,CAG,Toxo,,piston,1,L
+TP40,Thunder Wings,Curtiss P-40,,piston,1,L
+TPIL,Enaer,T-35DT Turbo Pillán,,turboprop,1,L
+TPIN,Scottish Aviation,Twin Pioneer,,piston,2,L
+TR1,Trident,TR-1 Trigull,,piston,1,L
+TR20,Feugray,TR-200,,piston,1,L
+TR26,Feugray,TR-260 Sirius,,piston,1,L
+TR55,3xtrim,3X-55 Trener,,piston,1,L
+TRAL,Groppo,Trial,,piston,1,L
+TRAP,Capella,T-Raptor,,piston,1,L
+TRBA,Podesva,Trener Baby,,piston,1,L
+TRDO,Titan,Tornado S,,piston,1,L
+TRF1,Team Rocket,F-1,,piston,1,L
+TRIM,Ford,4-AT Tri-Motor,,piston,3,L
+TRIS,Anglo Normandy,BN-2A Mk3 Trislander,,piston,3,L
+TRMA,Stinson,A Tri-Motor,,piston,3,L
+TRWN,Pacific Airmotive,Tradewind,,piston,2,L
+TS11,PZL-Mielec,TS-11 Iskra,,jet,1,L
+TS14,Test,TST-14 Bonus,,piston,1,L
+TS8,PZL-Mielec,TS-8 Bies,,piston,1,L
+TSPT,Thunder Wings,Supermarine Spitfire,,piston,1,L
+TSTN,Terrafugia,Transition,,piston,1,L
+TSTR,AIR & Space,Twinstar,,piston,1,L
+TTRS,Humbert,Tetras,,piston,1,L
+TTWO,Parker,Teenie Two,,piston,1,L
+TU16,Tupolev,Tu-16,,jet,2,M
+TU22,Tupolev,Tu-22,,jet,2,M
+TU95,Tupolev,Tu-142,,turboprop,4,H
+TUCA,Embraer,A-27 Tucano,,turboprop,1,L
+TUCR,Flying Legend,Tucano Replica,,piston,1,L
+TUCT,Flying Legend,Turbine Tucano Replica,,turboprop,1,L
+TUL3,Podesva,TUL-03 Amigo,,piston,1,L
+TUTR,Avro,621 Tutor,,piston,1,L
+TVL4,Travel AIR,4,,piston,1,L
+TVLB,Travel AIR,2000,,piston,1,L
+TWEN,Tecnam,P-2010 Gran Lusso,,piston,1,L
+TWIR,Dyn'aero,Twin-R,,piston,2,L
+TWSP,Time Warp,Spitfire,,piston,1,L
+TWST,Silence,Twister,,piston,1,L
+TZRV,Iriaf,JT-2-2 Tazarve,,jet,1,L
+U15,Phoenix AIR,U-15 Phoenix,,piston,1,L
+U16,Grumman,G-111 Albatross,,piston,2,M
+U2,Lockheed,ER-2,,jet,1,M
+U21,Beech,90 (A90-1) Ute,,turboprop,2,L
+U22,Beech,1074,,piston,1,L
+UBAT,Australite,Ultrabat,,piston,1,L
+UF10,Airo,5,,piston,1,L
+UF13,Distar,D-13 SunDancer,,piston,1,L
+UFHT,UFO,HeliThruster,,piston,1,L
+UH1,Bell,204,,helicopter,1,L
+UH12,Hiller,H-23 Raven,,helicopter,1,L
+UH1Y,Bell,UH-1Y,,helicopter,2,M
+UL10,Streamline Welding,10 Ultimate Competitor,,piston,1,L
+UL20,Streamline Welding,20 Ultimate Companion,,piston,1,L
+UL2F,Aeros,UL-2000 Flamingo,,piston,1,L
+UL39,Cvut,UL-39 Albi,,piston,1,L
+UL45,3xtrim,3X-47 Ultra,,piston,1,L
+ULPA,Ullmann,Panther,,piston,1,L
+ULTS,American Sportscopter,Ultrasport 496,,helicopter,1,L
+UM18,AIR & Space,18,,piston,1,L
+UNIV,Neiva,N-621 Universal,,piston,1,L
+URRA,Ibis,Arrow,,piston,1,L
+US2,Shinmaywa,US-2,,turboprop,4,M
+UT60,Utva,60,,piston,1,L
+UT65,Utva,65 Privrednik,,piston,1,L
+UT66,Utva,66,,piston,1,L
+UT75,Utva,75,,piston,1,L
+UU12,Udet,U-12 Flamingo Replica,,piston,1,L
+V1,Grumman,AO-1 Mohawk,,turboprop,2,M
+V10,North American,OV-10 Bronco,,turboprop,2,L
+V22,Bell-Boeing,V-22 Osprey,,turboprop,2,M
+V221,MSW,Votec 221,,piston,1,L
+V252,MSW,Votec 252,,piston,1,L
+V280,Bell,V-280 Valor,,turboprop,2,M
+V322,MSW,Votec 322,,piston,1,L
+V351,MSW,Votec 351,,piston,1,L
+V452,MSW,Votec 452,,turboprop,1,L
+V500,Revolution,Voyager-500,,helicopter,1,L
+VALI,Vultee,BT-13 Valiant,,piston,1,L
+VAMP,de Havilland,DH-100 Vampire,,jet,1,L
+VANT,Visionaire,VA-10 Vantage,,jet,1,L
+VAUT,SUD,SO-4050 Vautour,,jet,2,M
+VELO,Velocity,Velocity 173,,piston,1,L
+VELT,Velocity,Velocity V-Twin,,piston,2,L
+VENT,Schempp-Hirth,Ventus 2cM,,piston,1,L
+VEZE,Rutan,33 VariEze,,piston,1,L
+VF2,FRY,VF-2 Esprit,,piston,1,L
+VF35,Lockheed Martin,F-35B Lightning 2,,jet,1,M
+VF60,Vulcanair,VF-600 Mission,,turboprop,1,L
+VG3T,Aviakit,Vega 3000,,piston,1,L
+VGUL,Percival,K-1 Vega Gull,,piston,1,L
+VIMA,Valmet,Viima,,piston,1,L
+VIPJ,Viper,ViperJet,,jet,1,L
+VIPR,Paxman's,Viper,,piston,1,L
+VISI,Pro-Composites,Vision,,piston,1,L
+VIVA,Composit Airplanes,Viva,,piston,1,L
+VIX,Skystar,Kitfox Vixen,,piston,1,L
+VIXN,Amax,Vixen,,piston,1,L
+VJ22,Volmer,VJ-22 Sportsman,,piston,1,L
+VK3P,Cirrus,VK-30 Cirrus (piston),,piston,1,L
+VK3T,Cirrus,VK-30 Cirrus (turbine),,turboprop,1,L
+VL3,Aveko,VL-3,,piston,1,L
+VL3T,JMB Aircraft,VL-3 Evolution Turbine,,turboprop,1,L
+VLOT,Velocity,Velocity XL (turbine),,turboprop,1,L
+VLTT,Velocity,Velocity V-Twin (turbine),,turboprop,2,L
+VM1,VOL Mediterrani,VM-1 Esqual,,piston,1,L
+VNOM,de Havilland,DH-112 Venom,,jet,1,M
+VNTE,Schempp-Hirth,Ventus 3F,,electric,1,L
+VNTR,ICP,Ventura,,piston,1,L
+VO10,Volaircraft,Volaire 10,,piston,1,L
+VOL2,Volante,Volante Two,,piston,1,L
+VP2,Evans,VP-2 Volksplane,,piston,1,L
+VR20,Egvoyager,VR-202,,piston,1,L
+VR7,Vashon,Ranger R7,,piston,1,L
+VSON,American Affordable,Vision,,piston,1,L
+VTOR,Vulcanair,AP-68TP-600 A-Viator,,turboprop,2,L
+VTRA,Rans,S-19 Venterra,,piston,1,L
+VTUR,Nuventure,Venture,,piston,1,L
+VUT1,Evektor,VUT-100 Cobra,,piston,1,L
+VVIG,Rutan,27 VariViggen,,piston,1,L
+VW10,Airconcept,VoWi-10 Airbuggy,,piston,1,L
+VWIT,Aircraft Spruce,V-Witt,,piston,1,L
+W11,Wolf,W-11 Boredom Fighter,,piston,1,L
+W135,Boeing,WC-135R,,jet,4,H
+W201,Weatherly,201,,piston,1,L
+W3,PZL-Swidnik,S-1 Procjon,,helicopter,2,L
+W5BC,Wittman,W-5 Buttercup,,piston,1,L
+W62T,Weatherly,620BTG,,turboprop,1,L
+WA40,Wassmer,WA-40 Super 4,,piston,1,L
+WA41,Wassmer,WA-41 Baladou,,piston,1,L
+WA42,Wassmer,Prestige,,piston,1,L
+WA50,Wassmer,WA-51 Pacific,,piston,1,L
+WA80,Wassmer,WA-80 Piranha,,piston,1,L
+WAC9,Waco,9,,piston,1,L
+WACA,Waco,IBA,,piston,1,L
+WACC,Waco,AGC,,piston,1,L
+WACD,Waco,D,,piston,1,L
+WACE,Waco,ARE Aristocrat,,piston,1,L
+WACF,Waco,CPF,,piston,1,L
+WACG,Waco,CRG,,piston,1,L
+WACM,Waco,JWM,,piston,1,L
+WACN,Waco,AVN,,piston,1,L
+WACO,Waco,10,,piston,1,L
+WACT,Waco,RPT,,piston,1,L
+WAIX,Sonex,Waiex,,piston,1,L
+WASP,Westland,Wasp,,helicopter,1,L
+WB57,Martin,272,,jet,2,M
+WBOO,Dean-Wilson,DW-200 Whitney Boomerang,,piston,1,L
+WCAT,Grumman,F4F Wildcat,,piston,1,L
+WDEX,Radab,Windex,,piston,1,L
+WESX,Westland,WS-58 Wessex,,helicopter,2,L
+WF4U,WAR,Vought F4U Corsair,,piston,1,L
+WFOC,WAR,Focke-Wulf 190,,piston,1,L
+WFUR,WAR,Hawker Sea Fury,,piston,1,L
+WH1,Wendt,WH-1 Traveler,,piston,1,L
+WH4,Hall,WH-4 Harpoon,,turboprop,1,L
+WHAT,Whatley,Special,,piston,1,L
+WHIL,Reflex,WLAC-1 White Lightning,,piston,1,L
+WHIS,Grove,GR-2 Whisper,,piston,1,L
+WHIT,Miles,M-11 Whitney Straight,,piston,1,L
+WHK2,Rutan,348 White Knight Two,,jet,4,M
+WICH,Javelin,Wichawk,,piston,1,L
+WILT,Aerostar,WT-01 Wild Thing,,piston,1,L
+WIND,Watson,GW-1 Windwagon,,piston,1,L
+WINE,Windecker,Eagle,,piston,1,L
+WIRR,Commonwealth,CA-16 Wirraway,,piston,1,L
+WISP,Whisper,Whisper,,piston,1,L
+WLBY,FLY Synthesis,Wallaby,,piston,1,L
+WM2,Miller,WM-2,,piston,1,L
+WOPU,Aerosport,Woody Pusher,,piston,1,L
+WP40,WAR,Curtiss P-40 Kittyhawk,,piston,1,L
+WP47,WAR,Republic P-47 Thunderbolt,,piston,1,L
+WS22,Spring,WS-202 Sprint,,piston,1,L
+WSP,AAK,Wasp,,piston,1,L
+WT10,Aerospool,WT-10 Advantic,,piston,1,L
+WT9,Aerospool,WT-9 Dynamic,,piston,1,L
+WUSH,Wüst,Seagle,,piston,1,L
+WW1,White,WW-1 Der Jäger D-9,,piston,1,L
+WW23,IAI,1123 Westwind,,jet,2,M
+WW24,IAI,1124 Westwind,,jet,2,M
+WZ10,Changhe,WZ-10,,helicopter,2,L
+WZER,WAR,Mitsubishi Zero,,piston,1,L
+X2,Sikorsky,X-2,,helicopter,1,L
+X3,Eurocopter,X-3,,helicopter,2,L
+X47B,Northrop Grumman,X-47B,,jet,1,M
+X49,Piasecki,X-49 SpeedHawk,,helicopter,2,M
+X59,Lockheed Martin,X-59 QueSST,,jet,1,M
+XA41,Xtremeair,Sbach 300,,piston,1,L
+XA42,Xtremeair,Sbach 342,,piston,1,L
+XA85,RAJ Hamsa,XA-85 X-Air LS,,piston,1,L
+XAIR,RAJ Hamsa,X-AIR F Gumnam,,piston,1,L
+XB1,Boom,XB-1,,jet,3,L
+XL2,Discovery,XL-2,,piston,1,L
+XNON,ABS Aerolight,Xenon,,piston,1,L
+XNOS,Sonex,Xenos,,piston,1,L
+Y11,Harbin,Y-11,,piston,2,L
+Y112,Yakovlev,Yak-112,,piston,1,L
+Y12,Harbin,Y-12-2,,turboprop,2,L
+Y12F,Harbin,Y-12F Aircar,,turboprop,2,M
+Y130,Yakovlev,Yak-130,,jet,2,M
+Y18T,Technoavia,SM-2000P,,piston,1,L
+Y20,Xian,Y-20 Kunpeng,,jet,4,H
+YA1,Yeoman,YA-1 Cropmaster,,piston,1,L
+YAK3,Yakovlev,Yak-3,,piston,1,L
+YAK9,Yakovlev,Yak-9,,piston,1,L
+YALE,North American,BT-14 Yale,,piston,1,L
+YARR,Arrow,Yarrow Arrow,,piston,1,L
+YAST,Sgau,Yastreb,,piston,1,L
+YC12,Chasle,YC-12 Tourbillon,,piston,1,L
+YK11,LET,C-11,,piston,1,L
+YK12,Pzl-Okecie,Yak-12,,piston,1,L
+YK18,Yakovlev,Yak-18,,piston,1,L
+YK28,Yakovlev,Yak-28,,jet,2,M
+YK30,Yakovlev,Yak-30,,jet,1,L
+YK40,Yakovlev,Yak-40,,jet,3,M
+YK42,Yakovlev,Yak-142,,jet,3,M
+YK50,Yakovlev,Yak-50,,piston,1,L
+YK52,Aerostar,Iak-52,,piston,1,L
+YK53,Yakovlev,Yak-53,,piston,1,L
+YK54,Yakovlev,Yak-54,,piston,1,L
+YK55,Yakovlev,Yak-55,,piston,1,L
+YK58,Yakovlev,Yak-58,,piston,1,L
+YL15,Boeing,451 Scout,,piston,1,L
+YNHL,Aviaimpex,KT-112 Yanhol,,helicopter,2,L
+YS11,Mitsubishi,YS-11,,turboprop,2,M
+YUKN,Murphy,Yukon,,piston,1,L
+YUNO,Shuya,Yunona,,piston,1,L
+YURO,Soko-Cniar,J-22 Orao,,jet,2,M
+Z22,Moravan,Zlin Z-22 Junak,,piston,1,L
+Z26,Moravan,Zlin C-5 Trener,,piston,1,L
+Z37P,LET,Z-237 Cmelák,,piston,1,L
+Z37T,Moravan,Z-137 Agro Turbo,,turboprop,1,L
+Z42,Moravan,Firnas 142,,piston,1,L
+Z43,Moravan,Safir 43,,piston,1,L
+Z50,Moravan,Zlin Z-50,,piston,1,L
+ZA6,Aerokopter,AK-1,,helicopter,1,L
+ZEFR,Curti,Zefhir,,helicopter,1,L
+ZEP2,Arnet Pereyra,Toucan,,piston,1,L
+ZEPH,Atec,122 Zephyr,,piston,1,L
+ZERO,Mitsubishi,A6M Zero,,piston,1,L
+ZIU,TAI,ZIU,,piston,1,L
+ZULU,BUL,Zùlù,,piston,1,L

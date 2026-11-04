@@ -30,7 +30,7 @@ CREATE TABLE aircraft_types (
   manufacturer TEXT NOT NULL,          -- Airbus
   model        TEXT NOT NULL,          -- A380-800
   family       TEXT,                   -- A380
-  engine_type  TEXT,                   -- jet, turboprop, piston, helicopter
+  engine_type  TEXT,                   -- jet, turboprop, piston, helicopter, electric, rocket
   engine_count INTEGER,
   wtc          TEXT                    -- ICAO wake turbulence category: L, M, H, J
 ) WITHOUT ROWID;

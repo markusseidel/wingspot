@@ -1,0 +1,26 @@
+icao_code,manufacturer,model,family,engine_type,engine_count,wtc
+A19N,Airbus,A319neo,A320,jet,2,M
+A20N,Airbus,A320neo,A320,jet,2,M
+A21N,Airbus,A321neo,A320,jet,2,M
+A319,Airbus,A319,A320,jet,2,M
+A320,Airbus,A320,A320,jet,2,M
+A321,Airbus,A321,A320,jet,2,M
+A333,Airbus,A330-300,A330,jet,2,H
+A359,Airbus,A350-900,A350,jet,2,H
+A35K,Airbus,A350-1000,A350,jet,2,H
+A388,Airbus,A380-800,A380,jet,4,J
+AT76,ATR,ATR 72-600,ATR 72,turboprop,2,M
+B38M,Boeing,737 MAX 8,737,jet,2,M
+B738,Boeing,737-800,737,jet,2,M
+B744,Boeing,747-400,747,jet,4,H
+B748,Boeing,747-8,747,jet,4,H
+B772,Boeing,777-200,777,jet,2,H
+B77W,Boeing,777-300ER,777,jet,2,H
+B788,Boeing,787-8,787,jet,2,H
+B789,Boeing,787-9,787,jet,2,H
+CRJ9,Bombardier,CRJ-900,CRJ,jet,2,M
+DH8D,De Havilland Canada,Dash 8-400,Dash 8,turboprop,2,M
+E190,Embraer,E190,E-Jet,jet,2,M
+GANT,Fairey,Gannet,,turboprop,2,M
+MD11,McDonnell Douglas,MD-11,MD-11,jet,3,H
+PRET,GM&T,Pretty Flight,,,,

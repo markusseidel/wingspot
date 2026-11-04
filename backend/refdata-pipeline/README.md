@@ -15,6 +15,17 @@ python3 build_refdata.py --airports /tmp/airports.csv --out /tmp/refdata --data-
 
 This writes `refdata.sqlite` and `manifest.json` to the output folder. Rows that can't be used are listed in the manifest under `skipped` and don't stop the build. Curated keywords for an airport that isn't in the data are listed under `unmatched_keywords`. A missing column does stop it, and any existing database is kept.
 
+## Update aircraft types
+
+Download [FAA Order JO 7360.1](https://www.faa.gov/regulations_policies/orders_notices/index.cfm/go/document.current/documentNumber/7360.1) and the [Aircraft Characteristics Database](https://www.faa.gov/airports/engineering/aircraft_char_database), then regenerate the list. Extracting the text needs macOS.
+
+```bash
+swift extract_pdf.swift order.pdf order.txt
+python3 faa_aircraft_types.py --order-text order.txt --spreadsheet aircraft_data.xlsx --report report.json
+```
+
+Check `report.json` before committing. It lists rows it couldn't read, ambiguous values and conflicts between the two sources. Fix a wrong name in `aircraft_type_overrides.csv`, not in the generated file.
+
 ## Load into Postgres
 
 Check-ins reference airports and aircraft types by the IDs in the snapshot, so load each snapshot into Postgres **before** publishing it. Otherwise an app could send an ID the server doesn't have. Run these from `backend/`, linked to the hosted project:
@@ -42,7 +53,7 @@ Download the file from `https://<project-ref>.supabase.co/storage/v1/object/publ
 | Table | Source | Status |
 |---|---|---|
 | `airports` | OurAirports, excluding closed airports. Its `keywords` column is searchable, plus German names from [`seed/airport_keywords.csv`](seed/airport_keywords.csv), curated by hand | Imported |
-| `aircraft_types` | [`seed/aircraft_types.csv`](seed/aircraft_types.csv), curated by hand | 22 common types, about 2,500 planned |
+| `aircraft_types` | [`seed/aircraft_types.csv`](seed/aircraft_types.csv), generated from FAA Order JO 7360.1, with [`seed/aircraft_type_overrides.csv`](seed/aircraft_type_overrides.csv) and [`seed/aircraft_families.csv`](seed/aircraft_families.csv) curated by hand | Generated. Reuse terms for commercial use still need confirming |
 | `operators` | Not chosen | Empty, licensing is undecided |
 | `aircraft` | Not chosen | Empty, licensing is undecided (concept §16, question 6) |
 
