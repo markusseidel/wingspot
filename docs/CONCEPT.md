@@ -314,7 +314,7 @@ The information architecture is identical on both platforms; the visual implemen
 
 | Screen | Purpose / notes |
 |---|---|
-| Onboarding | 3 screens value prop → sign in (Apple / email) → choose home airport → permissions (location "when in use", notifications) asked **in context**, not upfront. |
+| Onboarding | 3 screens value prop → sign in (Apple / email, can be skipped) → choose username and home airport → permissions (location "when in use", notifications) asked **in context**, not upfront. |
 | Check-in: Spotted | Big registration field with live autocomplete (local DB) · type fallback · location chip · tags · photo · "Check in" button. Keyboard optimized for regs (uppercase, dash auto-insert per country prefix: `DAIMA` → `D-AIMA`). |
 | Check-in: Flown | Scan boarding pass (primary) · or flight number + date · or manual route. |
 | Check-in: Airport | Nearest airports list, context picker, spotting location picker. |

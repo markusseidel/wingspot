@@ -17,6 +17,16 @@
         }
       }
     },
+    "3 to 30 lowercase letters, numbers or underscores.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 bis 30 Kleinbuchstaben, Zahlen oder Unterstriche."
+          }
+        }
+      }
+    },
     "A flight you were on": {
       "localizations": {
         "de": {
@@ -127,12 +137,42 @@
         }
       }
     },
+    "Check your connection and try again. You can still check in.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prüfe deine Verbindung und versuche es noch einmal. Einchecken kannst du trotzdem."
+          }
+        }
+      }
+    },
+    "Check your email": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schau in dein E-Mail-Postfach"
+          }
+        }
+      }
+    },
     "Check-ins from people you follow will appear here.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Hier erscheinen Check-ins von Leuten, denen du folgst."
+          }
+        }
+      }
+    },
+    "Collect aircraft types, airlines and airports as you go.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sammle nebenbei Flugzeugtypen, Airlines und Flughäfen."
           }
         }
       }
@@ -147,12 +187,52 @@
         }
       }
     },
+    "Couldn't load your profile": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil konnte nicht geladen werden"
+          }
+        }
+      }
+    },
     "Couldn't save this check-in": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Check-in konnte nicht gespeichert werden"
+          }
+        }
+      }
+    },
+    "Couldn't sign in": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anmeldung fehlgeschlagen"
+          }
+        }
+      }
+    },
+    "Couldn't sign out": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abmeldung fehlgeschlagen"
+          }
+        }
+      }
+    },
+    "Create your profile": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil erstellen"
           }
         }
       }
@@ -177,12 +257,52 @@
         }
       }
     },
+    "Earn badges": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sammle Badges"
+          }
+        }
+      }
+    },
     "Earn badges for the aircraft you spot and fly.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Sammle Badges für die Flugzeuge, die du spottest und mit denen du fliegst."
+          }
+        }
+      }
+    },
+    "Edit profile": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil bearbeiten"
+          }
+        }
+      }
+    },
+    "Email address": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "E-Mail-Adresse"
+          }
+        }
+      }
+    },
+    "Enter a registration and see if it's new to you. It works offline too.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib eine Registrierung ein und sieh, ob sie neu für dich ist. Das geht auch offline."
           }
         }
       }
@@ -247,6 +367,26 @@
         }
       }
     },
+    "Follow other spotters and share what you've seen.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folge anderen Spottern und teile, was du gesehen hast."
+          }
+        }
+      }
+    },
+    "Home airport": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heimatflughafen"
+          }
+        }
+      }
+    },
     "Last time at %@, %@": {
       "localizations": {
         "de": {
@@ -269,6 +409,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zuletzt am %@"
+          }
+        }
+      }
+    },
+    "Log every aircraft": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Halte jedes Flugzeug fest"
+          }
+        }
+      }
+    },
+    "Name": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
           }
         }
       }
@@ -313,6 +473,16 @@
         }
       }
     },
+    "Not now": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Später"
+          }
+        }
+      }
+    },
     "OK": {
       "localizations": {
         "de": {
@@ -329,6 +499,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Optional"
+          }
+        }
+      }
+    },
+    "Optional. Shown on your profile.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional. Wird in deinem Profil angezeigt."
+          }
+        }
+      }
+    },
+    "Please enter a valid email address.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bitte gib eine gültige E-Mail-Adresse ein."
           }
         }
       }
@@ -373,6 +563,16 @@
         }
       }
     },
+    "Save": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sichern"
+          }
+        }
+      }
+    },
     "Search aircraft, airports and spotters.": {
       "localizations": {
         "de": {
@@ -403,6 +603,96 @@
         }
       }
     },
+    "Send link": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Link senden"
+          }
+        }
+      }
+    },
+    "Set": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Festgelegt"
+          }
+        }
+      }
+    },
+    "Sign in": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anmelden"
+          }
+        }
+      }
+    },
+    "Sign in to keep your check-ins safe and follow other spotters. Your check-ins stay on this iPhone until then.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Melde dich an, um deine Check-ins zu sichern und anderen Spottern zu folgen. Bis dahin bleiben deine Check-ins auf diesem iPhone."
+          }
+        }
+      }
+    },
+    "Sign in with email": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit E-Mail anmelden"
+          }
+        }
+      }
+    },
+    "Sign out": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abmelden"
+          }
+        }
+      }
+    },
+    "Sign-in isn't available in this version of the app.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Anmeldung ist in dieser App-Version nicht verfügbar."
+          }
+        }
+      }
+    },
+    "Something went wrong. Please try again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Etwas ist schiefgelaufen. Bitte versuche es noch einmal."
+          }
+        }
+      }
+    },
+    "Spot with friends": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spotte mit Freunden"
+          }
+        }
+      }
+    },
     "Spotted": {
       "localizations": {
         "de": {
@@ -413,12 +703,122 @@
         }
       }
     },
-    "Your stats, collection and map.": {
+    "This sign-in link doesn't work anymore. Please request a new one on this device.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deine Statistiken, Sammlung und Karte."
+            "value": "Dieser Anmeldelink funktioniert nicht mehr. Bitte fordere auf diesem Gerät einen neuen an."
+          }
+        }
+      }
+    },
+    "This username is taken. Please try another one.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Benutzername ist vergeben. Bitte versuche einen anderen."
+          }
+        }
+      }
+    },
+    "Too many attempts. Please wait a moment and try again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zu viele Versuche. Bitte warte kurz und versuche es noch einmal."
+          }
+        }
+      }
+    },
+    "Try again": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erneut versuchen"
+          }
+        }
+      }
+    },
+    "Use 3 to 30 lowercase letters, numbers or underscores.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verwende 3 bis 30 Kleinbuchstaben, Zahlen oder Unterstriche."
+          }
+        }
+      }
+    },
+    "Use a different email": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Andere E-Mail-Adresse verwenden"
+          }
+        }
+      }
+    },
+    "Username": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzername"
+          }
+        }
+      }
+    },
+    "We sent a link to %@. Open it on this iPhone to sign in.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wir haben einen Link an %@ gesendet. Öffne ihn auf diesem iPhone, um dich anzumelden."
+          }
+        }
+      }
+    },
+    "We'll email you a link to sign in. You don't need a password.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wir senden dir per E-Mail einen Link zum Anmelden. Du brauchst kein Passwort."
+          }
+        }
+      }
+    },
+    "You're offline. Please connect to the internet and try again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du bist offline. Bitte verbinde dich mit dem Internet und versuche es noch einmal."
+          }
+        }
+      }
+    },
+    "Your check-ins stay on this iPhone.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Check-ins bleiben auf diesem iPhone."
+          }
+        }
+      }
+    },
+    "Your profile": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Profil"
           }
         }
       }

@@ -21,16 +21,22 @@ packages:
     path: Packages/ReferenceData
   Persistence:
     path: Packages/Persistence
+  Account:
+    path: Packages/Account
 targets:
   Wingspot:
     type: application
     platform: iOS
     sources: [Wingspot]
+    configFiles:
+      Debug: Config/Wingspot.xcconfig
+      Release: Config/Wingspot.xcconfig
     dependencies:
       - package: WingspotCore
       - package: BCBP
       - package: ReferenceData
       - package: Persistence
+      - package: Account
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: site.wingspot.ios
@@ -60,3 +66,4 @@ schemes:
         - package: BCBP/BCBPTests
         - package: ReferenceData/ReferenceDataTests
         - package: Persistence/PersistenceTests
+        - package: Account/AccountTests

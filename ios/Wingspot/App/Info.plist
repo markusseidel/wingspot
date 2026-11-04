@@ -18,6 +18,10 @@
 			</array>
 		</dict>
 	</array>
+	<key>WingspotSupabaseURL</key>
+	<string>https://gsfeuxowjymdqbopcpdo.supabase.co</string>
+	<key>WingspotPublishableKey</key>
+	<string>$(WINGSPOT_PUBLISHABLE_KEY)</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Wingspot suggests the airport you're at when you check in.</string>
 	<key>WingspotAPIBaseURL</key>

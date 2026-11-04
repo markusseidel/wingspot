@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: [WingspotCore, BCBP, ReferenceData, Persistence]
+        package: [WingspotCore, BCBP, ReferenceData, Persistence, Account]
     steps:
       - uses: actions/checkout@v4
       - run: swift test --package-path ios/Packages/${{ matrix.package }}

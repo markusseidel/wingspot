@@ -28,6 +28,7 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
 6. **Left for later:** push notifications, universal links, weekly data updates (full snapshot downloads instead) and full airport outlines for location checks (a simple radius for now).
 7. **Creating aircraft:** `POST /v1/checkins` creates missing `aircraft` rows. `GET /v1/aircraft/lookup` only reads.
 8. **Languages:** German and English from the first TestFlight, following the phone's language, with English as the fallback (concept §11.5). Airport names, aircraft names and user content aren't translated.
+9. **Signing in is optional:** check-ins work without an account and offline, so onboarding offers "Not now". Local check-ins stay on the device when the user signs out.
 
 ## Before each milestone
 

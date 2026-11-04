@@ -6,7 +6,7 @@ Last updated: 2026-11-04. Tick items off as you finish them.
 
 - [x] Send the licensing email to ICAO (draft at the end of this file)
 - [x] Start Phase 1 (iOS MVP)
-- [ ] Finish Milestone 2 (sign-in and profile)
+- [ ] Finish Milestone 2: add Apple sign-in, once its credentials exist
 
 ## Your tasks
 
@@ -24,7 +24,8 @@ Only you can do these, because they need your accounts, money or judgement.
 - [ ] Set up custom email sending (SMTP). Supabase's built-in email only reaches project team addresses and is heavily rate-limited
 - [x] Join the Apple Developer Program (before Milestone 2)
 - [x] Choose the final app ID: `site.wingspot.ios`
-- [ ] Create Apple sign-in credentials
+- [ ] Create Apple sign-in credentials for `site.wingspot.ios`
+- [ ] Add `wingspot://auth-callback` to the redirect URLs in Supabase's Auth settings on hosted (before testing sign-in on hosted)
 - [ ] Publish a privacy policy and Impressum on `wingspot.site`, in German and English (before Milestone 9)
 - [ ] Create Google sign-in credentials (after the first TestFlight)
 
@@ -38,6 +39,7 @@ Only you can do these, because they need your accounts, money or judgement.
 
 - [ ] Try the offline Spotted check-in in real airplane mode on an iPhone, including a first launch with no network
 - [ ] Review the German text in each milestone before it merges
+- [ ] Try email sign-in on an iPhone against hosted, from the real email to the signed-in app
 
 ### Small housekeeping
 
@@ -97,7 +99,7 @@ Only you can do these, because they need your accounts, money or judgement.
 - [x] Add a string catalog and German to the iOS project (start of Milestone 2)
 - [x] Translate Milestone 1's text, including plain `String` values that SwiftUI won't translate automatically (start of Milestone 2)
 - [ ] Store badge names and descriptions by language (Milestone 4)
-- [ ] Send sign-up emails in the user's language. First confirm that Supabase email templates can do this (before Milestone 9)
+- [ ] Send sign-up emails in the user's language. The app already stores it as `language` in the user's metadata. First confirm that Supabase email templates can use it (before Milestone 9)
 - [ ] Write the TestFlight text in both languages (Milestone 9)
 - [ ] Build shared-link pages in both languages (when universal links are built)
 - [ ] Write the App Store text in both languages (Phase 2)
@@ -116,9 +118,39 @@ Only you can do these, because they need your accounts, money or judgement.
 
 ### After Phase 1
 
-- [ ] Phase 2: spotter features, Wingspot Pro and App Store 1.0
+- [ ] Phase 2: spotter features, Wingspot Pro and App Store 1.0 (tasks below)
 - [ ] Phase 2b: Android 1.0
 - [ ] Phase 3: growth
+
+### Phase 2: spotter features, Wingspot Pro and App Store 1.0
+
+Spotter features (concept §14):
+
+- [ ] Spotting sessions with a Live Activity, and batch mode
+- [ ] Photo import with details filled in from EXIF, and a Share Extension
+- [ ] Flight number lookup, with 5 lookups a month on the free plan (needs the provider decision above)
+- [ ] Spotting locations added by users, with moderation
+- [ ] Airport leaderboards
+- [ ] Widgets and App Intents
+- [ ] "What's overhead?" and ADS-B verification (needs the provider and licence decision above)
+
+Wingspot Pro (concept §13):
+
+- [ ] Decide the price (€3.99 a month and €29.99 a year suggested) and whether to show ads (no ads recommended)
+- [ ] Build purchases with StoreKit 2, server-side entitlements and App Store webhooks (needs the purchases decision above)
+- [ ] Pro features: 10 photos per check-in instead of 4, full-resolution photo storage, advanced stats and charts, CSV and JSON export, custom app icons, profile themes, Pro badge frame
+
+App Store 1.0:
+
+- [ ] Submit the app for App Store review
+
+Left for later in Phase 1, with no phase set yet (PHASE1.md, decisions 4 and 6):
+
+- [ ] Push notifications
+- [ ] Universal links
+- [ ] Weekly reference data updates, instead of full snapshot downloads
+- [ ] Full airport outlines for location checks, instead of a simple radius
+- [ ] Predicted badge progress while offline
 
 ## Draft: email to ICAO
 

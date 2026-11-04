@@ -1,3 +1,4 @@
+import Account
 import SwiftUI
 
 enum AppTab: Hashable {
@@ -8,6 +9,8 @@ enum AppTab: Hashable {
 struct RootView: View {
     @State private var selection: AppTab = .feed
     @State private var isCheckInPresented = false
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+    @Environment(AccountStore.self) private var account
 
     var body: some View {
         TabView(selection: tabSelection) {
@@ -27,13 +30,33 @@ struct RootView: View {
                                   message: "Earn badges for the aircraft you spot and fly.")
             }
             Tab("Profile", systemImage: "person.crop.circle", value: AppTab.profile) {
-                PlaceholderScreen(title: "Profile", systemImage: "person.crop.circle",
-                                  message: "Your stats, collection and map.")
+                ProfileScreen()
             }
         }
         .sheet(isPresented: $isCheckInPresented) {
             CheckInSheet()
         }
+        // Signing in is optional, because check-ins work without an account and offline.
+        .fullScreenCover(isPresented: .constant(isSetupPresented)) {
+            Group {
+                if let profile = account.profile, account.needsProfileSetup {
+                    NavigationStack {
+                        ProfileEditorView(profile: profile, isFirstSetup: true)
+                    }
+                } else {
+                    OnboardingView { hasSeenOnboarding = true }
+                }
+            }
+            .signInLinkAlert(isEnabled: true)
+        }
+        .signInLinkAlert(isEnabled: !isSetupPresented)
+        .onChange(of: account.state) {
+            if case .signedIn = account.state { hasSeenOnboarding = true }
+        }
+    }
+
+    private var isSetupPresented: Bool {
+        account.needsProfileSetup || (account.state == .signedOut && !hasSeenOnboarding)
     }
 
     /// Selecting the check-in tab presents the sheet instead of switching tabs.
@@ -53,4 +76,5 @@ struct RootView: View {
 
 #Preview {
     RootView()
+        .environment(AccountStore(backend: UnconfiguredAccountBackend()))
 }
