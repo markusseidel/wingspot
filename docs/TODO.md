@@ -25,7 +25,7 @@ Only you can do these, because they need your accounts, money or judgement.
 - [ ] Join the Apple Developer Program (before Milestone 2)
 - [ ] Choose the final app ID: `app.wingspot.ios` today, `site.wingspot.ios` suggested (before Milestone 2)
 - [ ] Create Apple sign-in credentials
-- [ ] Publish a privacy policy and Impressum on `wingspot.site` (before Milestone 9)
+- [ ] Publish a privacy policy and Impressum on `wingspot.site`, in German and English (before Milestone 9)
 - [ ] Create Google sign-in credentials (after the first TestFlight)
 
 ### Before real users sign up
@@ -37,6 +37,7 @@ Only you can do these, because they need your accounts, money or judgement.
 ### Testing
 
 - [ ] Try the offline Spotted check-in in real airplane mode on an iPhone, including a first launch with no network
+- [ ] Review the German text in each milestone before it merges
 
 ### Small housekeeping
 
@@ -90,6 +91,16 @@ Only you can do these, because they need your accounts, money or judgement.
 - [x] Find hyphenated names when typed without the hyphen, such as `crj900` and `an124`
 - [x] Rank large airports first in search, such as `Wien`
 - [ ] Handle registrations with no type or airline yet, on check-ins and badges
+
+### German and English
+
+- [ ] Add a string catalog and German to the iOS project (start of Milestone 2)
+- [ ] Translate Milestone 1's text, including plain `String` values that SwiftUI won't translate automatically (start of Milestone 2)
+- [ ] Store badge names and descriptions by language (Milestone 4)
+- [ ] Send sign-up emails in the user's language. First confirm that Supabase email templates can do this (before Milestone 9)
+- [ ] Write the TestFlight text in both languages (Milestone 9)
+- [ ] Build shared-link pages in both languages (when universal links are built)
+- [ ] Write the App Store text in both languages (Phase 2)
 
 ### Phase 1: iOS MVP ([PHASE1.md](PHASE1.md))
 

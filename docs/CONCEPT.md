@@ -219,12 +219,12 @@ Each check-in gives XP; badges give bonus XP. Levels show on the profile ("Lvl 2
 Rank titles: Cadet → Student Pilot → First Officer → Captain → Senior Captain → Chief Pilot → Ace → Legend.
 
 ### 5.4 Badge engine design
-Badges are **data, not code**. Each badge is a JSON rule evaluated server-side after each check-in (and recomputed in batch when the reference data changes).
+Badges are **data, not code**. Each badge is a JSON rule evaluated server-side after each check-in (and recomputed in batch when the reference data changes). Names and descriptions are stored in each language in the backend, because a new badge can't wait for an app update.
 
 ```json
 {
   "id": "triple_seven_collector",
-  "name": "Triple Seven Collector",
+  "name": { "en": "Triple Seven Collector", "de": "Triple-Seven-Sammler" },
   "category": "types",
   "kind": "leveled",
   "requiresVerified": false,
@@ -398,7 +398,7 @@ The app lives or dies on good aircraft/airport data. Plan for it early.
 | BCBP parser | Implemented in Swift and Kotlin, both tested against the same fixture set (real-world anonymized barcodes) |
 | Registration normalization, great-circle distance | Same: two small implementations, one shared test-vector file |
 | Reference data | One SQLite file, one schema |
-| Strings | One source (e.g. XLIFF/JSON in `contracts/i18n`) exported to `Localizable.xcstrings` and `strings.xml` |
+| Strings | The iOS string catalog (`Localizable.xcstrings`) is the one source. Android's `strings.xml` is generated from it when Android starts |
 | Design tokens | Colors, spacing, typography, badge art defined once (`contracts/design-tokens.json`, SVG badge art) → exported to Asset Catalog and Compose theme |
 | Analytics | `contracts/analytics-events.yaml` → generated constants for both |
 
@@ -423,7 +423,6 @@ wingspot/
 │   ├── openapi.yaml          # API contract (versioned /v1)
 │   ├── badge-rules/          # Badge JSON + golden test files
 │   ├── test-vectors/         # BCBP barcodes, registrations, distances
-│   ├── i18n/                 # Strings
 │   ├── design-tokens.json    # Colors, spacing, typography
 │   ├── badge-art/            # SVG badge artwork
 │   └── analytics-events.yaml
@@ -595,7 +594,7 @@ create table spotting_locations (id serial primary key, airport_id int reference
                        location geography(point), description text, best_time text, legal_notes text,
                        created_by uuid references profiles, status text default 'pending');
 
-create table badges (id text primary key, name text, description text, category text, kind text,
+create table badges (id text primary key, name jsonb not null, description jsonb, category text, kind text,  -- text by language: {"en": "...", "de": "..."}
                      rule jsonb not null, levels int[], requires_verified boolean, hidden boolean,
                      valid_from timestamptz, valid_until timestamptz, art_url text);
 create table user_badges (user_id uuid references profiles, badge_id text references badges, level int,
@@ -694,6 +693,12 @@ All endpoints are versioned under `/v1` and described in `contracts/openapi.yaml
 - **Minimum app version:** `/v1/config` returns `min_version` per platform; apps below it show a "please update" screen. Needed because iOS and Android releases ship at different times.
 - **Feature flags:** new features are enabled per platform, so one app can ship a feature before the other without diverging backend behavior.
 - **Push payloads:** one notification model on the server (`type`, `title_key`, `body_args`, `deep_link`), rendered per platform. Localized on the server using the user's `locale` so both apps show identical texts. Send logic: look up the user's `devices`, send APNs to iOS tokens and FCM to Android tokens, delete tokens the stores report as invalid.
+- **Languages:** German and English from the first TestFlight, with English as the fallback for any other language.
+  - Apps follow the phone's language, which the system can also set per app, so there's no language setting of our own.
+  - The API returns badge text in all languages, so changing language also works offline.
+  - API errors carry a fixed `code`, and apps show their own text for it. `message` is for debugging only.
+  - Sign-up emails and shared-link pages come in both languages.
+  - Airport names, aircraft names and user content aren't translated. German airport names are added as search terms.
 - **Entitlements:** a user who buys Pro on iOS has Pro on Android too (and vice versa). Clients **never** decide Pro status from the local store receipt alone; they ask `/v1/me/entitlements`. The "Manage subscription" link points to the store the purchase was made in.
 - **Time & units:** all timestamps UTC ISO-8601 with the airport's/location's IANA time zone stored next to it (needed for "Early Bird"/"Red-Eye" rules); distances in km on the wire, converted for display.
 - **Images:** clients request a signed upload URL, upload directly to storage, then reference the path in the check-in. HEIC (iOS) is converted to JPEG/AVIF server-side so Android and the web can always display it.
@@ -753,6 +758,7 @@ Later: partnerships with airshows/airports (event badges), spotting-guide conten
 - Follow, feed, salutes, comments, report/block.
 - Airport detail page (info + recent public activity).
 - Settings, privacy controls, account deletion, data export.
+- German and English throughout (§11.5).
 
 ### Phase 2 — Spotter power (6–8 weeks) → App Store 1.0 / 1.1
 - Spotting sessions + Live Activity, batch mode.
@@ -777,7 +783,7 @@ Later: partnerships with airshows/airports (event badges), spotting-guide conten
 - Wishlists & alerts.
 - Apple Watch and Wear OS apps.
 - On-device aircraft type recognition from photos (one model trained on community photos with consent, exported to Core ML for iOS and TensorFlow Lite/LiteRT for Android).
-- Localization (DE, EN first; then FR, ES, NL, JA) from the shared string catalog.
+- More languages (FR, ES, NL, JA) from the shared string catalog.
 - Web profile and check-in pages (the deep-link landing pages grown into shareable public profiles for virality).
 
 ---
