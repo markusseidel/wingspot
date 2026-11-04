@@ -54,8 +54,8 @@ Download the file from `https://<project-ref>.supabase.co/storage/v1/object/publ
 |---|---|---|
 | `airports` | OurAirports, excluding closed airports. Its `keywords` column is searchable, plus German names from [`seed/airport_keywords.csv`](seed/airport_keywords.csv), curated by hand | Imported |
 | `aircraft_types` | [`seed/aircraft_types.csv`](seed/aircraft_types.csv), generated from FAA Order JO 7360.1, with [`seed/aircraft_type_overrides.csv`](seed/aircraft_type_overrides.csv) and [`seed/aircraft_families.csv`](seed/aircraft_families.csv) curated by hand | Generated. Reuse terms for commercial use still need confirming |
-| `operators` | Not chosen | Empty, licensing is undecided |
-| `aircraft` | Not chosen | Empty, licensing is undecided (concept §16, question 6) |
+| `operators` | Wikidata (CC0) plus manual curation | Empty, import not built yet |
+| `aircraft` | User-entered, not imported (concept §10) | Stays empty in the snapshot |
 
 ## Test
 

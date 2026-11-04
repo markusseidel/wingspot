@@ -319,7 +319,7 @@ The information architecture is identical on both platforms; the visual implemen
 | Check-in: Flown | Scan boarding pass (primary) · or flight number + date · or manual route. |
 | Check-in: Airport | Nearest airports list, context picker, spotting location picker. |
 | Check-in result | Celebration screen: new reg/type/airport chips, XP gain, badges unlocked (animated + haptic), progress to next badge, share card. |
-| Aircraft detail (registration) | Photo gallery from community, type, operator history, first flight / age, "you've seen it N times", map of where it was spotted by everyone. |
+| Aircraft detail (registration) | Photo gallery from community, type, operator history, first flight / age (as far as users have entered them, see §10), "you've seen it N times", map of where it was spotted by everyone. |
 | Aircraft type detail | Family, manufacturer, specs, your regs of this type, % of known fleet seen. |
 | Airport detail | See §6.3. |
 | Badge detail | Art, description, levels, your progress, rarity ("3.2% of users have this"), recent earners among friends. |
@@ -352,14 +352,14 @@ The app lives or dies on good aircraft/airport data. Plan for it early.
 | **Airports** (≈ 70k incl. small fields) | [OurAirports](https://ourairports.com/data/) — public domain | IATA/ICAO, coordinates, elevation, runways, country. Filter to airports with IATA code or scheduled service for default search. |
 | **Airport polygons** (geofences) | OpenStreetMap `aeroway=aerodrome` (ODbL) | For location verification. Fallback: radius from runway length. |
 | **Aircraft types** | ICAO Doc 8643 designators (curate manually into your own table); Wikidata for specs | ~2,500 designators; you need: ICAO code, manufacturer, model, family, engine type/count, WTC category. |
-| **Airlines / operators** | OpenFlights airlines (ODbL, partly outdated) + Wikidata + manual curation | ICAO/IATA codes, callsign, country, alliance, LCC/flag/cargo flags. |
-| **Registrations → type/operator** | OpenSky aircraft database (check license), national registries (FAA, UK CAA G-INFO, etc. — many are open), community edits | Biggest effort. Start with OpenSky DB + FAA + G-INFO; allow users to submit corrections; unknown regs can still be checked in ("pending" → resolved later). |
+| **Airlines / operators** | Decided: Wikidata (CC0) + manual curation | ICAO/IATA codes, callsign, country, alliance, LCC/flag/cargo flags. OpenFlights isn't used, because its ODbL terms may require sharing the improved data and it's partly outdated. |
+| **Registrations → type/operator** | Decided: user-entered, with no preloaded registry | The `aircraft` table starts empty and fills from check-ins, marked `user_submitted`. Any registration can be checked in, and the type and operator stay unknown until someone enters them. National registries may be added country by country later, once each one's terms are checked. |
 | **Flight lookup** (flight number → route, reg) | AeroDataBox (RapidAPI), FlightAware AeroAPI, Cirium (enterprise) | Paid per call → server-side only, cache aggressively, limit for free users. |
 | **Live/historic ADS-B** | adsb.lol (open, ODbL), OpenSky Network API (non-commercial terms — needs a commercial agreement for a paid app), ADS-B Exchange (commercial licensing) | Needed for "What's overhead?" and ADS-B verification. Verify license terms before shipping. |
 | **Sunrise/sunset** | Computed locally (solar position algorithm) | For Night Owl etc., no API needed. |
 | **Weather** | METAR from aviationweather.gov, or Apple WeatherKit **REST API** called from the server | Fetched server-side and attached to the check-in, so both apps get the same data. Optional badges + nice "conditions" on check-ins (METAR is very on-brand). |
 
-**On-device database:** a server-side pipeline builds one compressed SQLite snapshot of airports, types, airlines and the most common ~500k registrations (~20–40 MB), with an FTS5 search index. **The same file is used by both apps** (iOS via GRDB, Android via Room/`SupportSQLiteDatabase` opened from a prepackaged file), downloaded on first launch or bundled, and updated via weekly delta downloads. The schema of this file is versioned (`refdata_schema_version`) and part of the shared contract (§11.5).
+**On-device database:** a server-side pipeline builds one compressed SQLite snapshot of airports, types and airlines, with an FTS5 search index. Registrations aren't preloaded (see the table above). **The same file is used by both apps** (iOS via GRDB, Android via Room/`SupportSQLiteDatabase` opened from a prepackaged file), downloaded on first launch or bundled, and updated via weekly delta downloads. The schema of this file is versioned (`refdata_schema_version`) and part of the shared contract (§11.5).
 
 ---
 
@@ -741,7 +741,7 @@ Later: partnerships with airshows/airports (event badges), spotting-guide conten
 - Monorepo layout (§11.2), `contracts/` with a first `openapi.yaml`, CI with path filters (GitHub Actions; Fastlane for iOS, Gradle Play Publisher for Android later).
 - Supabase project, migrations, RLS, Auth with Apple, Google and email.
 - `devices`, `entitlements` and `/v1/config` from the start, even if only iOS uses them at first.
-- Reference data pipeline: scripts to import OurAirports, ICAO types, operators, initial registrations → Postgres + generate the shared on-device SQLite.
+- Reference data pipeline: scripts to import OurAirports, ICAO types, operators → Postgres + generate the shared on-device SQLite.
 - Shared test vectors (registrations, distances, BCBP fixtures).
 
 ### Phase 1 — iOS MVP (8–10 weeks) → TestFlight
@@ -805,7 +805,7 @@ All metrics are tracked per platform from the shared event catalog, so iOS and A
 3. **Purchase backend:** own webhook handling for both stores vs. RevenueCat (faster, free up to a revenue threshold, but an extra dependency).
 4. **Kotlin Multiplatform** for the shared pure-logic modules — revisit after Android 1.0 if keeping two implementations in sync becomes painful.
 5. **Maps on Android:** Google Maps (familiar, needs API key/billing) vs. MapLibre (open, can use one map style on both platforms).
-6. **Registration data licensing:** which sources can be used commercially? Budget for a commercial data source vs. community-built database.
+6. **Registration data licensing:** decided. Registrations are user-entered, with no commercial data source (§10). Still open: who may change a registration's type or operator once it's entered, and whether those entries reach other users' devices.
 7. **ADS-B provider & license** for live/verification features.
 8. **Flight lookup provider** and cost per lookup → defines free-tier limits.
 9. **Moderation:** who reviews reports and spotting locations at launch (you alone? community moderators?).
