@@ -88,6 +88,54 @@
       "barcode": "M1DOE/JANE            EABC123 FRAJFKLH 0",
       "referenceDate": "2026-11-03",
       "expectedError": "truncated"
+    },
+    {
+      "name": "origin airport not letters",
+      "barcode": "M1SMITH/ALEX          EQWE456 L4XNRTUA 0032A001W021C0007 000",
+      "referenceDate": "2026-12-30",
+      "expectedError": "invalidField"
+    },
+    {
+      "name": "destination airport not letters",
+      "barcode": "M1SMITH/ALEX          EQWE456 LAXN9TUA 0032A001W021C0007 000",
+      "referenceDate": "2026-12-30",
+      "expectedError": "invalidField"
+    },
+    {
+      "name": "day of year not numeric",
+      "barcode": "M1SMITH/ALEX          EQWE456 LAXNRTUA 0032A0X1W021C0007 000",
+      "referenceDate": "2026-12-30",
+      "expectedError": "invalidField"
+    },
+    {
+      "name": "day of year below range",
+      "barcode": "M1SMITH/ALEX          EQWE456 LAXNRTUA 0032A000W021C0007 000",
+      "referenceDate": "2026-12-30",
+      "expectedError": "invalidField"
+    },
+    {
+      "name": "day of year above range",
+      "barcode": "M1SMITH/ALEX          EQWE456 LAXNRTUA 0032A367W021C0007 000",
+      "referenceDate": "2026-12-30",
+      "expectedError": "invalidField"
+    },
+    {
+      "name": "conditional size not hex",
+      "barcode": "M1SMITH/ALEX          EQWE456 LAXNRTUA 0032A001W021C0007 0ZZ",
+      "referenceDate": "2026-12-30",
+      "expectedError": "invalidField"
+    },
+    {
+      "name": "carrier blank",
+      "barcode": "M1SMITH/ALEX          EQWE456 LAXNRT   0032A001W021C0007 000",
+      "referenceDate": "2026-12-30",
+      "expectedError": "invalidField"
+    },
+    {
+      "name": "flight number blank",
+      "barcode": "M1SMITH/ALEX          EQWE456 LAXNRTUA      001W021C0007 000",
+      "referenceDate": "2026-12-30",
+      "expectedError": "invalidField"
     }
   ]
 }
