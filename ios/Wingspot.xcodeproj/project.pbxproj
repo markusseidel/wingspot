@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		000638736A7D21777E5468DC /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 181278D0BAEE1C7A36510BCE /* Localizable.xcstrings */; };
 		10748D50CE99239391EE4B98 /* WingspotCore in Frameworks */ = {isa = PBXBuildFile; productRef = FA9C4D07C08E909754DE9B4F /* WingspotCore */; };
 		1878E11AE259B4D66AF3B0F4 /* BCBP in Frameworks */ = {isa = PBXBuildFile; productRef = 84545F5C809788F8A6A927A8 /* BCBP */; };
 		2009AC27E2FC13DC4C52C220 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17369D1192D4BAF9721962FE /* RootView.swift */; };
@@ -19,11 +20,13 @@
 		B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B545FD209FC2942BD45E71 /* CheckInResultView.swift */; };
 		C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A035100ED13735493AF7BF1 /* LocationProvider.swift */; };
 		CF3807277F1FDA241609254C /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 5B2EB62437C5BE2130BABF23 /* Persistence */; };
+		D866E9760B084CDB160CA4D5 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */; };
 		F9804A44218F27F9FAC0B571 /* SpottedCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CBBBAF8DD8DAC4FD7390E9 /* SpottedCheckInView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		17369D1192D4BAF9721962FE /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		181278D0BAEE1C7A36510BCE /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		2A600D9AC1C5768A9B274FA0 /* ReferenceData */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ReferenceData; path = Packages/ReferenceData; sourceTree = SOURCE_ROOT; };
 		41CBBBAF8DD8DAC4FD7390E9 /* SpottedCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpottedCheckInView.swift; sourceTree = "<group>"; };
 		48B545FD209FC2942BD45E71 /* CheckInResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInResultView.swift; sourceTree = "<group>"; };
@@ -37,6 +40,7 @@
 		BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceSearchViews.swift; sourceTree = "<group>"; };
 		C87BF659DFCBC4828CF78129 /* PlaceholderScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderScreen.swift; sourceTree = "<group>"; };
 		DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInSheet.swift; sourceTree = "<group>"; };
+		E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		F4D2C07FCB6185F02199297F /* Persistence */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Persistence; path = Packages/Persistence; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -59,6 +63,8 @@
 			isa = PBXGroup;
 			children = (
 				5D8FB2291C9A4A75529A9461 /* Assets.xcassets */,
+				E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */,
+				181278D0BAEE1C7A36510BCE /* Localizable.xcstrings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -185,6 +191,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
+				de,
 				en,
 			);
 			mainGroup = 628D5F429C1B6E92B5C4F2A0;
@@ -211,6 +218,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				761F6B7BD8870311AFC02EBB /* Assets.xcassets in Resources */,
+				D866E9760B084CDB160CA4D5 /* InfoPlist.xcstrings in Resources */,
+				000638736A7D21777E5468DC /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,8 +261,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.wingspot.ios;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = site.wingspot.ios;
 				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
@@ -275,8 +286,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.wingspot.ios;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = site.wingspot.ios;
 				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;

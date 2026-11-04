@@ -3,7 +3,7 @@ import Observation
 import OSLog
 import WingspotCore
 
-private let logger = Logger(subsystem: "app.wingspot.ios", category: "refdata")
+private let logger = Logger(subsystem: "site.wingspot.ios", category: "refdata")
 
 /// Keeps the on-device reference database current. A failed update leaves the installed snapshot in use.
 @MainActor @Observable

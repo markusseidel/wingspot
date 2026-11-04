@@ -38,4 +38,7 @@ jobs:
           -project ios/Wingspot.xcodeproj
           -scheme Wingspot
           -destination 'generic/platform=iOS Simulator'
+          -derivedDataPath build
           CODE_SIGNING_ALLOWED=NO
+      - name: Check strings
+        run: ios/scripts/check-strings.sh build

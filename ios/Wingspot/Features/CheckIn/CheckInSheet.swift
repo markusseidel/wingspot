@@ -5,7 +5,7 @@ enum CheckInKind: String, CaseIterable, Identifiable {
 
     var id: Self { self }
 
-    var title: String {
+    var title: LocalizedStringResource {
         switch self {
         case .spotted: "Spotted"
         case .flown: "Flown"
@@ -13,7 +13,7 @@ enum CheckInKind: String, CaseIterable, Identifiable {
         }
     }
 
-    var subtitle: String {
+    var subtitle: LocalizedStringResource {
         switch self {
         case .spotted: "An aircraft you have seen"
         case .flown: "A flight you were on"
@@ -55,8 +55,15 @@ struct CheckInSheet: View {
                 case .spotted:
                     SpottedCheckInView(onDone: { dismiss() })
                 case .flown, .airport:
-                    ContentUnavailableView(kind.title, systemImage: kind.systemImage,
-                                           description: Text("Coming in a later milestone."))
+                    ContentUnavailableView {
+                        Label {
+                            Text(kind.title)
+                        } icon: {
+                            Image(systemName: kind.systemImage)
+                        }
+                    } description: {
+                        Text("Coming in a later app version.")
+                    }
                 }
             }
             .toolbar {

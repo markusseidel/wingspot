@@ -62,7 +62,7 @@ struct SpottedCheckInView: View {
                 NavigationLink {
                     TypeSearchView(selection: $type)
                 } label: {
-                    LabeledContent("Aircraft type", value: type?.name ?? "Optional")
+                    LabeledContent("Aircraft type", value: type?.name ?? String(localized: "Optional"))
                 }
                 NavigationLink {
                     AirportSearchView(selection: Binding(
@@ -70,13 +70,15 @@ struct SpottedCheckInView: View {
                         set: { airport = $0; airportWasChosen = true }
                     ))
                 } label: {
-                    LabeledContent("Airport", value: airport.map { "\($0.code) · \($0.name)" } ?? "None")
+                    LabeledContent("Airport", value: airport.map { "\($0.code) · \($0.name)" } ?? String(localized: "None"))
                 }
             } footer: {
                 if referenceData.database == nil {
-                    Text(referenceData.isUpdating
-                         ? "Downloading aircraft and airport data."
-                         : "Aircraft and airport search needs one download while online. You can still check in by registration.")
+                    if referenceData.isUpdating {
+                        Text("Downloading aircraft and airport data.")
+                    } else {
+                        Text("Aircraft and airport search needs one download while online. You can still check in by registration.")
+                    }
                 }
             }
 
@@ -92,7 +94,7 @@ struct SpottedCheckInView: View {
         if let registration {
             Label {
                 Text(registration.value).font(.system(.body, design: .monospaced).bold())
-                    + Text("  ·  \(Self.countryName(registration.countryCode))")
+                    + Text(verbatim: "  ·  \(Self.countryName(registration.countryCode))")
             } icon: {
                 Text(Self.flag(registration.countryCode))
             }
