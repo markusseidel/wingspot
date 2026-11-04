@@ -8,4 +8,6 @@ Single source of truth shared by the iOS app, the Android app and the backend (s
 | `refdata/` | Schema of the on-device reference database. |
 | `test-vectors/` | Input → expected output files. Every client implementation of the same logic must pass them. |
 
-Planned: `badge-rules/`, `i18n/`, `design-tokens.json`, `badge-art/`, `analytics-events.yaml`.
+`app-icon/` holds the source artwork for the app icon, for every theme. Render the iOS icon with `swift ios/scripts/render-app-icon.swift`.
+
+Planned: `badge-rules/`, `design-tokens.json`, `badge-art/`, `analytics-events.yaml`.
