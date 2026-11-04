@@ -1,30 +1,30 @@
 # Graph Report - wingspot  (2026-11-04)
 
 ## Corpus Check
-- 52 files · ~23,636 words
+- 54 files · ~23,893 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 11 file(s) not represented in the graph (top: (none) 3, .csv 3, .toml 1)
 
 ## Summary
-- 459 nodes · 719 edges · 18 communities (14 shown, 4 thin omitted)
+- 460 nodes · 720 edges · 25 communities (21 shown, 4 thin omitted)
 - Extraction: 95% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 32 edges (avg confidence: 0.89)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `59aa9e86`
+- Built from commit: `63a5b274`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - iOS Project Configuration
-- BCBP Parser Internals
+- String
 - App Shell and Navigation
-- Wingspot Repository
+- Android Project Structure
 - api.test.js
-- DistanceVector
+- GeoCoordinate
 - http.ts
 - Airport Visit Check-in
-- build_refdata.py
+- build
 - ios.yml
 - BuildRefdataTests
 - Swift Package Manifests
@@ -34,6 +34,13 @@
 - CLAUDE.md
 - BCBPError
 - .mcp.json
+- .init
+- Cross-platform Contract Rules
+- Check-in Verification Levels
+- Wingspot Repository
+- Supabase
+- Code Sharing Strategy (Native Codebases, Shared Contracts)
+- Badge System
 
 ## God Nodes (most connected - your core abstractions)
 1. `BuildRefdataTests` - 23 edges
@@ -52,12 +59,12 @@
   README.md → docs/CONCEPT.md
 - `contracts/test-vectors` --implements--> `Shared Test Vectors`  [INFERRED]
   contracts/README.md → docs/CONCEPT.md
-- `Wingspot Repository` --implements--> `Monorepo Layout`  [INFERRED]
-  README.md → docs/CONCEPT.md
-- `WingspotCore Swift Package` --implements--> `WingspotCore Module`  [INFERRED]
-  README.md → docs/CONCEPT.md
 - `Wingspot Repository` --references--> `Wingspot App Concept`  [EXTRACTED]
   README.md → docs/CONCEPT.md
+- `.body` --calls--> `SpottedCheckInView`  [INFERRED]
+  ios/Wingspot/Features/CheckIn/CheckInSheet.swift → ios/Wingspot/Features/CheckIn/SpottedCheckInView.swift
+- `Android App (Kotlin / Jetpack Compose)` --conceptually_related_to--> `Android Project Structure`  [INFERRED]
+  android/README.md → docs/CONCEPT.md
 
 ## Import Cycles
 - None detected.
@@ -67,31 +74,31 @@
 - **Offline Check-in Sync Flow** — docs_concept_outbox_sync, docs_concept_post_v1_checkins, docs_concept_checkins_table, docs_concept_badge_engine, docs_concept_client_badge_predictor [EXTRACTED 1.00]
 - **Shared Contract Artifacts** — contracts_readme_contracts, docs_concept_openapi_spec, docs_concept_shared_test_vectors, docs_concept_design_tokens, docs_concept_on_device_database [EXTRACTED 1.00]
 
-## Communities (18 total, 4 thin omitted)
+## Communities (25 total, 4 thin omitted)
 
 ### Community 0 - "iOS Project Configuration"
 Cohesion: 0.05
 Nodes (45): ASSETCATALOG_COMPILER_APPICON_NAME, ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME, CODE_SIGN_STYLE, CURRENT_PROJECT_VERSION, GENERATE_INFOPLIST_FILE, INFOPLIST_FILE, INFOPLIST_KEY_CFBundleDisplayName, INFOPLIST_KEY_UIApplicationSceneManifest_Generation (+37 more)
 
-### Community 1 - "BCBP Parser Internals"
-Cohesion: 0.07
-Nodes (26): BCBP, FieldScanner, String, .droppingLeadingZeros, Substring, .trimmed, BoardingPass, Leg (+18 more)
+### Community 1 - "String"
+Cohesion: 0.08
+Nodes (26): BCBP, String, .droppingLeadingZeros, BCBPVector, .testDescription, BCBPVectors, Expected, Leg (+18 more)
 
 ### Community 2 - "App Shell and Navigation"
-Cohesion: 0.05
-Nodes (30): AppTab, badges, checkIn, explore, feed, profile, RootView, .body (+22 more)
+Cohesion: 0.06
+Nodes (25): AppTab, badges, checkIn, explore, feed, profile, RootView, .body (+17 more)
 
-### Community 3 - "Wingspot Repository"
-Cohesion: 0.05
-Nodes (55): Android App (Kotlin / Jetpack Compose), refdata-pipeline, Supabase Backend Project, Contracts Folder, contracts/test-vectors, Live and Historic ADS-B Data, aircraft Table, airports Table (+47 more)
+### Community 3 - "Android Project Structure"
+Cohesion: 0.25
+Nodes (7): Android App (Kotlin / Jetpack Compose), Android Project Structure, badges Table, Client Badge Progress Predictor, Offline Outbox Sync, POST /v1/checkins, Roadmap (iOS First, Android Second)
 
 ### Community 4 - "api.test.js"
 Cohesion: 0.09
 Nodes (17): ajv, assertError(), assertMatches(), spec, status, devDependencies, ajv@8.17.1, ajv-formats@3.0.1 (+9 more)
 
-### Community 5 - "DistanceVector"
-Cohesion: 0.16
-Nodes (9): GeoCoordinate, GreatCircle, DistanceVector, .testDescription, DistanceVectors, GreatCircleTests, Point, .coordinate (+1 more)
+### Community 5 - "GeoCoordinate"
+Cohesion: 0.15
+Nodes (6): Foundation, TestVectors, GeoCoordinate, GreatCircle, GreatCircleTests, TestVectors
 
 ### Community 6 - "http.ts"
 Cohesion: 0.28
@@ -101,8 +108,8 @@ Nodes (16): invalid(), isOptionalText(), register(), unregister(), validate(), a
 Cohesion: 0.40
 Nodes (5): Airport Visit Check-in, Batch Mode Spotting Session, Flown Check-in, Spotted Check-in, Spotting Locations
 
-### Community 8 - "build_refdata.py"
-Cohesion: 0.11
+### Community 8 - "build"
+Cohesion: 0.10
 Nodes (9): _airport(), build(), _curated_keywords(), InputError, _load_airports(), _load_types(), main(), _rows() (+1 more)
 
 ### Community 9 - "ios.yml"
@@ -118,12 +125,40 @@ Cohesion: 0.12
 Nodes (15): jobs, openapi, name, on, pull_request, push, runs-on, steps (+7 more)
 
 ### Community 14 - "Reference data pipeline"
-Cohesion: 0.40
-Nodes (4): Build, Data sources, Reference data pipeline, Test
+Cohesion: 0.33
+Nodes (5): Build, Data sources, Publish, Reference data pipeline, Test
 
 ### Community 16 - "BCBPError"
-Cohesion: 0.08
-Nodes (16): Foundation, BCBPError, .code, invalidField, invalidFormatCode, invalidLegCount, truncated, TestVectors (+8 more)
+Cohesion: 0.09
+Nodes (18): BCBPError, .code, invalidField, invalidFormatCode, invalidLegCount, truncated, APIClient, APIError (+10 more)
+
+### Community 18 - ".init"
+Cohesion: 0.14
+Nodes (6): FieldScanner, Substring, .trimmed, BoardingPass, Leg, BCBPTests
+
+### Community 19 - "Cross-platform Contract Rules"
+Cohesion: 0.22
+Nodes (10): Live and Historic ADS-B Data, Shared Deep Link Scheme, devices Table, entitlements Table, Flight Lookup Provider, GET /v1/config, GET /v1/me/entitlements, Unified Push Notification Model (+2 more)
+
+### Community 20 - "Check-in Verification Levels"
+Cohesion: 0.24
+Nodes (9): aircraft Table, airports Table, Anti-cheat Rules, checkins Table, OpenSky Aircraft Database, OpenStreetMap Aerodrome Polygons, OurAirports Dataset, Reference Data (+1 more)
+
+### Community 21 - "Wingspot Repository"
+Cohesion: 0.27
+Nodes (10): BCBP Parser, Boarding Pass Scan, IATA BCBP Barcode, iOS Project Structure, Monorepo Layout, WingspotCore Module, BCBP Swift Package, Wingspot Repository (+2 more)
+
+### Community 22 - "Supabase"
+Cohesion: 0.25
+Nodes (8): refdata-pipeline, Supabase Backend Project, CloudKit (Ruled Out), Firebase (Alternative), On-device SQLite Snapshot, Row Level Security, Safety, Privacy and Legal Rules, Supabase
+
+### Community 23 - "Code Sharing Strategy (Native Codebases, Shared Contracts)"
+Cohesion: 0.43
+Nodes (6): Contracts Folder, contracts/test-vectors, Design Tokens (contracts/design-tokens.json), Kotlin Multiplatform (Later Option), OpenAPI Spec (contracts/openapi.yaml), Shared Test Vectors
+
+### Community 24 - "Badge System"
+Cohesion: 0.40
+Nodes (5): Badge System, Core Loop (See, Check In, Reward, Social), Friends and Social Feed, User Level and XP, Wingspot App Concept
 
 ## Ambiguous Edges - Review These
 - `Shared Deep Link Scheme` → `GET /v1/config`  [AMBIGUOUS]
@@ -131,23 +166,23 @@ Nodes (16): Foundation, BCBPError, .code, invalidField, invalidFormatCode, inval
 
 ## Knowledge Gaps
 - **43 isolated node(s):** `.trimmed`, `.droppingLeadingZeros`, `invalidFormatCode`, `invalidLegCount`, `truncated` (+38 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 163 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 164 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `String` connect `BCBP Parser Internals` to `BCBPError`, `App Shell and Navigation`, `DistanceVector`?**
-  _High betweenness centrality (0.063) - this node is a cross-community bridge._
+- **Why does `String` connect `String` to `BCBPError`, `.init`, `App Shell and Navigation`, `GeoCoordinate`?**
+  _High betweenness centrality (0.062) - this node is a cross-community bridge._
 - **What connects `.trimmed`, `.droppingLeadingZeros`, `invalidFormatCode` to the rest of the system?**
   _43 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `iOS Project Configuration` be split into smaller, more focused modules?**
   _Cohesion score 0.04541062801932367 - nodes in this community are weakly interconnected._
-- **Why does `Registration` connect `BCBP Parser Internals` to `BCBPError`, `App Shell and Navigation`, `DistanceVector`?**
+- **Why does `Registration` connect `String` to `App Shell and Navigation`, `GeoCoordinate`?**
   _High betweenness centrality (0.017) - this node is a cross-community bridge._
-- **Should `BCBP Parser Internals` be split into smaller, more focused modules?**
-  _Cohesion score 0.06557377049180328 - nodes in this community are weakly interconnected._
-- **Why does `CheckInKind` connect `App Shell and Navigation` to `BCBP Parser Internals`?**
+- **Should `String` be split into smaller, more focused modules?**
+  _Cohesion score 0.07568027210884354 - nodes in this community are weakly interconnected._
+- **Why does `CheckInKind` connect `App Shell and Navigation` to `String`?**
   _High betweenness centrality (0.015) - this node is a cross-community bridge._
 
 ### Low-confidence Hints

@@ -283,7 +283,7 @@ components:
           description: |
             Version of contracts/refdata/schema.sql. Apps must not open a snapshot whose
             schema version they don't support.
-          examples: [1]
+          examples: [2]
         data_version:
           type: string
           description: Identifies the data in this snapshot. Compare for equality only.
