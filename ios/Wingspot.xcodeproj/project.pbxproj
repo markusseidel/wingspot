@@ -25,6 +25,7 @@
 		65CF500EAA7D99B499377459 /* BCBP */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BCBP; path = Packages/BCBP; sourceTree = SOURCE_ROOT; };
 		6E61A661480E1ED65178DE4B /* WingspotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WingspotApp.swift; sourceTree = "<group>"; };
 		76B04C14C68A65FD24C0D6DD /* WingspotCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = WingspotCore; path = Packages/WingspotCore; sourceTree = SOURCE_ROOT; };
+		A47349EC0A6768BA0A1C2F6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C87BF659DFCBC4828CF78129 /* PlaceholderScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderScreen.swift; sourceTree = "<group>"; };
 		DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInSheet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -90,6 +91,7 @@
 		78EF8102C6206FC55B54ED0A /* App */ = {
 			isa = PBXGroup;
 			children = (
+				A47349EC0A6768BA0A1C2F6F /* Info.plist */,
 				17369D1192D4BAF9721962FE /* RootView.swift */,
 				6E61A661480E1ED65178DE4B /* WingspotApp.swift */,
 			);
@@ -217,6 +219,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Wingspot/App/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Wingspot;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -239,6 +242,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Wingspot/App/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Wingspot;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
