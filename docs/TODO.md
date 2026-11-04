@@ -4,7 +4,7 @@ Last updated: 2026-11-04. Tick items off as you finish them.
 
 ## Do next
 
-- [ ] Send the licensing email to ICAO (draft at the end of this file)
+- [x] Send the licensing email to ICAO (draft at the end of this file)
 - [ ] Start Phase 1 (iOS MVP)
 
 ## Your tasks
@@ -19,8 +19,8 @@ Only you can do these, because they need your accounts, money or judgement.
 
 ### Accounts and services
 
-- [ ] Buy the domain `wingspot.site`
-- [ ] Set up custom email sending (SMTP), once you own the domain. Supabase's built-in email only reaches project team addresses and is heavily rate-limited
+- [x] Buy the domain `wingspot.site`
+- [ ] Set up custom email sending (SMTP). Supabase's built-in email only reaches project team addresses and is heavily rate-limited
 - [ ] Create Apple sign-in credentials
 - [ ] Create Google sign-in credentials
 
