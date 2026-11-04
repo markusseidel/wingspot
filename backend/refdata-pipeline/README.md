@@ -13,13 +13,13 @@ curl -fLo /tmp/airports.csv https://davidmegginson.github.io/ourairports-data/ai
 python3 build_refdata.py --airports /tmp/airports.csv --out /tmp/refdata --data-version 2026-11-04
 ```
 
-This writes `refdata.sqlite` and `manifest.json` to the output folder. Rows that can't be used are listed in the manifest under `skipped` and don't stop the build. A missing column does stop it, and any existing database is kept.
+This writes `refdata.sqlite` and `manifest.json` to the output folder. Rows that can't be used are listed in the manifest under `skipped` and don't stop the build. Curated keywords for an airport that isn't in the data are listed under `unmatched_keywords`. A missing column does stop it, and any existing database is kept.
 
 ## Data sources
 
 | Table | Source | Status |
 |---|---|---|
-| `airports` | OurAirports, excluding closed airports | Imported |
+| `airports` | OurAirports, excluding closed airports. Its `keywords` column is searchable, plus German names from [`seed/airport_keywords.csv`](seed/airport_keywords.csv), curated by hand | Imported |
 | `aircraft_types` | [`seed/aircraft_types.csv`](seed/aircraft_types.csv), curated by hand | 22 common types, about 2,500 planned |
 | `operators` | Not chosen | Empty, licensing is undecided |
 | `aircraft` | Not chosen | Empty, licensing is undecided (concept §16, question 6) |

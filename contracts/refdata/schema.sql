@@ -1,6 +1,6 @@
 -- Schema of the read-only on-device reference database, shared by iOS and Android
 -- (docs/CONCEPT.md §10). Bump user_version on any change that clients must know about.
-PRAGMA user_version = 1;
+PRAGMA user_version = 2;
 
 CREATE TABLE meta (
   key   TEXT PRIMARY KEY,
@@ -19,7 +19,8 @@ CREATE TABLE airports (
   latitude       REAL NOT NULL,
   longitude      REAL NOT NULL,
   elevation_ft   INTEGER,
-  default_search INTEGER NOT NULL      -- 1 if it has an IATA code or scheduled service
+  default_search INTEGER NOT NULL,     -- 1 if it has an IATA code or scheduled service
+  keywords       TEXT                  -- other names, e.g. Flughafen München
 );
 CREATE INDEX airports_icao ON airports (icao);
 CREATE INDEX airports_iata ON airports (iata);
@@ -56,7 +57,7 @@ CREATE TABLE aircraft (
 ) WITHOUT ROWID;
 
 CREATE VIRTUAL TABLE airports_fts USING fts5 (
-  name, city, icao, iata,
+  name, city, icao, iata, keywords,
   content = 'airports', content_rowid = 'id',
   tokenize = 'unicode61 remove_diacritics 2', prefix = '2 3'
 );
