@@ -36,6 +36,12 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
     - Check-ins made while signed out belong to whoever signs in next. Check-ins made while signed in belong to that account, and another account never uploads them.
     - Uploaded check-ins are `private` until privacy settings exist (milestone 8). Raw location is stored but never shown to others.
     - Hosted has only 22 aircraft types until ICAO answers, so a check-in with another type is rejected as `unknown_type`.
+11. **Badges and XP (milestone 4):**
+    - Badges are rows with a rule, levels and text in German and English. The server works out every badge after an upload and from `GET /v1/me/progress`. Levels never go down.
+    - XP is recalculated from the data each time (10 per check-in, 15 per new registration, 30 per new type, 40 per new airport, and 50 times the level for each badge level), so repeating it never counts twice. Level L starts at 50 × L × (L − 1) XP.
+    - A broken badge rule never fails an upload. The check-ins are stored and the answer has no badge data.
+    - The app celebrates the difference between what the server says is unlocked and what it has already shown. The upload answer is only a fast path, because it can be lost.
+    - "Local time" is estimated from the airport's longitude, because the airport data has no time zones.
 
 ## Before each milestone
 

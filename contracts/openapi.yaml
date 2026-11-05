@@ -21,6 +21,8 @@ servers:
         default: http://localhost:54321/functions
         description: Local Supabase default.
 tags:
+  - name: badges
+    description: Badges, XP and levels
   - name: checkins
     description: Check-in upload from the offline outbox
   - name: config
@@ -154,6 +156,31 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/ServerError'
+  /v1/me/progress:
+    get:
+      tags: [badges]
+      operationId: getMyProgress
+      summary: Get the current user's XP, level and badge progress
+      description: |
+        Also catches up on badges for check-ins uploaded before badges existed. Apps compare the
+        returned `level` of each badge with the levels they have already shown, and celebrate the
+        difference. They must not rely on the upload answer alone, because that answer can be lost
+        or can arrive on another device. On the first fetch after sign-in or a reinstall, apps record
+        what is unlocked without celebrating it.
+
+        Hidden badges appear only once earned. `hidden_remaining` counts the others. Dormant badges,
+        whose data doesn't exist yet, are left out.
+      responses:
+        '200':
+          description: The user's progress.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Progress'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
   /v1/refdata/manifest:
     get:
       tags: [refdata]
@@ -275,11 +302,108 @@ components:
     CheckinUploadResult:
       type: object
       required: [results]
+      description: |
+        `badges_unlocked`, `xp` and `level` are present when the server could work out badges for this
+        upload. They are a fast path only: a repeated upload answers with no new unlocks, so apps get
+        the full picture from `GET /v1/me/progress`.
       properties:
         results:
           type: array
           items:
             $ref: '#/components/schemas/CheckinResult'
+        badges_unlocked:
+          type: array
+          items:
+            $ref: '#/components/schemas/BadgeUnlock'
+        xp:
+          type: integer
+        level:
+          type: integer
+    LocalizedText:
+      type: object
+      required: [en]
+      description: Text by language code. `en` is always there. Apps use the phone's language and fall back to `en`.
+      additionalProperties:
+        type: string
+      examples:
+        - {en: Wheels Up, de: Abheben}
+    BadgeUnlock:
+      type: object
+      required: [id, level, name]
+      properties:
+        id:
+          type: string
+        level:
+          type: integer
+          description: The highest level reached. A jump over several levels reports only the last one.
+        previous_level:
+          type: integer
+        name:
+          $ref: '#/components/schemas/LocalizedText'
+        description:
+          $ref: '#/components/schemas/LocalizedText'
+        category:
+          type: string
+          description: Open string set.
+        kind:
+          type: string
+          description: Open string set. `single` or `leveled` today.
+    BadgeProgress:
+      type: object
+      required: [id, name, levels, value, level]
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/LocalizedText'
+        description:
+          $ref: '#/components/schemas/LocalizedText'
+        category:
+          type: string
+          description: Open string set.
+        kind:
+          type: string
+          description: Open string set.
+        hidden:
+          type: boolean
+        levels:
+          type: array
+          items:
+            type: integer
+          description: The value needed for each level, ascending. One entry for a single badge.
+        value:
+          type: integer
+          description: The current value of the badge's metric.
+        level:
+          type: integer
+          description: The highest level unlocked. 0 if none, and it never goes down.
+        unlocked_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+          description: When the latest level was unlocked.
+    Progress:
+      type: object
+      required: [xp, level, xp_for_level, xp_for_next_level, badges, hidden_remaining]
+      properties:
+        xp:
+          type: integer
+        level:
+          type: integer
+        xp_for_level:
+          type: integer
+          description: The XP at which the current level starts.
+        xp_for_next_level:
+          type: integer
+        badges:
+          type: array
+          description: In display order.
+          items:
+            $ref: '#/components/schemas/BadgeProgress'
+        hidden_remaining:
+          type: integer
+          description: How many hidden badges are still locked.
     Platform:
       type: string
       enum: [ios, android]
