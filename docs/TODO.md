@@ -36,9 +36,9 @@ For sign-in to work in this build, also do the SMTP and redirect URL tasks above
 
 - [ ] Confirm your Apple Developer membership shows as active
 - [ ] Sign in to Xcode with your Apple ID (Settings > Accounts)
-- [ ] Decide whether to commit the publishable key. Otherwise put it in `ios/Config/Local.xcconfig` before archiving
+- [x] Commit the publishable key (done), so every build can sign in
 - [ ] Create the app in App Store Connect, with the bundle ID `site.wingspot.ios`. The ID can't be changed afterwards. Check that the name "Wingspot" is free; the primary language is English
-- [ ] Pick "Any iOS Device (arm64)", then archive in Xcode (Product > Archive) and upload with Distribute App > TestFlight Internal Only. Without `Local.xcconfig`, the build says sign-in isn't available
+- [ ] Pick "Any iOS Device (arm64)", then archive in Xcode (Product > Archive) and upload with Distribute App > TestFlight Internal Only
 - [ ] Fill in App Privacy in App Store Connect, before external testers or the App Store. List the data the app collects, such as email address, user ID and location
 - [ ] Create an internal testing group in App Store Connect, then add yourself and the build
 - [ ] Install the TestFlight app on your iPhone and install Wingspot
