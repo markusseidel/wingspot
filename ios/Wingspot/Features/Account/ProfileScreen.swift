@@ -6,6 +6,7 @@ import SwiftUI
 struct ProfileScreen: View {
     @Environment(AccountStore.self) private var account
     @State private var isSigningIn = false
+    @State private var isShowingHistory = false
 
     var body: some View {
         NavigationStack {
@@ -25,6 +26,9 @@ struct ProfileScreen: View {
             .navigationDestination(isPresented: $isSigningIn) {
                 EmailSignInView()
             }
+            .navigationDestination(isPresented: $isShowingHistory) {
+                CheckInHistoryView()
+            }
         }
         .onChange(of: account.state) {
             if case .signedIn = account.state { isSigningIn = false }
@@ -39,6 +43,7 @@ struct ProfileScreen: View {
         } actions: {
             Button("Sign in with email") { isSigningIn = true }
                 .buttonStyle(.borderedProminent)
+            Button("Check-in history") { isShowingHistory = true }
         }
     }
 
@@ -51,6 +56,7 @@ struct ProfileScreen: View {
             Button("Try again") {
                 Task { await account.reloadProfile() }
             }
+            Button("Check-in history") { isShowingHistory = true }
         }
     }
 }
@@ -75,6 +81,9 @@ private struct ProfileDetailsView: View {
                 }
             }
             Section {
+                NavigationLink("Check-in history") {
+                    CheckInHistoryView()
+                }
                 NavigationLink("Edit profile") {
                     ProfileEditorView(profile: profile, isFirstSetup: false)
                 }
