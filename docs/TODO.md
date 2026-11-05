@@ -1,6 +1,6 @@
 # Wingspot to-do list
 
-Last updated: 2026-11-04. Tick items off as you finish them.
+Last updated: 2026-11-05. Tick items off as you finish them.
 
 ## Do next
 
@@ -22,11 +22,11 @@ Only you can do these, because they need your accounts, money or judgement.
 ### Accounts and services
 
 - [x] Buy the domain `wingspot.site`
-- [ ] Set up custom email sending (SMTP). Supabase's built-in email only reaches project team addresses and is heavily rate-limited. Use a service such as Resend, Postmark or Brevo, and enter its details in Supabase under Auth > SMTP
+- [x] Set up custom email sending (SMTP). Supabase's built-in email only reaches project team addresses and is heavily rate-limited. Use a service such as Resend, Postmark or Brevo, and enter its details in Supabase under Auth > SMTP
 - [x] Join the Apple Developer Program (before Milestone 2)
 - [x] Choose the final app ID: `site.wingspot.ios`
 - [ ] Create Apple sign-in credentials for `site.wingspot.ios`: a Services ID, a key and your Team ID
-- [ ] Add `wingspot://auth-callback` to the redirect URLs in Supabase's Auth settings on hosted (before testing sign-in on hosted)
+- [x] Add `wingspot://auth-callback` to the redirect URLs in Supabase's Auth settings on hosted (before testing sign-in on hosted)
 - [ ] Publish a privacy policy and Impressum on `wingspot.site`, in German and English (before Milestone 9)
 - [ ] Create Google sign-in credentials (after the first TestFlight)
 
@@ -34,8 +34,8 @@ Only you can do these, because they need your accounts, money or judgement.
 
 For sign-in to work in this build, also do the SMTP and redirect URL tasks above.
 
-- [ ] Confirm your Apple Developer membership shows as active
-- [ ] Sign in to Xcode with your Apple ID (Settings > Accounts)
+- [x] Confirm your Apple Developer membership shows as active
+- [x] Sign in to Xcode with your Apple ID (Settings > Accounts)
 - [x] Commit the publishable key (done), so every build can sign in
 - [ ] Create the app in App Store Connect, with the bundle ID `site.wingspot.ios`. The ID can't be changed afterwards. Check that the name "Wingspot" is free; the primary language is English
 - [ ] Pick "Any iOS Device (arm64)", then archive in Xcode (Product > Archive) and upload with Distribute App > TestFlight Internal Only
@@ -53,7 +53,7 @@ For sign-in to work in this build, also do the SMTP and redirect URL tasks above
 
 - [ ] Try the offline Spotted check-in in real airplane mode on an iPhone, including a first launch with no network
 - [ ] Review the German text in each milestone before it merges
-- [ ] Try email sign-in on an iPhone against hosted, from the real email to the signed-in app
+- [ ] Try email sign-in on an iPhone against hosted, from the real email to the signed-in app (already works in the Simulator, with Resend and the profile save)
 - [ ] Check the dark and tinted app icons on an iPhone Home Screen
 
 ### Small housekeeping
