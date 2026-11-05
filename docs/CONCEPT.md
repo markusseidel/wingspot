@@ -19,7 +19,8 @@ Wingspot is a social logbook for aviation enthusiasts. Users **check in** aircra
 3. **Collection, not just a feed.** The value grows with the user's history: "my types", "my airlines", "my airports", "my registrations".
 4. **Trustworthy progress.** Verified check-ins (GPS, ADS-B, boarding pass) make badges mean something.
 5. **Respect safety and privacy.** Spotting is legally sensitive in some countries; location sharing is opt-in and coarse by default.
-6. **One backend, native clients.** iOS and Android are fully native apps that feel at home on their platform. All business rules (badges, XP, verification, entitlements) live on the server; clients only render, cache and predict. Nothing in the backend may depend on a single platform.
+6. **Photos are part of the hobby.** Spotters shoot as much as they log. The photo belongs to the aircraft and the check-in, it stays the owner's, and it can grow into a place where spotters share and exchange photos (§6.5).
+7. **One backend, native clients.** iOS and Android are fully native apps that feel at home on their platform. All business rules (badges, XP, verification, entitlements) live on the server; clients only render, cache and predict. Nothing in the backend may depend on a single platform.
 
 ---
 
@@ -27,7 +28,7 @@ Wingspot is a social logbook for aviation enthusiasts. Users **check in** aircra
 
 | Persona | Description | What they want |
 |---|---|---|
-| **The Spotter** (core) | Spends weekends at airport fences, shoots with a telephoto lens, knows registrations by heart. | Fast logging by registration, "first seen" vs. "seen again", rarity, photo uploads, leaderboards per airport. |
+| **The Spotter** (core) | Spends weekends at airport fences, shoots with a telephoto lens, knows registrations by heart. | Fast logging by registration, "first seen" vs. "seen again", rarity, photo uploads, a place to show and share their best shots, leaderboards per airport. |
 | **The Frequent Flyer** | Flies 20–100 times a year, cares about aircraft types and airlines. | Logging flights (ideally by scanning the boarding pass), miles, routes map, "flown on 30 types". |
 | **The Casual Enthusiast** | Likes planes, goes to airshows, travels a few times a year. | Fun badges, nice visuals, easy "what plane is that?" help. |
 | **The Avgeek Kid / Family** | Parents with kids watching planes. | Simple, playful check-ins, big badges. |
@@ -69,7 +70,7 @@ The main check-in. Minimum required data: **aircraft** (by registration *or* by 
 | Date & time | Auto | From photo EXIF if a photo is attached. |
 | Phase | Optional | Landing · Takeoff · Taxi · Parked · Overhead · Display (airshow) · Museum/static. |
 | Tags | Optional | Special livery · Retro livery · First visit to airport · Go-around · Night · Military · Cargo · Bizjet · Rare. |
-| Photo(s) | Optional | Up to 4 (Pro: 10). The phone removes location data and uploads a JPEG, and originals aren't stored. |
+| Photo(s) | Optional | Up to 4 (Pro: 10). The phone removes location data and uploads a JPEG, and originals aren't stored. Sharing photos beyond the check-in: §6.5. |
 | Note | Optional | Free text, 500 chars. |
 | Rating | Optional | 1–5 "spot quality" (light, angle, distance) — a personal score for the moment, not for the aircraft. |
 
@@ -269,6 +270,27 @@ Airports are the "venues". Each airport page has:
 - Personal wishlists: "Want to see: A340-600, An-124, B747-8i in LH retro".
 - Notifications when a friend logs an aircraft on your wishlist at a nearby airport (opt-in).
 
+### 6.5 Photos and photo exchange
+
+Spotters shoot as much as they log, so photos are a core part of the check-in. Over time they can make Wingspot a place where spotters share and exchange photos. Wingspot stays a logbook first. Photo sharing grows from it in three stages, so the launch stays small.
+
+| Stage | When | What it adds |
+|---|---|---|
+| 1. Photos on check-ins | Phase 1 | Up to 4 photos per check-in (§4.1). They show with the check-in, under the check-in's visibility. |
+| 2. Galleries | Phase 2 | Photos also belong to the aircraft: a gallery per registration, type and airport, and the Photos tab on profiles. A photo page with its own share link. Photo import and the Share Extension. |
+| 3. Exchange | Phase 3 | Photo requests ("does anyone have D-AIMA at Frankfurt?"), licence options per photo, albums, and "photo of the week". Filters by type, airline, livery, airport and date. |
+
+Rules for all stages:
+- **The photographer owns the photo.** Wingspot gets only a licence to display it (§8). The photographer is always credited.
+- **Sharing is opt-in per photo.** A photo shows with its check-in. It enters the public gallery only if the owner chooses that.
+- **View only by default.** Others can download a photo only if the owner allows it and picks a licence: all rights reserved, Creative Commons non-commercial, or Creative Commons attribution. Without it, no download and no hotlinking.
+- **Location is never public.** The public version has the location data removed (§8). The camera model, lens and settings may be shown if the owner wants.
+- **Sensitive aircraft stay out.** Military, government and blocked registrations never enter the public gallery (§8).
+- **Moderation:** the same reports, takedown and review process as other content (§8), plus a copyright notice process for photos.
+- **No photo review queue at launch.** Photo sites such as Planespotters.net and JetPhotos review every photo for quality. Wingspot doesn't try to replace them. Quality shows through the spotter's own rating and, later, "featured" photos.
+
+Storage and cost: public photos are stored as display versions (about 2048 px on the long edge). Full-resolution originals are a Pro feature (§13). Photo exchange makes originals more useful, and storage and traffic cost money, so the limits are an open decision (§16, question 12).
+
 ---
 
 ## 7. Trust & verification
@@ -293,7 +315,7 @@ Anti-cheat rules: rate limit (e.g. max 200 check-ins/hour), impossible-travel de
 - **User-generated content** (App Store Guideline 1.2, Google Play UGC policy): report & block users, report content, moderation queue, EULA with zero-tolerance policy, filtering of offensive text. One moderation system on the server serves both apps.
 - **Sign-in:** Sign in with Apple, Sign in with Google and email (magic link). On iOS, Sign in with Apple must be offered once Google login exists (Guideline 4.8). Both providers are available on both platforms (Apple via web OAuth on Android), so a user can switch phones and keep their account.
 - **Account deletion:** in-app on both platforms, plus a public web URL for deletion requests (required by Google Play).
-- **Photos:** EXIF GPS stripped from public versions; users keep copyright; license grant to display only.
+- **Photos:** EXIF GPS stripped from public versions; users keep copyright; license grant to display only. Photos in the public gallery are opt-in, with a copyright notice and takedown process, and the owner decides about downloads and licence (§6.5). Check photos for identifiable people before featuring them, and honour removal requests.
 - **GDPR:** data export (JSON/CSV), account deletion inside the app (Guideline 5.1.1(v)), minimal analytics.
 - **Naming & branding:** "Wingspot" is your own brand; don't use names, logos or styling of existing apps/sites (e.g. beer check-in apps or Planespotters.net) in store listing or UI. Airline logos are trademarks — use airline names + ICAO codes and neutral colored tail markers instead of real logos unless licensed.
 
@@ -320,6 +342,7 @@ The information architecture is identical on both platforms; the visual implemen
 | Check-in: Airport | Nearest airports list, context picker, spotting location picker. |
 | Check-in result | Celebration screen: new reg/type/airport chips, XP gain, badges unlocked (animated + haptic), progress to next badge, share card. |
 | Aircraft detail (registration) | Photo gallery from community, type, operator history, first flight / age (as far as users have entered them, see §10), "you've seen it N times", map of where it was spotted by everyone. |
+| Photo page | One photo, large, with credit, licence, aircraft, airport and date, salutes and comments, report, and a share link. Download only where the owner allows it (§6.5). |
 | Aircraft type detail | Family, manufacturer, specs, your regs of this type, % of known fleet seen. |
 | Airport detail | See §6.3. |
 | Badge detail | Art, description, levels, your progress, rarity ("3.2% of users have this"), recent earners among friends. |
@@ -339,7 +362,7 @@ The information architecture is identical on both platforms; the visual implemen
 | Watch (phase 3) | watchOS app | Wear OS app |
 | Deep links | Universal Links | Android App Links |
 
-Both platforms register the same link scheme: `https://wingspot.site/u/{username}`, `/c/{checkinId}`, `/a/{icao}`, `/r/{registration}`, `/b/{badgeId}`. The domain hosts both `apple-app-site-association` and `assetlinks.json`, and a lightweight web page for each link so shared links work without the app installed.
+Both platforms register the same link scheme: `https://wingspot.site/u/{username}`, `/c/{checkinId}`, `/a/{icao}`, `/r/{registration}`, `/b/{badgeId}`, `/p/{photoId}`. The domain hosts both `apple-app-site-association` and `assetlinks.json`, and a lightweight web page for each link so shared links work without the app installed.
 
 ---
 
@@ -588,6 +611,8 @@ create index on checkins (aircraft_id);
 
 create table checkin_photos (id uuid primary key, checkin_id uuid references checkins on delete cascade,
                              storage_path text, width int, height int, position smallint);
+-- Planned for the photo gallery (Phase 2): aircraft_id, visibility, license, allow_download, caption, taken_at.
+-- Phase 3: photo_requests (who asks for which registration, status).
 create table sessions (id uuid primary key, user_id uuid references profiles, airport_id int references airports,
                        started_at timestamptz, ended_at timestamptz);
 create table spotting_locations (id serial primary key, airport_id int references airports, name text,
@@ -732,7 +757,7 @@ Free app with an optional **Wingspot Pro** subscription (e.g. €3.99/month · �
 | — | Custom app icons, profile themes, Pro badge frame |
 | Non-intrusive ads? (decide; ads hurt a hobby community — recommend **no ads**) | — |
 
-Never paywall **badges** or **check-ins** — that is the core loop and the social proof.
+Never paywall **badges**, **check-ins** or the basic photo gallery — that is the core loop and the social proof. Pro adds storage (more photos, full resolution), not access to the community's photos.
 
 Later: partnerships with airshows/airports (event badges), spotting-guide content, merch (embroidered patches of earned badges — a very natural fit).
 
@@ -763,6 +788,7 @@ Later: partnerships with airshows/airports (event badges), spotting-guide conten
 ### Phase 2 — Spotter power (6–8 weeks) → App Store 1.0 / 1.1
 - Spotting sessions + Live Activity, batch mode.
 - Photo import with EXIF prefill, Share Extension.
+- Public photo galleries per registration, type and airport, and a photo page with a share link (§6.5).
 - Flight number lookup.
 - Spotting locations (user-contributed + moderation).
 - Airport leaderboards.
@@ -780,6 +806,7 @@ Later: partnerships with airshows/airports (event badges), spotting-guide conten
 
 ### Phase 3 — Growth
 - Seasonal events & time-limited badges, Year in Review.
+- Photo exchange: photo requests, licence options, albums, photo of the week (§6.5).
 - Wishlists & alerts.
 - Apple Watch and Wear OS apps.
 - On-device aircraft type recognition from photos (one model trained on community photos with consent, exported to Core ML for iOS and TensorFlow Lite/LiteRT for Android).
@@ -817,6 +844,7 @@ All metrics are tracked per platform from the shared event catalog, so iOS and A
 9. **Moderation:** decided for launch: the project owner reviews reports. Community moderators can come later.
 10. **Pilot logbook** — separate track for private/commercial pilots (hours, PIC)? Could be a strong niche, but out of scope for MVP.
 11. **Name & trademark check** for "Wingspot" in your target markets + App Store and Google Play name availability, plus the `wingspot.site` domain for deep links.
+12. **Photo platform scope:** how much to build beyond photos on check-ins. Display size versus full resolution, storage and traffic cost per user, the licence options and download policy, and whether to review photos for quality (§6.5).
 
 ---
 
