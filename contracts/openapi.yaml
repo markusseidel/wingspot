@@ -21,6 +21,8 @@ servers:
         default: http://localhost:54321/functions
         description: Local Supabase default.
 tags:
+  - name: checkins
+    description: Check-in upload from the offline outbox
   - name: config
     description: Remote configuration
   - name: devices
@@ -32,6 +34,40 @@ tags:
 security:
   - bearerAuth: []
 paths:
+  /v1/checkins:
+    post:
+      tags: [checkins]
+      operationId: uploadCheckins
+      summary: Upload check-ins from the outbox
+      description: |
+        Stores 1 to 50 check-ins. Idempotent by check-in `id`: uploading an id that is already
+        stored for the same user answers `stored` again, so apps can retry after a lost
+        response without creating duplicates. Each item is judged on its own, so one rejected
+        item never blocks the others. The HTTP status is 200 whenever the request itself
+        was valid, and each item's `status` says what happened.
+
+        Only `spotted` check-ins are accepted for now. A check-in is `private` unless the app
+        sends another visibility. Apps retry network errors and 5xx answers, and never retry
+        a `rejected` item.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckinUpload'
+      responses:
+        '200':
+          description: One result per uploaded check-in, in request order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckinUploadResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
   /v1/config:
     get:
       tags: [config]
@@ -169,6 +205,81 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
+    Visibility:
+      type: string
+      description: Open string set.
+      examples: [private]
+    CheckinItem:
+      type: object
+      required: [id, kind, occurred_at]
+      description: |
+        A spotted check-in needs a registration or a type. The type is whatever the user
+        entered, and it stays on this check-in only.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Generated on the device.
+        kind:
+          type: string
+          description: Open string set. Only `spotted` is accepted for now.
+          examples: [spotted]
+        occurred_at:
+          type: string
+          format: date-time
+        registration:
+          type: string
+          description: Canonical form, such as `D-AIMA`.
+        type_icao:
+          type: string
+          examples: [A388]
+        airport_id:
+          type: integer
+        latitude:
+          type: number
+          description: Both latitude and longitude, or neither. Stored privately and never shown to others.
+        longitude:
+          type: number
+        visibility:
+          $ref: '#/components/schemas/Visibility'
+    CheckinUpload:
+      type: object
+      required: [checkins]
+      properties:
+        checkins:
+          type: array
+          minItems: 1
+          maxItems: 50
+          items:
+            $ref: '#/components/schemas/CheckinItem'
+    CheckinResult:
+      type: object
+      required: [id, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          description: |
+            `stored` means the server has it, including a repeat of an earlier upload.
+            `rejected` is final: retrying the same item gets the same answer. Open string set.
+          examples: [stored]
+        code:
+          type: string
+          description: |
+            Present when rejected. Open string set. Values today: `unsupported_kind`,
+            `missing_aircraft`, `invalid_registration`, `invalid_time`, `unknown_type`,
+            `unknown_airport`, `invalid_location`, `invalid_visibility`, `id_taken`,
+            `invalid_request`.
+    CheckinUploadResult:
+      type: object
+      required: [results]
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CheckinResult'
     Platform:
       type: string
       enum: [ios, android]

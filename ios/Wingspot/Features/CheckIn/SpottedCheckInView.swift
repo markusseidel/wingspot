@@ -1,3 +1,4 @@
+import Account
 import Persistence
 import ReferenceData
 import SwiftData
@@ -10,6 +11,8 @@ struct SpottedCheckInView: View {
 
     @Environment(ReferenceDataStore.self) private var referenceData
     @Environment(\.modelContext) private var modelContext
+    @Environment(AccountStore.self) private var account
+    @Environment(CheckInSyncCoordinator.self) private var sync: CheckInSyncCoordinator?
 
     @State private var input = ""
     @State private var type: AircraftType?
@@ -114,7 +117,9 @@ struct SpottedCheckInView: View {
             position: position
         )
         do {
-            result = try CheckInStore(context: modelContext).saveSpotted(draft)
+            result = try CheckInStore(context: modelContext).saveSpotted(draft, ownerID: account.userID)
+            // Saved on the device first. This sends it when signed in and online, and otherwise it waits.
+            sync?.requestSync()
         } catch {
             saveFailed = true
         }

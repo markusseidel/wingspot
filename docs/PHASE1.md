@@ -29,6 +29,13 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
 7. **Creating aircraft:** `POST /v1/checkins` creates missing `aircraft` rows. `GET /v1/aircraft/lookup` only reads.
 8. **Languages:** German and English from the first TestFlight, following the phone's language, with English as the fallback (concept §11.5). Airport names, aircraft names and user content aren't translated.
 9. **Signing in is optional:** check-ins work without an account and offline, so onboarding offers "Not now". Local check-ins stay on the device when the user signs out.
+10. **Sync rules (milestone 3):**
+    - Upload is `POST /v1/checkins`, up to 50 at a time, idempotent by the id the phone generated. If a response is lost, the retry hears `stored` again and nothing is duplicated.
+    - Each item is judged alone. Only the server's answer for an item can reject it: it is then marked `rejected` on the phone, stays there, and is never sent again. The answer carries a code, such as `unknown_type`.
+    - Any failed request leaves everything waiting, whatever the reason: no network, a server error, a missing endpoint before a deploy, or an expired token. It is tried again with growing pauses (5 s, 30 s, 2 min, 10 min), and again when the app comes to the foreground, after sign-in and when the network returns.
+    - Check-ins made while signed out belong to whoever signs in next. Check-ins made while signed in belong to that account, and another account never uploads them.
+    - Uploaded check-ins are `private` until privacy settings exist (milestone 8). Raw location is stored but never shown to others.
+    - Hosted has only 22 aircraft types until ICAO answers, so a check-in with another type is rejected as `unknown_type`.
 
 ## Before each milestone
 

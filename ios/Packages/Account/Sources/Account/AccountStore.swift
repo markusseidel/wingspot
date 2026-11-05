@@ -18,6 +18,8 @@ public enum AccountError: Error, Equatable, Sendable {
 public protocol AccountBackend: Sendable {
     /// The user with a session stored on this device. Doesn't need a network.
     func currentUserID() async -> UUID?
+    /// An access token for the Wingspot API, refreshed if it expired. `nil` if nobody is signed in or the refresh failed.
+    func accessToken() async -> String?
     func sendSignInLink(email: String, language: String?) async throws
     /// Finishes sign-in from the link in the email and returns the user's ID.
     func completeSignIn(from url: URL) async throws -> UUID
@@ -40,6 +42,8 @@ public final class AccountStore {
     public private(set) var state = State.loading
     /// Why the last sign-in link didn't work, for the app to show.
     public var linkError: AccountError?
+    /// The signed-in user, known from the stored session even while offline. `nil` when signed out.
+    public private(set) var userID: UUID?
 
     private let backend: AccountBackend
 
@@ -59,9 +63,11 @@ public final class AccountStore {
     /// Restores the stored session. A failed profile load keeps the user signed in.
     public func start() async {
         guard let id = await backend.currentUserID() else {
+            userID = nil
             state = .signedOut
             return
         }
+        userID = id
         state = .signedIn(nil)
         await loadProfile(id: id)
     }
@@ -84,12 +90,18 @@ public final class AccountStore {
         do {
             let id = try await backend.completeSignIn(from: url)
             linkError = nil
+            userID = id
             state = .signedIn(nil)
             await loadProfile(id: id)
         } catch {
             linkError = error as? AccountError ?? .unknown
         }
         return true
+    }
+
+    /// For API calls that need the signed-in user. Refreshes an expired token.
+    public func accessToken() async -> String? {
+        await backend.accessToken()
     }
 
     public func save(_ profile: Profile) async throws {
@@ -101,6 +113,7 @@ public final class AccountStore {
     /// Local check-ins stay on the device.
     public func signOut() async throws {
         try await backend.signOut()
+        userID = nil
         state = .signedOut
     }
 
@@ -111,6 +124,7 @@ public final class AccountStore {
             // The client removes a session the server rejected. Anything else, such as being offline,
             // leaves the user signed in.
             if await backend.currentUserID() == nil {
+                userID = nil
                 state = .signedOut
             }
         }
@@ -122,6 +136,7 @@ public struct UnconfiguredAccountBackend: AccountBackend {
     public init() {}
 
     public func currentUserID() async -> UUID? { nil }
+    public func accessToken() async -> String? { nil }
     public func sendSignInLink(email: String, language: String?) async throws { throw AccountError.notConfigured }
     public func completeSignIn(from url: URL) async throws -> UUID { throw AccountError.notConfigured }
     public func loadProfile(id: UUID) async throws -> Profile { throw AccountError.notConfigured }

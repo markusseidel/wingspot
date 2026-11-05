@@ -104,7 +104,8 @@ For sign-in to work in this build, also do the SMTP and redirect URL tasks above
 
 ### Backend
 
-- [ ] Create `aircraft` rows from `POST /v1/checkins` (apps can't write to `aircraft` today)
+- [x] Create `aircraft` rows from `POST /v1/checkins` (apps can't write to `aircraft` today)
+- [ ] Deploy sync to hosted, with the next approved deploy: the migration `20261105100000_sync_checkins.sql` and the `checkins` function. Until then, a build with sync gets a 404 on hosted and keeps its check-ins waiting
 - [x] Change the `aircraft.data_status` default to `user_submitted`
 - [x] Add indexes for the 17 unindexed foreign keys
 - [ ] Deploy that migration to hosted, with the next approved deploy
@@ -140,7 +141,7 @@ For sign-in to work in this build, also do the SMTP and redirect URL tasks above
 
 - [x] Milestone 1: offline Spotted check-in
 - [ ] Milestone 2: sign-in and profile
-- [ ] Milestone 3: sync
+- [x] Milestone 3: sync
 - [ ] Milestone 4: badges and XP
 - [ ] Milestone 5: Airport and Flown check-ins, boarding pass scan, one photo
 - [ ] Milestone 6: your profile

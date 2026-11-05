@@ -12,15 +12,31 @@ private let logger = Logger(subsystem: "site.wingspot.ios", category: "backend")
 struct WingspotApp: App {
     private let modelContainer: ModelContainer
     @State private var referenceData: ReferenceDataStore
-    @State private var account = Self.makeAccount()
+    @State private var account: AccountStore
+    @State private var sync: CheckInSyncCoordinator
+    @Environment(\.scenePhase) private var scenePhase
+    private let network = NetworkMonitor()
 
     init() {
+        let container: ModelContainer
         do {
-            modelContainer = try ModelContainer(for: LocalCheckIn.self)
+            container = try ModelContainer(for: LocalCheckIn.self)
         } catch {
             fatalError("Local check-in storage can't open: \(error)")
         }
+        modelContainer = container
         _referenceData = State(initialValue: Self.makeReferenceData())
+
+        let account = Self.makeAccount()
+        _account = State(initialValue: account)
+        let uploader = APICheckInUploader(
+            client: Self.apiClient,
+            accessToken: { await account.accessToken() }
+        )
+        _sync = State(initialValue: CheckInSyncCoordinator(
+            outbox: CheckInOutbox(context: container.mainContext, uploader: uploader),
+            userID: { account.userID }
+        ))
     }
 
     var body: some Scene {
@@ -28,17 +44,29 @@ struct WingspotApp: App {
             RootView()
                 .environment(referenceData)
                 .environment(account)
+                .environment(sync)
                 .modelContainer(modelContainer)
                 .task { await referenceData.prepare() }
                 .task { await loadRemoteConfig() }
-                .task { await account.start() }
+                .task {
+                    await account.start()
+                    sync.requestSync()
+                }
+                .task { network.start { Task { @MainActor in sync.requestSync() } } }
+                // After signing in or out, and each time the app comes to the foreground.
+                .onChange(of: account.userID) { sync.requestSync() }
+                .onChange(of: scenePhase) { if scenePhase == .active { sync.requestSync() } }
                 .onOpenURL(perform: handleLink)
         }
     }
 
     private static var apiClient: APIClient? {
-        guard let value = Bundle.main.object(forInfoDictionaryKey: "WingspotAPIBaseURL") as? String,
-              let baseURL = URL(string: value) else {
+        var value = Bundle.main.object(forInfoDictionaryKey: "WingspotAPIBaseURL") as? String
+        #if DEBUG
+        // Lets development talk to the local backend.
+        value = ProcessInfo.processInfo.environment["WINGSPOT_API_BASE_URL"] ?? value
+        #endif
+        guard let value, let baseURL = URL(string: value) else {
             logger.error("WingspotAPIBaseURL is missing from Info.plist")
             return nil
         }

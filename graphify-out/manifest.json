@@ -1,547 +1,583 @@
 {
   "contracts/test-vectors/bcbp.json": {
-    "mtime": 1793861912.2178109,
-    "seen": 1793862184.7702348,
+    "mtime": 1793906223.3945205,
+    "seen": 1793907271.459907,
     "ast_hash": "83291ddd77127f703fe418bdd154b46f",
     "semantic_hash": ""
   },
   "contracts/test-vectors/distances.json": {
-    "mtime": 1793861912.2180676,
-    "seen": 1793862184.770236,
+    "mtime": 1793906223.3947806,
+    "seen": 1793907271.459908,
     "ast_hash": "0064da9e5363e66be63542b2544c10c3",
     "semantic_hash": "0064da9e5363e66be63542b2544c10c3"
   },
   "contracts/test-vectors/registrations.json": {
-    "mtime": 1793861912.2182784,
-    "seen": 1793862184.770237,
+    "mtime": 1793906223.395002,
+    "seen": 1793907271.4599092,
     "ast_hash": "74b7d4aa26c2c10b8f14369f57dcf3a8",
     "semantic_hash": "74b7d4aa26c2c10b8f14369f57dcf3a8"
   },
   "ios/Packages/BCBP/Package.swift": {
-    "mtime": 1793861912.2282434,
-    "seen": 1793862184.7702441,
+    "mtime": 1793906223.4033976,
+    "seen": 1793907271.459914,
     "ast_hash": "b4f22eef95612a33427bbd6c176e5f7b",
     "semantic_hash": "b4f22eef95612a33427bbd6c176e5f7b"
   },
   "ios/Packages/BCBP/Sources/BCBP/BCBPParser.swift": {
-    "mtime": 1793861912.2285366,
-    "seen": 1793862184.770245,
+    "mtime": 1793906223.4037063,
+    "seen": 1793907271.459914,
     "ast_hash": "f2734dfdd9c48521ae38302cca3ee510",
     "semantic_hash": "f2734dfdd9c48521ae38302cca3ee510"
   },
   "ios/Packages/BCBP/Sources/BCBP/BoardingPass.swift": {
-    "mtime": 1793861912.2288115,
-    "seen": 1793862184.7702458,
+    "mtime": 1793906223.40399,
+    "seen": 1793907271.459915,
     "ast_hash": "6eb158caeb6287b29c21de5a17738c41",
     "semantic_hash": "6eb158caeb6287b29c21de5a17738c41"
   },
   "ios/Packages/BCBP/Tests/BCBPTests/BCBPTests.swift": {
-    "mtime": 1793861912.229098,
-    "seen": 1793862184.770247,
+    "mtime": 1793906223.4042869,
+    "seen": 1793907271.459916,
     "ast_hash": "1383666a9727f0227a9cd85d8b8a81fa",
     "semantic_hash": "1383666a9727f0227a9cd85d8b8a81fa"
   },
   "ios/Packages/BCBP/Tests/BCBPTests/TestVectors.swift": {
-    "mtime": 1793861912.229255,
-    "seen": 1793862184.770248,
+    "mtime": 1793906223.4044516,
+    "seen": 1793907271.459917,
     "ast_hash": "7d93bdf56b3c641eae788af8d49f94e7",
     "semantic_hash": "7d93bdf56b3c641eae788af8d49f94e7"
   },
   "ios/Packages/WingspotCore/Package.swift": {
-    "mtime": 1793861912.2334957,
-    "seen": 1793862184.770263,
+    "mtime": 1793906223.4088995,
+    "seen": 1793907271.459929,
     "ast_hash": "e1b6ff9c01ecb2b6d00f0b5c6345ee95",
     "semantic_hash": "e1b6ff9c01ecb2b6d00f0b5c6345ee95"
   },
   "ios/Packages/WingspotCore/Sources/WingspotCore/GreatCircle.swift": {
-    "mtime": 1793861912.2340724,
-    "seen": 1793862184.770265,
+    "mtime": 1793906223.4095027,
+    "seen": 1793907271.4599302,
     "ast_hash": "aa6dc77bc42d2540f36c16f8f05e6f69",
     "semantic_hash": "aa6dc77bc42d2540f36c16f8f05e6f69"
   },
   "ios/Packages/WingspotCore/Sources/WingspotCore/NationalityPrefix.swift": {
-    "mtime": 1793861912.2344637,
-    "seen": 1793862184.7702668,
+    "mtime": 1793906223.4099998,
+    "seen": 1793907271.459931,
     "ast_hash": "99bf1714890f1fb256bde57980b8daeb",
     "semantic_hash": "99bf1714890f1fb256bde57980b8daeb"
   },
   "ios/Packages/WingspotCore/Sources/WingspotCore/Registration.swift": {
-    "mtime": 1793861912.2346258,
-    "seen": 1793862184.770268,
+    "mtime": 1793906223.4101734,
+    "seen": 1793907271.4599319,
     "ast_hash": "2bc8e45014fb61b45deb9208f6d72fa9",
     "semantic_hash": "2bc8e45014fb61b45deb9208f6d72fa9"
   },
   "ios/Packages/WingspotCore/Tests/WingspotCoreTests/GreatCircleTests.swift": {
-    "mtime": 1793861912.2352395,
-    "seen": 1793862184.770271,
+    "mtime": 1793906223.4107983,
+    "seen": 1793907271.459933,
     "ast_hash": "a90fedd0cb67aac218990985d15e093c",
     "semantic_hash": "a90fedd0cb67aac218990985d15e093c"
   },
   "ios/Packages/WingspotCore/Tests/WingspotCoreTests/RegistrationTests.swift": {
-    "mtime": 1793861912.2354047,
-    "seen": 1793862184.770272,
+    "mtime": 1793906223.4109776,
+    "seen": 1793907271.459934,
     "ast_hash": "0d65a2942d84d8d1e130c30910a8daf5",
     "semantic_hash": "0d65a2942d84d8d1e130c30910a8daf5"
   },
   "ios/Packages/WingspotCore/Tests/WingspotCoreTests/TestVectors.swift": {
-    "mtime": 1793861912.2355676,
-    "seen": 1793862184.770273,
+    "mtime": 1793906223.4111443,
+    "seen": 1793907271.459934,
     "ast_hash": "4e7728ff30d361483df27548d770ebeb",
     "semantic_hash": "4e7728ff30d361483df27548d770ebeb"
   },
   "ios/Wingspot/App/RootView.swift": {
-    "mtime": 1793861912.2372086,
-    "seen": 1793862184.770275,
+    "mtime": 1793906223.413044,
+    "seen": 1793907271.459937,
     "ast_hash": "4b2c10cb4f07202b6ea583dfe87c87df",
     "semantic_hash": ""
   },
   "ios/Wingspot/App/WingspotApp.swift": {
-    "mtime": 1793861912.237372,
-    "seen": 1793862184.770276,
-    "ast_hash": "87cb494754fd4aaead7ab2011f9fb8c9",
+    "mtime": 1793906690.7999997,
+    "seen": 1793907271.459937,
+    "ast_hash": "88e20f77ad5e934457aa1c1340c77443",
     "semantic_hash": ""
   },
   "ios/Wingspot/Features/CheckIn/CheckInSheet.swift": {
-    "mtime": 1793861912.2390819,
-    "seen": 1793862184.770283,
+    "mtime": 1793906223.4148772,
+    "seen": 1793907271.4599419,
     "ast_hash": "45bbe5df24abea78cfc79c3335829da1",
     "semantic_hash": ""
   },
   "ios/Wingspot/Features/CheckIn/SpottedCheckInView.swift": {
-    "mtime": 1793861912.2399378,
-    "seen": 1793862184.770286,
-    "ast_hash": "1c0f8626a7396e9d612f5ad676eea1b5",
+    "mtime": 1793906690.800357,
+    "seen": 1793907271.4599428,
+    "ast_hash": "8e9bcf9db6b6d0c89e952f72cccd03d0",
     "semantic_hash": ""
   },
   "ios/Wingspot/Features/Common/PlaceholderScreen.swift": {
-    "mtime": 1793861912.240168,
-    "seen": 1793862184.770287,
+    "mtime": 1793906223.4159746,
+    "seen": 1793907271.459944,
     "ast_hash": "f759734a614f83c8d4b23b1a2becaf8e",
     "semantic_hash": ""
   },
   "ios/Wingspot/Resources/Assets.xcassets/AccentColor.colorset/Contents.json": {
-    "mtime": 1793861912.2405505,
-    "seen": 1793862184.7702882,
+    "mtime": 1793906223.416341,
+    "seen": 1793907271.459945,
     "ast_hash": "14528d91828fc40e2cd1f83498ae43f3",
     "semantic_hash": "14528d91828fc40e2cd1f83498ae43f3"
   },
   "ios/Wingspot/Resources/Assets.xcassets/AppIcon.appiconset/Contents.json": {
-    "mtime": 1793861912.243738,
-    "seen": 1793862184.770289,
+    "mtime": 1793906223.41835,
+    "seen": 1793907271.459945,
     "ast_hash": "58cc4fa959cf9798cf93cafde40c663d",
     "semantic_hash": ""
   },
   "ios/Wingspot/Resources/Assets.xcassets/Contents.json": {
-    "mtime": 1793861912.2441247,
-    "seen": 1793862184.77029,
+    "mtime": 1793906223.418714,
+    "seen": 1793907271.459946,
     "ast_hash": "30278d05fb9abefb0e7aec38cdca4976",
     "semantic_hash": "30278d05fb9abefb0e7aec38cdca4976"
   },
   "ios/project.yml": {
-    "mtime": 1793862033.741242,
-    "seen": 1793862184.7702909,
-    "ast_hash": "dd95985790e5d076ff4c316001ffebaa",
+    "mtime": 1793906223.419605,
+    "seen": 1793907271.459946,
+    "ast_hash": "43e7a572c7c1829acca650bf54f63bd9",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1793861912.203309,
-    "seen": 1793862184.7702951,
+    "mtime": 1793906223.3808982,
+    "seen": 1793907271.461799,
     "ast_hash": "51c043af1718b7b5c5af6876217cc5a4",
     "semantic_hash": ""
   },
   "android/README.md": {
-    "mtime": 1793861912.203665,
-    "seen": 1793862184.770297,
+    "mtime": 1793906223.3813844,
+    "seen": 1793907271.461799,
     "ast_hash": "3cbb667b6eece095d3f1315f810e49fb",
     "semantic_hash": "3cbb667b6eece095d3f1315f810e49fb"
   },
   "backend/README.md": {
-    "mtime": 1793861912.2041504,
-    "seen": 1793862184.770298,
-    "ast_hash": "5b356db551accdbc227644ea6eb66dab",
+    "mtime": 1793907231.6508248,
+    "seen": 1793907271.4617999,
+    "ast_hash": "c090632a029c8b7d63e257c341a1c6af",
     "semantic_hash": ""
   },
   "contracts/README.md": {
-    "mtime": 1793861912.215116,
-    "seen": 1793862184.7703,
+    "mtime": 1793906223.392316,
+    "seen": 1793907271.461801,
     "ast_hash": "bae5f357061ef1e125cf51fe5a7a7c49",
     "semantic_hash": ""
   },
   "docs/CONCEPT.md": {
-    "mtime": 1793861912.219277,
-    "seen": 1793862184.7703009,
-    "ast_hash": "1581ac4740f71670008a19275036564c",
+    "mtime": 1793906223.3956392,
+    "seen": 1793907271.461802,
+    "ast_hash": "498e15f2c982f4ff977d83d96193c2cd",
     "semantic_hash": ""
   },
   ".claude/settings.json": {
-    "mtime": 1793861912.2009475,
-    "seen": 1793862184.770208,
+    "mtime": 1793906223.378327,
+    "seen": 1793907271.45989,
     "ast_hash": "3b541b9935fcf0831355da956f897645",
     "semantic_hash": ""
   },
   ".github/workflows/backend.yml": {
-    "mtime": 1793861912.2014673,
-    "seen": 1793862184.7702138,
+    "mtime": 1793906223.3788147,
+    "seen": 1793907271.459894,
     "ast_hash": "f63feec74dc39802d063ffbfbbfc546f",
     "semantic_hash": ""
   },
   ".github/workflows/contracts.yml": {
-    "mtime": 1793861912.2017758,
-    "seen": 1793862184.770217,
+    "mtime": 1793906223.3792377,
+    "seen": 1793907271.4598951,
     "ast_hash": "80f94a74ff202cc7a3540fe8b14d2658",
     "semantic_hash": ""
   },
   ".github/workflows/ios.yml": {
-    "mtime": 1793861912.2021482,
-    "seen": 1793862184.770218,
+    "mtime": 1793906223.3796663,
+    "seen": 1793907271.459896,
     "ast_hash": "43991a7c85a78e38ad8b7ced4cd4ace1",
     "semantic_hash": ""
   },
   "backend/refdata-pipeline/build_refdata.py": {
-    "mtime": 1793861912.2062914,
-    "seen": 1793862184.7702231,
+    "mtime": 1793906223.3836117,
+    "seen": 1793907271.4599,
     "ast_hash": "7662f51ea4a69d0cb59944cfefea5e84",
     "semantic_hash": ""
   },
   "backend/refdata-pipeline/tests/test_build_refdata.py": {
-    "mtime": 1793861912.210182,
-    "seen": 1793862184.770227,
+    "mtime": 1793906223.3876672,
+    "seen": 1793907271.459902,
     "ast_hash": "6bf4f16f6678d96f751f02ff6dc29a84",
     "semantic_hash": ""
   },
   "contracts/openapi.yaml": {
-    "mtime": 1793861912.2170703,
-    "seen": 1793862184.770234,
-    "ast_hash": "e58ef8d3e445164e67b43ea46c510451",
+    "mtime": 1793906293.9940639,
+    "seen": 1793907271.459907,
+    "ast_hash": "e1f2f63e993cac6edf0f2aa3712ab444",
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1793861912.203075,
-    "seen": 1793862184.770294,
+    "mtime": 1793906223.3807003,
+    "seen": 1793907271.461798,
     "ast_hash": "67d88e9d0760c3ba54c75dfd9551c1c5",
     "semantic_hash": ""
   },
   "backend/refdata-pipeline/README.md": {
-    "mtime": 1793861912.2058845,
-    "seen": 1793862184.770299,
+    "mtime": 1793906223.3832135,
+    "seen": 1793907271.461801,
     "ast_hash": "b350333c642f602a058518ac3b3083d6",
     "semantic_hash": ""
   },
   "backend/api-tests/api.test.js": {
-    "mtime": 1793861912.204535,
-    "seen": 1793862184.770221,
-    "ast_hash": "173f5f963c7f6c0959737345496f0465",
+    "mtime": 1793906325.6417494,
+    "seen": 1793907271.459898,
+    "ast_hash": "ba819462c8278c5018db5167e8933925",
     "semantic_hash": ""
   },
   "backend/api-tests/package.json": {
-    "mtime": 1793861912.205482,
-    "seen": 1793862184.7702222,
+    "mtime": 1793906223.38285,
+    "seen": 1793907271.459899,
     "ast_hash": "f79f9d0ed6eb18134eede49910abdbe6",
     "semantic_hash": ""
   },
   "backend/supabase/functions/_shared/http.ts": {
-    "mtime": 1793861912.2112997,
-    "seen": 1793862184.770228,
+    "mtime": 1793906223.3886623,
+    "seen": 1793907271.459903,
     "ast_hash": "58e68c2f82f647ed7075e0ac0d8effab",
     "semantic_hash": ""
   },
   "backend/supabase/functions/config/index.ts": {
-    "mtime": 1793861912.2115467,
-    "seen": 1793862184.770229,
+    "mtime": 1793906223.3888927,
+    "seen": 1793907271.459904,
     "ast_hash": "c1ee7041c4f6f364d9feb81446762122",
     "semantic_hash": ""
   },
   "backend/supabase/functions/devices/index.ts": {
-    "mtime": 1793861912.2118707,
-    "seen": 1793862184.77023,
+    "mtime": 1793906223.3892112,
+    "seen": 1793907271.459905,
     "ast_hash": "7419d6e57b320f1dec25967bdb5254ee",
     "semantic_hash": ""
   },
   "backend/supabase/functions/me/index.ts": {
-    "mtime": 1793861912.212095,
-    "seen": 1793862184.770232,
+    "mtime": 1793906223.3894308,
+    "seen": 1793907271.459905,
     "ast_hash": "37b0a0398449539d811531473fb28f5b",
     "semantic_hash": ""
   },
   "backend/supabase/functions/refdata/index.ts": {
-    "mtime": 1793861912.2124207,
-    "seen": 1793862184.7702332,
+    "mtime": 1793906223.3897388,
+    "seen": 1793907271.459906,
     "ast_hash": "fc05652f24ecbee31aa8ff637c601d86",
     "semantic_hash": ""
   },
   ".mcp.json": {
-    "mtime": 1793861912.2028081,
-    "seen": 1793862184.77022,
+    "mtime": 1793906223.3804107,
+    "seen": 1793907271.459898,
     "ast_hash": "f7079a275ca7e06d263c558190405f7c",
     "semantic_hash": ""
   },
   "ios/Packages/WingspotCore/Sources/WingspotCore/APIClient.swift": {
-    "mtime": 1793861912.2337768,
-    "seen": 1793862184.7702641,
-    "ast_hash": "a6c2be81a65735722f323215c01d40b2",
+    "mtime": 1793906622.6941698,
+    "seen": 1793907271.4599302,
+    "ast_hash": "0660b30d21284e16dd4c95478a744957",
     "semantic_hash": ""
   },
   "ios/Packages/WingspotCore/Tests/WingspotCoreTests/APIClientTests.swift": {
-    "mtime": 1793861912.2350752,
-    "seen": 1793862184.7702699,
-    "ast_hash": "7e171ea031306874bb57ae5e5a9b0260",
+    "mtime": 1793906488.1498973,
+    "seen": 1793907271.459933,
+    "ast_hash": "492a1925fa159ddf3a26397e47eb0c9f",
     "semantic_hash": ""
   },
   "backend/refdata-pipeline/postgres_import.py": {
-    "mtime": 1793861912.2073247,
-    "seen": 1793862184.770226,
+    "mtime": 1793906223.3845265,
+    "seen": 1793907271.4599009,
     "ast_hash": "c252bf5b7890ef8fee4028507b4cf782",
     "semantic_hash": ""
   },
   "backend/refdata-pipeline/extract_pdf.swift": {
-    "mtime": 1793861912.206691,
-    "seen": 1793862184.770224,
+    "mtime": 1793906223.3839014,
+    "seen": 1793907271.4599,
     "ast_hash": "341406894d5536467f1716eace81846f",
     "semantic_hash": ""
   },
   "backend/refdata-pipeline/faa_aircraft_types.py": {
-    "mtime": 1793861912.206962,
-    "seen": 1793862184.7702248,
+    "mtime": 1793906223.3842049,
+    "seen": 1793907271.4599009,
     "ast_hash": "b273d3ff07c9b5d1d34a787f76b2cb3e",
     "semantic_hash": ""
   },
   "ios/Packages/Persistence/Package.swift": {
-    "mtime": 1793861912.22959,
-    "seen": 1793862184.770249,
+    "mtime": 1793906223.4047885,
+    "seen": 1793907271.459917,
     "ast_hash": "e3c43dd22a3501db561d39fd0d8e6bb3",
     "semantic_hash": ""
   },
   "ios/Packages/Persistence/Sources/Persistence/CheckInStore.swift": {
-    "mtime": 1793861912.230053,
-    "seen": 1793862184.77025,
-    "ast_hash": "0886e8767db697513a92d02782855191",
+    "mtime": 1793906609.3264694,
+    "seen": 1793907271.4599192,
+    "ast_hash": "e37f962951e77237660e136b6bd39447",
     "semantic_hash": ""
   },
   "ios/Packages/Persistence/Sources/Persistence/LocalCheckIn.swift": {
-    "mtime": 1793861912.2306209,
-    "seen": 1793862184.770251,
-    "ast_hash": "c7a0ca324c101ee29cdb84a83733a783",
+    "mtime": 1793906609.3261886,
+    "seen": 1793907271.459921,
+    "ast_hash": "070f4637b61d35d822eb8b9259e73250",
     "semantic_hash": ""
   },
   "ios/Packages/Persistence/Tests/PersistenceTests/CheckInStoreTests.swift": {
-    "mtime": 1793861912.2309628,
-    "seen": 1793862184.770252,
+    "mtime": 1793906223.4061785,
+    "seen": 1793907271.4599218,
     "ast_hash": "55498b9c7555b0f4102556aad8d81812",
     "semantic_hash": ""
   },
   "ios/Packages/ReferenceData/Package.swift": {
-    "mtime": 1793861912.2311862,
-    "seen": 1793862184.770253,
+    "mtime": 1793906223.40643,
+    "seen": 1793907271.459923,
     "ast_hash": "fd0900c9c61706f1c4e35edfd4ff04b9",
     "semantic_hash": ""
   },
   "ios/Packages/ReferenceData/Sources/ReferenceData/ReferenceDataStore.swift": {
-    "mtime": 1793861912.231682,
-    "seen": 1793862184.7702541,
+    "mtime": 1793906223.4068909,
+    "seen": 1793907271.459924,
     "ast_hash": "9a5fcd7e0a9566198b2dc647457716ef",
     "semantic_hash": ""
   },
   "ios/Packages/ReferenceData/Sources/ReferenceData/ReferenceDatabase.swift": {
-    "mtime": 1793861912.2319386,
-    "seen": 1793862184.770255,
+    "mtime": 1793906223.4072604,
+    "seen": 1793907271.459925,
     "ast_hash": "8f6e321a4050cefae1a60330dc5d9dd0",
     "semantic_hash": ""
   },
   "ios/Packages/ReferenceData/Sources/ReferenceData/SearchQuery.swift": {
-    "mtime": 1793861912.2321086,
-    "seen": 1793862184.770257,
+    "mtime": 1793906223.4074326,
+    "seen": 1793907271.459925,
     "ast_hash": "9dfe2230f9e6c19cd4202e86fcaca6ec",
     "semantic_hash": ""
   },
   "ios/Packages/ReferenceData/Sources/ReferenceData/SnapshotInstaller.swift": {
-    "mtime": 1793861912.2322729,
-    "seen": 1793862184.770258,
+    "mtime": 1793906223.407605,
+    "seen": 1793907271.4599261,
     "ast_hash": "f930963d0562e5f73ebc2e4e59e98939",
     "semantic_hash": ""
   },
   "ios/Packages/ReferenceData/Tests/ReferenceDataTests/Fixture.swift": {
-    "mtime": 1793861912.2325633,
-    "seen": 1793862184.770259,
+    "mtime": 1793906223.4079,
+    "seen": 1793907271.459927,
     "ast_hash": "46fe951bdc285e75117506136858e180",
     "semantic_hash": ""
   },
   "ios/Packages/ReferenceData/Tests/ReferenceDataTests/RealSnapshotTests.swift": {
-    "mtime": 1793861912.2327428,
-    "seen": 1793862184.7702599,
+    "mtime": 1793906223.4080758,
+    "seen": 1793907271.459927,
     "ast_hash": "51bc3b0d0f69f55020cbc81228544dff",
     "semantic_hash": ""
   },
   "ios/Packages/ReferenceData/Tests/ReferenceDataTests/ReferenceDatabaseTests.swift": {
-    "mtime": 1793861912.2329917,
-    "seen": 1793862184.770261,
+    "mtime": 1793906223.4083974,
+    "seen": 1793907271.459928,
     "ast_hash": "b55f9f6270cdc865795f22b63151432e",
     "semantic_hash": ""
   },
   "ios/Packages/ReferenceData/Tests/ReferenceDataTests/SnapshotInstallerTests.swift": {
-    "mtime": 1793861912.2331688,
-    "seen": 1793862184.770262,
+    "mtime": 1793906223.4085898,
+    "seen": 1793907271.459928,
     "ast_hash": "e44c3d1f9fb435deabafd69bdcf0b405",
     "semantic_hash": ""
   },
   "ios/Packages/WingspotCore/Sources/WingspotCore/UUIDv7.swift": {
-    "mtime": 1793861912.2347853,
-    "seen": 1793862184.770269,
+    "mtime": 1793906223.4103293,
+    "seen": 1793907271.4599319,
     "ast_hash": "7e1054cf614a74ad5bb5d386b8d8f7b0",
     "semantic_hash": ""
   },
   "ios/Packages/WingspotCore/Tests/WingspotCoreTests/UUIDv7Tests.swift": {
-    "mtime": 1793861912.2357275,
-    "seen": 1793862184.7702742,
+    "mtime": 1793906223.411309,
+    "seen": 1793907271.459935,
     "ast_hash": "09001009ed75dac39a57ee3931f977bb",
     "semantic_hash": ""
   },
   "ios/Wingspot/Features/CheckIn/CheckInResultView.swift": {
-    "mtime": 1793861912.238747,
-    "seen": 1793862184.770282,
+    "mtime": 1793906223.4145422,
+    "seen": 1793907271.4599411,
     "ast_hash": "65d89b4decc3bfff691e143a33b3875d",
     "semantic_hash": ""
   },
   "ios/Wingspot/Features/CheckIn/LocationProvider.swift": {
-    "mtime": 1793861912.2392642,
-    "seen": 1793862184.770284,
+    "mtime": 1793906223.4150481,
+    "seen": 1793907271.4599419,
     "ast_hash": "ca4b0ea2d4e12742002a0861dec7d1dc",
     "semantic_hash": ""
   },
   "ios/Wingspot/Features/CheckIn/ReferenceSearchViews.swift": {
-    "mtime": 1793861912.2397423,
-    "seen": 1793862184.7702851,
+    "mtime": 1793906223.4155407,
+    "seen": 1793907271.4599428,
     "ast_hash": "0260a363c069a559c3de8a8319a1b40f",
     "semantic_hash": ""
   },
   "docs/TODO.md": {
-    "mtime": 1793862179.1823134,
-    "seen": 1793862184.770303,
-    "ast_hash": "c9ffe0827695040bec4e9f7a178ad4ce",
+    "mtime": 1793907231.6510773,
+    "seen": 1793907271.461803,
+    "ast_hash": "f08224c048a623ec78325e7056ad709d",
     "semantic_hash": ""
   },
   "ios/scripts/check-strings.sh": {
-    "mtime": 1793861912.2452817,
-    "seen": 1793862184.770292,
+    "mtime": 1793906223.420048,
+    "seen": 1793907271.459947,
     "ast_hash": "4bc2740dd2a96c5ac34ae28c91ce6959",
     "semantic_hash": ""
   },
   "docs/PHASE1.md": {
-    "mtime": 1793861912.2197027,
-    "seen": 1793862184.770302,
-    "ast_hash": "a90c21a4be138859e33ed436e73a1697",
+    "mtime": 1793907231.6509483,
+    "seen": 1793907271.461803,
+    "ast_hash": "9f02f9898c4992be5497197a78ff421b",
     "semantic_hash": ""
   },
   "ios/Packages/Account/Package.swift": {
-    "mtime": 1793861912.226479,
-    "seen": 1793862184.770238,
+    "mtime": 1793906223.4018252,
+    "seen": 1793907271.45991,
     "ast_hash": "f76f2a8f1451e2f72a36c6ecec2ffe7e",
     "semantic_hash": ""
   },
   "ios/Packages/Account/Sources/Account/AccountStore.swift": {
-    "mtime": 1793861912.227035,
-    "seen": 1793862184.77024,
-    "ast_hash": "a49e4e06af3410bc6f199aeb1eb7bcce",
+    "mtime": 1793906530.6568613,
+    "seen": 1793907271.45991,
+    "ast_hash": "c71c9d017ab77f6b1d46d420193d6ed3",
     "semantic_hash": ""
   },
   "ios/Packages/Account/Sources/Account/Profile.swift": {
-    "mtime": 1793861912.2273695,
-    "seen": 1793862184.770241,
+    "mtime": 1793906223.402564,
+    "seen": 1793907271.4599109,
     "ast_hash": "f19af175417042f7e92b8bd4516cf554",
     "semantic_hash": ""
   },
   "ios/Packages/Account/Sources/Account/SupabaseAccountBackend.swift": {
-    "mtime": 1793861912.2275538,
-    "seen": 1793862184.770242,
-    "ast_hash": "bd74149a139fb06a21b81f507260c0a8",
+    "mtime": 1793906530.6571443,
+    "seen": 1793907271.4599118,
+    "ast_hash": "079346f67eba3f2ed39b149eb73c3361",
     "semantic_hash": ""
   },
   "ios/Packages/Account/Tests/AccountTests/AccountStoreTests.swift": {
-    "mtime": 1793861912.2280164,
-    "seen": 1793862184.7702432,
-    "ast_hash": "21b6c16a0d708a0fc726190f033630ec",
+    "mtime": 1793906542.4768257,
+    "seen": 1793907271.459913,
+    "ast_hash": "83528263ed1c74396169761a8fbf6ce8",
     "semantic_hash": ""
   },
   "ios/Wingspot/Features/Account/AccountMessages.swift": {
-    "mtime": 1793861912.237652,
-    "seen": 1793862184.770277,
+    "mtime": 1793906223.4135094,
+    "seen": 1793907271.459938,
     "ast_hash": "cd21e501146cddd0794fcf96c3c59a20",
     "semantic_hash": ""
   },
   "ios/Wingspot/Features/Account/EmailSignInView.swift": {
-    "mtime": 1793861912.237824,
-    "seen": 1793862184.770278,
+    "mtime": 1793906223.4136782,
+    "seen": 1793907271.459939,
     "ast_hash": "9365e6f2fe00902a26730fa49154499a",
     "semantic_hash": ""
   },
   "ios/Wingspot/Features/Account/OnboardingView.swift": {
-    "mtime": 1793861912.2379816,
-    "seen": 1793862184.770279,
+    "mtime": 1793906223.4138515,
+    "seen": 1793907271.459939,
     "ast_hash": "ee2cb326865fb9b8fb2c9e64af3c28b8",
     "semantic_hash": ""
   },
   "ios/Wingspot/Features/Account/ProfileEditorView.swift": {
-    "mtime": 1793861912.238148,
-    "seen": 1793862184.77028,
+    "mtime": 1793906223.4140253,
+    "seen": 1793907271.4599402,
     "ast_hash": "e3534e5b4b6d8214b48da3dc2edb0d5c",
     "semantic_hash": ""
   },
   "ios/Wingspot/Features/Account/ProfileScreen.swift": {
-    "mtime": 1793861912.2383122,
-    "seen": 1793862184.770281,
+    "mtime": 1793906223.4142032,
+    "seen": 1793907271.4599402,
     "ast_hash": "73615a35b9bb190e7a2b071bd5f36ed4",
     "semantic_hash": ""
   },
   "ios/scripts/render-app-icon.swift": {
-    "mtime": 1793861912.245633,
-    "seen": 1793862184.770293,
+    "mtime": 1793906223.420304,
+    "seen": 1793907271.459947,
     "ast_hash": "1b386a74962335579ec358f1a9998be1",
     "semantic_hash": ""
   },
   "contracts/app-icon/black.svg": {
-    "mtime": 1793861912.2155614,
-    "seen": 1793862184.770304,
+    "mtime": 1793906223.3927135,
+    "seen": 1793907271.461974,
     "ast_hash": "f2b094350a7eff50abe5d2bc981ef457",
     "semantic_hash": ""
   },
   "contracts/app-icon/dark.svg": {
-    "mtime": 1793861912.2158506,
-    "seen": 1793862184.770305,
+    "mtime": 1793906223.3929908,
+    "seen": 1793907271.461975,
     "ast_hash": "8d90fcbe5b02332af62acb9bf57d8dc2",
     "semantic_hash": ""
   },
   "contracts/app-icon/light.svg": {
-    "mtime": 1793861912.2160826,
-    "seen": 1793862184.770307,
+    "mtime": 1793906223.3934054,
+    "seen": 1793907271.461976,
     "ast_hash": "4b39e1fd092c5dfe2966b3f7f0e9d39a",
     "semantic_hash": ""
   },
   "contracts/app-icon/tinted.svg": {
-    "mtime": 1793861912.216761,
-    "seen": 1793862184.770308,
+    "mtime": 1793906223.3935611,
+    "seen": 1793907271.461976,
     "ast_hash": "3010cc96f805135b6126aa3ae93871a0",
     "semantic_hash": ""
   },
   "ios/Wingspot/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-Dark.png": {
-    "mtime": 1793861912.2413678,
-    "seen": 1793862184.7703092,
+    "mtime": 1793906223.4169588,
+    "seen": 1793907271.461977,
     "ast_hash": "bb5d01a03b9ab2c7661257d6d1f1fe23",
     "semantic_hash": ""
   },
   "ios/Wingspot/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-Light.png": {
-    "mtime": 1793861912.2424085,
-    "seen": 1793862184.77031,
+    "mtime": 1793906223.4175289,
+    "seen": 1793907271.4619782,
     "ast_hash": "3dfb6d4017cb0e63409b0dc07411bcb4",
     "semantic_hash": ""
   },
   "ios/Wingspot/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-Tinted.png": {
-    "mtime": 1793861912.243434,
-    "seen": 1793862184.7703118,
+    "mtime": 1793906223.4180577,
+    "seen": 1793907271.4619782,
     "ast_hash": "014ebbb2a6454643d62c4d5511661ecd",
     "semantic_hash": ""
   },
+  "backend/supabase/functions/checkins/index.ts": {
+    "mtime": 1793906281.064123,
+    "seen": 1793907271.459903,
+    "ast_hash": "c528cb1008c2dd7f943e96e5fa569798",
+    "semantic_hash": ""
+  },
+  "ios/Packages/Persistence/Sources/Persistence/CheckInOutbox.swift": {
+    "mtime": 1793906622.694457,
+    "seen": 1793907271.459918,
+    "ast_hash": "6a06d44f913676a8355ab042b623ec9c",
+    "semantic_hash": ""
+  },
+  "ios/Packages/Persistence/Sources/Persistence/CheckInSyncCoordinator.swift": {
+    "mtime": 1793906622.6997082,
+    "seen": 1793907271.45992,
+    "ast_hash": "44093fc4ab62c7886c0ef6f1ee40906c",
+    "semantic_hash": ""
+  },
+  "ios/Packages/Persistence/Tests/PersistenceTests/CheckInOutboxTests.swift": {
+    "mtime": 1793906651.5387392,
+    "seen": 1793907271.459921,
+    "ast_hash": "6a4e1fa2669cdd47b880e9108025071b",
+    "semantic_hash": ""
+  },
+  "ios/Wingspot/App/APICheckInUploader.swift": {
+    "mtime": 1793906690.7608755,
+    "seen": 1793907271.459936,
+    "ast_hash": "7bba8eafb47eee37e18131854e93cfd5",
+    "semantic_hash": ""
+  },
+  "ios/Wingspot/App/NetworkMonitor.swift": {
+    "mtime": 1793906690.7575393,
+    "seen": 1793907271.459936,
+    "ast_hash": "d3a7fcaca8979ac56a47c1121ef8e8a6",
+    "semantic_hash": ""
+  },
   "backend/api-tests/package-lock.json": {
-    "mtime": 1793861912.2048132,
-    "seen": 1793862184.770313,
+    "mtime": 1793906223.3826766,
+    "seen": 1793907271.462017,
     "ast_hash": "b61013d8c312f32755f7a3d850c6a287",
     "semantic_hash": ""
   }

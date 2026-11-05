@@ -26,6 +26,11 @@ public struct SupabaseAccountBackend: AccountBackend {
         client.auth.currentSession?.user.id
     }
 
+    public func accessToken() async -> String? {
+        // Refreshes the session if it expired, and throws if there is none or the refresh failed.
+        try? await client.auth.session.accessToken
+    }
+
     public func sendSignInLink(email: String, language: String?) async throws {
         try await mappingErrors {
             try await client.auth.signInWithOTP(

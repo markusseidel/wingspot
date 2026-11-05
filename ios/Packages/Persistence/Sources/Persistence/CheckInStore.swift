@@ -74,7 +74,8 @@ public struct CheckInStore {
     }
 
     /// Saves locally and reports how often this aircraft was seen before.
-    public func saveSpotted(_ draft: SpottedDraft, at date: Date = Date()) throws -> SpottedResult {
+    /// `ownerID` is the signed-in user, or `nil` when signed out. Check-ins without an owner go to whoever signs in next.
+    public func saveSpotted(_ draft: SpottedDraft, ownerID: UUID? = nil, at date: Date = Date()) throws -> SpottedResult {
         let subject: String
         let earlier: [LocalCheckIn]
         if let registration = draft.registration?.value {
@@ -93,7 +94,7 @@ public struct CheckInStore {
             typeICAO: draft.type?.icaoCode, typeName: draft.type?.name,
             airportID: draft.place?.airportID, airportCode: draft.place?.code,
             latitude: draft.position?.latitude, longitude: draft.position?.longitude,
-            occurredAt: date, syncState: .pending
+            occurredAt: date, syncState: .pending, ownerID: ownerID
         ))
         try context.save()
 
