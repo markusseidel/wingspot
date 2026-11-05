@@ -52,6 +52,15 @@ For sign-in to work in this build, also do the SMTP and redirect URL tasks above
 - [x] Add build 2 to your external group and submit it for Beta App Review (usually a day or less)
 - [ ] Add testers to the external group, by email or public link
 
+### Build 3: the first build with sync
+
+In this order:
+
+- [x] Deploy sync to hosted, so the endpoint exists before testers use it (done 2026-11-05)
+- [ ] Update App Privacy in App Store Connect: check-ins with their location now reach the server
+- [ ] Archive build 3 (the version bump is in the repo) and upload it with Distribute App > App Store Connect
+- [ ] Test on your iPhone: make a check-in in airplane mode, switch the network back on, and check that it arrives once (Supabase table `checkins`)
+
 ### Before real users sign up
 
 - [ ] Turn on leaked password protection in Supabase
@@ -105,10 +114,10 @@ For sign-in to work in this build, also do the SMTP and redirect URL tasks above
 ### Backend
 
 - [x] Create `aircraft` rows from `POST /v1/checkins` (apps can't write to `aircraft` today)
-- [ ] Deploy sync to hosted, with the next approved deploy: the migration `20261105100000_sync_checkins.sql` and the `checkins` function. Until then, a build with sync gets a 404 on hosted and keeps its check-ins waiting
+- [x] Deploy sync to hosted, with the next approved deploy: the migration `20261105100000_sync_checkins.sql` and the `checkins` function. Until then, a build with sync gets a 404 on hosted and keeps its check-ins waiting
 - [x] Change the `aircraft.data_status` default to `user_submitted`
 - [x] Add indexes for the 17 unindexed foreign keys
-- [ ] Deploy that migration to hosted, with the next approved deploy
+- [x] Deploy that migration to hosted, with the next approved deploy
 - [ ] Confirm the live functions use the publishable key, before legacy anon keys end at the end of 2026:
   - [ ] Update the signup test script, which still uses the anon key
   - [ ] Briefly deactivate the anon key and test
