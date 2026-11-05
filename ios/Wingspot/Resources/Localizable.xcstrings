@@ -157,12 +157,32 @@
         }
       }
     },
+    "Check-in history": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check-in-Verlauf"
+          }
+        }
+      }
+    },
     "Check-ins from people you follow will appear here.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Hier erscheinen Check-ins von Leuten, denen du folgst."
+          }
+        }
+      }
+    },
+    "Check-ins that weren't accepted stay on this iPhone.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht akzeptierte Check-ins bleiben auf diesem iPhone."
           }
         }
       }
@@ -443,6 +463,16 @@
         }
       }
     },
+    "No check-ins yet": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine Check-ins"
+          }
+        }
+      }
+    },
     "None": {
       "localizations": {
         "de": {
@@ -459,6 +489,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Noch keine gültige Registrierung"
+          }
+        }
+      }
+    },
+    "Not accepted": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht akzeptiert"
           }
         }
       }
@@ -743,6 +783,16 @@
         }
       }
     },
+    "Uploaded": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hochgeladen"
+          }
+        }
+      }
+    },
     "Use 3 to 30 lowercase letters, numbers or underscores.": {
       "localizations": {
         "de": {
@@ -769,6 +819,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Benutzername"
+          }
+        }
+      }
+    },
+    "Waiting to upload": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wartet auf Upload"
           }
         }
       }
@@ -809,6 +869,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Deine Check-ins bleiben auf diesem iPhone."
+          }
+        }
+      }
+    },
+    "Your check-ins will appear here.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hier erscheinen deine Check-ins."
           }
         }
       }
