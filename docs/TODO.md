@@ -39,7 +39,8 @@ For sign-in to work in this build, also do the SMTP and redirect URL tasks above
 - [x] Commit the publishable key (done), so every build can sign in
 - [ ] Create the app in App Store Connect, with the bundle ID `site.wingspot.ios`. The ID can't be changed afterwards. Check that the name "Wingspot" is free; the primary language is English
 - [ ] Pick "Any iOS Device (arm64)", then archive in Xcode (Product > Archive) and upload with Distribute App > TestFlight Internal Only
-- [ ] Fill in App Privacy in App Store Connect, before external testers or the App Store. List the data the app collects, such as email address, user ID and location
+- [ ] Fill in App Privacy in App Store Connect (app > General > App Privacy), before external testers or the App Store. For the current build, declare only email address and user ID (and the name if you count the username), for app functionality, linked to the user, not used for tracking. Location stays on the phone until sync exists
+- [ ] When sync (Milestone 3) ships, update App Privacy: check-ins with their location, and any other user content, are then sent to the server
 - [ ] Create an internal testing group in App Store Connect, then add yourself and the build
 - [ ] Install the TestFlight app on your iPhone and install Wingspot
 
