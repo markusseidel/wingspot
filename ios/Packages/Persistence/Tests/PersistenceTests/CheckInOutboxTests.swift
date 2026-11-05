@@ -7,7 +7,7 @@ import WingspotCore
 @MainActor
 private func makeContext() throws -> ModelContext {
     let container = try ModelContainer(
-        for: LocalCheckIn.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        for: LocalCheckIn.self, BadgeAck.self, BadgeAccount.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true)
     )
     return ModelContext(container)
 }
@@ -321,6 +321,31 @@ private func state(_ context: ModelContext, _ id: UUID) throws -> LocalCheckIn {
         #expect(!sync.isWaitingToRetry)
     }
 
+    @Test func theAfterRunHookRunsAfterASuccessfulRunButNotAfterAFailedOne() async throws {
+        let context = try makeContext()
+        _ = try save(context, "DAIMA", owner: alice)
+        let server = FakeServer()
+        let counter = RunCounter()
+        let sync = CheckInSyncCoordinator(
+            outbox: CheckInOutbox(context: context, uploader: server), userID: { alice },
+            backoff: [], sleep: { _ in }, afterRun: { counter.count += 1 }
+        )
+
+        await server.set(.networkDown)
+        sync.requestSync()
+        await sync.waitUntilIdle()
+        #expect(counter.count == 0, "a failed run says nothing new")
+
+        await server.set(.none)
+        sync.requestSync()
+        await sync.waitUntilIdle()
+        #expect(counter.count == 1)
+
+        sync.requestSync()
+        await sync.waitUntilIdle()
+        #expect(counter.count == 2, "even with nothing to upload, the server may know something new")
+    }
+
     @Test func aRetryThatWorksEndsTheWaiting() async throws {
         let context = try makeContext()
         let id = try save(context, "DAIMA", owner: alice)
@@ -342,3 +367,5 @@ private actor SleepLog {
     private(set) var durations: [Duration] = []
     func record(_ duration: Duration) { durations.append(duration) }
 }
+
+@MainActor private final class RunCounter { var count = 0 }

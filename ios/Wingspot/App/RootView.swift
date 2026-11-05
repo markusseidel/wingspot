@@ -1,4 +1,5 @@
 import Account
+import Persistence
 import SwiftUI
 
 enum AppTab: Hashable {
@@ -11,6 +12,7 @@ struct RootView: View {
     @State private var isCheckInPresented = false
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @Environment(AccountStore.self) private var account
+    @Environment(BadgeStore.self) private var badges
 
     var body: some View {
         TabView(selection: tabSelection) {
@@ -26,8 +28,7 @@ struct RootView: View {
                 Color.clear
             }
             Tab("Badges", systemImage: "rosette", value: AppTab.badges) {
-                PlaceholderScreen(title: "Badges", systemImage: "rosette",
-                                  message: "Earn badges for the aircraft you spot and fly.")
+                BadgesScreen()
             }
             Tab("Profile", systemImage: "person.crop.circle", value: AppTab.profile) {
                 ProfileScreen()
@@ -50,6 +51,12 @@ struct RootView: View {
             .signInLinkAlert(isEnabled: true)
         }
         .signInLinkAlert(isEnabled: !isSetupPresented)
+        // One sheet at a time: the celebration waits until the check-in sheet and the setup screens are gone.
+        .sheet(isPresented: .constant(!badges.celebrations.isEmpty && !isCheckInPresented && !isSetupPresented)) {
+            CelebrationView(celebrations: badges.celebrations) { badges.acknowledge() }
+                .presentationDetents([.large])
+                .interactiveDismissDisabled()
+        }
         .onChange(of: account.state) {
             if case .signedIn = account.state { hasSeenOnboarding = true }
         }
@@ -72,9 +79,4 @@ struct RootView: View {
             }
         )
     }
-}
-
-#Preview {
-    RootView()
-        .environment(AccountStore(backend: UnconfiguredAccountBackend()))
 }

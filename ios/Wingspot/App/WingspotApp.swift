@@ -14,13 +14,14 @@ struct WingspotApp: App {
     @State private var referenceData: ReferenceDataStore
     @State private var account: AccountStore
     @State private var sync: CheckInSyncCoordinator
+    @State private var badges: BadgeStore
     @Environment(\.scenePhase) private var scenePhase
     private let network = NetworkMonitor()
 
     init() {
         let container: ModelContainer
         do {
-            container = try ModelContainer(for: LocalCheckIn.self)
+            container = try ModelContainer(for: LocalCheckIn.self, BadgeAck.self, BadgeAccount.self)
         } catch {
             fatalError("Local check-in storage can't open: \(error)")
         }
@@ -33,9 +34,16 @@ struct WingspotApp: App {
             client: Self.apiClient,
             accessToken: { await account.accessToken() }
         )
+        let badgeStore = BadgeStore(
+            context: container.mainContext,
+            source: APIProgressSource(client: Self.apiClient, accessToken: { await account.accessToken() })
+        )
+        _badges = State(initialValue: badgeStore)
         _sync = State(initialValue: CheckInSyncCoordinator(
             outbox: CheckInOutbox(context: container.mainContext, uploader: uploader),
-            userID: { account.userID }
+            userID: { account.userID },
+            // After a run, with or without uploads, the server may have unlocked something.
+            afterRun: { Task { await badgeStore.refresh() } }
         ))
     }
 
@@ -45,16 +53,21 @@ struct WingspotApp: App {
                 .environment(referenceData)
                 .environment(account)
                 .environment(sync)
+                .environment(badges)
                 .modelContainer(modelContainer)
                 .task { await referenceData.prepare() }
                 .task { await loadRemoteConfig() }
                 .task {
                     await account.start()
+                    badges.begin(userID: account.userID)
                     sync.requestSync()
                 }
                 .task { network.start { Task { @MainActor in sync.requestSync() } } }
                 // After signing in or out, and each time the app comes to the foreground.
-                .onChange(of: account.userID) { sync.requestSync() }
+                .onChange(of: account.userID) {
+                    badges.begin(userID: account.userID)
+                    sync.requestSync()
+                }
                 .onChange(of: scenePhase) { if scenePhase == .active { sync.requestSync() } }
                 .onOpenURL(perform: handleLink)
         }

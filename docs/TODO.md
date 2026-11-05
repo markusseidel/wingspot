@@ -61,6 +61,13 @@ In this order:
 - [ ] Archive build 3 (the version bump is in the repo) and upload it with Distribute App > App Store Connect
 - [ ] Test on your iPhone: make a check-in in airplane mode, switch the network back on, and check that it arrives once (Supabase table `checkins`)
 
+### Build 5: badges and levels
+
+- [x] Deploy the badge migration and the `me` function to hosted (done 2026-11-05)
+- [ ] Archive build 5 and upload it with Distribute App > App Store Connect, then add it to your groups
+- [ ] Test on your iPhone: make a check-in, wait for the badge celebration ("Abheben"), then look at Badges and Profile (level, rank, XP)
+- [ ] Update the test text for your testers: badges, XP and levels are new
+
 ### Before real users sign up
 
 - [ ] Turn on leaked password protection in Supabase
@@ -154,7 +161,7 @@ In this order:
 - [x] Milestone 1: offline Spotted check-in
 - [ ] Milestone 2: sign-in and profile
 - [x] Milestone 3: sync
-- [ ] Milestone 4: badges and XP (server done; the app's celebration, Badges tab and level come next)
+- [x] Milestone 4: badges and XP
 - [ ] Milestone 5: Airport and Flown check-ins, boarding pass scan, one photo
 - [ ] Milestone 6: your profile
 - [ ] Milestone 7: social

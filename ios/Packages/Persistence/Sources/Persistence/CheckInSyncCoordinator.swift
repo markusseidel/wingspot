@@ -14,6 +14,7 @@ public final class CheckInSyncCoordinator {
     private let userID: @MainActor () -> UUID?
     private let sleep: @Sendable (Duration) async -> Void
     private let backoff: [Duration]
+    private let afterRun: @MainActor () -> Void
     private var task: Task<Void, Never>?
     private var requestedAgain = false
 
@@ -24,11 +25,13 @@ public final class CheckInSyncCoordinator {
         outbox: CheckInOutbox,
         userID: @escaping @MainActor () -> UUID?,
         backoff: [Duration] = CheckInSyncCoordinator.defaultBackoff,
-        sleep: @escaping @Sendable (Duration) async -> Void = { try? await Task.sleep(for: $0) }
+        sleep: @escaping @Sendable (Duration) async -> Void = { try? await Task.sleep(for: $0) },
+        afterRun: @escaping @MainActor () -> Void = {}
     ) {
         self.outbox = outbox
         self.userID = userID
         self.backoff = backoff
+        self.afterRun = afterRun
         self.sleep = sleep
     }
 
@@ -59,6 +62,8 @@ public final class CheckInSyncCoordinator {
             case .idle, .finished:
                 failures = 0
                 isWaitingToRetry = false
+                // Whether something went up or not, the server may know something new, such as badges.
+                afterRun()
                 // Something may have been saved while this run was uploading.
                 if !requestedAgain { return }
             case .retryLater:

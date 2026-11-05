@@ -159,4 +159,14 @@ public struct APIClient: Sendable {
         guard status == 200 else { throw APIError.unexpectedStatus(status) }
         return try JSONDecoder().decode(Answer.self, from: data).results
     }
+
+    /// `GET /v1/me/progress`. Returns the raw answer too, so the app can keep it for offline use.
+    public func progress(accessToken: String) async throws -> (progress: UserProgress, raw: Data) {
+        var request = URLRequest(url: baseURL.appending(path: "v1/me/progress"))
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        let (data, response) = try await transport(request)
+        let status = (response as? HTTPURLResponse)?.statusCode ?? 200
+        guard status == 200 else { throw APIError.unexpectedStatus(status) }
+        return (try UserProgress.decode(data), data)
+    }
 }
