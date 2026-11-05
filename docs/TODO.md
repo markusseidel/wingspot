@@ -89,6 +89,7 @@ For sign-in to work in this build, also do the SMTP and redirect URL tasks above
 - [ ] Android timing: after the iOS MVP (recommended) or in parallel? (§16, question 2)
 - [ ] Kotlin Multiplatform: revisit after Android 1.0 (§16, question 4)
 - [ ] Pilot logbook: build it as a separate track? (§16, question 10)
+- [ ] Photo platform scope: display size or full resolution, storage cost, licence options, download policy, quality review (§16, question 12)
 
 ## Build work
 
@@ -162,6 +163,7 @@ Spotter features (concept §14):
 - [ ] Photo import with details filled in from EXIF, and a Share Extension
 - [ ] Flight number lookup, with 5 lookups a month on the free plan (needs the provider decision above)
 - [ ] Spotting locations added by users, with moderation
+- [ ] Public photo galleries per registration, type and airport, and a photo page with a share link (concept §6.5)
 - [ ] Airport leaderboards
 - [ ] Widgets and App Intents
 - [ ] "What's overhead?" and ADS-B verification (needs the provider and licence decision above)
