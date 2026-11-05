@@ -52,6 +52,15 @@ For sign-in to work in this build, also do the SMTP and redirect URL tasks above
 - [x] Add build 2 to your external group and submit it for Beta App Review (usually a day or less)
 - [ ] Add testers to the external group, by email or public link
 
+### Build 3: the first build with sync
+
+In this order:
+
+- [ ] Approve the hosted deploy of sync (see Backend below), so the endpoint exists before testers use it
+- [ ] Update App Privacy in App Store Connect: check-ins with their location now reach the server
+- [ ] Archive build 3 (the version bump is in the repo) and upload it with Distribute App > App Store Connect
+- [ ] Test on your iPhone: make a check-in in airplane mode, switch the network back on, and check that it arrives once (Supabase table `checkins`)
+
 ### Before real users sign up
 
 - [ ] Turn on leaked password protection in Supabase
