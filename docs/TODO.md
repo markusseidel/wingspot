@@ -38,11 +38,20 @@ For sign-in to work in this build, also do the SMTP and redirect URL tasks above
 - [x] Sign in to Xcode with your Apple ID (Settings > Accounts)
 - [x] Commit the publishable key (done), so every build can sign in
 - [ ] Create the app in App Store Connect, with the bundle ID `site.wingspot.ios`. The ID can't be changed afterwards. Check that the name "Wingspot" is free; the primary language is English
-- [ ] Pick "Any iOS Device (arm64)", then archive in Xcode (Product > Archive) and upload with Distribute App > TestFlight Internal Only
+- [ ] Pick "Any iOS Device (arm64)", then archive in Xcode (Product > Archive) and upload with Distribute App. Build 1 went up as "TestFlight Internal Only", which can never go to external testers or the App Store. For external testing, upload with "TestFlight & App Store"
 - [ ] Fill in App Privacy in App Store Connect (app > General > App Privacy), before external testers or the App Store. For the current build, declare only email address and user ID (and the name if you count the username), for app functionality, linked to the user, not used for tracking. Location stays on the phone until sync exists
 - [ ] When sync (Milestone 3) ships, update App Privacy: check-ins with their location, and any other user content, are then sent to the server
 - [ ] Create an internal testing group in App Store Connect, then add yourself and the build
 - [ ] Install the TestFlight app on your iPhone and install Wingspot
+
+### External TestFlight testers
+
+- [ ] Upload build 2 (version bump is in the repo) with Distribute App > TestFlight & App Store
+- [ ] Fill in Test Information in App Store Connect (TestFlight > Test Information): beta app description, feedback email, contact details
+- [ ] Publish App Privacy (see above)
+- [ ] Publish a privacy policy on `wingspot.site` if Apple asks for its URL
+- [ ] Add build 2 to your external group and submit it for Beta App Review (usually a day or less)
+- [ ] Add testers to the external group, by email or public link
 
 ### Before real users sign up
 
