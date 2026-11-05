@@ -123,6 +123,9 @@ In this order:
   - [ ] Briefly deactivate the anon key and test
   - [ ] Remove the to-do from `backend/README.md`
 
+- [ ] Deploy badges to hosted, with the next approved deploy: the migration `20261105200000_badges.sql` and the changed `me` function. Do this before any build that shows badges
+- [ ] Fill in the island flag and runway lengths in the airport data, then switch on `island_hopper` and `short_field` (set their `valid_from` to null)
+
 ### TestFlight setup
 
 - [x] Set the Apple Team ID in the iOS project
@@ -140,7 +143,7 @@ In this order:
 
 - [x] Add a string catalog and German to the iOS project (start of Milestone 2)
 - [x] Translate Milestone 1's text, including plain `String` values that SwiftUI won't translate automatically (start of Milestone 2)
-- [ ] Store badge names and descriptions by language (Milestone 4)
+- [x] Store badge names and descriptions by language (Milestone 4, server side)
 - [ ] Send sign-up emails in the user's language. The app already stores it as `language` in the user's metadata. First confirm that Supabase email templates can use it (before Milestone 9)
 - [ ] Write the TestFlight text in both languages (Milestone 9)
 - [ ] Build shared-link pages in both languages (when universal links are built)
@@ -151,7 +154,7 @@ In this order:
 - [x] Milestone 1: offline Spotted check-in
 - [ ] Milestone 2: sign-in and profile
 - [x] Milestone 3: sync
-- [ ] Milestone 4: badges and XP
+- [ ] Milestone 4: badges and XP (server done; the app's celebration, Badges tab and level come next)
 - [ ] Milestone 5: Airport and Flown check-ins, boarding pass scan, one photo
 - [ ] Milestone 6: your profile
 - [ ] Milestone 7: social

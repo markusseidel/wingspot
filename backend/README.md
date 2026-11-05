@@ -32,7 +32,7 @@ supabase stop --workdir backend
 
 [`20261104100100_access.sql`](supabase/migrations/20261104100100_access.sql) denies everything by default, then grants specific columns and rows. New tables get no client access, and every new function in `public` must revoke `PUBLIC` execute, or the database tests fail.
 
-Implemented endpoints: `/v1/checkins` (upload only), `/v1/config`, `/v1/devices`, `/v1/me/entitlements` and `/v1/refdata/manifest`.
+Implemented endpoints: `/v1/checkins` (upload only), `/v1/config`, `/v1/devices`, `/v1/me/entitlements`, `/v1/me/progress` and `/v1/refdata/manifest`.
 
 ## Before going live
 

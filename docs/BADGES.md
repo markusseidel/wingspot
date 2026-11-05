@@ -1,6 +1,6 @@
-# Launch badges, draft for review
+# Launch badges
 
-Draft for Milestone 4 (see [PHASE1.md](PHASE1.md) and concept §5). Nothing is built yet. Change anything here and I'll build the final list.
+The 36 launch badges for Milestone 4 (see [PHASE1.md](PHASE1.md) and concept §5), as approved. The server seeds them in `20261105200000_badges.sql`.
 
 ## How badges work
 
@@ -11,6 +11,10 @@ Draft for Milestone 4 (see [PHASE1.md](PHASE1.md) and concept §5). Nothing is b
 - "Local time" is estimated from the airport's longitude (UTC plus longitude divided by 15, rounded), because the airport data has no time zones.
 - Level unlocks give bonus XP, 50 times the level (concept §5.3).
 - Art for now: a symbol and a color per level. You can replace it with drawn art later without changing the rules.
+
+## Dormant until the data exists
+
+`island_hopper` and `short_field` are in the database but switched off, because the airport data has no island flag and no runway lengths yet. They show up and can be earned once that data is imported and they are switched on. Their `valid_from` is `infinity` until then.
 
 ## What the server needs that doesn't exist yet
 
@@ -76,7 +80,7 @@ Counts only the types in the database, 22 on hosted at first.
 |---|---|---|---|---|
 | early_bird | Early Bird | Frühaufsteher | Check-ins between 04:00 and 06:00 local time | 1, 10, 25 |
 | night_owl | Night Owl | Nachteule | Check-ins between 22:00 and 04:00 local time | 1, 10, 25 |
-| anniversary | Anniversary | Jahrestag | A check-in on the day you joined, in a later year | single, repeats yearly |
+| anniversary | Anniversary | Jahrestag | Years in which you checked in on the day you joined, in a later year | 1, 2, 3, 5, 10 |
 
 ## Hidden (3)
 
@@ -96,8 +100,7 @@ These show as "???" until earned. Drop any you don't like.
 - **Events and seasons:** airshow weekends, winter and summer badges, holidays. These are time-limited badges, set up on the server.
 - **Social:** salutes on a check-in, spotting together with a friend. They come with Milestone 7.
 
-## Open questions
+## Decisions
 
-1. Are 36 launch badges enough, or do you want more types before ICAO answers?
-2. Keep the three hidden badges?
-3. Any badge you want renamed or dropped?
+- 36 launch badges are enough, and the three hidden badges stay.
+- Hidden badges are secret in the app, but their names and rules can be read from the public `badges` table. That is acceptable for a surprise mechanic.

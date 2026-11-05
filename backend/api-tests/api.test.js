@@ -128,6 +128,7 @@ describe("authentication", () => {
     ["DELETE /v1/devices/{id}", `/v1/devices/${randomUUID()}`, { method: "DELETE" }],
     ["GET /v1/me/entitlements", "/v1/me/entitlements", {}],
     ["POST /v1/checkins", "/v1/checkins", { method: "POST", body: { checkins: [{ id: randomUUID() }] } }],
+    ["GET /v1/me/progress", "/v1/me/progress", {}],
   ];
   for (const [name, path, options] of protectedCalls) {
     test(`${name} needs a token`, async () => {
@@ -395,6 +396,84 @@ describe("POST /v1/checkins", () => {
     const attempt = item();
     assert.ok([401, 403].includes(await direct("checkins", { id: attempt.id, user_id: alice.id, kind: "spotted", occurred_at: attempt.occurred_at })));
     assert.ok([401, 403].includes(await direct("aircraft", { registration: registration() })));
+  });
+});
+
+describe("badges and progress", () => {
+  const registrations = [];
+  const ids = [];
+
+  after(async () => {
+    for (const id of ids) await service(`checkins?id=eq.${id}`, { method: "DELETE" });
+    for (const value of registrations) await service(`aircraft?registration=eq.${value}`, { method: "DELETE" });
+  });
+
+  const spot = () => {
+    const letters = Array.from({ length: 4 }, () => String.fromCharCode(65 + Math.floor(Math.random() * 26))).join("");
+    registrations.push(`D-${letters}`);
+    const id = randomUUID();
+    ids.push(id);
+    return { id, kind: "spotted", occurred_at: new Date(Date.now() - 3600_000).toISOString(), registration: registrations.at(-1) };
+  };
+  const upload = (user, checkins) => call("/v1/checkins", { method: "POST", token: user.token, body: { checkins } });
+  const progress = (user) => call("/v1/me/progress", { token: user.token });
+
+  test("a new user starts at level 1 with no XP, and hidden badges stay hidden", async () => {
+    const user = await signUp();
+    const response = await progress(user);
+    assert.equal(response.status, 200, JSON.stringify(response.body));
+    assertMatches("Progress", response.body);
+    assert.equal(response.body.xp, 0);
+    assert.equal(response.body.level, 1);
+    assert.equal(response.body.hidden_remaining, 3);
+    assert.equal(response.body.badges.length, 31);
+    assert.ok(response.body.badges.every((badge) => !badge.hidden && badge.level === 0));
+    assert.ok(response.body.badges.every((badge) => typeof badge.name.en === "string" && typeof badge.name.de === "string"));
+  });
+
+  test("an upload reports the unlocked badge, XP and level, and the answer matches the contract", async () => {
+    const user = await signUp();
+    const first = spot();
+    const response = await upload(user, [first]);
+    assert.equal(response.status, 200, JSON.stringify(response.body));
+    assertMatches("CheckinUploadResult", response.body);
+    assert.deepEqual(response.body.results, [{ id: first.id, status: "stored" }]);
+    assert.deepEqual(response.body.badges_unlocked.map((badge) => badge.id), ["wheels_up"]);
+    assert.equal(response.body.badges_unlocked[0].name.de, "Abheben");
+    assert.equal(response.body.xp, 75, "10 for the check-in, 15 for a new registration, 50 for the badge");
+    assert.equal(response.body.level, 1);
+  });
+
+  test("a repeated upload unlocks nothing new, but progress still has the badge", async () => {
+    const user = await signUp();
+    const first = spot();
+    await upload(user, [first]);
+    const again = await upload(user, [first]);
+    assert.deepEqual(again.body.badges_unlocked, []);
+
+    const response = await progress(user);
+    const wheelsUp = response.body.badges.find((badge) => badge.id === "wheels_up");
+    assert.equal(wheelsUp.level, 1);
+    assert.ok(wheelsUp.unlocked_at);
+    assert.equal(response.body.xp, 75);
+    assert.equal(response.body.badges.find((badge) => badge.id === "logbook").value, 1);
+  });
+
+  test("progress catches up on check-ins that were stored without the engine", async () => {
+    const user = await signUp();
+    const item = spot();
+    // Stored directly, as the check-ins uploaded before badges existed were.
+    const [aircraft] = await service("aircraft", { method: "POST", body: { registration: item.registration, data_status: "user_submitted" } });
+    await service("checkins", { method: "POST", body: { id: item.id, user_id: user.id, kind: "spotted", occurred_at: item.occurred_at, aircraft_id: aircraft.id } });
+
+    const response = await progress(user);
+    assert.equal(response.body.badges.find((badge) => badge.id === "wheels_up").level, 1);
+    assert.equal(response.body.xp, 75);
+  });
+
+  test("rejects other methods", async () => {
+    const user = await signUp();
+    assertError(await call("/v1/me/progress", { method: "POST", token: user.token, body: {} }), 405);
   });
 });
 

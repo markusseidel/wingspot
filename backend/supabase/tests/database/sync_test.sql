@@ -25,8 +25,8 @@ reset role;
 select pg_temp.as_user('00000000-0000-0000-0000-0000000000a1');
 
 select is(
-  public.sync_checkins('[{"id":"20000000-0000-0000-0000-000000000001","kind":"spotted","occurred_at":"2026-01-01T10:00:00Z","registration":"D-SYNC"}]'::jsonb),
-  '{"results":[{"id":"20000000-0000-0000-0000-000000000001","status":"stored"}]}'::jsonb,
+  public.sync_checkins('[{"id":"20000000-0000-0000-0000-000000000001","kind":"spotted","occurred_at":"2026-01-01T10:00:00Z","registration":"D-SYNC"}]'::jsonb) -> 'results',
+  '[{"id":"20000000-0000-0000-0000-000000000001","status":"stored"}]'::jsonb,
   'a valid check-in is stored'
 );
 select is(
