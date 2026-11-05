@@ -1,4 +1,5 @@
 import Account
+import Persistence
 import ReferenceData
 import SwiftUI
 
@@ -66,11 +67,15 @@ private struct ProfileDetailsView: View {
 
     @Environment(AccountStore.self) private var account
     @Environment(ReferenceDataStore.self) private var referenceData
+    @Environment(BadgeStore.self) private var badges
     @State private var airport: Airport?
     @State private var signOutFailed = false
 
     var body: some View {
         Form {
+            if let progress = badges.progress {
+                Section { LevelHeader(progress: progress) }
+            }
             Section {
                 LabeledContent("Username") { Text(verbatim: "@\(profile.username)") }
                 if let name = profile.displayName {
