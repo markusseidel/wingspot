@@ -15,16 +15,17 @@ Only you can do these, because they need your accounts, money or judgement.
 ### Licensing
 
 - [ ] Get ICAO's written answer on commercial use of the aircraft type data
+- [ ] If ICAO hasn't answered two weeks after the email, send a short reminder
 - [ ] Optional: get a short opinion from a German IT or copyright lawyer, including the EU database right
 - [ ] Before adding a national registry, check that registry's terms
 
 ### Accounts and services
 
 - [x] Buy the domain `wingspot.site`
-- [ ] Set up custom email sending (SMTP). Supabase's built-in email only reaches project team addresses and is heavily rate-limited
+- [ ] Set up custom email sending (SMTP). Supabase's built-in email only reaches project team addresses and is heavily rate-limited. Use a service such as Resend, Postmark or Brevo, and enter its details in Supabase under Auth > SMTP
 - [x] Join the Apple Developer Program (before Milestone 2)
 - [x] Choose the final app ID: `site.wingspot.ios`
-- [ ] Create Apple sign-in credentials for `site.wingspot.ios`
+- [ ] Create Apple sign-in credentials for `site.wingspot.ios`: a Services ID, a key and your Team ID
 - [ ] Add `wingspot://auth-callback` to the redirect URLs in Supabase's Auth settings on hosted (before testing sign-in on hosted)
 - [ ] Publish a privacy policy and Impressum on `wingspot.site`, in German and English (before Milestone 9)
 - [ ] Create Google sign-in credentials (after the first TestFlight)
@@ -36,8 +37,8 @@ For sign-in to work in this build, also do the SMTP and redirect URL tasks above
 - [ ] Confirm your Apple Developer membership shows as active
 - [ ] Sign in to Xcode with your Apple ID (Settings > Accounts)
 - [ ] Decide whether to commit the publishable key. Otherwise put it in `ios/Config/Local.xcconfig` before archiving
-- [ ] Create the app in App Store Connect, with the bundle ID `site.wingspot.ios`. The ID can't be changed afterwards
-- [ ] Archive in Xcode and upload with Distribute App > TestFlight Internal Only. Without `Local.xcconfig`, the build says sign-in isn't available
+- [ ] Create the app in App Store Connect, with the bundle ID `site.wingspot.ios`. The ID can't be changed afterwards. Check that the name "Wingspot" is free; the primary language is English
+- [ ] Pick "Any iOS Device (arm64)", then archive in Xcode (Product > Archive) and upload with Distribute App > TestFlight Internal Only. Without `Local.xcconfig`, the build says sign-in isn't available
 - [ ] Fill in App Privacy in App Store Connect, before external testers or the App Store. List the data the app collects, such as email address, user ID and location
 - [ ] Create an internal testing group in App Store Connect, then add yourself and the build
 - [ ] Install the TestFlight app on your iPhone and install Wingspot
