@@ -1,0 +1,73 @@
+import Foundation
+import Observation
+
+/// Decides when the outbox runs. Callers just say "sync now" after a save, on coming to the
+/// foreground, after sign-in and when the network returns. Several requests at once become one run,
+/// and a run that fails because of the network tries again after a growing pause, then stops
+/// until the next request.
+@MainActor
+@Observable
+public final class CheckInSyncCoordinator {
+    public static let defaultBackoff: [Duration] = [.seconds(5), .seconds(30), .seconds(120), .seconds(600)]
+
+    private let outbox: CheckInOutbox
+    private let userID: @MainActor () -> UUID?
+    private let sleep: @Sendable (Duration) async -> Void
+    private let backoff: [Duration]
+    private var task: Task<Void, Never>?
+    private var requestedAgain = false
+
+    /// Check-ins that failed on the last run and will be retried.
+    public private(set) var isWaitingToRetry = false
+
+    public init(
+        outbox: CheckInOutbox,
+        userID: @escaping @MainActor () -> UUID?,
+        backoff: [Duration] = CheckInSyncCoordinator.defaultBackoff,
+        sleep: @escaping @Sendable (Duration) async -> Void = { try? await Task.sleep(for: $0) }
+    ) {
+        self.outbox = outbox
+        self.userID = userID
+        self.backoff = backoff
+        self.sleep = sleep
+    }
+
+    /// Does nothing while signed out: check-ins wait on the device and go up after sign-in.
+    public func requestSync() {
+        guard task == nil else {
+            requestedAgain = true
+            return
+        }
+        task = Task { await run() }
+    }
+
+    /// For tests: resolves when the current run, if any, has finished.
+    public func waitUntilIdle() async {
+        while let task { await task.value }
+    }
+
+    private func run() async {
+        defer {
+            task = nil
+            isWaitingToRetry = false
+        }
+        var failures = 0
+        while true {
+            requestedAgain = false
+            guard let id = userID() else { return }
+            switch await outbox.sync(userID: id) {
+            case .idle, .finished:
+                failures = 0
+                isWaitingToRetry = false
+                // Something may have been saved while this run was uploading.
+                if !requestedAgain { return }
+            case .retryLater:
+                guard failures < backoff.count else { return }
+                isWaitingToRetry = true
+                await sleep(backoff[failures])
+                failures += 1
+                if Task.isCancelled { return }
+            }
+        }
+    }
+}

@@ -431,6 +431,9 @@ enabled = true
 [functions.config]
 verify_jwt = false
 
+[functions.checkins]
+verify_jwt = false
+
 [functions.devices]
 verify_jwt = false
 

@@ -127,6 +127,7 @@ describe("authentication", () => {
     ["POST /v1/devices", "/v1/devices", { method: "POST", body: device() }],
     ["DELETE /v1/devices/{id}", `/v1/devices/${randomUUID()}`, { method: "DELETE" }],
     ["GET /v1/me/entitlements", "/v1/me/entitlements", {}],
+    ["POST /v1/checkins", "/v1/checkins", { method: "POST", body: { checkins: [{ id: randomUUID() }] } }],
   ];
   for (const [name, path, options] of protectedCalls) {
     test(`${name} needs a token`, async () => {
@@ -233,6 +234,167 @@ describe("devices", () => {
 
   test("rejects other methods", async () => {
     assertError(await call("/v1/devices", { token: alice.token }), 405);
+  });
+});
+
+describe("POST /v1/checkins", () => {
+  const TYPE = "ZT99";
+  const AIRPORT = 900001;
+  const registrations = [];
+  const ids = [];
+  let alice;
+  let bob;
+
+  const registration = () => {
+    const letters = Array.from({ length: 4 }, () => String.fromCharCode(65 + Math.floor(Math.random() * 26))).join("");
+    registrations.push(`D-${letters}`);
+    return registrations.at(-1);
+  };
+  const item = (overrides = {}) => {
+    const id = randomUUID();
+    ids.push(id);
+    return { id, kind: "spotted", occurred_at: new Date(Date.now() - 3600_000).toISOString(), registration: registration(), ...overrides };
+  };
+  const upload = (user, checkins) => call("/v1/checkins", { method: "POST", token: user.token, body: { checkins } });
+  const stored = (id) => service(`checkins?id=eq.${id}&select=*`);
+
+  before(async () => {
+    await service("aircraft_types", { method: "POST", body: { icao_code: TYPE, manufacturer: "Test", model: "Zero" } });
+    await service("airports", {
+      method: "POST",
+      body: { id: AIRPORT, icao: "ZZZZ", name: "Test", country_code: "DE", continent: "EU", location: "POINT(8.5 50.0)" },
+    });
+    alice = await signUp();
+    bob = await signUp();
+  });
+  after(async () => {
+    for (const id of ids) await service(`checkins?id=eq.${id}`, { method: "DELETE" });
+    for (const value of registrations) await service(`aircraft?registration=eq.${value}`, { method: "DELETE" });
+    await service(`airports?id=eq.${AIRPORT}`, { method: "DELETE" });
+    await service(`aircraft_types?icao_code=eq.${TYPE}`, { method: "DELETE" });
+  });
+
+  test("stores a batch and matches the contract", async () => {
+    const first = item({ type_icao: TYPE, airport_id: AIRPORT, latitude: 50.03, longitude: 8.57 });
+    const second = item();
+    const response = await upload(alice, [first, second]);
+    assert.equal(response.status, 200, JSON.stringify(response.body));
+    assertMatches("CheckinUploadResult", response.body);
+    assert.deepEqual(response.body.results, [
+      { id: first.id, status: "stored" },
+      { id: second.id, status: "stored" },
+    ]);
+
+    const [row] = await stored(first.id);
+    assert.equal(row.user_id, alice.id);
+    assert.equal(row.kind, "spotted");
+    assert.equal(row.type_icao, TYPE);
+    assert.equal(row.airport_id, AIRPORT);
+    assert.equal(row.visibility, "private");
+    assert.equal(row.verification, "none");
+    assert.ok(row.location, "the location is stored");
+
+    // The shared aircraft row holds only the registration.
+    const [aircraft] = await service(`aircraft?registration=eq.${first.registration}&select=*`);
+    assert.equal(aircraft.id, row.aircraft_id);
+    assert.equal(aircraft.data_status, "user_submitted");
+    assert.equal(aircraft.type_icao, null);
+    assert.equal(aircraft.operator_id, null);
+  });
+
+  test("uploading the same batch again stores nothing twice", async () => {
+    const batch = [item(), item({ visibility: "public" })];
+    const one = await upload(alice, batch);
+    const two = await upload(alice, batch);
+    assert.deepEqual(one.body, two.body);
+    assert.deepEqual(two.body.results.map((r) => r.status), ["stored", "stored"]);
+    for (const { id } of batch) assert.equal((await stored(id)).length, 1);
+    assert.equal((await stored(batch[1].id))[0].visibility, "public");
+  });
+
+  test("two users sharing a registration share one aircraft row", async () => {
+    const shared = registration();
+    await upload(alice, [item({ registration: shared })]);
+    await upload(bob, [item({ registration: shared })]);
+    assert.equal((await service(`aircraft?registration=eq.${shared}&select=id`)).length, 1);
+  });
+
+  test("a type-only check-in creates no aircraft", async () => {
+    const typeOnly = item({ registration: undefined, type_icao: TYPE });
+    const response = await upload(alice, [typeOnly]);
+    assert.equal(response.body.results[0].status, "stored");
+    assert.equal((await stored(typeOnly.id))[0].aircraft_id, null);
+  });
+
+  test("another user's id is rejected and the original stays untouched", async () => {
+    const mine = item();
+    await upload(alice, [mine]);
+    const response = await upload(bob, [{ ...mine, registration: registration() }]);
+    assert.deepEqual(response.body.results, [{ id: mine.id, status: "rejected", code: "id_taken" }]);
+    assert.equal((await stored(mine.id))[0].user_id, alice.id);
+  });
+
+  test("a bad item is rejected and the rest of the batch is stored", async () => {
+    const good = item();
+    const cases = [
+      ["unsupported_kind", item({ kind: "flown" })],
+      ["missing_aircraft", item({ registration: undefined })],
+      ["invalid_registration", item({ registration: "not a registration" })],
+      ["invalid_time", item({ occurred_at: new Date(Date.now() + 3 * 86400_000).toISOString() })],
+      ["invalid_request", item({ occurred_at: "banana" })],
+      ["unknown_type", item({ type_icao: "NOPE" })],
+      ["unknown_airport", item({ airport_id: 987654 })],
+      ["invalid_request", item({ airport_id: "x" })],
+      ["invalid_location", item({ latitude: 50 })],
+      ["invalid_location", item({ latitude: 95, longitude: 8 })],
+      ["invalid_visibility", item({ visibility: "everyone" })],
+    ];
+    const response = await upload(alice, [good, ...cases.map(([, bad]) => bad)]);
+    assert.equal(response.status, 200, JSON.stringify(response.body));
+    assertMatches("CheckinUploadResult", response.body);
+    assert.deepEqual(response.body.results[0], { id: good.id, status: "stored" });
+    cases.forEach(([code, bad], index) => {
+      assert.deepEqual(response.body.results[index + 1], { id: bad.id, status: "rejected", code }, `case ${index}`);
+    });
+    for (const [, bad] of cases) assert.equal((await stored(bad.id)).length, 0, "rejected items are not stored");
+    assert.equal((await stored(good.id)).length, 1);
+  });
+
+  test("rejects a request that is not valid", async () => {
+    const tooMany = Array.from({ length: 51 }, () => item());
+    const bad = [
+      ["empty list", { checkins: [] }],
+      ["not a list", { checkins: "x" }],
+      ["missing list", {}],
+      ["too many", { checkins: tooMany }],
+      ["item without id", { checkins: [{ kind: "spotted" }] }],
+      ["item that is not an object", { checkins: ["x"] }],
+    ];
+    for (const [name, body] of bad) assertError(await call("/v1/checkins", { method: "POST", token: alice.token, body }), 400, name);
+
+    const same = item();
+    assertError(await call("/v1/checkins", { method: "POST", token: alice.token, body: { checkins: [same, same] } }), 400);
+    assertError(await call("/v1/checkins", { method: "POST", token: alice.token, rawBody: "not json" }), 400);
+    assertError(await call("/v1/checkins", { method: "POST", token: alice.token, body: [] }), 400);
+  });
+
+  test("rejects other methods and paths", async () => {
+    assertError(await call("/v1/checkins", { token: alice.token }), 405);
+    assertError(await call("/v1/checkins/x", { method: "POST", token: alice.token, body: {} }), 404);
+  });
+
+  test("clients still cannot write check-ins or aircraft directly", async () => {
+    const direct = async (table, body) => {
+      const response = await fetch(`${API}/rest/v1/${table}`, {
+        method: "POST",
+        headers: { apikey: ANON_KEY, Authorization: `Bearer ${alice.token}`, "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      return response.status;
+    };
+    const attempt = item();
+    assert.ok([401, 403].includes(await direct("checkins", { id: attempt.id, user_id: alice.id, kind: "spotted", occurred_at: attempt.occurred_at })));
+    assert.ok([401, 403].includes(await direct("aircraft", { registration: registration() })));
   });
 });
 

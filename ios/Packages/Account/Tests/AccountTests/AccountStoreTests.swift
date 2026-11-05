@@ -30,6 +30,8 @@ private actor FakeBackend: AccountBackend {
 
     func currentUserID() -> UUID? { sessionUser }
 
+    func accessToken() -> String? { sessionUser == nil ? nil : "token-for-\(sessionUser!)" }
+
     func sendSignInLink(email: String, language: String?) {
         sentEmails.append((email, language))
     }
@@ -92,6 +94,40 @@ struct AccountStoreTests {
         let store = AccountStore(backend: backend)
         await store.start()
         #expect(store.state == .signedOut)
+    }
+
+    @Test func knowsTheUserFromTheStoredSessionEvenOffline() async {
+        let id = UUID()
+        let backend = FakeBackend(sessionUser: id)
+        await backend.fail(load: .offline)
+        let store = AccountStore(backend: backend)
+        #expect(store.userID == nil)
+        await store.start()
+        #expect(store.userID == id)
+    }
+
+    @Test func hasNoUserIDWhenSignedOutOrTheSessionWasRejected() async {
+        let store = AccountStore(backend: FakeBackend())
+        await store.start()
+        #expect(store.userID == nil)
+
+        let backend = FakeBackend(sessionUser: UUID())
+        await backend.rejectSession()
+        let rejected = AccountStore(backend: backend)
+        await rejected.start()
+        #expect(rejected.userID == nil)
+    }
+
+    @Test func theUserIDFollowsSignInAndSignOut() async throws {
+        let store = AccountStore(backend: FakeBackend())
+        await store.start()
+        #expect(await store.handle(link))
+        let id = try #require(store.userID)
+        #expect(await store.accessToken() == "token-for-\(id)")
+
+        try await store.signOut()
+        #expect(store.userID == nil)
+        #expect(await store.accessToken() == nil)
     }
 
     @Test func trimsTheEmailAndPassesTheLanguage() async throws {

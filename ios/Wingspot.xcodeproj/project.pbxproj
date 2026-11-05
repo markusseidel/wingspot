@@ -14,6 +14,7 @@
 		14963B1634A245DD5F21D19F /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = FE4DDF37937E81A62EB60AB5 /* Account */; };
 		1878E11AE259B4D66AF3B0F4 /* BCBP in Frameworks */ = {isa = PBXBuildFile; productRef = 84545F5C809788F8A6A927A8 /* BCBP */; };
 		2009AC27E2FC13DC4C52C220 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17369D1192D4BAF9721962FE /* RootView.swift */; };
+		2E4689A87246BCE2846B568F /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82163058748258D0AE08F801 /* NetworkMonitor.swift */; };
 		39383DB2983A80C96D05EA39 /* ReferenceSearchViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */; };
 		3B16BBB37412D38A89E454BD /* PlaceholderScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87BF659DFCBC4828CF78129 /* PlaceholderScreen.swift */; };
 		3C72654BC1F78F3B175048F2 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA53E0B6C7D19C0B128FFE6 /* OnboardingView.swift */; };
@@ -25,6 +26,7 @@
 		A08C4CA8904388F960BBA71F /* ProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD2433D565B1E9974F334CA /* ProfileScreen.swift */; };
 		A165396CBFC567234392EE1F /* EmailSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA65F3D7DF5E25F2228C346 /* EmailSignInView.swift */; };
 		B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B545FD209FC2942BD45E71 /* CheckInResultView.swift */; };
+		C11130AF4BC7A3C72A86C5A3 /* APICheckInUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828B639D7292CFD9B11324B0 /* APICheckInUploader.swift */; };
 		C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A035100ED13735493AF7BF1 /* LocationProvider.swift */; };
 		CF3807277F1FDA241609254C /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 5B2EB62437C5BE2130BABF23 /* Persistence */; };
 		D866E9760B084CDB160CA4D5 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */; };
@@ -47,6 +49,8 @@
 		6E61A661480E1ED65178DE4B /* WingspotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WingspotApp.swift; sourceTree = "<group>"; };
 		6FD2433D565B1E9974F334CA /* ProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileScreen.swift; sourceTree = "<group>"; };
 		76B04C14C68A65FD24C0D6DD /* WingspotCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = WingspotCore; path = Packages/WingspotCore; sourceTree = SOURCE_ROOT; };
+		82163058748258D0AE08F801 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		828B639D7292CFD9B11324B0 /* APICheckInUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICheckInUploader.swift; sourceTree = "<group>"; };
 		9A035100ED13735493AF7BF1 /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
 		A47349EC0A6768BA0A1C2F6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceSearchViews.swift; sourceTree = "<group>"; };
@@ -151,7 +155,9 @@
 		78EF8102C6206FC55B54ED0A /* App */ = {
 			isa = PBXGroup;
 			children = (
+				828B639D7292CFD9B11324B0 /* APICheckInUploader.swift */,
 				A47349EC0A6768BA0A1C2F6F /* Info.plist */,
+				82163058748258D0AE08F801 /* NetworkMonitor.swift */,
 				17369D1192D4BAF9721962FE /* RootView.swift */,
 				6E61A661480E1ED65178DE4B /* WingspotApp.swift */,
 			);
@@ -274,11 +280,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C11130AF4BC7A3C72A86C5A3 /* APICheckInUploader.swift in Sources */,
 				1427422ED2866AC007958D1A /* AccountMessages.swift in Sources */,
 				B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */,
 				666833BB5AA51A95401FAE68 /* CheckInSheet.swift in Sources */,
 				A165396CBFC567234392EE1F /* EmailSignInView.swift in Sources */,
 				C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */,
+				2E4689A87246BCE2846B568F /* NetworkMonitor.swift in Sources */,
 				3C72654BC1F78F3B175048F2 /* OnboardingView.swift in Sources */,
 				3B16BBB37412D38A89E454BD /* PlaceholderScreen.swift in Sources */,
 				0937BA0BF1EBF4732DA23138 /* ProfileEditorView.swift in Sources */,

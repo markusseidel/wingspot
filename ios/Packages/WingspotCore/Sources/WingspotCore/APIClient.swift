@@ -41,6 +41,61 @@ public struct RefdataManifest: Decodable, Equatable, Sendable {
     }
 }
 
+/// One check-in in `POST /v1/checkins` (`CheckinItem` in contracts/openapi.yaml).
+public struct CheckInUploadItem: Encodable, Equatable, Sendable {
+    public let id: UUID
+    public let kind: String
+    public let occurredAt: Date
+    public let registration: String?
+    public let typeICAO: String?
+    public let airportID: Int?
+    public let latitude: Double?
+    public let longitude: Double?
+    /// Sent explicitly, so what the app means doesn't depend on the server's default.
+    public let visibility: String
+
+    public init(
+        id: UUID, kind: String, occurredAt: Date, registration: String?, typeICAO: String?, airportID: Int?,
+        latitude: Double?, longitude: Double?, visibility: String = "private"
+    ) {
+        self.id = id
+        self.kind = kind
+        self.occurredAt = occurredAt
+        self.registration = registration
+        self.typeICAO = typeICAO
+        self.airportID = airportID
+        self.latitude = latitude
+        self.longitude = longitude
+        self.visibility = visibility
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, kind
+        case occurredAt = "occurred_at"
+        case registration
+        case typeICAO = "type_icao"
+        case airportID = "airport_id"
+        case latitude, longitude, visibility
+    }
+}
+
+/// One result in the answer to `POST /v1/checkins` (`CheckinResult` in contracts/openapi.yaml).
+public struct CheckInUploadResult: Decodable, Equatable, Sendable {
+    public let id: UUID
+    /// `stored` or `rejected`. Any other value is a status this app doesn't know, which is neither.
+    public let status: String
+    public let code: String?
+
+    public init(id: UUID, status: String, code: String? = nil) {
+        self.id = id
+        self.status = status
+        self.code = code
+    }
+
+    public var isStored: Bool { status == "stored" }
+    public var isRejected: Bool { status == "rejected" }
+}
+
 public enum APIError: Error, Equatable {
     case unexpectedStatus(Int)
 }
@@ -78,5 +133,30 @@ public struct APIClient: Sendable {
         if status == 404 { return nil }
         if status != 200 { throw APIError.unexpectedStatus(status) }
         return try JSONDecoder().decode(RefdataManifest.self, from: data)
+    }
+
+    /// `POST /v1/checkins`. Safe to repeat: the server answers `stored` again for an id it already has.
+    /// - Throws: `APIError.unexpectedStatus` for any answer other than 200, and `URLError` without a network.
+    public func uploadCheckins(_ items: [CheckInUploadItem], accessToken: String) async throws -> [CheckInUploadResult] {
+        struct Body: Encodable { let checkins: [CheckInUploadItem] }
+        struct Answer: Decodable { let results: [CheckInUploadResult] }
+
+        var request = URLRequest(url: baseURL.appending(path: "v1/checkins"))
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .custom { date, encoder in
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            var container = encoder.singleValueContainer()
+            try container.encode(formatter.string(from: date))
+        }
+        request.httpBody = try encoder.encode(Body(checkins: items))
+
+        let (data, response) = try await transport(request)
+        let status = (response as? HTTPURLResponse)?.statusCode ?? 200
+        guard status == 200 else { throw APIError.unexpectedStatus(status) }
+        return try JSONDecoder().decode(Answer.self, from: data).results
     }
 }
