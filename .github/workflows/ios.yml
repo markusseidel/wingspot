@@ -2,9 +2,12 @@ name: iOS
 
 # One macOS job, because macOS minutes count ten times and every job is rounded up to a full minute.
 # It runs for pull requests only: what lands on main was already checked there. Run it by hand from the
-# Actions tab if you need it on main.
+# Actions tab if you need it on main. Draft pull requests are skipped, so work in progress costs nothing:
+# mark the pull request ready for review to run the checks. The package tests run when something under
+# ios/Packages or contracts changed (the shared test vectors live there), and the app build and strings check when the app or a package changed.
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - 'ios/**'
       - 'contracts/**'
@@ -21,12 +24,34 @@ concurrency:
 
 jobs:
   ios:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Work out what changed
+        id: changes
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "packages=true" >> "$GITHUB_OUTPUT"
+            echo "app=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          changed=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
+          echo "$changed"
+          if echo "$changed" | grep -qE '^(ios/Packages/|contracts/|\.github/workflows/ios\.yml)'; then
+            echo "packages=true" >> "$GITHUB_OUTPUT"
+          fi
+          if echo "$changed" | grep -qE '^(ios/|\.github/workflows/ios\.yml)'; then
+            echo "app=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - run: xcodebuild -version
 
       - name: Test packages
+        if: steps.changes.outputs.packages == 'true'
         run: |
           failed=()
           for package in WingspotCore BCBP ReferenceData Persistence Account; do
@@ -40,6 +65,7 @@ jobs:
           fi
 
       - name: Build app
+        if: steps.changes.outputs.app == 'true'
         run: >
           xcodebuild build
           -project ios/Wingspot.xcodeproj
@@ -49,4 +75,5 @@ jobs:
           CODE_SIGNING_ALLOWED=NO
 
       - name: Check strings
+        if: steps.changes.outputs.app == 'true'
         run: ios/scripts/check-strings.sh build
