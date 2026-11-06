@@ -94,6 +94,34 @@ private let sampleItem = CheckInUploadItem(
     #expect(results[0].isStored)
 }
 
+/// Every field of an item has to appear in what is sent. A field left out of the coding keys would be dropped
+/// without any error, and the server would reject the check-in for what is missing.
+@Test func uploadSendsTheFieldsOfAirportVisitsAndFlights() async throws {
+    let visit = CheckInUploadItem(
+        id: UUID(), kind: "airport", occurredAt: Date(), registration: nil, typeICAO: nil, airportID: 3,
+        latitude: nil, longitude: nil, context: "transit"
+    )
+    let flight = CheckInUploadItem(
+        id: UUID(), kind: "flown", occurredAt: Date(), registration: "D-AIMA", typeICAO: "A388", airportID: nil,
+        latitude: nil, longitude: nil, originID: 3, destinationID: 7, flightNumber: "LH400", cabin: "business", seat: "2A"
+    )
+    let client = APIClient(baseURL: baseURL) { request in
+        let body = try #require(request.httpBody)
+        let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: [[String: Any]]])
+        let items = try #require(json["checkins"])
+        #expect(items[0]["context"] as? String == "transit")
+        #expect(items[0]["airport_id"] as? Int == 3)
+        #expect(items[1]["origin_id"] as? Int == 3)
+        #expect(items[1]["destination_id"] as? Int == 7)
+        #expect(items[1]["flight_number"] as? String == "LH400")
+        #expect(items[1]["cabin"] as? String == "business")
+        #expect(items[1]["seat"] as? String == "2A")
+        let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+        return (Data(#"{"results":[]}"#.utf8), response)
+    }
+    _ = try await client.uploadCheckins([visit, flight], accessToken: "t")
+}
+
 @Test func uploadReadsRejectionsAndIgnoresUnknownFields() async throws {
     let results = try await client(status: 200, body: """
     {"results":[{"id":"0198aaaa-0000-7000-8000-000000000001","status":"rejected","code":"unknown_type","extra":1}]}

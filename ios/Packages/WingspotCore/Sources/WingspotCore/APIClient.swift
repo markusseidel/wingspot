@@ -91,7 +91,11 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
         case registration
         case typeICAO = "type_icao"
         case airportID = "airport_id"
-        case latitude, longitude, visibility
+        case latitude, longitude, context
+        case originID = "origin_id"
+        case destinationID = "destination_id"
+        case flightNumber = "flight_number"
+        case cabin, seat, visibility
     }
 }
 
