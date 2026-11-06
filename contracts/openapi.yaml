@@ -48,7 +48,7 @@ paths:
         item never blocks the others. The HTTP status is 200 whenever the request itself
         was valid, and each item's `status` says what happened.
 
-        Only `spotted` check-ins are accepted for now. A check-in is `private` unless the app
+        `spotted`, `airport` and `flown` check-ins are accepted. A check-in is `private` unless the app
         sends another visibility. Apps retry network errors and 5xx answers, and never retry
         a `rejected` item.
       requestBody:
@@ -68,6 +68,69 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /v1/checkins/{checkinId}/photos/{photoId}:
+    put:
+      tags: [checkins]
+      operationId: uploadCheckinPhoto
+      summary: Upload one photo for a check-in
+      description: |
+        The body is the JPEG. The app removes all metadata, including the location, before uploading,
+        and the server refuses a JPEG that still carries EXIF or XMP data. A check-in can have 4 photos of
+        up to 3 MB each. Idempotent by `photoId`: uploading the same photo again answers `stored` again.
+        The check-in has to be uploaded first. If it isn't yet, the answer is 404 `unknown_checkin` and
+        apps try again later. Photos are private to their owner for now.
+      parameters:
+        - name: checkinId
+          in: path
+          required: true
+          schema: {type: string, format: uuid}
+        - name: photoId
+          in: path
+          required: true
+          description: Generated on the device.
+          schema: {type: string, format: uuid}
+      requestBody:
+        required: true
+        content:
+          image/jpeg:
+            schema: {type: string, format: binary}
+      responses:
+        '200':
+          description: The photo is stored.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhotoUploadResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: The check-in isn't on the server (yet). Code `unknown_checkin`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Code `too_many_photos` or `id_taken`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '413':
+          description: The photo is larger than 3 MB. Code `photo_too_large`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '415':
+          description: The photo isn't a JPEG. Code `unsupported_media_type`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '500':
           $ref: '#/components/responses/ServerError'
   /v1/config:
@@ -322,6 +385,16 @@ components:
             `unknown_airport`, `missing_airport`, `missing_route`, `invalid_route`,
             `invalid_flight_number`, `invalid_cabin`, `invalid_seat`, `invalid_context`, `invalid_location`, `invalid_visibility`, `id_taken`,
             `invalid_request`.
+    PhotoUploadResult:
+      type: object
+      required: [id, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          examples: [stored]
     CheckinUploadResult:
       type: object
       required: [results]
