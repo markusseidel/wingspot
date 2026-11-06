@@ -33,6 +33,8 @@ struct AirportCheckInView: View {
     @State private var position: GeoCoordinate?
     @State private var result: AirportResult?
     @State private var saveFailed = false
+    @State private var photo: PreparedPhoto?
+    @State private var isPreparingPhoto = false
 
     var body: some View {
         Group {
@@ -81,16 +83,18 @@ struct AirportCheckInView: View {
                 }
             }
 
+            PhotoSection(photo: $photo, isPreparing: $isPreparingPhoto)
+
             Section {
                 Button("Check in", action: save)
-                    .disabled(airport == nil)
+                    .disabled(airport == nil || isPreparingPhoto)
             }
         }
     }
 
     private func save() {
         guard let airport else { return }
-        let draft = AirportDraft(airportID: airport.id, code: airport.code, context: context, position: position)
+        let draft = AirportDraft(airportID: airport.id, code: airport.code, context: context, position: position, photo: photo)
         do {
             result = try CheckInStore(context: modelContext).saveAirport(draft, ownerID: account.userID)
             sync?.requestSync()
