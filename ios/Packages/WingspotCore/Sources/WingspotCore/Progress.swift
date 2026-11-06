@@ -147,3 +147,26 @@ public enum Rank: Int, CaseIterable, Sendable {
         }
     }
 }
+
+/// Which badges the Badges tab lists.
+public enum BadgeFilter: CaseIterable, Sendable {
+    case all
+    /// At least one level reached.
+    case earned
+    /// Not every level reached yet, so there is something left to work on. A badge with levels left shows in
+    /// both "all" and here, even when its first level is already earned.
+    case inProgress
+
+    public func matches(_ badge: BadgeProgress) -> Bool {
+        switch self {
+        case .all: true
+        case .earned: badge.level > 0
+        case .inProgress: !badge.isComplete
+        }
+    }
+}
+
+public extension UserProgress {
+    /// How many badges have at least one level reached.
+    var earnedCount: Int { badges.filter { $0.level > 0 }.count }
+}

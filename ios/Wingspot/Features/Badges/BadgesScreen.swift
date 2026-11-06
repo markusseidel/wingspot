@@ -7,6 +7,7 @@ import WingspotCore
 struct BadgesScreen: View {
     @Environment(AccountStore.self) private var account
     @Environment(BadgeStore.self) private var badges
+    @State private var filter = BadgeFilter.all
 
     private static let categoryOrder = ["milestones", "airports", "countries", "types", "time", "hidden"]
 
@@ -40,7 +41,16 @@ struct BadgesScreen: View {
 
     private func list(_ progress: UserProgress) -> some View {
         List {
-            Section { LevelHeader(progress: progress) }
+            Section {
+                LevelHeader(progress: progress)
+                Text("\(progress.earnedCount) of \(progress.badges.count) badges earned")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                Picker("Show", selection: $filter) {
+                    ForEach(BadgeFilter.allCases, id: \.self) { Text($0.title).tag($0) }
+                }
+                .pickerStyle(.segmented)
+            }
             ForEach(groups(progress), id: \.category) { group in
                 Section {
                     ForEach(group.badges) { BadgeRow(badge: $0) }
@@ -52,7 +62,10 @@ struct BadgesScreen: View {
                     }
                 }
             }
-            if progress.hiddenRemaining > 0, !progress.badges.contains(where: { $0.category == "hidden" }) {
+            if filter != .all, groups(progress).isEmpty {
+                Section { Text("No badges here yet").foregroundStyle(.secondary) }
+            }
+            if filter == .all, progress.hiddenRemaining > 0, !progress.badges.contains(where: { $0.category == "hidden" }) {
                 Section {
                     Label("Hidden badges left: \(progress.hiddenRemaining)", systemImage: "questionmark.diamond")
                         .foregroundStyle(.secondary)
@@ -64,11 +77,15 @@ struct BadgesScreen: View {
 
     private func groups(_ progress: UserProgress) -> [(category: String, badges: [BadgeProgress])] {
         let known = Self.categoryOrder.compactMap { category -> (String, [BadgeProgress])? in
-            let items = progress.badges.filter { $0.category == category }
+            let items = progress.badges.filter { $0.category == category && filter.matches($0) }
             return items.isEmpty ? nil : (category, items)
         }
         let others = Set(progress.badges.map(\.category)).subtracting(Self.categoryOrder).sorted()
-        return known + others.map { category in (category, progress.badges.filter { $0.category == category }) }
+        let more = others.compactMap { category -> (String, [BadgeProgress])? in
+            let items = progress.badges.filter { $0.category == category && filter.matches($0) }
+            return items.isEmpty ? nil : (category, items)
+        }
+        return known + more
     }
 
     private static func title(for category: String) -> LocalizedStringKey {
@@ -80,6 +97,16 @@ struct BadgesScreen: View {
         case "time": "Time of day"
         case "hidden": "Hidden"
         default: LocalizedStringKey(category.capitalized)
+        }
+    }
+}
+
+private extension BadgeFilter {
+    var title: LocalizedStringKey {
+        switch self {
+        case .all: "All"
+        case .earned: "Earned"
+        case .inProgress: "In progress"
         }
     }
 }
