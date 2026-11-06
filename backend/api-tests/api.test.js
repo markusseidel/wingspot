@@ -327,6 +327,19 @@ describe("POST /v1/checkins", () => {
     assert.equal((await stored(typeOnly.id))[0].aircraft_id, null);
   });
 
+  test("an airport visit stores the airport and why the user was there, and ignores aircraft fields", async () => {
+    const visit = item({ kind: "airport", airport_id: AIRPORT, context: "departing", type_icao: TYPE });
+    const response = await upload(alice, [visit]);
+    assert.deepEqual(response.body.results, [{ id: visit.id, status: "stored" }]);
+    const [row] = await stored(visit.id);
+    assert.equal(row.kind, "airport");
+    assert.equal(row.airport_id, AIRPORT);
+    assert.equal(row.visit_context, "departing");
+    assert.equal(row.aircraft_id, null);
+    assert.equal(row.type_icao, null);
+    assert.equal((await upload(alice, [visit])).body.results[0].status, "stored", "a repeat is stored again");
+  });
+
   test("another user's id is rejected and the original stays untouched", async () => {
     const mine = item();
     await upload(alice, [mine]);
@@ -339,6 +352,8 @@ describe("POST /v1/checkins", () => {
     const good = item();
     const cases = [
       ["unsupported_kind", item({ kind: "flown" })],
+      ["missing_airport", item({ kind: "airport", registration: undefined })],
+      ["invalid_context", item({ kind: "airport", airport_id: AIRPORT, context: "napping" })],
       ["missing_aircraft", item({ registration: undefined })],
       ["invalid_registration", item({ registration: "not a registration" })],
       ["invalid_time", item({ occurred_at: new Date(Date.now() + 3 * 86400_000).toISOString() })],

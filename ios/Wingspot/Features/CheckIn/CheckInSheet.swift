@@ -54,7 +54,9 @@ struct CheckInSheet: View {
                 switch kind {
                 case .spotted:
                     SpottedCheckInView(onDone: { dismiss() })
-                case .flown, .airport:
+                case .airport:
+                    AirportCheckInView(onDone: { dismiss() })
+                case .flown:
                     ContentUnavailableView {
                         Label {
                             Text(kind.title)

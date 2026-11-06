@@ -1,1191 +1,1311 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "%@, registered in %@": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@, registriert in %2$@"
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@, registered in %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, registriert in %2$@"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@, registered in %2$@"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, registered in %2$@"
           }
         }
       }
     },
-    "%lld XP": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld XP"
+    "%lld XP" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld XP"
           }
         }
       }
     },
-    "%lld XP to level %lld": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Noch %1$lld XP bis Level %2$lld"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$lld XP to level %2$lld"
-          }
-        }
-      }
-    },
-    "3 to 30 lowercase letters, numbers or underscores.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "3 bis 30 Kleinbuchstaben, Zahlen oder Unterstriche."
-          }
-        }
-      }
-    },
-    "A flight you were on": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ein Flug, auf dem du warst"
-          }
-        }
-      }
-    },
-    "A388, Boeing 737, CRJ900": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A388, Boeing 737, CRJ900"
-          }
-        }
-      }
-    },
-    "Ace": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ass"
-          }
-        }
-      }
-    },
-    "Aircraft and airport search needs one download while online. You can still check in by registration.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Die Suche nach Flugzeugen und Flughäfen braucht einmalig einen Download mit Internetverbindung. Du kannst trotzdem per Registrierung einchecken."
-          }
-        }
-      }
-    },
-    "Aircraft type": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Flugzeugtyp"
-          }
-        }
-      }
-    },
-    "Aircraft types": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Flugzeugtypen"
-          }
-        }
-      }
-    },
-    "Airport": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Flughafen"
-          }
-        }
-      }
-    },
-    "Airports": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Flughäfen"
-          }
-        }
-      }
-    },
-    "All levels reached": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle Level erreicht"
-          }
-        }
-      }
-    },
-    "An aircraft you have seen": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ein Flugzeug, das du gesehen hast"
-          }
-        }
-      }
-    },
-    "An airport you are at": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ein Flughafen, an dem du gerade bist"
-          }
-        }
-      }
-    },
-    "Badges": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Badges"
-          }
-        }
-      }
-    },
-    "Cadet": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kadett"
-          }
-        }
-      }
-    },
-    "Cancel": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abbrechen"
-          }
-        }
-      }
-    },
-    "Captain": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kapitän"
-          }
-        }
-      }
-    },
-    "Check in": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Check-in"
-          }
-        }
-      }
-    },
-    "Check in another": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Weiterer Check-in"
-          }
-        }
-      }
-    },
-    "Check your connection and try again.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Prüfe deine Verbindung und versuche es erneut."
-          }
-        }
-      }
-    },
-    "Check your connection and try again. You can still check in.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Prüfe deine Verbindung und versuche es noch einmal. Einchecken kannst du trotzdem."
-          }
-        }
-      }
-    },
-    "Check your email": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Schau in dein E-Mail-Postfach"
-          }
-        }
-      }
-    },
-    "Check-in history": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Check-in-Verlauf"
-          }
-        }
-      }
-    },
-    "Check-ins from people you follow will appear here.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hier erscheinen Check-ins von Leuten, denen du folgst."
-          }
-        }
-      }
-    },
-    "Check-ins that weren't accepted stay on this iPhone.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicht akzeptierte Check-ins bleiben auf diesem iPhone."
-          }
-        }
-      }
-    },
-    "Chief Pilot": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Chefpilot"
-          }
-        }
-      }
-    },
-    "Collect aircraft types, airlines and airports as you go.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sammle nebenbei Flugzeugtypen, Airlines und Flughäfen."
-          }
-        }
-      }
-    },
-    "Coming in a later app version.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kommt in einer späteren App-Version."
-          }
-        }
-      }
-    },
-    "Couldn't load your badges": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Badges konnten nicht geladen werden"
-          }
-        }
-      }
-    },
-    "Couldn't load your profile": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Profil konnte nicht geladen werden"
-          }
-        }
-      }
-    },
-    "Couldn't save this check-in": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Check-in konnte nicht gespeichert werden"
-          }
-        }
-      }
-    },
-    "Couldn't sign in": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Anmeldung fehlgeschlagen"
-          }
-        }
-      }
-    },
-    "Couldn't sign out": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abmeldung fehlgeschlagen"
-          }
-        }
-      }
-    },
-    "Countries": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Länder"
-          }
-        }
-      }
-    },
-    "Create your profile": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Profil erstellen"
-          }
-        }
-      }
-    },
-    "Done": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fertig"
-          }
-        }
-      }
-    },
-    "Downloading aircraft and airport data.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Flugzeug- und Flughafendaten werden geladen."
-          }
-        }
-      }
-    },
-    "Earn badges": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sammle Badges"
-          }
-        }
-      }
-    },
-    "Earn badges for the aircraft you spot and fly.": {
-      "extractionState": "stale",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sammle Badges für die Flugzeuge, die du spottest und mit denen du fliegst."
-          }
-        }
-      }
-    },
-    "Edit profile": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Profil bearbeiten"
-          }
-        }
-      }
-    },
-    "Email address": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "E-Mail-Adresse"
-          }
-        }
-      }
-    },
-    "Enter a registration and see if it's new to you. It works offline too.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gib eine Registrierung ein und sieh, ob sie neu für dich ist. Das geht auch offline."
-          }
-        }
-      }
-    },
-    "Enter a registration, or choose a type if you couldn't read it.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gib eine Registrierung ein oder wähle einen Typ, falls du sie nicht lesen konntest."
-          }
-        }
-      }
-    },
-    "Explore": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entdecken"
-          }
-        }
-      }
-    },
-    "FRA, Frankfurt, Vienna": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FRA, Frankfurt, Wien"
-          }
-        }
-      }
-    },
-    "Feed": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Feed"
-          }
-        }
-      }
-    },
-    "First Officer": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Erster Offizier"
-          }
-        }
-      }
-    },
-    "First time seeing this one!": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zum ersten Mal gesehen!"
-          }
-        }
-      }
-    },
-    "Flown": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Geflogen"
-          }
-        }
-      }
-    },
-    "Follow other spotters and share what you've seen.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Folge anderen Spottern und teile, was du gesehen hast."
-          }
-        }
-      }
-    },
-    "Hidden": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Versteckt"
-          }
-        }
-      }
-    },
-    "Hidden badges left: %lld": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Versteckte Badges übrig: %lld"
-          }
-        }
-      }
-    },
-    "Home airport": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Heimatflughafen"
-          }
-        }
-      }
-    },
-    "Last time at %@, %@": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zuletzt in %1$@, %2$@"
+    "%lld XP to level %lld" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch %1$lld XP bis Level %2$lld"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Last time at %1$@, %2$@"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld XP to level %2$lld"
           }
         }
       }
     },
-    "Last time on %@": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zuletzt am %@"
+    "3 to 30 lowercase letters, numbers or underscores." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 bis 30 Kleinbuchstaben, Zahlen oder Unterstriche."
           }
         }
       }
     },
-    "Legend": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Legende"
+    "A flight you were on" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Flug, auf dem du warst"
           }
         }
       }
     },
-    "Level %lld": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Level %lld"
+    "A388, Boeing 737, CRJ900" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A388, Boeing 737, CRJ900"
           }
         }
       }
     },
-    "Level %lld of %lld": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Level %1$lld von %2$lld"
+    "Ace" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ass"
+          }
+        }
+      }
+    },
+    "Aircraft and airport search needs one download while online. You can still check in by registration." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Suche nach Flugzeugen und Flughäfen braucht einmalig einen Download mit Internetverbindung. Du kannst trotzdem per Registrierung einchecken."
+          }
+        }
+      }
+    },
+    "Aircraft type" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flugzeugtyp"
+          }
+        }
+      }
+    },
+    "Aircraft types" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flugzeugtypen"
+          }
+        }
+      }
+    },
+    "Airport" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flughafen"
+          }
+        }
+      }
+    },
+    "Airports" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flughäfen"
+          }
+        }
+      }
+    },
+    "All levels reached" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Level erreicht"
+          }
+        }
+      }
+    },
+    "An aircraft you have seen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Flugzeug, das du gesehen hast"
+          }
+        }
+      }
+    },
+    "An airport you are at" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Flughafen, an dem du gerade bist"
+          }
+        }
+      }
+    },
+    "Arriving" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ankunft"
+          }
+        }
+      }
+    },
+    "Badges" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Badges"
+          }
+        }
+      }
+    },
+    "Cadet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kadett"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abbrechen"
+          }
+        }
+      }
+    },
+    "Captain" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapitän"
+          }
+        }
+      }
+    },
+    "Check in" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check-in"
+          }
+        }
+      }
+    },
+    "Check in another" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weiterer Check-in"
+          }
+        }
+      }
+    },
+    "Check your connection and try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüfe deine Verbindung und versuche es erneut."
+          }
+        }
+      }
+    },
+    "Check your connection and try again. You can still check in." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüfe deine Verbindung und versuche es noch einmal. Einchecken kannst du trotzdem."
+          }
+        }
+      }
+    },
+    "Check your email" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schau in dein E-Mail-Postfach"
+          }
+        }
+      }
+    },
+    "Check-in history" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check-in-Verlauf"
+          }
+        }
+      }
+    },
+    "Check-ins from people you follow will appear here." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier erscheinen Check-ins von Leuten, denen du folgst."
+          }
+        }
+      }
+    },
+    "Check-ins that weren't accepted stay on this iPhone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht akzeptierte Check-ins bleiben auf diesem iPhone."
+          }
+        }
+      }
+    },
+    "Chief Pilot" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chefpilot"
+          }
+        }
+      }
+    },
+    "Choose" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auswählen"
+          }
+        }
+      }
+    },
+    "Choose the airport you are at." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle den Flughafen, an dem du bist."
+          }
+        }
+      }
+    },
+    "Choosing an airport needs one download while online." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um einen Flughafen auszuwählen, ist einmal ein Download mit Internetverbindung nötig."
+          }
+        }
+      }
+    },
+    "Collect aircraft types, airlines and airports as you go." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sammle nebenbei Flugzeugtypen, Airlines und Flughäfen."
+          }
+        }
+      }
+    },
+    "Coming in a later app version." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kommt in einer späteren App-Version."
+          }
+        }
+      }
+    },
+    "Couldn't load your badges" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Badges konnten nicht geladen werden"
+          }
+        }
+      }
+    },
+    "Couldn't load your profile" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil konnte nicht geladen werden"
+          }
+        }
+      }
+    },
+    "Couldn't save this check-in" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check-in konnte nicht gespeichert werden"
+          }
+        }
+      }
+    },
+    "Couldn't sign in" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anmeldung fehlgeschlagen"
+          }
+        }
+      }
+    },
+    "Couldn't sign out" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abmeldung fehlgeschlagen"
+          }
+        }
+      }
+    },
+    "Countries" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Länder"
+          }
+        }
+      }
+    },
+    "Create your profile" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil erstellen"
+          }
+        }
+      }
+    },
+    "Departing" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abflug"
+          }
+        }
+      }
+    },
+    "Done" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fertig"
+          }
+        }
+      }
+    },
+    "Downloading aircraft and airport data." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flugzeug- und Flughafendaten werden geladen."
+          }
+        }
+      }
+    },
+    "Earn badges" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sammle Badges"
+          }
+        }
+      }
+    },
+    "Earn badges for the aircraft you spot and fly." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sammle Badges für die Flugzeuge, die du spottest und mit denen du fliegst."
+          }
+        }
+      }
+    },
+    "Edit profile" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil bearbeiten"
+          }
+        }
+      }
+    },
+    "Email address" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-Mail-Adresse"
+          }
+        }
+      }
+    },
+    "Enter a registration and see if it's new to you. It works offline too." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gib eine Registrierung ein und sieh, ob sie neu für dich ist. Das geht auch offline."
+          }
+        }
+      }
+    },
+    "Enter a registration, or choose a type if you couldn't read it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gib eine Registrierung ein oder wähle einen Typ, falls du sie nicht lesen konntest."
+          }
+        }
+      }
+    },
+    "Explore" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entdecken"
+          }
+        }
+      }
+    },
+    "FRA, Frankfurt, Vienna" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FRA, Frankfurt, Wien"
+          }
+        }
+      }
+    },
+    "Feed" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feed"
+          }
+        }
+      }
+    },
+    "First Officer" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erster Offizier"
+          }
+        }
+      }
+    },
+    "First time at this airport!" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zum ersten Mal an diesem Flughafen!"
+          }
+        }
+      }
+    },
+    "First time seeing this one!" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zum ersten Mal gesehen!"
+          }
+        }
+      }
+    },
+    "Flown" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geflogen"
+          }
+        }
+      }
+    },
+    "Follow other spotters and share what you've seen." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folge anderen Spottern und teile, was du gesehen hast."
+          }
+        }
+      }
+    },
+    "Hidden" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versteckt"
+          }
+        }
+      }
+    },
+    "Hidden badges left: %lld" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versteckte Badges übrig: %lld"
+          }
+        }
+      }
+    },
+    "Home airport" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heimatflughafen"
+          }
+        }
+      }
+    },
+    "Last time at %@, %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zuletzt in %1$@, %2$@"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Level %1$lld of %2$lld"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last time at %1$@, %2$@"
           }
         }
       }
     },
-    "Log every aircraft": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Halte jedes Flugzeug fest"
+    "Last time on %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zuletzt am %@"
           }
         }
       }
     },
-    "Milestones": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Meilensteine"
+    "Legend" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legende"
           }
         }
       }
     },
-    "Name": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Name"
+    "Level %lld" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Level %lld"
           }
         }
       }
     },
-    "New badge!": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Neues Badge!"
+    "Level %lld of %lld" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Level %1$lld von %2$lld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Level %1$lld of %2$lld"
           }
         }
       }
     },
-    "New badges!": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Neue Badges!"
+    "Log every aircraft" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Halte jedes Flugzeug fest"
           }
         }
       }
     },
-    "Nice!": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Super!"
+    "Milestones" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meilensteine"
           }
         }
       }
     },
-    "No airport": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kein Flughafen"
+    "Museum or airshow" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Museum oder Flugshow"
           }
         }
       }
     },
-    "No check-ins yet": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Noch keine Check-ins"
+    "Name" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name"
           }
         }
       }
     },
-    "None": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keiner"
+    "New badge!" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neues Badge!"
           }
         }
       }
     },
-    "Not a valid registration yet": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Noch keine gültige Registrierung"
+    "New badges!" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neue Badges!"
           }
         }
       }
     },
-    "Not accepted": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicht akzeptiert"
+    "Nice!" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Super!"
           }
         }
       }
     },
-    "Not downloaded yet": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Noch nicht geladen"
+    "No airport" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kein Flughafen"
           }
         }
       }
     },
-    "Not now": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Später"
+    "No check-ins yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine Check-ins"
           }
         }
       }
     },
-    "OK": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OK"
+    "None" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keiner"
           }
         }
       }
     },
-    "Optional": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Optional"
+    "Not a valid registration yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine gültige Registrierung"
           }
         }
       }
     },
-    "Optional. Shown on your profile.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Optional. Wird in deinem Profil angezeigt."
+    "Not accepted" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht akzeptiert"
           }
         }
       }
     },
-    "Please enter a valid email address.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bitte gib eine gültige E-Mail-Adresse ein."
+    "Not downloaded yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nicht geladen"
           }
         }
       }
     },
-    "Please try again.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bitte versuche es noch einmal."
+    "Not now" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Später"
           }
         }
       }
     },
-    "Profile": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Profil"
+    "OK" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
           }
         }
       }
     },
-    "Registration, e.g. DAIMA": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Registrierung (DAIMA)"
+    "Optional" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional"
           }
         }
       }
     },
-    "Remove type": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Typ entfernen"
+    "Optional. Shown on your profile." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional. Wird in deinem Profil angezeigt."
           }
         }
       }
     },
-    "Save": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sichern"
+    "Please enter a valid email address." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte gib eine gültige E-Mail-Adresse ein."
           }
         }
       }
     },
-    "Search aircraft, airports and spotters.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Suche nach Flugzeugen, Flughäfen und Spottern."
+    "Please try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte versuche es noch einmal."
           }
         }
       }
     },
-    "Search works offline after one download while online.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Die Suche funktioniert offline, sobald die Daten einmal mit Internetverbindung geladen wurden."
+    "Profile" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil"
           }
         }
       }
     },
-    "Seen for the %@ time": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zum %@ Mal gesehen"
+    "Reason" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anlass"
           }
         }
       }
     },
-    "Send link": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Link senden"
+    "Registration, e.g. DAIMA" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registrierung (DAIMA)"
           }
         }
       }
     },
-    "Senior Captain": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Senior-Kapitän"
+    "Remove type" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Typ entfernen"
           }
         }
       }
     },
-    "Set": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Festgelegt"
+    "Save" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sichern"
           }
         }
       }
     },
-    "Sign in": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Anmelden"
+    "Search aircraft, airports and spotters." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suche nach Flugzeugen, Flughäfen und Spottern."
           }
         }
       }
     },
-    "Sign in from the Profile tab, and your check-ins will earn badges.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Melde dich im Tab „Profil“ an, dann sammeln deine Check-ins Badges."
+    "Search works offline after one download while online." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Suche funktioniert offline, sobald die Daten einmal mit Internetverbindung geladen wurden."
           }
         }
       }
     },
-    "Sign in to keep your check-ins safe and follow other spotters. Your check-ins stay on this iPhone until then.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Melde dich an, um deine Check-ins zu sichern und anderen Spottern zu folgen. Bis dahin bleiben deine Check-ins auf diesem iPhone."
+    "Seen for the %@ time" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zum %@ Mal gesehen"
           }
         }
       }
     },
-    "Sign in with Apple isn't available yet. Please use your email.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Die Anmeldung mit Apple ist noch nicht verfügbar. Bitte nutze deine E-Mail."
+    "Send link" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link senden"
           }
         }
       }
     },
-    "Sign in with email": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mit E-Mail anmelden"
+    "Senior Captain" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior-Kapitän"
           }
         }
       }
     },
-    "Sign out": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abmelden"
+    "Set" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Festgelegt"
           }
         }
       }
     },
-    "Sign-in isn't available in this version of the app.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Die Anmeldung ist in dieser App-Version nicht verfügbar."
+    "Sign in" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anmelden"
           }
         }
       }
     },
-    "Something went wrong. Please try again.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Etwas ist schiefgelaufen. Bitte versuche es noch einmal."
+    "Sign in from the Profile tab, and your check-ins will earn badges." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melde dich im Tab „Profil“ an, dann sammeln deine Check-ins Badges."
           }
         }
       }
     },
-    "Spot with friends": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spotte mit Freunden"
+    "Sign in to keep your check-ins safe and follow other spotters. Your check-ins stay on this iPhone until then." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melde dich an, um deine Check-ins zu sichern und anderen Spottern zu folgen. Bis dahin bleiben deine Check-ins auf diesem iPhone."
           }
         }
       }
     },
-    "Spotted": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gespottet"
+    "Sign in with Apple isn't available yet. Please use your email." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Anmeldung mit Apple ist noch nicht verfügbar. Bitte nutze deine E-Mail."
           }
         }
       }
     },
-    "Student Pilot": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Flugschüler"
+    "Sign in with email" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit E-Mail anmelden"
           }
         }
       }
     },
-    "This sign-in link doesn't work anymore. Please request a new one on this device.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dieser Anmeldelink funktioniert nicht mehr. Bitte fordere auf diesem Gerät einen neuen an."
+    "Sign out" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abmelden"
           }
         }
       }
     },
-    "This username is taken. Please try another one.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dieser Benutzername ist vergeben. Bitte versuche einen anderen."
+    "Sign-in isn't available in this version of the app." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Anmeldung ist in dieser App-Version nicht verfügbar."
           }
         }
       }
     },
-    "Time of day": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tageszeit"
+    "Something went wrong. Please try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwas ist schiefgelaufen. Bitte versuche es noch einmal."
           }
         }
       }
     },
-    "Too many attempts. Please wait a moment and try again.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zu viele Versuche. Bitte warte kurz und versuche es noch einmal."
+    "Spot with friends" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spotte mit Freunden"
           }
         }
       }
     },
-    "Try again": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Erneut versuchen"
+    "Spotted" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespottet"
           }
         }
       }
     },
-    "Unlocked": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Freigeschaltet"
+    "Spotting" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spotten"
           }
         }
       }
     },
-    "Uploaded": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hochgeladen"
+    "Student Pilot" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flugschüler"
           }
         }
       }
     },
-    "Use 3 to 30 lowercase letters, numbers or underscores.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verwende 3 bis 30 Kleinbuchstaben, Zahlen oder Unterstriche."
+    "This sign-in link doesn't work anymore. Please request a new one on this device." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Anmeldelink funktioniert nicht mehr. Bitte fordere auf diesem Gerät einen neuen an."
           }
         }
       }
     },
-    "Use a different email": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Andere E-Mail-Adresse verwenden"
+    "This username is taken. Please try another one." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Benutzername ist vergeben. Bitte versuche einen anderen."
           }
         }
       }
     },
-    "Username": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Benutzername"
+    "Time of day" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tageszeit"
           }
         }
       }
     },
-    "Waiting to upload": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wartet auf Upload"
+    "Too many attempts. Please wait a moment and try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu viele Versuche. Bitte warte kurz und versuche es noch einmal."
           }
         }
       }
     },
-    "We sent a link to %@. Open it on this iPhone to sign in.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wir haben einen Link an %@ gesendet. Öffne ihn auf diesem iPhone, um dich anzumelden."
+    "Transit" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umstieg"
           }
         }
       }
     },
-    "We'll email you a link to sign in. You don't need a password.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wir senden dir per E-Mail einen Link zum Anmelden. Du brauchst kein Passwort."
+    "Try again" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erneut versuchen"
           }
         }
       }
     },
-    "You're offline. Please connect to the internet and try again.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Du bist offline. Bitte verbinde dich mit dem Internet und versuche es noch einmal."
+    "Unlocked" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Freigeschaltet"
           }
         }
       }
     },
-    "Your check-ins stay on this iPhone.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deine Check-ins bleiben auf diesem iPhone."
+    "Uploaded" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hochgeladen"
           }
         }
       }
     },
-    "Your check-ins will appear here.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hier erscheinen deine Check-ins."
+    "Use 3 to 30 lowercase letters, numbers or underscores." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verwende 3 bis 30 Kleinbuchstaben, Zahlen oder Unterstriche."
           }
         }
       }
     },
-    "Your profile": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dein Profil"
+    "Use a different email" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Andere E-Mail-Adresse verwenden"
+          }
+        }
+      }
+    },
+    "Username" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Benutzername"
+          }
+        }
+      }
+    },
+    "Visit number %lld" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Besuch Nummer %lld"
+          }
+        }
+      }
+    },
+    "Waiting to upload" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wartet auf Upload"
+          }
+        }
+      }
+    },
+    "We sent a link to %@. Open it on this iPhone to sign in." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir haben einen Link an %@ gesendet. Öffne ihn auf diesem iPhone, um dich anzumelden."
+          }
+        }
+      }
+    },
+    "We'll email you a link to sign in. You don't need a password." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir senden dir per E-Mail einen Link zum Anmelden. Du brauchst kein Passwort."
+          }
+        }
+      }
+    },
+    "Working" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arbeit"
+          }
+        }
+      }
+    },
+    "You're offline. Please connect to the internet and try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du bist offline. Bitte verbinde dich mit dem Internet und versuche es noch einmal."
+          }
+        }
+      }
+    },
+    "Your check-ins stay on this iPhone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Check-ins bleiben auf diesem iPhone."
+          }
+        }
+      }
+    },
+    "Your check-ins will appear here." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier erscheinen deine Check-ins."
+          }
+        }
+      }
+    },
+    "Your profile" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Profil"
           }
         }
       }
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }

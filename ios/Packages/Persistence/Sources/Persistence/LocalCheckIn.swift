@@ -30,11 +30,13 @@ public final class LocalCheckIn {
     public var syncedAt: Date?
     /// Why the server refused it, once `syncState` is `rejected`.
     public var syncError: String?
+    /// Why the user was at the airport. Only for airport check-ins. Like `ownerID`, it opens an existing store without a migration step.
+    public var visitContext: String?
 
     init(
         id: UUID, kind: String, registration: String?, typeICAO: String?, typeName: String?, airportID: Int?,
         airportCode: String?, latitude: Double?, longitude: Double?, occurredAt: Date, syncState: SyncState,
-        ownerID: UUID? = nil
+        ownerID: UUID? = nil, visitContext: String? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -48,5 +50,6 @@ public final class LocalCheckIn {
         self.occurredAt = occurredAt
         self.syncState = syncState.rawValue
         self.ownerID = ownerID
+        self.visitContext = visitContext
     }
 }

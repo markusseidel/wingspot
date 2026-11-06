@@ -81,3 +81,24 @@ private let dus = SpottedDraft.Place(airportID: 7, code: "DUS")
     let result = try CheckInStore(context: open()).saveSpotted(SpottedDraft(registration: Registration("DAIMA")))
     if case .seenBefore(let count, _, _) = result.history { #expect(count == 2) } else { Issue.record("expected a count") }
 }
+
+@MainActor @Test func theFirstVisitToAnAirportIsReportedAsFirst() throws {
+    let context = try makeContext()
+    let result = try CheckInStore(context: context).saveAirport(AirportDraft(airportID: 3, code: "FRA", context: .arriving))
+    #expect(result.code == "FRA")
+    #expect(result.history == .firstTime)
+    let saved = try #require(try context.fetch(FetchDescriptor<LocalCheckIn>()).first)
+    #expect(saved.kind == "airport")
+    #expect(saved.visitContext == "arriving")
+    #expect(saved.syncState == "pending")
+    #expect(saved.registration == nil)
+}
+
+@MainActor @Test func visitsCountEarlierCheckInsOfAnyKindAtThatAirport() throws {
+    let store = CheckInStore(context: try makeContext())
+    _ = try store.saveSpotted(SpottedDraft(registration: Registration("DAIMA"), place: fra), at: Date(timeIntervalSince1970: 1_000))
+    _ = try store.saveAirport(AirportDraft(airportID: 3, code: "FRA"), at: Date(timeIntervalSince1970: 2_000))
+    _ = try store.saveAirport(AirportDraft(airportID: 7, code: "DUS"), at: Date(timeIntervalSince1970: 2_500))
+    let result = try store.saveAirport(AirportDraft(airportID: 3, code: "FRA"), at: Date(timeIntervalSince1970: 3_000))
+    #expect(result.history == .visitedBefore(count: 3, lastVisit: Date(timeIntervalSince1970: 2_000)))
+}

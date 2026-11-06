@@ -55,5 +55,29 @@ select is((select visibility from public.checkins where id = '20000000-0000-0000
 select is((select count(*)::int from public.aircraft where registration = 'D-SYNC'), 1, 'the aircraft was created once');
 select is((select data_status from public.aircraft where registration = 'D-SYNC'), 'user_submitted', 'a new aircraft is user submitted');
 
+-- Airport visits ---------------------------------------------------------------------------
+reset role;
+insert into public.airports (id, icao, name, country_code, continent, location)
+values (900002, 'ZZZY', 'Visit Test', 'DE', 'EU', 'POINT(8.5 50.0)');
+select pg_temp.as_user('00000000-0000-0000-0000-0000000000a1');
+select is(
+  public.sync_checkins('[{"id":"20000000-0000-0000-0000-000000000010","kind":"airport","occurred_at":"2026-01-02T10:00:00Z","airport_id":900002,"context":"transit","registration":"D-SKIP"}]'::jsonb) -> 'results' -> 0 ->> 'status',
+  'stored', 'an airport visit is stored'
+);
+select is(
+  public.sync_checkins('[{"id":"20000000-0000-0000-0000-000000000011","kind":"airport","occurred_at":"2026-01-02T10:00:00Z"}]'::jsonb) -> 'results' -> 0 ->> 'code',
+  'missing_airport', 'a visit needs an airport'
+);
+select is(
+  public.sync_checkins('[{"id":"20000000-0000-0000-0000-000000000012","kind":"airport","occurred_at":"2026-01-02T10:00:00Z","airport_id":900002,"context":"napping"}]'::jsonb) -> 'results' -> 0 ->> 'code',
+  'invalid_context', 'an unknown context is rejected'
+);
+reset role;
+select is((select visit_context from public.checkins where id = '20000000-0000-0000-0000-000000000010'), 'transit', 'the context is stored');
+select is((select aircraft_id from public.checkins where id = '20000000-0000-0000-0000-000000000010'), null, 'a visit has no aircraft');
+select is((select count(*)::int from public.aircraft where registration = 'D-SKIP'), 0, 'aircraft fields on a visit create nothing');
+select ok((select count(*) from private.checkin_facts('00000000-0000-0000-0000-0000000000a1') where airport_id = 900002) = 1,
+          'an airport visit counts for the airport badges');
+
 select * from finish();
 rollback;

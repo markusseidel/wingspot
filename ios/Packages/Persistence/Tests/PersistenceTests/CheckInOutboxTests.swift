@@ -21,6 +21,7 @@ private actor FakeServer: CheckInUploader {
     var unknownStatus: Set<UUID> = []
     private(set) var stored: Set<UUID> = []
     private(set) var calls: [[UUID]] = []
+    private(set) var sent: [CheckInUploadItem] = []
 
     func set(_ fault: Fault) { self.fault = fault }
     func reject(_ id: UUID, code: String) { rejections[id] = code }
@@ -28,6 +29,7 @@ private actor FakeServer: CheckInUploader {
 
     func upload(_ items: [CheckInUploadItem]) async throws -> [CheckInUploadResult] {
         calls.append(items.map(\.id))
+        sent.append(contentsOf: items)
         switch fault {
         case .networkDown: throw URLError(.notConnectedToInternet)
         case .serverError(let status): throw APIError.unexpectedStatus(status)
@@ -76,6 +78,23 @@ private func state(_ context: ModelContext, _ id: UUID) throws -> LocalCheckIn {
         #expect(try state(context, id).syncState == "synced")
         #expect(try state(context, id).syncedAt != nil)
         #expect(await server.stored == [id])
+    }
+
+    @Test func anAirportVisitIsSentWithItsKindAndReason() async throws {
+        let context = try makeContext()
+        let id = try CheckInStore(context: context).saveAirport(
+            AirportDraft(airportID: 3, code: "FRA", context: .transit), ownerID: alice
+        ).id
+        let server = FakeServer()
+
+        _ = await CheckInOutbox(context: context, uploader: server).sync(userID: alice)
+
+        let item = try #require(await server.sent.first)
+        #expect(item.id == id)
+        #expect(item.kind == "airport")
+        #expect(item.airportID == 3)
+        #expect(item.context == "transit")
+        #expect(item.registration == nil)
     }
 
     @Test func doesNothingWhenNothingWaits() async throws {
