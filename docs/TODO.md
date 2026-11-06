@@ -164,8 +164,9 @@ In this order:
 - [x] Milestone 3: sync
 - [x] Milestone 4: badges and XP
 - [ ] Milestone 5: Airport and Flown check-ins, boarding pass scan, one photo
-  - [x] Airport check-in (app and server; needs a deploy of the migration to hosted)
-  - [ ] Flown check-in and boarding pass scan
+  - [x] Airport check-in (app and server, deployed to hosted)
+  - [x] Flown check-in, typed in by hand (app and server; migration `20261106200000` still to deploy)
+  - [ ] Boarding pass scan that prefills the Flown check-in
   - [ ] One photo
 - [ ] Milestone 6: your profile
 - [ ] Milestone 7: social

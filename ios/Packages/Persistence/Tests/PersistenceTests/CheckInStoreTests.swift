@@ -102,3 +102,35 @@ private let dus = SpottedDraft.Place(airportID: 7, code: "DUS")
     let result = try store.saveAirport(AirportDraft(airportID: 3, code: "FRA"), at: Date(timeIntervalSince1970: 3_000))
     #expect(result.history == .visitedBefore(count: 3, lastVisit: Date(timeIntervalSince1970: 2_000)))
 }
+
+@MainActor @Test func aFlightIsSavedWithItsRouteAndCountsRepeats() throws {
+    let context = try makeContext()
+    let store = CheckInStore(context: context)
+    let draft = FlownDraft(
+        origin: fra, destination: dus, distanceKm: 180, flightNumber: "lh 400", registration: Registration("DAIMA"),
+        cabin: .premiumEconomy, seat: "34k"
+    )
+    let first = try store.saveFlown(draft, at: Date(timeIntervalSince1970: 1_000))
+    #expect(first.route == "FRA → DUS")
+    #expect(first.timesOnRoute == 1)
+    let second = try store.saveFlown(draft, at: Date(timeIntervalSince1970: 2_000))
+    #expect(second.timesOnRoute == 2)
+    let reverse = try store.saveFlown(FlownDraft(origin: dus, destination: fra), at: Date(timeIntervalSince1970: 3_000))
+    #expect(reverse.timesOnRoute == 1)
+
+    let saved = try #require(try context.fetch(FetchDescriptor<LocalCheckIn>()).first { $0.id == first.id })
+    #expect(saved.kind == "flown")
+    #expect(saved.flightNumber == "LH400")
+    #expect(saved.seat == "34K")
+    #expect(saved.cabin == "premium_economy")
+    #expect(saved.registration == "D-AIMA")
+    #expect(saved.syncState == "pending")
+}
+
+@MainActor @Test func aFlightNeedsTwoDifferentAirports() throws {
+    let context = try makeContext()
+    #expect(throws: CheckInError.sameAirport) {
+        try CheckInStore(context: context).saveFlown(FlownDraft(origin: fra, destination: fra))
+    }
+    #expect(try context.fetchCount(FetchDescriptor<LocalCheckIn>()) == 0)
+}

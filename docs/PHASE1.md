@@ -47,6 +47,10 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
     - The server rejects one without an airport as `missing_airport`, and an unknown reason as `invalid_context`.
     - Every check-in counts for badges and XP, so an airport visit counts towards the airport badges, streaks and the 10 XP per check-in.
     - "First time at this airport" looks at earlier check-ins of any kind at that airport.
+13. **Flown check-ins (milestone 5):**
+    - A flight needs two different airports and a date. Flight number, aircraft (registration or type), cabin and seat are optional. The flight date is `occurred_at`: today keeps the real time, any other day is midday.
+    - The server works out `distance_km` from the two airports and tidies the flight number and seat. Bad input is rejected as `missing_route`, `invalid_route`, `invalid_flight_number`, `invalid_cabin` or `invalid_seat`.
+    - A flight counts like any check-in for XP and for the aircraft badges if it has an aircraft. Its airports don't count for the airport badges yet.
 
 ## Before each milestone
 
