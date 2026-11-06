@@ -16,14 +16,21 @@ public struct CheckInStats: Equatable, Sendable {
 
     public init() {}
 
+    /// The check-ins that count: not refused by the server, and this account's or made signed out.
+    static func counted(_ all: [LocalCheckIn], userID: UUID?) -> [LocalCheckIn] {
+        all.filter { checkIn in
+            if checkIn.syncState == SyncState.rejected.rawValue { return false }
+            if let userID, let owner = checkIn.ownerID, owner != userID { return false }
+            return true
+        }
+    }
+
     /// - Parameter userID: the signed-in account. Its check-ins and those made signed out count. `nil` counts everything.
     public init(_ all: [LocalCheckIn], userID: UUID?) {
         var registrations = Set<String>()
         var typeCodes = Set<String>()
         var airportIDs = Set<Int>()
-        for checkIn in all {
-            if checkIn.syncState == SyncState.rejected.rawValue { continue }
-            if let userID, let owner = checkIn.ownerID, owner != userID { continue }
+        for checkIn in Self.counted(all, userID: userID) {
             checkIns += 1
             switch checkIn.kind {
             case "spotted":
