@@ -110,7 +110,9 @@ public final class CheckInOutbox {
         CheckInUploadItem(
             id: checkIn.id, kind: checkIn.kind, occurredAt: checkIn.occurredAt, registration: checkIn.registration,
             typeICAO: checkIn.typeICAO, airportID: checkIn.airportID, latitude: checkIn.latitude,
-            longitude: checkIn.longitude, context: checkIn.visitContext
+            longitude: checkIn.longitude, context: checkIn.visitContext,
+            originID: checkIn.originID, destinationID: checkIn.destinationID, flightNumber: checkIn.flightNumber,
+            cabin: checkIn.cabin, seat: checkIn.seat
         )
     }
 }

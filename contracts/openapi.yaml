@@ -249,8 +249,26 @@ components:
           description: Generated on the device.
         kind:
           type: string
-          description: Open string set. `spotted` and `airport` are accepted for now. An `airport` check-in needs `airport_id`, and its aircraft fields are ignored.
+          description: Open string set. `spotted`, `airport` and `flown` are accepted for now. An `airport` check-in needs `airport_id`, and its aircraft fields are ignored. A `flown` check-in needs `origin_id` and `destination_id` (different airports), and `occurred_at` is the flight date. The server works out the distance.
           examples: [spotted]
+        origin_id:
+          type: integer
+          description: Only for `flown` check-ins.
+        destination_id:
+          type: integer
+          description: Only for `flown` check-ins.
+        flight_number:
+          type: string
+          description: Only for `flown` check-ins, such as `LH400`.
+          examples: [LH400]
+        cabin:
+          type: string
+          description: Only for `flown` check-ins. One of `economy`, `premium_economy`, `business`, `first`.
+          examples: [economy]
+        seat:
+          type: string
+          description: Only for `flown` check-ins, such as `34K`.
+          examples: [34K]
         context:
           type: string
           description: Why the user was at the airport. Only for `airport` check-ins. One of `spotting`, `departing`, `arriving`, `transit`, `working`, `museum`.
@@ -301,7 +319,8 @@ components:
           description: |
             Present when rejected. Open string set. Values today: `unsupported_kind`,
             `missing_aircraft`, `invalid_registration`, `invalid_time`, `unknown_type`,
-            `unknown_airport`, `missing_airport`, `invalid_context`, `invalid_location`, `invalid_visibility`, `id_taken`,
+            `unknown_airport`, `missing_airport`, `missing_route`, `invalid_route`,
+            `invalid_flight_number`, `invalid_cabin`, `invalid_seat`, `invalid_context`, `invalid_location`, `invalid_visibility`, `id_taken`,
             `invalid_request`.
     CheckinUploadResult:
       type: object

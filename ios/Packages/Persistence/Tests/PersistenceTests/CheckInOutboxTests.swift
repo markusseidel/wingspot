@@ -97,6 +97,28 @@ private func state(_ context: ModelContext, _ id: UUID) throws -> LocalCheckIn {
         #expect(item.registration == nil)
     }
 
+    @Test func aFlightIsSentWithItsRouteAndDetails() async throws {
+        let context = try makeContext()
+        _ = try CheckInStore(context: context).saveFlown(
+            FlownDraft(
+                origin: .init(airportID: 3, code: "FRA"), destination: .init(airportID: 7, code: "DUS"),
+                flightNumber: "LH400", cabin: .business, seat: "2A"
+            ), ownerID: alice
+        )
+        let server = FakeServer()
+
+        _ = await CheckInOutbox(context: context, uploader: server).sync(userID: alice)
+
+        let item = try #require(await server.sent.first)
+        #expect(item.kind == "flown")
+        #expect(item.originID == 3)
+        #expect(item.destinationID == 7)
+        #expect(item.flightNumber == "LH400")
+        #expect(item.cabin == "business")
+        #expect(item.seat == "2A")
+        #expect(item.airportID == nil)
+    }
+
     @Test func doesNothingWhenNothingWaits() async throws {
         let server = FakeServer()
         let outcome = await CheckInOutbox(context: try makeContext(), uploader: server).sync(userID: alice)

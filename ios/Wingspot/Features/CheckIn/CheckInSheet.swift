@@ -57,15 +57,7 @@ struct CheckInSheet: View {
                 case .airport:
                     AirportCheckInView(onDone: { dismiss() })
                 case .flown:
-                    ContentUnavailableView {
-                        Label {
-                            Text(kind.title)
-                        } icon: {
-                            Image(systemName: kind.systemImage)
-                        }
-                    } description: {
-                        Text("Coming in a later app version.")
-                    }
+                    FlownCheckInView(onDone: { dismiss() })
                 }
             }
             .toolbar {

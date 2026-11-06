@@ -43,6 +43,16 @@
         }
       }
     },
+    "%lld km" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld km"
+          }
+        }
+      }
+    },
     "3 to 30 lowercase letters, numbers or underscores." : {
       "localizations" : {
         "de" : {
@@ -179,6 +189,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Badges"
+          }
+        }
+      }
+    },
+    "Business" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Business"
+          }
+        }
+      }
+    },
+    "Cabin" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kabine"
           }
         }
       }
@@ -323,6 +353,26 @@
         }
       }
     },
+    "Choose two different airports." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle zwei verschiedene Flughäfen."
+          }
+        }
+      }
+    },
+    "Choosing airports needs one download while online." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um Flughäfen auszuwählen, ist einmal ein Download mit Internetverbindung nötig."
+          }
+        }
+      }
+    },
     "Choosing an airport needs one download while online." : {
       "localizations" : {
         "de" : {
@@ -344,6 +394,7 @@
       }
     },
     "Coming in a later app version." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -423,6 +474,16 @@
         }
       }
     },
+    "Date" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datum"
+          }
+        }
+      }
+    },
     "Departing" : {
       "localizations" : {
         "de" : {
@@ -470,6 +531,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sammle Badges für die Flugzeuge, die du spottest und mit denen du fliegst."
+          }
+        }
+      }
+    },
+    "Economy" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Economy"
           }
         }
       }
@@ -544,12 +615,32 @@
         }
       }
     },
+    "First" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First Class"
+          }
+        }
+      }
+    },
     "First Officer" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Erster Offizier"
+          }
+        }
+      }
+    },
+    "First flight on this route!" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erster Flug auf dieser Strecke!"
           }
         }
       }
@@ -574,6 +665,36 @@
         }
       }
     },
+    "Flight" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flug"
+          }
+        }
+      }
+    },
+    "Flight number %lld on this route" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flug Nummer %lld auf dieser Strecke"
+          }
+        }
+      }
+    },
+    "Flight number, e.g. LH400" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flugnummer, z. B. LH400"
+          }
+        }
+      }
+    },
     "Flown" : {
       "localizations" : {
         "de" : {
@@ -590,6 +711,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Folge anderen Spottern und teile, was du gesehen hast."
+          }
+        }
+      }
+    },
+    "From" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Von"
           }
         }
       }
@@ -826,6 +957,16 @@
         }
       }
     },
+    "Not set" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht angegeben"
+          }
+        }
+      }
+    },
     "OK" : {
       "localizations" : {
         "de" : {
@@ -872,6 +1013,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bitte versuche es noch einmal."
+          }
+        }
+      }
+    },
+    "Premium Economy" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium Economy"
           }
         }
       }
@@ -942,6 +1093,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Die Suche funktioniert offline, sobald die Daten einmal mit Internetverbindung geladen wurden."
+          }
+        }
+      }
+    },
+    "Seat, e.g. 34K" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sitz, z. B. 34K"
           }
         }
       }
@@ -1132,6 +1293,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tageszeit"
+          }
+        }
+      }
+    },
+    "To" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach"
           }
         }
       }

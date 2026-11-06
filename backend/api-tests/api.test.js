@@ -241,6 +241,7 @@ describe("devices", () => {
 describe("POST /v1/checkins", () => {
   const TYPE = "ZT99";
   const AIRPORT = 900001;
+  const AIRPORT_2 = 900002;
   const registrations = [];
   const ids = [];
   let alice;
@@ -265,6 +266,10 @@ describe("POST /v1/checkins", () => {
       method: "POST",
       body: { id: AIRPORT, icao: "ZZZZ", name: "Test", country_code: "DE", continent: "EU", location: "POINT(8.5 50.0)" },
     });
+    await service("airports", {
+      method: "POST",
+      body: { id: AIRPORT_2, icao: "ZZZY", name: "Test Two", country_code: "DE", continent: "EU", location: "POINT(8.5 51.0)" },
+    });
     alice = await signUp();
     bob = await signUp();
   });
@@ -272,6 +277,7 @@ describe("POST /v1/checkins", () => {
     for (const id of ids) await service(`checkins?id=eq.${id}`, { method: "DELETE" });
     for (const value of registrations) await service(`aircraft?registration=eq.${value}`, { method: "DELETE" });
     await service(`airports?id=eq.${AIRPORT}`, { method: "DELETE" });
+    await service(`airports?id=eq.${AIRPORT_2}`, { method: "DELETE" });
     await service(`aircraft_types?icao_code=eq.${TYPE}`, { method: "DELETE" });
   });
 
@@ -340,6 +346,24 @@ describe("POST /v1/checkins", () => {
     assert.equal((await upload(alice, [visit])).body.results[0].status, "stored", "a repeat is stored again");
   });
 
+  test("a flight stores its route, details and the distance the server works out", async () => {
+    const flight = item({
+      kind: "flown", origin_id: AIRPORT, destination_id: AIRPORT_2, flight_number: "lh 400",
+      cabin: "economy", seat: "12a", registration: undefined, type_icao: TYPE,
+    });
+    const response = await upload(alice, [flight]);
+    assert.deepEqual(response.body.results, [{ id: flight.id, status: "stored" }]);
+    const [row] = await stored(flight.id);
+    assert.equal(row.kind, "flown");
+    assert.equal(row.origin_id, AIRPORT);
+    assert.equal(row.destination_id, AIRPORT_2);
+    assert.equal(row.flight_number, "LH400");
+    assert.equal(row.cabin_class, "economy");
+    assert.equal(row.seat, "12A");
+    assert.ok(row.distance_km >= 105 && row.distance_km <= 118, `distance ${row.distance_km}`);
+    assert.equal(row.type_icao, TYPE);
+  });
+
   test("another user's id is rejected and the original stays untouched", async () => {
     const mine = item();
     await upload(alice, [mine]);
@@ -351,8 +375,10 @@ describe("POST /v1/checkins", () => {
   test("a bad item is rejected and the rest of the batch is stored", async () => {
     const good = item();
     const cases = [
-      ["unsupported_kind", item({ kind: "flown" })],
+      ["unsupported_kind", item({ kind: "banana" })],
       ["missing_airport", item({ kind: "airport", registration: undefined })],
+      ["missing_route", item({ kind: "flown" })],
+      ["invalid_route", item({ kind: "flown", origin_id: AIRPORT, destination_id: AIRPORT })],
       ["invalid_context", item({ kind: "airport", airport_id: AIRPORT, context: "napping" })],
       ["missing_aircraft", item({ registration: undefined })],
       ["invalid_registration", item({ registration: "not a registration" })],

@@ -20,6 +20,7 @@
 		3B16BBB37412D38A89E454BD /* PlaceholderScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87BF659DFCBC4828CF78129 /* PlaceholderScreen.swift */; };
 		3C72654BC1F78F3B175048F2 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA53E0B6C7D19C0B128FFE6 /* OnboardingView.swift */; };
 		3FF4DDD01D1F79267517DE35 /* ReferenceData in Frameworks */ = {isa = PBXBuildFile; productRef = 16B4602119380A191047210F /* ReferenceData */; };
+		5EFAD640812D73C675B33326 /* FlownCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED53FE5B4A009D5575119BB4 /* FlownCheckInView.swift */; };
 		63920812D725A2EE33A89EC1 /* WingspotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E61A661480E1ED65178DE4B /* WingspotApp.swift */; };
 		63A6ACF8B98323CFB9936784 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C9AA754CC23E4288DF9E2262 /* PrivacyInfo.xcprivacy */; };
 		666833BB5AA51A95401FAE68 /* CheckInSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */; };
@@ -74,6 +75,7 @@
 		DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInSheet.swift; sourceTree = "<group>"; };
 		E539BCC329B1D95E5DE61344 /* AirportCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirportCheckInView.swift; sourceTree = "<group>"; };
 		E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		ED53FE5B4A009D5575119BB4 /* FlownCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlownCheckInView.swift; sourceTree = "<group>"; };
 		EEADFFA0580043E3265322F0 /* BadgesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgesScreen.swift; sourceTree = "<group>"; };
 		F4D2C07FCB6185F02199297F /* Persistence */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Persistence; path = Packages/Persistence; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -112,6 +114,7 @@
 				4459DE5C40C01B9A974864C6 /* CheckInHistoryView.swift */,
 				48B545FD209FC2942BD45E71 /* CheckInResultView.swift */,
 				DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */,
+				ED53FE5B4A009D5575119BB4 /* FlownCheckInView.swift */,
 				9A035100ED13735493AF7BF1 /* LocationProvider.swift */,
 				BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */,
 				41CBBBAF8DD8DAC4FD7390E9 /* SpottedCheckInView.swift */,
@@ -323,6 +326,7 @@
 				B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */,
 				666833BB5AA51A95401FAE68 /* CheckInSheet.swift in Sources */,
 				A165396CBFC567234392EE1F /* EmailSignInView.swift in Sources */,
+				5EFAD640812D73C675B33326 /* FlownCheckInView.swift in Sources */,
 				C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */,
 				2E4689A87246BCE2846B568F /* NetworkMonitor.swift in Sources */,
 				3C72654BC1F78F3B175048F2 /* OnboardingView.swift in Sources */,

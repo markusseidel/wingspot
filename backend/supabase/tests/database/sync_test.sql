@@ -79,5 +79,34 @@ select is((select count(*)::int from public.aircraft where registration = 'D-SKI
 select ok((select count(*) from private.checkin_facts('00000000-0000-0000-0000-0000000000a1') where airport_id = 900002) = 1,
           'an airport visit counts for the airport badges');
 
+-- Flights ----------------------------------------------------------------------------------
+reset role;
+insert into public.airports (id, icao, name, country_code, continent, location)
+values (900003, 'ZZZX', 'Far Test', 'DE', 'EU', 'POINT(8.5 51.0)');
+select pg_temp.as_user('00000000-0000-0000-0000-0000000000a1');
+select is(
+  public.sync_checkins('[{"id":"20000000-0000-0000-0000-000000000020","kind":"flown","occurred_at":"2026-01-03T10:00:00Z","origin_id":900002,"destination_id":900003,"flight_number":"lh 400","cabin":"business","seat":"34k","registration":"D-FLWN"}]'::jsonb) -> 'results' -> 0 ->> 'status',
+  'stored', 'a flight is stored'
+);
+select is(
+  (select array_agg(public.sync_checkins(format('[{"id":"20000000-0000-0000-0000-0000000000%s","kind":"flown","occurred_at":"2026-01-03T10:00:00Z"%s}]', n, extra)::jsonb) -> 'results' -> 0 ->> 'code' order by n)
+   from (values ('21', ''), ('22', ',"origin_id":900002,"destination_id":900002'),
+                ('23', ',"origin_id":900002,"destination_id":900003,"flight_number":"BANANA"'),
+                ('24', ',"origin_id":900002,"destination_id":900003,"cabin":"steerage"'),
+                ('25', ',"origin_id":900002,"destination_id":900003,"seat":"K34"'),
+                ('26', ',"origin_id":900002,"destination_id":987654')) v(n, extra)),
+  array['missing_route','invalid_route','invalid_flight_number','invalid_cabin','invalid_seat','unknown_airport'],
+  'bad flights are rejected with a reason'
+);
+reset role;
+select is((select flight_number from public.checkins where id = '20000000-0000-0000-0000-000000000020'), 'LH400', 'the flight number is tidied');
+select is((select seat from public.checkins where id = '20000000-0000-0000-0000-000000000020'), '34K', 'the seat is tidied');
+select ok((select distance_km from public.checkins where id = '20000000-0000-0000-0000-000000000020') between 105 and 118,
+          'the server works out the distance (about 111 km)');
+select is((select count(*)::int from public.checkins where id::text like '20000000-0000-0000-0000-0000000000_2' and kind = 'flown'
+           and id <> '20000000-0000-0000-0000-000000000020'), 0, 'rejected flights are not stored');
+select ok((select count(*) from private.checkin_facts('00000000-0000-0000-0000-0000000000a1') where registration = 'D-FLWN') = 1,
+          'a flight with an aircraft counts for the aircraft badges');
+
 select * from finish();
 rollback;
