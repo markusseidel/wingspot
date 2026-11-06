@@ -20,6 +20,8 @@ struct AppleSignInButton: View {
         }
         .signInWithAppleButtonStyle(colorScheme == .dark ? .white : .black)
         .frame(height: 50)
+        // The same round shape as the other sign-in buttons.
+        .clipShape(Capsule())
         .alert(
             "Couldn't sign in",
             isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } }),
