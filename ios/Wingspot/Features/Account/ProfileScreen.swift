@@ -1,11 +1,13 @@
 import Account
 import Persistence
 import ReferenceData
+import SwiftData
 import SwiftUI
 
-/// The Profile tab. Stats, collections and the map join it in Milestone 6.
+/// The Profile tab. Collections and the map join the stats in Milestone 6.
 struct ProfileScreen: View {
     @Environment(AccountStore.self) private var account
+    @Query private var all: [LocalCheckIn]
     @State private var isSigningIn = false
     @State private var isShowingHistory = false
 
@@ -45,6 +47,13 @@ struct ProfileScreen: View {
             } description: {
                 Text("Sign in to keep your check-ins safe and follow other spotters. Your check-ins stay on this iPhone until then.")
             }
+            let stats = CheckInStats(all, userID: nil)
+            if stats.checkIns > 0 {
+                VStack(spacing: 12) { ProfileStatsRows(stats: stats) }
+                    .padding()
+                    .background(.background.secondary, in: .rect(cornerRadius: 12))
+                    .padding(.horizontal)
+            }
             Spacer()
             VStack(spacing: 12) {
                 AppleSignInButton()
@@ -83,14 +92,18 @@ private struct ProfileDetailsView: View {
     @Environment(AccountStore.self) private var account
     @Environment(ReferenceDataStore.self) private var referenceData
     @Environment(BadgeStore.self) private var badges
+    @Query private var all: [LocalCheckIn]
     @State private var airport: Airport?
     @State private var signOutFailed = false
+
+    private var stats: CheckInStats { CheckInStats(all, userID: account.userID) }
 
     var body: some View {
         Form {
             if let progress = badges.progress {
                 Section { LevelHeader(progress: progress) }
             }
+            Section { ProfileStatsRows(stats: stats) }
             Section {
                 LabeledContent("Username") { Text(verbatim: "@\(profile.username)") }
                 if let name = profile.displayName {
@@ -141,5 +154,18 @@ private struct ProfileDetailsView: View {
     private struct AirportKey: Hashable {
         let id: Int?
         let dataVersion: String?
+    }
+}
+
+/// The five numbers, for a form section or a plain card.
+private struct ProfileStatsRows: View {
+    let stats: CheckInStats
+
+    var body: some View {
+        LabeledContent("Check-ins") { Text(stats.checkIns, format: .number) }
+        LabeledContent("Aircraft seen") { Text(stats.aircraft, format: .number) }
+        LabeledContent("Aircraft types") { Text(stats.types, format: .number) }
+        LabeledContent("Airports") { Text(stats.airports, format: .number) }
+        LabeledContent("Flights") { Text(stats.flights, format: .number) }
     }
 }

@@ -1682,6 +1682,36 @@
           }
         }
       }
+    },
+    "Check-ins" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check-ins"
+          }
+        }
+      }
+    },
+    "Aircraft seen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesehene Flugzeuge"
+          }
+        }
+      }
+    },
+    "Flights" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flüge"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
