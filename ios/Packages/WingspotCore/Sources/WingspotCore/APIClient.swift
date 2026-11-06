@@ -116,6 +116,15 @@ public struct CheckInUploadResult: Decodable, Equatable, Sendable {
     public var isRejected: Bool { status == "rejected" }
 }
 
+/// The server's answer for one photo (`PUT /v1/checkins/{id}/photos/{id}`).
+public enum PhotoUploadOutcome: Equatable, Sendable {
+    case stored
+    /// The server refused it for good, with its code, such as `too_many_photos`. Uploading again gets the same answer.
+    case rejected(code: String)
+    /// The check-in isn't on the server yet. The photo waits and goes up after it.
+    case checkInNotThereYet
+}
+
 public enum APIError: Error, Equatable {
     case unexpectedStatus(Int)
 }
@@ -134,6 +143,31 @@ public struct APIClient: Sendable {
         self.baseURL = baseURL
         self.transport = transport
     }
+
+    /// `PUT /v1/checkins/{checkinID}/photos/{photoID}`. The body is the JPEG, which must have no metadata.
+    /// Repeating it is safe, because the server stores each photo id once.
+    /// - Throws: for anything that should be tried again later, such as no network or a server error.
+    public func uploadPhoto(
+        checkInID: UUID, photoID: UUID, jpeg: Data, accessToken: String
+    ) async throws -> PhotoUploadOutcome {
+        var request = URLRequest(url: baseURL.appending(path: "v1/checkins/\(checkInID.uuidString.lowercased())/photos/\(photoID.uuidString.lowercased())"))
+        request.httpMethod = "PUT"
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("image/jpeg", forHTTPHeaderField: "Content-Type")
+        request.httpBody = jpeg
+
+        let (data, response) = try await transport(request)
+        let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+        let code = (try? JSONDecoder().decode(ErrorBody.self, from: data))?.code
+        switch status {
+        case 200: return .stored
+        case 404 where code == "unknown_checkin": return .checkInNotThereYet
+        case 400, 409, 413, 415: return .rejected(code: code ?? "http_\(status)")
+        default: throw APIError.unexpectedStatus(status)
+        }
+    }
+
+    private struct ErrorBody: Decodable { let code: String? }
 
     /// `GET /v1/config`. Public, because apps must check their minimum version before sign-in.
     public func config() async throws -> RemoteConfig {

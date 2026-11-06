@@ -21,7 +21,7 @@ struct WingspotApp: App {
     init() {
         let container: ModelContainer
         do {
-            container = try ModelContainer(for: LocalCheckIn.self, BadgeAck.self, BadgeAccount.self)
+            container = try ModelContainer(for: LocalCheckIn.self, LocalPhoto.self, BadgeAck.self, BadgeAccount.self)
         } catch {
             fatalError("Local check-in storage can't open: \(error)")
         }
@@ -34,6 +34,10 @@ struct WingspotApp: App {
             client: Self.apiClient,
             accessToken: { await account.accessToken() }
         )
+        let photoUploader = APIPhotoUploader(
+            client: Self.apiClient,
+            accessToken: { await account.accessToken() }
+        )
         let badgeStore = BadgeStore(
             context: container.mainContext,
             source: APIProgressSource(client: Self.apiClient, accessToken: { await account.accessToken() })
@@ -41,6 +45,7 @@ struct WingspotApp: App {
         _badges = State(initialValue: badgeStore)
         _sync = State(initialValue: CheckInSyncCoordinator(
             outbox: CheckInOutbox(context: container.mainContext, uploader: uploader),
+            photos: PhotoOutbox(context: container.mainContext, uploader: photoUploader),
             userID: { account.userID },
             // After a run, with or without uploads, the server may have unlocked something.
             afterRun: { Task { await badgeStore.refresh() } }

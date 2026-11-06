@@ -11,6 +11,7 @@ public final class CheckInSyncCoordinator {
     public static let defaultBackoff: [Duration] = [.seconds(5), .seconds(30), .seconds(120), .seconds(600)]
 
     private let outbox: CheckInOutbox
+    private let photos: PhotoOutbox?
     private let userID: @MainActor () -> UUID?
     private let sleep: @Sendable (Duration) async -> Void
     private let backoff: [Duration]
@@ -23,12 +24,14 @@ public final class CheckInSyncCoordinator {
 
     public init(
         outbox: CheckInOutbox,
+        photos: PhotoOutbox? = nil,
         userID: @escaping @MainActor () -> UUID?,
         backoff: [Duration] = CheckInSyncCoordinator.defaultBackoff,
         sleep: @escaping @Sendable (Duration) async -> Void = { try? await Task.sleep(for: $0) },
         afterRun: @escaping @MainActor () -> Void = {}
     ) {
         self.outbox = outbox
+        self.photos = photos
         self.userID = userID
         self.backoff = backoff
         self.afterRun = afterRun
@@ -49,6 +52,13 @@ public final class CheckInSyncCoordinator {
         while let task { await task.value }
     }
 
+    /// Anything that has to be tried again makes the whole run try again.
+    private static func combined(_ checkIns: OutboxOutcome, _ photos: OutboxOutcome?) -> OutboxOutcome {
+        if case .retryLater = checkIns { return checkIns }
+        if let photos, case .retryLater = photos { return photos }
+        return checkIns
+    }
+
     private func run() async {
         defer {
             task = nil
@@ -58,7 +68,10 @@ public final class CheckInSyncCoordinator {
         while true {
             requestedAgain = false
             guard let id = userID() else { return }
-            switch await outbox.sync(userID: id) {
+            // Check-ins first, because a photo goes up only after its check-in is stored.
+            let checkIns = await outbox.sync(userID: id)
+            let pictures = await photos?.sync(userID: id)
+            switch Self.combined(checkIns, pictures) {
             case .idle, .finished:
                 failures = 0
                 isWaitingToRetry = false

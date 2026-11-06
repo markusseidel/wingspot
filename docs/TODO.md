@@ -168,7 +168,8 @@ In this order:
   - [x] Flown check-in, typed in by hand (app and server; migration `20261106200000` still to deploy)
   - [x] Boarding pass scan that prefills the Flown check-in (camera and picture)
   - [ ] Try the camera scan on your iPhone with a real boarding pass or a boarding pass on screen (the Simulator has no camera, and its picture reading doesn't work)
-  - [ ] One photo
+  - [x] One photo on a Spotted check-in (app, and server: private bucket, `PUT` route). Flown and Airport check-ins don't take photos yet
+  - [ ] After the photo migration and the `checkins` function are deployed to hosted: add **Photos or Videos** to the App Privacy answers in App Store Connect (collected, linked to the user, not used for tracking), and tell testers that photos now upload
 - [ ] Milestone 6: your profile
 - [ ] Milestone 7: social
 - [ ] Milestone 8: airport page and settings

@@ -207,3 +207,34 @@ private let progressJSON = """
     """).uploadCheckins([sampleItem], accessToken: "t")
     #expect(results == [CheckInUploadResult(id: sampleItem.id, status: "stored")])
 }
+
+private let photoCheckIn = UUID(uuidString: "0198AAAA-0000-7000-8000-000000000001")!
+private let photoID = UUID(uuidString: "0198BBBB-0000-7000-8000-000000000002")!
+
+private func photoClient(status: Int, body: String = "") -> APIClient {
+    APIClient(baseURL: baseURL) { request in
+        #expect(request.url?.absoluteString == "https://example.com/functions/v1/checkins/0198aaaa-0000-7000-8000-000000000001/photos/0198bbbb-0000-7000-8000-000000000002")
+        #expect(request.httpMethod == "PUT")
+        #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer t")
+        #expect(request.value(forHTTPHeaderField: "Content-Type") == "image/jpeg")
+        #expect(request.httpBody == Data([1, 2, 3]))
+        let response = HTTPURLResponse(url: request.url!, statusCode: status, httpVersion: nil, headerFields: nil)!
+        return (Data(body.utf8), response)
+    }
+}
+
+@Test func aPhotoIsSentAsAJPEGAndAnswersAreMapped() async throws {
+    func outcome(_ status: Int, _ body: String = "") async throws -> PhotoUploadOutcome {
+        try await photoClient(status: status, body: body)
+            .uploadPhoto(checkInID: photoCheckIn, photoID: photoID, jpeg: Data([1, 2, 3]), accessToken: "t")
+    }
+    #expect(try await outcome(200, #"{"id":"x","status":"stored"}"#) == .stored)
+    #expect(try await outcome(404, #"{"code":"unknown_checkin","message":"m"}"#) == .checkInNotThereYet)
+    #expect(try await outcome(409, #"{"code":"too_many_photos","message":"m"}"#) == .rejected(code: "too_many_photos"))
+    #expect(try await outcome(413, #"{"code":"photo_too_large","message":"m"}"#) == .rejected(code: "photo_too_large"))
+    #expect(try await outcome(415) == .rejected(code: "http_415"))
+    #expect(try await outcome(400, #"{"code":"invalid_request","message":"m"}"#) == .rejected(code: "invalid_request"))
+    for status in [401, 404, 500, 503] {
+        await #expect(throws: APIError.unexpectedStatus(status)) { _ = try await outcome(status) }
+    }
+}
