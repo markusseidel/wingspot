@@ -165,11 +165,16 @@ In this order:
 - [x] Milestone 4: badges and XP
 - [ ] Milestone 5: Airport and Flown check-ins, boarding pass scan, one photo
   - [x] Airport check-in (app and server, deployed to hosted)
-  - [x] Flown check-in, typed in by hand (app and server; migration `20261106200000` still to deploy)
+  - [x] Flown check-in, typed in by hand (app and server, deployed to hosted)
   - [x] Boarding pass scan that prefills the Flown check-in (camera and picture)
   - [ ] Try the camera scan on your iPhone with a real boarding pass or a boarding pass on screen (the Simulator has no camera, and its picture reading doesn't work)
   - [x] One photo on a Spotted check-in (app, and server: private bucket, `PUT` route). Flown and Airport check-ins don't take photos yet
-  - [ ] After the photo migration and the `checkins` function are deployed to hosted: add **Photos or Videos** to the App Privacy answers in App Store Connect (collected, linked to the user, not used for tracking), and tell testers that photos now upload
+  - [x] Photo migration and `checkins` function deployed to hosted; version 0.2.0 (1) uploaded and waiting for review
+  - [ ] Add **Photos or Videos** to the App Privacy answers in App Store Connect (collected, linked to the user, not used for tracking), before external testers get 0.2.0
+  - [ ] Real-iPhone checks: airplane-mode check-in of each kind, photo upload from the signed-in app, dark and tinted icons
+  - [ ] Final check that Airport, Flown and photo check-ins all sync from the app to hosted
+  - [ ] Draft privacy policy is in [PRIVACY-DRAFT.md](PRIVACY-DRAFT.md): fill in the brackets and publish on `wingspot.site`
+  - [ ] Delete the test account `github@seidel.ruhr` on hosted
 - [ ] Milestone 6: your profile
 - [ ] Milestone 7: social
 - [ ] Milestone 8: airport page and settings

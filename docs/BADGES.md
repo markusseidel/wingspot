@@ -16,6 +16,13 @@ The 36 launch badges for Milestone 4 (see [PHASE1.md](PHASE1.md) and concept §5
 
 `island_hopper` and `short_field` are in the database but switched off, because the airport data has no island flag and no runway lengths yet. They show up and can be earned once that data is imported and they are switched on. Their `valid_from` is `infinity` until then.
 
+What each one needs:
+
+- `short_field`: the longest runway length per airport. OurAirports publishes `runways.csv` with `length_ft` per runway, so the refdata pipeline can take the longest one and store it in metres. Decide what counts when an airport has no runway data (it should simply not qualify).
+- `island_hopper`: an `is_island` flag per airport. No source in the current data has it. A way to get it is to test each airport's coordinates against island polygons (for example Natural Earth or OpenStreetMap), and decide a size limit so that Great Britain or Honshu don't count. Check the source's licence before importing.
+
+After the data is in the snapshot, the app needs no change: switch the badges on by setting `valid_from` to null (see TODO).
+
 ## What the server needs that doesn't exist yet
 
 - The country of a registration (from its prefix, such as D for Germany). The phone already has this table, and the server needs the same one, checked against the shared test file.
