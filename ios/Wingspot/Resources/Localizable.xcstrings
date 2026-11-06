@@ -1,6 +1,22 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ → %@ · %@%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ → %2$@ · %3$@%4$@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ → %@ · %@%@"
+          }
+        }
+      }
+    },
     "%@, registered in %@" : {
       "localizations" : {
         "de" : {
@@ -133,12 +149,32 @@
         }
       }
     },
+    "Airport data is missing" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flughafendaten fehlen"
+          }
+        }
+      }
+    },
     "Airports" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Flughäfen"
+          }
+        }
+      }
+    },
+    "Airports not found" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flughäfen nicht gefunden"
           }
         }
       }
@@ -615,6 +651,16 @@
         }
       }
     },
+    "Fills in the route, date, flight number and seat. Your name and booking code are never read or saved." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Füllt Strecke, Datum, Flugnummer und Sitz aus. Dein Name und dein Buchungscode werden nie gelesen oder gespeichert."
+          }
+        }
+      }
+    },
     "First" : {
       "localizations" : {
         "de" : {
@@ -741,6 +787,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Versteckte Badges übrig: %lld"
+          }
+        }
+      }
+    },
+    "Hold the barcode inside the frame. Your name and booking code are never saved." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Halte den Barcode in den Rahmen. Dein Name und dein Buchungscode werden nie gespeichert."
           }
         }
       }
@@ -897,6 +953,16 @@
         }
       }
     },
+    "No boarding pass found" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Bordkarte gefunden"
+          }
+        }
+      }
+    },
     "No check-ins yet" : {
       "localizations" : {
         "de" : {
@@ -1037,6 +1103,36 @@
         }
       }
     },
+    "Read from a picture" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aus einem Bild lesen"
+          }
+        }
+      }
+    },
+    "Reading a boarding pass needs one download while online." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um eine Bordkarte zu lesen, ist einmal ein Download mit Internetverbindung nötig."
+          }
+        }
+      }
+    },
+    "Reading…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lese …"
+          }
+        }
+      }
+    },
     "Reason" : {
       "localizations" : {
         "de" : {
@@ -1073,6 +1169,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sichern"
+          }
+        }
+      }
+    },
+    "Scan boarding pass" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bordkarte scannen"
           }
         }
       }
@@ -1267,6 +1373,16 @@
         }
       }
     },
+    "This boarding pass uses an airport that isn't in the app's data. Enter the flight by hand." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Bordkarte nennt einen Flughafen, der nicht in den Daten der App ist. Gib den Flug von Hand ein."
+          }
+        }
+      }
+    },
     "This sign-in link doesn't work anymore. Please request a new one on this device." : {
       "localizations" : {
         "de" : {
@@ -1323,6 +1439,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Umstieg"
+          }
+        }
+      }
+    },
+    "Try a clearer picture, or enter the flight by hand." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versuche ein schärferes Bild oder gib den Flug von Hand ein."
           }
         }
       }
@@ -1423,6 +1549,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Wir senden dir per E-Mail einen Link zum Anmelden. Du brauchst kein Passwort."
+          }
+        }
+      }
+    },
+    "Which flight?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcher Flug?"
           }
         }
       }

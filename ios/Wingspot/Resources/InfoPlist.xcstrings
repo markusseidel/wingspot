@@ -1,6 +1,24 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "NSCameraUsageDescription": {
+      "comment": "Camera permission prompt for scanning boarding passes",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wingspot scannt deine Bordkarte, um einen Flug auszufüllen. Dein Name und dein Buchungscode werden nie gespeichert."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wingspot scans your boarding pass to fill in a flight. Your name and booking code are never saved."
+          }
+        }
+      }
+    },
     "NSLocationWhenInUseUsageDescription": {
       "comment": "Location permission prompt",
       "extractionState": "manual",

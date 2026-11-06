@@ -51,6 +51,10 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
     - A flight needs two different airports and a date. Flight number, aircraft (registration or type), cabin and seat are optional. The flight date is `occurred_at`: today keeps the real time, any other day is midday.
     - The server works out `distance_km` from the two airports and tidies the flight number and seat. Bad input is rejected as `missing_route`, `invalid_route`, `invalid_flight_number`, `invalid_cabin` or `invalid_seat`.
     - A flight counts like any check-in for XP and for the aircraft badges if it has an aircraft. Its airports don't count for the airport badges yet.
+14. **Boarding pass scan (milestone 5):**
+    - The Flown screen can read a boarding pass with the camera or from a picture. It fills in the route, date, flight number and seat. The cabin stays as it is, because the booking class letter means different things at different airlines.
+    - Reading happens on the device. The barcode text goes only to the parser, which skips the passenger name and booking code, so neither is stored or uploaded. Nothing from the pass is sent except what the user saves in the form.
+    - A pass with several flights asks which one. Airports are matched by IATA code in the downloaded data.
 
 ## Before each milestone
 

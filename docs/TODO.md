@@ -166,7 +166,8 @@ In this order:
 - [ ] Milestone 5: Airport and Flown check-ins, boarding pass scan, one photo
   - [x] Airport check-in (app and server, deployed to hosted)
   - [x] Flown check-in, typed in by hand (app and server; migration `20261106200000` still to deploy)
-  - [ ] Boarding pass scan that prefills the Flown check-in
+  - [x] Boarding pass scan that prefills the Flown check-in (camera and picture)
+  - [ ] Try the camera scan on your iPhone with a real boarding pass or a boarding pass on screen (the Simulator has no camera, and its picture reading doesn't work)
   - [ ] One photo
 - [ ] Milestone 6: your profile
 - [ ] Milestone 7: social

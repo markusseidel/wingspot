@@ -24,6 +24,8 @@
 	<string>$(WINGSPOT_PUBLISHABLE_KEY)</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Wingspot suggests the airport you're at when you check in.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Wingspot scans your boarding pass to fill in a flight. Your name and booking code are never saved.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>WingspotAPIBaseURL</key>
