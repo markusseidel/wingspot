@@ -60,6 +60,12 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
     - The phone shrinks it to 2048 pixels on the long side, turns it upright, and writes a new JPEG with **no metadata**: the location, camera and date of the original are not carried over, and the original is not kept. It is saved on the device with the check-in.
     - The photo goes up only after its check-in is stored, to a private bucket (`photos/{user}/{check-in}/{photo}.jpg`) through `PUT /v1/checkins/{id}/photos/{id}`. The server refuses a JPEG with EXIF, XMP or other metadata segments, files over 3 MB, and a fifth photo on a check-in. Only the owner can read it until sharing exists (milestone 7).
     - A failed request leaves the photo waiting. Only the server's answer can reject it, as with check-ins.
+16. **Sharing, feed and reports (milestone 7a):**
+    - Each account has a sharing choice (`default_visibility`: only me, friends or everyone), which starts as **only me**. A check-in the app sends without a visibility gets it. `set_sharing` changes the choice and can apply it to all earlier check-ins.
+    - `get_feed` returns the caller's own check-ins and those of people they follow, newest first, with salute and comment counts. It runs as the caller, so visibility, private profiles, blocks and the post delay decide what shows, and the counts follow the same rules. Paging uses the last row's time and id. The registration of a sensitive aircraft is hidden from other people. Raw location is never returned.
+    - `report` stores a report of a user, check-in, comment or photo after checking the caller can see it. Reports can't be read by users, so the project owner reviews them in the database. It allows 20 reports an hour, and a repeat of an open report adds nothing.
+    - A word filter refuses comments with a blocked word (whole words, any case). Words live in `private.blocked_words`, and the owner can add more with plain SQL.
+    - These are database functions called directly (like `get_profile`), so they aren't in `openapi.yaml`.
 
 ## Before each milestone
 

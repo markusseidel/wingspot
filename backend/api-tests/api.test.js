@@ -645,3 +645,74 @@ describe("GET /v1/me/entitlements", () => {
     assertError(await call("/v1/me/other", { token: alice.token }), 404);
   });
 });
+
+/** Calls a database function or table as a signed-in user, the way the apps do. */
+async function rest(path, { method = "POST", token, body } = {}) {
+  const response = await fetch(`${API}/rest/v1/${path}`, {
+    method,
+    headers: { apikey: ANON_KEY, Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const text = await response.text();
+  return { status: response.status, body: text ? JSON.parse(text) : null };
+}
+
+describe("social: sharing, feed, reports and comments", () => {
+  let alice, bob;
+  const checkin = randomUUID();
+  before(async () => {
+    alice = await signUp();
+    bob = await signUp();
+    await service("follows", { method: "POST", body: { follower: bob.id, followee: alice.id } });
+  });
+
+  test("a check-in is private until the account shares, and then shows in a follower's feed", async () => {
+    const upload = (id) => call("/v1/checkins", {
+      method: "POST", token: alice.token,
+      body: { checkins: [{ id, kind: "spotted", occurred_at: new Date(Date.now() - 3600_000).toISOString(), registration: "D-AIMA" }] },
+    });
+    assert.equal((await upload(checkin)).status, 200);
+    let feed = await rest("rpc/get_feed", { token: bob.token, body: {} });
+    assert.equal(feed.status, 200, JSON.stringify(feed.body));
+    assert.equal(feed.body.length, 0, "private check-ins stay out of other people's feeds");
+
+    const shared = await rest("rpc/set_sharing", { token: alice.token, body: { new_default: "public", apply_to_existing: true } });
+    assert.equal(shared.status, 200, JSON.stringify(shared.body));
+    assert.equal(shared.body, 1);
+
+    feed = await rest("rpc/get_feed", { token: bob.token, body: {} });
+    assert.equal(feed.body.length, 1);
+    assert.equal(feed.body[0].id, checkin);
+    assert.equal(feed.body[0].registration, "D-AIMA");
+    assert.equal(feed.body[0].salutes, 0);
+    assert.ok(!("location" in feed.body[0]), "no raw location");
+  });
+
+  test("the feed needs a signed-in user", async () => {
+    const response = await fetch(`${API}/rest/v1/rpc/get_feed`, {
+      method: "POST", headers: { apikey: ANON_KEY, "Content-Type": "application/json" }, body: "{}",
+    });
+    assert.ok([401, 403].includes(response.status), `status ${response.status}`);
+  });
+
+  test("a salute is counted, and a reported check-in is stored once for the owner to review", async () => {
+    const salute = await rest("salutes", { token: bob.token, body: { user_id: bob.id, checkin_id: checkin } });
+    assert.equal(salute.status, 201, JSON.stringify(salute.body));
+    const feed = await rest("rpc/get_feed", { token: bob.token, body: {} });
+    assert.equal(feed.body[0].salutes, 1);
+    assert.equal(feed.body[0].saluted, true);
+
+    const report = await rest("rpc/report", { token: bob.token, body: { report_kind: "checkin", report_target: checkin, report_reason: "test" } });
+    assert.equal(report.body, "reported");
+    const rows = await service(`reports?reporter=eq.${bob.id}`);
+    assert.equal(rows.length, 1);
+  });
+
+  test("a comment with a blocked word is refused", async () => {
+    const response = await rest("comments", { token: bob.token, body: { checkin_id: checkin, user_id: bob.id, body: "scheisse" } });
+    assert.equal(response.status, 400, JSON.stringify(response.body));
+    assert.equal(response.body.code, "23514");
+    const fine = await rest("comments", { token: bob.token, body: { checkin_id: checkin, user_id: bob.id, body: "Great shot!" } });
+    assert.equal(fine.status, 201, JSON.stringify(fine.body));
+  });
+});
