@@ -1,14 +1,15 @@
 name: iOS
 
 # One macOS job, because macOS minutes count ten times and every job is rounded up to a full minute.
-# It runs for pull requests only: what lands on main was already checked there. Run it by hand from the
-# Actions tab if you need it on main.
+# The workflow starts for every pull request, so its check can be required. A cheap Linux job works out what
+# changed, and the macOS job is skipped when nothing here did (a skipped job counts as passing) and for draft
+# pull requests, so work in progress costs nothing: mark the pull request ready for review to run the checks.
+# The package tests run when something under ios/Packages or contracts changed (the shared test vectors live
+# there), and the app build and strings check when anything under ios/ changed. It runs for pull requests only:
+# what lands on main was already checked there. Run it by hand from the Actions tab if you need it on main.
 on:
   pull_request:
-    paths:
-      - 'ios/**'
-      - 'contracts/**'
-      - '.github/workflows/ios.yml'
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 permissions:
@@ -20,13 +21,43 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.diff.outputs.packages }}
+      app: ${{ steps.diff.outputs.app }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: diff
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "packages=true" >> "$GITHUB_OUTPUT"
+            echo "app=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          changed=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
+          echo "$changed"
+          if echo "$changed" | grep -qE '^(ios/Packages/|contracts/|\.github/workflows/ios\.yml)'; then
+            echo "packages=true" >> "$GITHUB_OUTPUT"
+          fi
+          if echo "$changed" | grep -qE '^(ios/|\.github/workflows/ios\.yml)'; then
+            echo "app=true" >> "$GITHUB_OUTPUT"
+          fi
+
   ios:
+    needs: changes
+    if: >
+      (needs.changes.outputs.packages == 'true' || needs.changes.outputs.app == 'true') &&
+      (github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - run: xcodebuild -version
 
       - name: Test packages
+        if: needs.changes.outputs.packages == 'true'
         run: |
           failed=()
           for package in WingspotCore BCBP ReferenceData Persistence Account; do
@@ -40,6 +71,7 @@ jobs:
           fi
 
       - name: Build app
+        if: needs.changes.outputs.app == 'true'
         run: >
           xcodebuild build
           -project ios/Wingspot.xcodeproj
@@ -49,4 +81,5 @@ jobs:
           CODE_SIGNING_ALLOWED=NO
 
       - name: Check strings
+        if: needs.changes.outputs.app == 'true'
         run: ios/scripts/check-strings.sh build

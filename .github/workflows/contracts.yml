@@ -1,15 +1,12 @@
 name: Contracts
 
+# The workflow starts for every pull request, so its check can be required. The check is skipped when nothing
+# in contracts/ changed, and a skipped job counts as passing.
 on:
   push:
     branches: [main]
-    paths:
-      - 'contracts/**'
-      - '.github/workflows/contracts.yml'
   pull_request:
-    paths:
-      - 'contracts/**'
-      - '.github/workflows/contracts.yml'
+    types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: read
@@ -20,7 +17,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      contracts: ${{ steps.diff.outputs.contracts }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: diff
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            changed=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
+          else
+            changed=$(git diff --name-only HEAD^1 HEAD)
+          fi
+          echo "$changed"
+          if echo "$changed" | grep -qE '^(contracts/|\.github/workflows/contracts\.yml)'; then
+            echo "contracts=true" >> "$GITHUB_OUTPUT"
+          fi
+
   openapi:
+    needs: changes
+    if: needs.changes.outputs.contracts == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

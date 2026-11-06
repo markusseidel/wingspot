@@ -1,17 +1,12 @@
 name: Backend
 
+# The workflow starts for every pull request, so its checks can be required. The first job works out whether
+# anything here changed, and the others are skipped when nothing did. A skipped job counts as passing.
 on:
   push:
     branches: [main]
-    paths:
-      - 'backend/**'
-      - 'contracts/**'
-      - '.github/workflows/backend.yml'
   pull_request:
-    paths:
-      - 'backend/**'
-      - 'contracts/**'
-      - '.github/workflows/backend.yml'
+    types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: read
@@ -22,13 +17,37 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.diff.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: diff
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            changed=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
+          else
+            changed=$(git diff --name-only HEAD^1 HEAD)
+          fi
+          echo "$changed"
+          if echo "$changed" | grep -qE '^(backend/|contracts/|\.github/workflows/backend\.yml)'; then
+            echo "backend=true" >> "$GITHUB_OUTPUT"
+          fi
+
   refdata-pipeline:
+    needs: changes
+    if: needs.changes.outputs.backend == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: python3 backend/refdata-pipeline/tests/test_build_refdata.py
 
   supabase:
+    needs: changes
+    if: needs.changes.outputs.backend == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
