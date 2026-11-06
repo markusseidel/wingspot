@@ -3,16 +3,16 @@
   "strings" : {
     "%@ → %@ · %@%@" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ → %2$@ · %3$@%4$@"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ → %@ · %@%@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ → %2$@ · %3$@%4$@"
           }
         }
       }
@@ -105,6 +105,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ass"
+          }
+        }
+      }
+    },
+    "Add a photo" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto hinzufügen"
           }
         }
       }
@@ -486,6 +496,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Abmeldung fehlgeschlagen"
+          }
+        }
+      }
+    },
+    "Couldn't use this picture" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Bild konnte nicht verwendet werden"
           }
         }
       }
@@ -873,6 +893,16 @@
         }
       }
     },
+    "Location and other details are removed from the photo before it is saved. It goes up with your check-in when you are signed in." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standort und andere Angaben werden aus dem Foto entfernt, bevor es gespeichert wird. Es wird mit deinem Check-in hochgeladen, wenn du angemeldet bist."
+          }
+        }
+      }
+    },
     "Log every aircraft" : {
       "localizations" : {
         "de" : {
@@ -1063,6 +1093,16 @@
         }
       }
     },
+    "Photo" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto"
+          }
+        }
+      }
+    },
     "Please enter a valid email address." : {
       "localizations" : {
         "de" : {
@@ -1089,6 +1129,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Premium Economy"
+          }
+        }
+      }
+    },
+    "Preparing…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bereite vor …"
           }
         }
       }
@@ -1149,6 +1199,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Registrierung (DAIMA)"
+          }
+        }
+      }
+    },
+    "Remove photo" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto entfernen"
           }
         }
       }
@@ -1599,6 +1659,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hier erscheinen deine Check-ins."
+          }
+        }
+      }
+    },
+    "Your photo" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Foto"
           }
         }
       }

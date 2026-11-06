@@ -55,6 +55,11 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
     - The Flown screen can read a boarding pass with the camera or from a picture. It fills in the route, date, flight number and seat. The cabin stays as it is, because the booking class letter means different things at different airlines.
     - Reading happens on the device. The barcode text goes only to the parser, which skips the passenger name and booking code, so neither is stored or uploaded. Nothing from the pass is sent except what the user saves in the form.
     - A pass with several flights asks which one. Airports are matched by IATA code in the downloaded data.
+15. **Photos (milestone 5):**
+    - One photo can be added to a Spotted check-in. It is chosen from the photo library, because spotters shoot with real cameras. Flown and Airport check-ins take photos later.
+    - The phone shrinks it to 2048 pixels on the long side, turns it upright, and writes a new JPEG with **no metadata**: the location, camera and date of the original are not carried over, and the original is not kept. It is saved on the device with the check-in.
+    - The photo goes up only after its check-in is stored, to a private bucket (`photos/{user}/{check-in}/{photo}.jpg`) through `PUT /v1/checkins/{id}/photos/{id}`. The server refuses a JPEG with EXIF, XMP or other metadata segments, files over 3 MB, and a fifth photo on a check-in. Only the owner can read it until sharing exists (milestone 7).
+    - A failed request leaves the photo waiting. Only the server's answer can reject it, as with check-ins.
 
 ## Before each milestone
 

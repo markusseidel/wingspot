@@ -238,6 +238,95 @@ describe("devices", () => {
   });
 });
 
+/** A tiny JPEG shell: just enough segments for the server to read its size. */
+const jpeg = (...segments) => Buffer.from([0xff, 0xd8, ...segments.flat(), 0xff, 0xd9]);
+const JFIF = [0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, 0x01, 0x01, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00];
+const SOF = [0xff, 0xc0, 0x00, 0x0b, 0x08, 0x02, 0x58, 0x03, 0x20, 0x01, 0x01, 0x11, 0x00]; // 800 x 600
+const EXIF = [0xff, 0xe1, 0x00, 0x08, 0x45, 0x78, 0x69, 0x66, 0x00, 0x00];
+const ICC = [0xff, 0xe2, 0x00, 0x04, 0x49, 0x43];
+
+describe("PUT /v1/checkins/{id}/photos/{id}", () => {
+  let alice;
+  let bob;
+  let checkin;
+  const checkinsToClean = [];
+  const put = async (user, checkinId, photoId, body, type = "image/jpeg") => {
+    const response = await fetch(`${API}/functions/v1/checkins/${checkinId}/photos/${photoId}`, {
+      method: "PUT",
+      headers: { ...(user ? { Authorization: `Bearer ${user.token}` } : {}), "Content-Type": type },
+      body,
+    });
+    const text = await response.text();
+    return { status: response.status, body: text ? JSON.parse(text) : null };
+  };
+
+  before(async () => {
+    alice = await signUp();
+    bob = await signUp();
+    checkin = randomUUID();
+    checkinsToClean.push(checkin);
+    const upload = await call("/v1/checkins", {
+      method: "POST", token: alice.token,
+      body: { checkins: [{ id: checkin, kind: "spotted", occurred_at: new Date(Date.now() - 3600_000).toISOString(), type_icao: null, registration: "D-PHTO" }] },
+    });
+    assert.equal(upload.body.results[0].status, "stored");
+  });
+  after(async () => {
+    for (const id of checkinsToClean) await service(`checkins?id=eq.${id}`, { method: "DELETE" });
+    await service("aircraft?registration=eq.D-PHTO", { method: "DELETE" });
+  });
+
+  test("stores a photo, reads its size, and a repeat is stored again", async () => {
+    const photo = randomUUID();
+    const first = await put(alice, checkin, photo, jpeg(JFIF, ICC, SOF));
+    assert.equal(first.status, 200, JSON.stringify(first.body));
+    assertMatches("PhotoUploadResult", first.body);
+    assert.deepEqual(first.body, { id: photo, status: "stored" });
+    const [row] = await service(`checkin_photos?id=eq.${photo}&select=*`);
+    assert.equal(row.checkin_id, checkin);
+    assert.equal(row.width, 800);
+    assert.equal(row.height, 600);
+    assert.equal(row.storage_path, `${alice.id}/${checkin}/${photo}.jpg`);
+    assert.equal((await put(alice, checkin, photo, jpeg(JFIF, SOF))).status, 200);
+    assert.equal((await service(`checkin_photos?checkin_id=eq.${checkin}&select=id`)).length, 1);
+  });
+
+  test("refuses photos that still carry metadata, are not JPEGs, or are too large", async () => {
+    const exif = await put(alice, checkin, randomUUID(), jpeg(JFIF, EXIF, SOF));
+    assert.equal(exif.status, 400);
+    assert.equal(exif.body.code, "invalid_request");
+    const png = await put(alice, checkin, randomUUID(), Buffer.from("not a jpeg"));
+    assert.equal(png.status, 415);
+    const wrongType = await put(alice, checkin, randomUUID(), jpeg(JFIF, SOF), "image/png");
+    assert.equal(wrongType.status, 415);
+    const big = await put(alice, checkin, randomUUID(), Buffer.concat([jpeg(JFIF, SOF), Buffer.alloc(3 * 1024 * 1024)]));
+    assert.equal(big.status, 413);
+    assert.equal(big.body.code, "photo_too_large");
+  });
+
+  test("needs a signed-in owner and an uploaded check-in", async () => {
+    assert.equal((await put(null, checkin, randomUUID(), jpeg(JFIF, SOF))).status, 401);
+    const notOurs = await put(bob, checkin, randomUUID(), jpeg(JFIF, SOF));
+    assert.equal(notOurs.status, 404);
+    assert.equal(notOurs.body.code, "unknown_checkin");
+    assert.equal((await put(alice, randomUUID(), randomUUID(), jpeg(JFIF, SOF))).status, 404);
+    assert.equal((await put(alice, "nope", "nope", jpeg(JFIF, SOF))).status, 400);
+  });
+
+  test("allows four photos per check-in", async () => {
+    const other = randomUUID();
+    checkinsToClean.push(other);
+    await call("/v1/checkins", {
+      method: "POST", token: alice.token,
+      body: { checkins: [{ id: other, kind: "spotted", occurred_at: new Date(Date.now() - 3600_000).toISOString(), registration: "D-PHTO" }] },
+    });
+    for (let i = 0; i < 4; i++) assert.equal((await put(alice, other, randomUUID(), jpeg(JFIF, SOF))).status, 200);
+    const fifth = await put(alice, other, randomUUID(), jpeg(JFIF, SOF));
+    assert.equal(fifth.status, 409);
+    assert.equal(fifth.body.code, "too_many_photos");
+  });
+});
+
 describe("POST /v1/checkins", () => {
   const TYPE = "ZT99";
   const AIRPORT = 900001;

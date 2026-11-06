@@ -28,15 +28,17 @@ public struct SpottedDraft: Sendable {
     public var type: AircraftTypeChoice?
     public var place: Place?
     public var position: GeoCoordinate?
+    public var photo: PreparedPhoto?
 
     public init(
         registration: Registration? = nil, type: AircraftTypeChoice? = nil, place: Place? = nil,
-        position: GeoCoordinate? = nil
+        position: GeoCoordinate? = nil, photo: PreparedPhoto? = nil
     ) {
         self.registration = registration
         self.type = type
         self.place = place
         self.position = position
+        self.photo = photo
     }
 
     public var hasAircraft: Bool { registration != nil || type != nil }
@@ -183,6 +185,13 @@ public struct CheckInStore {
             latitude: draft.position?.latitude, longitude: draft.position?.longitude,
             occurredAt: date, syncState: .pending, ownerID: ownerID
         ))
+        if let photo = draft.photo {
+            // Saved together with the check-in, so a photo never exists without it.
+            context.insert(LocalPhoto(
+                id: UUID.v7(at: date), checkInID: id, jpeg: photo.jpeg, width: photo.width, height: photo.height,
+                createdAt: date
+            ))
+        }
         try context.save()
 
         guard let last = earlier.first else {
