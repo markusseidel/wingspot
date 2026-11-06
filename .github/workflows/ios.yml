@@ -1,37 +1,44 @@
 name: iOS
 
+# One macOS job, because macOS minutes count ten times and every job is rounded up to a full minute.
+# It runs for pull requests only: what lands on main was already checked there. Run it by hand from the
+# Actions tab if you need it on main.
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'ios/**'
-      - 'contracts/**'
-      - '.github/workflows/ios.yml'
   pull_request:
     paths:
       - 'ios/**'
       - 'contracts/**'
       - '.github/workflows/ios.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
 
-jobs:
-  packages:
-    runs-on: macos-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        package: [WingspotCore, BCBP, ReferenceData, Persistence, Account]
-    steps:
-      - uses: actions/checkout@v4
-      - run: swift test --package-path ios/Packages/${{ matrix.package }}
+# A new push to the same pull request replaces the run that is still going.
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
 
-  app:
+jobs:
+  ios:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - run: xcodebuild -version
+
+      - name: Test packages
+        run: |
+          failed=()
+          for package in WingspotCore BCBP ReferenceData Persistence Account; do
+            echo "::group::$package"
+            swift test --package-path "ios/Packages/$package" || failed+=("$package")
+            echo "::endgroup::"
+          done
+          if [ ${#failed[@]} -gt 0 ]; then
+            echo "::error::Package tests failed: ${failed[*]}"
+            exit 1
+          fi
+
       - name: Build app
         run: >
           xcodebuild build
@@ -40,5 +47,6 @@ jobs:
           -destination 'generic/platform=iOS Simulator'
           -derivedDataPath build
           CODE_SIGNING_ALLOWED=NO
+
       - name: Check strings
         run: ios/scripts/check-strings.sh build
