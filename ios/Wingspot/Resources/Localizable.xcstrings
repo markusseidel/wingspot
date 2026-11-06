@@ -1818,6 +1818,46 @@
           }
         }
       }
+    },
+    "Airports map" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flughafenkarte"
+          }
+        }
+      }
+    },
+    "No airports yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine Flughäfen"
+          }
+        }
+      }
+    },
+    "The map needs the airport data. Open the app once while online." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Karte braucht die Flughafendaten. Öffne die App einmal mit Internet."
+          }
+        }
+      }
+    },
+    "Airports you spot at or visit appear here." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flughäfen, an denen du spottest oder die du besuchst, erscheinen hier."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

@@ -63,5 +63,13 @@ struct CollectionsView: View {
         }
         .navigationTitle("Collections")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            NavigationLink {
+                AirportsMapView()
+            } label: {
+                Image(systemName: "map")
+            }
+            .accessibilityLabel("Airports map")
+        }
     }
 }
