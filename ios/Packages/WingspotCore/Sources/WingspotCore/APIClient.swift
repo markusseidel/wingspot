@@ -51,12 +51,14 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
     public let airportID: Int?
     public let latitude: Double?
     public let longitude: Double?
+    /// Why the user was at the airport. Only for airport check-ins.
+    public let context: String?
     /// Sent explicitly, so what the app means doesn't depend on the server's default.
     public let visibility: String
 
     public init(
         id: UUID, kind: String, occurredAt: Date, registration: String?, typeICAO: String?, airportID: Int?,
-        latitude: Double?, longitude: Double?, visibility: String = "private"
+        latitude: Double?, longitude: Double?, context: String? = nil, visibility: String = "private"
     ) {
         self.id = id
         self.kind = kind
@@ -66,6 +68,7 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
         self.airportID = airportID
         self.latitude = latitude
         self.longitude = longitude
+        self.context = context
         self.visibility = visibility
     }
 

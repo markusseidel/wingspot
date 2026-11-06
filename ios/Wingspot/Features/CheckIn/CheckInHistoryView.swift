@@ -65,10 +65,15 @@ private struct CheckInRow: View {
 
     /// The registration if there is one, otherwise the type.
     private var title: String {
-        checkIn.registration ?? checkIn.typeICAO ?? "?"
+        if checkIn.kind == "airport" { return checkIn.airportCode ?? "?" }
+        return checkIn.registration ?? checkIn.typeICAO ?? "?"
     }
 
     private var detail: String? {
+        if checkIn.kind == "airport" {
+            return VisitContext(rawValue: checkIn.visitContext ?? "").map { String(localized: $0.title) }
+                ?? String(localized: "Airport")
+        }
         let type = checkIn.registration == nil ? checkIn.typeName : (checkIn.typeName ?? checkIn.typeICAO)
         let parts = [type, checkIn.airportCode].compactMap { $0 }
         return parts.isEmpty ? nil : parts.joined(separator: " · ")

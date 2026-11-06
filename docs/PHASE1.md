@@ -42,6 +42,11 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
     - A broken badge rule never fails an upload. The check-ins are stored and the answer has no badge data.
     - The app celebrates the difference between what the server says is unlocked and what it has already shown. The upload answer is only a fast path, because it can be lost.
     - "Local time" is estimated from the airport's longitude, because the airport data has no time zones.
+12. **Airport check-ins (milestone 5):**
+    - An airport check-in needs an airport and carries a reason (spotting, departing, arriving, transit, working, museum or airshow). Aircraft fields are ignored.
+    - The server rejects one without an airport as `missing_airport`, and an unknown reason as `invalid_context`.
+    - Every check-in counts for badges and XP, so an airport visit counts towards the airport badges, streaks and the 10 XP per check-in.
+    - "First time at this airport" looks at earlier check-ins of any kind at that airport.
 
 ## Before each milestone
 

@@ -36,6 +36,7 @@
 		CF3807277F1FDA241609254C /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 5B2EB62437C5BE2130BABF23 /* Persistence */; };
 		D866E9760B084CDB160CA4D5 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */; };
 		E2E45560E0A3701D1C226A90 /* CelebrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A9D215092A1385FA8E52D3A /* CelebrationView.swift */; };
+		E743B21C623831BB31024A48 /* AirportCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E539BCC329B1D95E5DE61344 /* AirportCheckInView.swift */; };
 		F9804A44218F27F9FAC0B571 /* SpottedCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CBBBAF8DD8DAC4FD7390E9 /* SpottedCheckInView.swift */; };
 /* End PBXBuildFile section */
 
@@ -71,6 +72,7 @@
 		C87BF659DFCBC4828CF78129 /* PlaceholderScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderScreen.swift; sourceTree = "<group>"; };
 		C9AA754CC23E4288DF9E2262 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInSheet.swift; sourceTree = "<group>"; };
+		E539BCC329B1D95E5DE61344 /* AirportCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirportCheckInView.swift; sourceTree = "<group>"; };
 		E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		EEADFFA0580043E3265322F0 /* BadgesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgesScreen.swift; sourceTree = "<group>"; };
 		F4D2C07FCB6185F02199297F /* Persistence */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Persistence; path = Packages/Persistence; sourceTree = SOURCE_ROOT; };
@@ -106,6 +108,7 @@
 		1EC26DAEA056854F28F4B7EE /* CheckIn */ = {
 			isa = PBXGroup;
 			children = (
+				E539BCC329B1D95E5DE61344 /* AirportCheckInView.swift */,
 				4459DE5C40C01B9A974864C6 /* CheckInHistoryView.swift */,
 				48B545FD209FC2942BD45E71 /* CheckInResultView.swift */,
 				DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */,
@@ -311,6 +314,7 @@
 				C11130AF4BC7A3C72A86C5A3 /* APICheckInUploader.swift in Sources */,
 				6DAA715E6FB8E824FA168D2C /* APIProgressSource.swift in Sources */,
 				1427422ED2866AC007958D1A /* AccountMessages.swift in Sources */,
+				E743B21C623831BB31024A48 /* AirportCheckInView.swift in Sources */,
 				9A3659845BE545C339AE2055 /* AppleSignInButton.swift in Sources */,
 				8A1E836A067C7D670EE85441 /* BadgeStyle.swift in Sources */,
 				A28B1AFC7227F94265B0AF01 /* BadgesScreen.swift in Sources */,

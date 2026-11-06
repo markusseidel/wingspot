@@ -61,6 +61,44 @@ public struct SpottedResult: Equatable, Sendable {
     }
 }
 
+/// Why someone is at an airport (concept §4.3). The raw values are what the server stores.
+public enum VisitContext: String, CaseIterable, Sendable {
+    case spotting, departing, arriving, transit, working, museum
+}
+
+/// What the user entered for an airport visit.
+public struct AirportDraft: Sendable {
+    public let airportID: Int
+    public let code: String
+    public var context: VisitContext
+    public var position: GeoCoordinate?
+
+    public init(airportID: Int, code: String, context: VisitContext = .spotting, position: GeoCoordinate? = nil) {
+        self.airportID = airportID
+        self.code = code
+        self.context = context
+        self.position = position
+    }
+}
+
+public struct AirportResult: Equatable, Sendable {
+    public enum History: Equatable, Sendable {
+        case firstTime
+        /// `count` includes this check-in. Earlier check-ins of any kind at this airport count.
+        case visitedBefore(count: Int, lastVisit: Date)
+    }
+
+    public let id: UUID
+    public let code: String
+    public let history: History
+
+    public init(id: UUID, code: String, history: History) {
+        self.id = id
+        self.code = code
+        self.history = history
+    }
+}
+
 public enum CheckInError: Error, Equatable {
     case missingAircraft
 }
@@ -104,6 +142,26 @@ public struct CheckInStore {
         return SpottedResult(id: id, subject: subject, history: .seenBefore(
             count: earlier.count + 1, lastSeen: last.occurredAt, lastPlace: last.airportCode
         ))
+    }
+
+    /// Saves an airport visit locally and reports whether this airport has been seen before.
+    public func saveAirport(_ draft: AirportDraft, ownerID: UUID? = nil, at date: Date = Date()) throws -> AirportResult {
+        let airportID = draft.airportID
+        let earlier = try history(FetchDescriptor(predicate: #Predicate { $0.airportID == airportID }))
+
+        let id = UUID.v7(at: date)
+        context.insert(LocalCheckIn(
+            id: id, kind: "airport", registration: nil, typeICAO: nil, typeName: nil,
+            airportID: draft.airportID, airportCode: draft.code,
+            latitude: draft.position?.latitude, longitude: draft.position?.longitude,
+            occurredAt: date, syncState: .pending, ownerID: ownerID, visitContext: draft.context.rawValue
+        ))
+        try context.save()
+
+        guard let last = earlier.first else {
+            return AirportResult(id: id, code: draft.code, history: .firstTime)
+        }
+        return AirportResult(id: id, code: draft.code, history: .visitedBefore(count: earlier.count + 1, lastVisit: last.occurredAt))
     }
 
     private func history(_ descriptor: FetchDescriptor<LocalCheckIn>) throws -> [LocalCheckIn] {

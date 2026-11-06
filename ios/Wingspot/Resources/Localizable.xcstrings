@@ -163,6 +163,16 @@
         }
       }
     },
+    "Arriving": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ankunft"
+          }
+        }
+      }
+    },
     "Badges": {
       "localizations": {
         "de": {
@@ -293,6 +303,36 @@
         }
       }
     },
+    "Choose": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auswählen"
+          }
+        }
+      }
+    },
+    "Choose the airport you are at.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle den Flughafen, an dem du bist."
+          }
+        }
+      }
+    },
+    "Choosing an airport needs one download while online.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um einen Flughafen auszuwählen, ist einmal ein Download mit Internetverbindung nötig."
+          }
+        }
+      }
+    },
     "Collect aircraft types, airlines and airports as you go.": {
       "localizations": {
         "de": {
@@ -383,6 +423,16 @@
         }
       }
     },
+    "Departing": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abflug"
+          }
+        }
+      }
+    },
     "Done": {
       "localizations": {
         "de": {
@@ -414,7 +464,6 @@
       }
     },
     "Earn badges for the aircraft you spot and fly.": {
-      "extractionState": "stale",
       "localizations": {
         "de": {
           "stringUnit": {
@@ -500,6 +549,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Erster Offizier"
+          }
+        }
+      }
+    },
+    "First time at this airport!": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum ersten Mal an diesem Flughafen!"
           }
         }
       }
@@ -642,6 +701,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Meilensteine"
+          }
+        }
+      }
+    },
+    "Museum or airshow": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Museum oder Flugshow"
           }
         }
       }
@@ -812,6 +881,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Profil"
+          }
+        }
+      }
+    },
+    "Reason": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anlass"
           }
         }
       }
@@ -1006,6 +1085,16 @@
         }
       }
     },
+    "Spotting": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spotten"
+          }
+        }
+      }
+    },
     "Student Pilot": {
       "localizations": {
         "de": {
@@ -1052,6 +1141,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zu viele Versuche. Bitte warte kurz und versuche es noch einmal."
+          }
+        }
+      }
+    },
+    "Transit": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Umstieg"
           }
         }
       }
@@ -1116,6 +1215,16 @@
         }
       }
     },
+    "Visit number %lld": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Besuch Nummer %lld"
+          }
+        }
+      }
+    },
     "Waiting to upload": {
       "localizations": {
         "de": {
@@ -1142,6 +1251,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wir senden dir per E-Mail einen Link zum Anmelden. Du brauchst kein Passwort."
+          }
+        }
+      }
+    },
+    "Working": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arbeit"
           }
         }
       }
