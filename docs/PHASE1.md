@@ -47,7 +47,7 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
 
 | Before | Needed |
 |---|---|
-| Milestone 2 | Apple sign-in credentials, for the app ID `site.wingspot.ios` |
+| Milestone 2 | Sign in with Apple switched on in Supabase, with `site.wingspot.ios` as Client ID. The iPhone app needs no Services ID or key |
 | Milestone 9 | Custom email sending, so sign-up emails reach testers, in German and English |
 | Milestone 9 | Leaked password protection turned on in Supabase |
 | Milestone 9 | Privacy policy and Impressum on `wingspot.site`, in German and English |

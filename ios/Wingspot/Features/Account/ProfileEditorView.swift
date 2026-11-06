@@ -80,6 +80,10 @@ struct ProfileEditorView: View {
             }
         }
         .task(id: referenceData.database?.dataVersion) { await loadAirport() }
+        .task {
+            // Apple gives the name only at the first sign-in, so offer it once.
+            if isFirstSetup, displayName.isEmpty, let name = account.takeSuggestedName() { displayName = name }
+        }
     }
 
     private var airportLabel: String {

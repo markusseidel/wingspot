@@ -9,6 +9,7 @@ extension AccountError {
         case .usernameTaken: "This username is taken. Please try another one."
         case .invalidLink: "This sign-in link doesn't work anymore. Please request a new one on this device."
         case .tooManyRequests: "Too many attempts. Please wait a moment and try again."
+        case .appleUnavailable: "Sign in with Apple isn't available yet. Please use your email."
         case .offline: "You're offline. Please connect to the internet and try again."
         case .notConfigured: "Sign-in isn't available in this version of the app."
         case .unknown: "Something went wrong. Please try again."

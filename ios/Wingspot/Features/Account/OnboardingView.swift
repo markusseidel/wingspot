@@ -19,6 +19,7 @@ struct OnboardingView: View {
                 .indexViewStyle(.page(backgroundDisplayMode: .always))
 
                 VStack(spacing: 12) {
+                    AppleSignInButton()
                     NavigationLink {
                         EmailSignInView()
                     } label: {

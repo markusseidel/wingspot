@@ -8,6 +8,8 @@ public enum AccountError: Error, Equatable, Sendable {
     /// The sign-in link was used already, has expired, or was requested on another device.
     case invalidLink
     case tooManyRequests
+    /// Sign in with Apple isn't switched on at the backend yet.
+    case appleUnavailable
     case offline
     /// This build has no backend key, see ios/Config/Wingspot.xcconfig.
     case notConfigured
@@ -23,6 +25,8 @@ public protocol AccountBackend: Sendable {
     func sendSignInLink(email: String, language: String?) async throws
     /// Finishes sign-in from the link in the email and returns the user's ID.
     func completeSignIn(from url: URL) async throws -> UUID
+    /// Signs in with the identity token from Sign in with Apple. `nonce` is the unhashed value whose SHA-256 went into the request.
+    func signInWithApple(idToken: String, nonce: String) async throws -> UUID
     func loadProfile(id: UUID) async throws -> Profile
     func saveProfile(_ profile: Profile) async throws
     func signOut() async throws
@@ -42,6 +46,8 @@ public final class AccountStore {
     public private(set) var state = State.loading
     /// Why the last sign-in link didn't work, for the app to show.
     public var linkError: AccountError?
+    /// The name Apple gave at the first sign-in, to prefill the profile. Apple sends it only once, and never again.
+    public private(set) var suggestedName: String?
     /// The signed-in user, known from the stored session even while offline. `nil` when signed out.
     public private(set) var userID: UUID?
 
@@ -104,6 +110,24 @@ public final class AccountStore {
         await backend.accessToken()
     }
 
+    /// Finishes Sign in with Apple. Never log the token.
+    /// - Parameter fullName: Apple's name for the user, which it only gives the first time.
+    public func signInWithApple(idToken: String, nonce: String, fullName: String?) async throws {
+        let id = try await backend.signInWithApple(idToken: idToken, nonce: nonce)
+        let name = fullName?.trimmingCharacters(in: .whitespacesAndNewlines)
+        suggestedName = (name?.isEmpty ?? true) ? nil : name
+        linkError = nil
+        userID = id
+        state = .signedIn(nil)
+        await loadProfile(id: id)
+    }
+
+    /// For the profile form to use once, then forget.
+    public func takeSuggestedName() -> String? {
+        defer { suggestedName = nil }
+        return suggestedName
+    }
+
     public func save(_ profile: Profile) async throws {
         guard Username.isValid(profile.username) else { throw AccountError.invalidUsername }
         try await backend.saveProfile(profile)
@@ -139,6 +163,7 @@ public struct UnconfiguredAccountBackend: AccountBackend {
     public func accessToken() async -> String? { nil }
     public func sendSignInLink(email: String, language: String?) async throws { throw AccountError.notConfigured }
     public func completeSignIn(from url: URL) async throws -> UUID { throw AccountError.notConfigured }
+    public func signInWithApple(idToken: String, nonce: String) async throws -> UUID { throw AccountError.notConfigured }
     public func loadProfile(id: UUID) async throws -> Profile { throw AccountError.notConfigured }
     public func saveProfile(_ profile: Profile) async throws { throw AccountError.notConfigured }
     public func signOut() async throws { throw AccountError.notConfigured }
