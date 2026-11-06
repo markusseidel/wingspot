@@ -36,18 +36,31 @@ struct ProfileScreen: View {
         }
     }
 
+    /// Laid out like the first screen: the text in the middle, the buttons at the bottom, as wide as the screen allows.
     private var signedOut: some View {
-        ContentUnavailableView {
-            Label("Your profile", systemImage: "person.crop.circle")
-        } description: {
-            Text("Sign in to keep your check-ins safe and follow other spotters. Your check-ins stay on this iPhone until then.")
-        } actions: {
-            AppleSignInButton()
-                .frame(maxWidth: 280)
-            Button("Sign in with email") { isSigningIn = true }
+        VStack(spacing: 16) {
+            Spacer()
+            ContentUnavailableView {
+                Label("Your profile", systemImage: "person.crop.circle")
+            } description: {
+                Text("Sign in to keep your check-ins safe and follow other spotters. Your check-ins stay on this iPhone until then.")
+            }
+            Spacer()
+            VStack(spacing: 12) {
+                AppleSignInButton()
+                Button { isSigningIn = true } label: {
+                    Text("Sign in with email").frame(maxWidth: .infinity)
+                }
                 .buttonStyle(.borderedProminent)
-            Button("Check-in history") { isShowingHistory = true }
+                Button { isShowingHistory = true } label: {
+                    Text("Check-in history").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+            }
+            .controlSize(.large)
+            .padding(.horizontal)
         }
+        .padding(.bottom)
     }
 
     private var profileMissing: some View {
