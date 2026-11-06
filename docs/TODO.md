@@ -1,6 +1,6 @@
 # Wingspot to-do list
 
-Last updated: 2026-11-05. Tick items off as you finish them.
+Last updated: 2026-11-06. Tick items off as you finish them.
 
 ## Do next
 
@@ -40,10 +40,10 @@ For sign-in to work in this build, also do the SMTP and redirect URL tasks above
 - [x] Commit the publishable key (done), so every build can sign in
 - [x] Create the app in App Store Connect, with the bundle ID `site.wingspot.ios`. The ID can't be changed afterwards. Check that the name "Wingspot" is free; the primary language is English
 - [x] Pick "Any iOS Device (arm64)", then archive in Xcode (Product > Archive) and upload with Distribute App. Build 1 went up as "TestFlight Internal Only", which can never go to external testers or the App Store. For external testing, upload with "TestFlight & App Store"
-- [ ] Fill in App Privacy in App Store Connect (app > General > App Privacy), before external testers or the App Store, and publish it. For the current build, declare only email address and user ID (and the name if you count the username), for app functionality, linked to the user, not used for tracking. Location stays on the phone until sync exists
-- [ ] When sync (Milestone 3) ships, update App Privacy: check-ins with their location, and any other user content, are then sent to the server
+- [x] Fill in App Privacy in App Store Connect (app > General > App Privacy), before external testers or the App Store, and publish it. For the current build, declare only email address and user ID (and the name if you count the username), for app functionality, linked to the user, not used for tracking. Location stays on the phone until sync exists
+- [x] When sync (Milestone 3) ships, update App Privacy: check-ins with their location, and any other user content, are then sent to the server
 - [x] Create an internal testing group in App Store Connect, then add yourself and the build
-- [ ] Install the TestFlight app on your iPhone and install Wingspot
+- [x] Install the TestFlight app on your iPhone and install Wingspot
 
 ### External TestFlight testers
 
@@ -58,15 +58,15 @@ For sign-in to work in this build, also do the SMTP and redirect URL tasks above
 In this order:
 
 - [x] Deploy sync to hosted, so the endpoint exists before testers use it (done 2026-11-05)
-- [ ] Update App Privacy in App Store Connect: check-ins with their location now reach the server
-- [ ] Archive build 3 (the version bump is in the repo) and upload it with Distribute App > App Store Connect
+- [x] Update App Privacy in App Store Connect: check-ins with their location now reach the server
+- [x] Archive build 3 (the version bump is in the repo) and upload it with Distribute App > App Store Connect
 - [ ] Test on your iPhone: make a check-in in airplane mode, switch the network back on, and check that it arrives once (Supabase table `checkins`)
 
 ### Build 5: badges and levels
 
 - [x] Deploy the badge migration and the `me` function to hosted (done 2026-11-05)
-- [ ] Archive build 5 and upload it with Distribute App > App Store Connect, then add it to your groups
-- [ ] Test on your iPhone: make a check-in, wait for the badge celebration ("Abheben"), then look at Badges and Profile (level, rank, XP)
+- [x] Archive build 5 and upload it with Distribute App > App Store Connect, then add it to your groups
+- [x] Test on your iPhone: make a check-in, wait for the badge celebration ("Abheben"), then look at Badges and Profile (level, rank, XP)
 - [ ] Update the test text for your testers: badges, XP and levels are new
 
 ### Before real users sign up
@@ -160,7 +160,7 @@ In this order:
 ### Phase 1: iOS MVP ([PHASE1.md](PHASE1.md))
 
 - [x] Milestone 1: offline Spotted check-in
-- [ ] Milestone 2: sign-in and profile
+- [x] Milestone 2: sign-in and profile
 - [x] Milestone 3: sync
 - [x] Milestone 4: badges and XP
 - [ ] Milestone 5: Airport and Flown check-ins, boarding pass scan, one photo
