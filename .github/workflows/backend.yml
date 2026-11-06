@@ -16,6 +16,11 @@ on:
 permissions:
   contents: read
 
+# A new push to the same pull request replaces the run that is still going.
+concurrency:
+  group: backend-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   refdata-pipeline:
     runs-on: ubuntu-latest
