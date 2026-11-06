@@ -54,6 +54,14 @@ public struct SupabaseAccountBackend: AccountBackend {
         }
     }
 
+    public func signInWithApple(idToken: String, nonce: String) async throws -> UUID {
+        try await mappingErrors {
+            try await client.auth.signInWithIdToken(
+                credentials: OpenIDConnectCredentials(provider: .apple, idToken: idToken, nonce: nonce)
+            ).user.id
+        }
+    }
+
     public func loadProfile(id: UUID) async throws -> Profile {
         try await mappingErrors {
             let row: ProfileRow = try await client.from("profiles")
@@ -102,6 +110,7 @@ public struct SupabaseAccountBackend: AccountBackend {
         } catch let error as AuthError {
             switch error.errorCode {
             case .overEmailSendRateLimit, .overRequestRateLimit: throw AccountError.tooManyRequests
+            case .providerDisabled: throw AccountError.appleUnavailable
             case .validationFailed: throw AccountError.invalidEmail
             default:
                 logger.error("Account request failed: \(error.errorCode.rawValue, privacy: .public)")

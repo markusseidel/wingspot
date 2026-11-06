@@ -36,6 +36,19 @@ private actor FakeBackend: AccountBackend {
         sentEmails.append((email, language))
     }
 
+    private(set) var appleTokens: [(token: String, nonce: String)] = []
+    var appleError: AccountError?
+
+    func failApple(_ error: AccountError?) { appleError = error }
+
+    func signInWithApple(idToken: String, nonce: String) throws -> UUID {
+        appleTokens.append((idToken, nonce))
+        if let appleError { throw appleError }
+        let id = profile?.id ?? UUID()
+        sessionUser = id
+        return id
+    }
+
     func completeSignIn(from url: URL) throws -> UUID {
         signInLinks.append(url)
         if let linkError { throw linkError }
@@ -128,6 +141,44 @@ struct AccountStoreTests {
         try await store.signOut()
         #expect(store.userID == nil)
         #expect(await store.accessToken() == nil)
+    }
+
+    @Test func signingInWithAppleStartsASessionAndKeepsTheNameOnce() async throws {
+        let backend = FakeBackend()
+        let store = AccountStore(backend: backend)
+        await store.start()
+
+        try await store.signInWithApple(idToken: "token", nonce: "raw-nonce", fullName: "  Ana Pilot \n")
+
+        let sent = await backend.appleTokens
+        #expect(sent.count == 1 && sent[0].token == "token" && sent[0].nonce == "raw-nonce")
+        #expect(store.userID != nil)
+        #expect(store.state != .signedOut)
+        #expect(store.takeSuggestedName() == "Ana Pilot")
+        #expect(store.takeSuggestedName() == nil, "the name is used once")
+    }
+
+    @Test func appleWithoutANameLeavesNoSuggestion() async throws {
+        let store = AccountStore(backend: FakeBackend())
+        try await store.signInWithApple(idToken: "t", nonce: "n", fullName: nil)
+        #expect(store.takeSuggestedName() == nil)
+        try await store.signInWithApple(idToken: "t", nonce: "n", fullName: "   ")
+        #expect(store.takeSuggestedName() == nil)
+    }
+
+    @Test func aFailedAppleSignInChangesNothing() async {
+        let backend = FakeBackend()
+        await backend.failApple(.appleUnavailable)
+        let store = AccountStore(backend: backend)
+        await store.start()
+
+        await #expect(throws: AccountError.appleUnavailable) {
+            try await store.signInWithApple(idToken: "t", nonce: "n", fullName: "Ana")
+        }
+
+        #expect(store.state == .signedOut)
+        #expect(store.userID == nil)
+        #expect(store.takeSuggestedName() == nil)
     }
 
     @Test func trimsTheEmailAndPassesTheLanguage() async throws {

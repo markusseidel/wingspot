@@ -6,7 +6,7 @@ Last updated: 2026-11-05. Tick items off as you finish them.
 
 - [x] Send the licensing email to ICAO (draft at the end of this file)
 - [x] Start Phase 1 (iOS MVP)
-- [ ] Finish Milestone 2: add Apple sign-in, once its credentials exist
+- [x] Finish Milestone 2: add Apple sign-in (code merged, switch it on in Supabase, see below)
 
 ## Your tasks
 
@@ -25,7 +25,8 @@ Only you can do these, because they need your accounts, money or judgement.
 - [x] Set up custom email sending (SMTP). Supabase's built-in email only reaches project team addresses and is heavily rate-limited. Use a service such as Resend, Postmark or Brevo, and enter its details in Supabase under Auth > SMTP
 - [x] Join the Apple Developer Program (before Milestone 2)
 - [x] Choose the final app ID: `site.wingspot.ios`
-- [ ] Create Apple sign-in credentials for `site.wingspot.ios`: a Services ID, a key and your Team ID
+- [ ] Switch on Sign in with Apple in Supabase: Authentication > Sign In / Providers > Apple. Enable it and enter `site.wingspot.ios` as the Client ID. The iPhone app needs no Services ID or key. Those are only for sign-in on the web and on Android (Phase 2b)
+- [ ] Test Sign in with Apple on your iPhone with the next TestFlight build, including signing out and in again. The name field in the profile setup should be prefilled with your Apple name
 - [x] Add `wingspot://auth-callback` to the redirect URLs in Supabase's Auth settings on hosted (before testing sign-in on hosted)
 - [ ] Publish a privacy policy and Impressum on `wingspot.site`, in German and English (before Milestone 9)
 - [ ] Create Google sign-in credentials (after the first TestFlight)

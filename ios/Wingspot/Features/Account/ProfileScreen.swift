@@ -42,6 +42,8 @@ struct ProfileScreen: View {
         } description: {
             Text("Sign in to keep your check-ins safe and follow other spotters. Your check-ins stay on this iPhone until then.")
         } actions: {
+            AppleSignInButton()
+                .frame(maxWidth: 280)
             Button("Sign in with email") { isSigningIn = true }
                 .buttonStyle(.borderedProminent)
             Button("Check-in history") { isShowingHistory = true }
