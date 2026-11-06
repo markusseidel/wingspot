@@ -75,3 +75,10 @@ func findsHyphenatedNamesHoweverTheyAreTyped(text: String) async throws {
     #expect(try await database.airport(id: frankfurt.id) == frankfurt)
     #expect(try await database.airport(id: -1) == nil)
 }
+
+@Test func findsAnAirportByItsIATACode() async throws {
+    let database = try database()
+    let frankfurt = try #require(try await database.airport(iata: "fra"))
+    #expect(frankfurt.iata == "FRA")
+    #expect(try await database.airport(iata: "ZZZ") == nil)
+}

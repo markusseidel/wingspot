@@ -1,4 +1,6 @@
 import Account
+import BCBP
+import PhotosUI
 import Persistence
 import ReferenceData
 import SwiftData
@@ -35,6 +37,16 @@ struct FlownCheckInView: View {
     @State private var seat = ""
     @State private var result: FlownResult?
     @State private var saveFailed = false
+    @State private var showCamera = false
+    @State private var photo: PhotosPickerItem?
+    @State private var isReadingImage = false
+    @State private var scanProblem: ScanProblem?
+    @State private var legChoices: [BoardingPass.Leg] = []
+
+    private enum ScanProblem: String, Identifiable {
+        case noBoardingPass, airportsUnknown, needsData
+        var id: String { rawValue }
+    }
 
     private var registration: Registration? { Registration(registrationInput) }
     private var hasRegistrationInput: Bool { !registrationInput.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -51,6 +63,27 @@ struct FlownCheckInView: View {
         }
         .navigationTitle("Flown")
         .navigationBarBackButtonHidden(result != nil)
+        .fullScreenCover(isPresented: $showCamera) {
+            BoardingPassCameraView { pass in handle(pass) }
+        }
+        .onChange(of: photo) { _, item in
+            guard let item else { return }
+            Task { await readImage(item) }
+        }
+        .confirmationDialog("Which flight?", isPresented: Binding(
+            get: { !legChoices.isEmpty }, set: { if !$0 { legChoices = [] } }
+        ), titleVisibility: .visible) {
+            ForEach(Array(legChoices.enumerated()), id: \.offset) { _, leg in
+                Button("\(leg.from) → \(leg.to) · \(leg.carrier)\(leg.flightNumber)") { apply(leg) }
+            }
+        }
+        .alert(scanProblemTitle, isPresented: Binding(
+            get: { scanProblem != nil }, set: { if !$0 { scanProblem = nil } }
+        )) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(scanProblemMessage)
+        }
         .alert("Couldn't save this check-in", isPresented: $saveFailed) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -60,6 +93,18 @@ struct FlownCheckInView: View {
 
     private var form: some View {
         Form {
+            Section {
+                if BoardingPassScanning.cameraIsAvailable {
+                    Button("Scan boarding pass", systemImage: "barcode.viewfinder") { showCamera = true }
+                }
+                PhotosPicker(selection: $photo, matching: .images) {
+                    Label(isReadingImage ? "Reading…" : "Read from a picture", systemImage: "photo")
+                }
+                .disabled(isReadingImage)
+            } footer: {
+                Text("Fills in the route, date, flight number and seat. Your name and booking code are never read or saved.")
+            }
+
             Section {
                 NavigationLink {
                     AirportSearchView(selection: $origin)
@@ -115,6 +160,66 @@ struct FlownCheckInView: View {
                     Text("Not a valid registration yet")
                 }
             }
+        }
+    }
+
+    private var scanProblemTitle: LocalizedStringKey {
+        switch scanProblem {
+        case .noBoardingPass: "No boarding pass found"
+        case .airportsUnknown: "Airports not found"
+        case .needsData: "Airport data is missing"
+        case nil: "OK"
+        }
+    }
+
+    private var scanProblemMessage: LocalizedStringKey {
+        switch scanProblem {
+        case .noBoardingPass: "Try a clearer picture, or enter the flight by hand."
+        case .airportsUnknown: "This boarding pass uses an airport that isn't in the app's data. Enter the flight by hand."
+        case .needsData: "Reading a boarding pass needs one download while online."
+        case nil: "OK"
+        }
+    }
+
+    private func readImage(_ item: PhotosPickerItem) async {
+        isReadingImage = true
+        defer { isReadingImage = false; photo = nil }
+        guard let data = try? await item.loadTransferable(type: Data.self),
+              let pass = await BoardingPassScanning.boardingPass(inImageData: data)
+        else {
+            scanProblem = .noBoardingPass
+            return
+        }
+        handle(pass)
+    }
+
+    private func handle(_ pass: BoardingPass) {
+        if pass.legs.count == 1, let leg = pass.legs.first {
+            apply(leg)
+        } else {
+            legChoices = pass.legs
+        }
+    }
+
+    /// Fills the form from one flight on the pass. The cabin stays as it is, because the booking class letter
+    /// means different things at different airlines.
+    private func apply(_ leg: BoardingPass.Leg) {
+        guard let database = referenceData.database else {
+            scanProblem = .needsData
+            return
+        }
+        Task {
+            guard let from = try? await database.airport(iata: leg.from),
+                  let to = try? await database.airport(iata: leg.to)
+            else {
+                scanProblem = .airportsUnknown
+                return
+            }
+            origin = from
+            destination = to
+            flightNumber = leg.carrier + leg.flightNumber
+            seat = leg.seat ?? ""
+            if let flightDate = leg.flightDate(near: Date()) { date = min(flightDate, Date()) }
         }
     }
 

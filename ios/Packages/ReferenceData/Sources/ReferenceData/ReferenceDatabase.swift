@@ -111,6 +111,18 @@ public struct ReferenceDatabase: Sendable {
         }
     }
 
+    /// The airport with this IATA code, such as `FRA`. Boarding passes carry IATA codes.
+    public func airport(iata: String) async throws -> Airport? {
+        let code = iata.trimmingCharacters(in: .whitespaces).uppercased()
+        return try await queue.read { db in
+            try Row.fetchOne(db, sql: """
+                SELECT * FROM airports WHERE iata = ?
+                ORDER BY CASE type WHEN 'large_airport' THEN 0 WHEN 'medium_airport' THEN 1 ELSE 2 END, default_search DESC
+                LIMIT 1
+                """, arguments: [code]).map(Self.airport)
+        }
+    }
+
     /// The airport someone at this position is most likely at: the nearest one with an IATA code or scheduled
     /// service within 15 km, otherwise any nearby airfield within 5 km. Heliports don't count.
     public func nearestAirport(to position: GeoCoordinate) async throws -> Airport? {
