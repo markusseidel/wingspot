@@ -1,9 +1,10 @@
 import Account
 import Persistence
 import ReferenceData
+import SwiftData
 import SwiftUI
 
-/// The Profile tab. Stats, collections and the map join it in Milestone 6.
+/// The Profile tab. Collections and the map join the stats in Milestone 6.
 struct ProfileScreen: View {
     @Environment(AccountStore.self) private var account
     @State private var isSigningIn = false
@@ -83,13 +84,23 @@ private struct ProfileDetailsView: View {
     @Environment(AccountStore.self) private var account
     @Environment(ReferenceDataStore.self) private var referenceData
     @Environment(BadgeStore.self) private var badges
+    @Query private var all: [LocalCheckIn]
     @State private var airport: Airport?
     @State private var signOutFailed = false
+
+    private var stats: CheckInStats { CheckInStats(all, userID: account.userID) }
 
     var body: some View {
         Form {
             if let progress = badges.progress {
                 Section { LevelHeader(progress: progress) }
+            }
+            Section {
+                LabeledContent("Check-ins") { Text(stats.checkIns, format: .number) }
+                LabeledContent("Aircraft seen") { Text(stats.aircraft, format: .number) }
+                LabeledContent("Aircraft types") { Text(stats.types, format: .number) }
+                LabeledContent("Airports") { Text(stats.airports, format: .number) }
+                LabeledContent("Flights") { Text(stats.flights, format: .number) }
             }
             Section {
                 LabeledContent("Username") { Text(verbatim: "@\(profile.username)") }
