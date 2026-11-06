@@ -22,10 +22,8 @@ struct SpottedCheckInView: View {
     @State private var position: GeoCoordinate?
     @State private var result: SpottedResult?
     @State private var saveFailed = false
-    @State private var photoItem: PhotosPickerItem?
     @State private var photo: PreparedPhoto?
     @State private var isPreparingPhoto = false
-    @State private var photoFailed = false
     @FocusState private var isFocused: Bool
 
     private var registration: Registration? { Registration(input) }
@@ -45,13 +43,6 @@ struct SpottedCheckInView: View {
         .task { position = await LocationProvider.currentPosition() }
         .task(id: NearestKey(position: position, dataVersion: referenceData.database?.dataVersion)) {
             await suggestAirport()
-        }
-        .onChange(of: photoItem) { _, item in
-            guard let item else { return }
-            Task { await choosePhoto(item) }
-        }
-        .alert("Couldn't use this picture", isPresented: $photoFailed) {
-            Button("OK", role: .cancel) {}
         }
         .alert("Couldn't save this check-in", isPresented: $saveFailed) {
             Button("OK", role: .cancel) {}
@@ -97,26 +88,7 @@ struct SpottedCheckInView: View {
                 }
             }
 
-            Section {
-                if let photo, let preview = UIImage(data: photo.jpeg) {
-                    Image(uiImage: preview)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxHeight: 180)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .accessibilityLabel("Your photo")
-                    Button("Remove photo", role: .destructive) { self.photo = nil }
-                } else {
-                    PhotosPicker(selection: $photoItem, matching: .images) {
-                        Label(isPreparingPhoto ? "Preparing…" : "Add a photo", systemImage: "photo")
-                    }
-                    .disabled(isPreparingPhoto)
-                }
-            } header: {
-                Text("Photo")
-            } footer: {
-                Text("Location and other details are removed from the photo before it is saved. It goes up with your check-in when you are signed in.")
-            }
+            PhotoSection(photo: $photo, isPreparing: $isPreparingPhoto)
 
             Section {
                 Button("Check in", action: save)
@@ -164,19 +136,6 @@ struct SpottedCheckInView: View {
         type = nil
         photo = nil
         result = nil
-    }
-
-    /// Loads the picked picture and removes its metadata, off the main thread. The original isn't kept.
-    private func choosePhoto(_ item: PhotosPickerItem) async {
-        isPreparingPhoto = true
-        defer { isPreparingPhoto = false; photoItem = nil }
-        guard let data = try? await item.loadTransferable(type: Data.self),
-              let prepared = try? await Task.detached(priority: .userInitiated, operation: { try PhotoPreparer.prepare(data) }).value
-        else {
-            photoFailed = true
-            return
-        }
-        photo = prepared
     }
 
     private func suggestAirport() async {

@@ -74,12 +74,17 @@ public struct AirportDraft: Sendable {
     public let code: String
     public var context: VisitContext
     public var position: GeoCoordinate?
+    public var photo: PreparedPhoto?
 
-    public init(airportID: Int, code: String, context: VisitContext = .spotting, position: GeoCoordinate? = nil) {
+    public init(
+        airportID: Int, code: String, context: VisitContext = .spotting, position: GeoCoordinate? = nil,
+        photo: PreparedPhoto? = nil
+    ) {
         self.airportID = airportID
         self.code = code
         self.context = context
         self.position = position
+        self.photo = photo
     }
 }
 
@@ -117,12 +122,14 @@ public struct FlownDraft: Sendable {
     public var type: SpottedDraft.AircraftTypeChoice?
     public var cabin: CabinClass?
     public var seat: String?
+    public var photo: PreparedPhoto?
 
     public init(
         origin: SpottedDraft.Place, destination: SpottedDraft.Place, distanceKm: Int? = nil, flightNumber: String? = nil,
         registration: Registration? = nil, type: SpottedDraft.AircraftTypeChoice? = nil, cabin: CabinClass? = nil,
-        seat: String? = nil
+        seat: String? = nil, photo: PreparedPhoto? = nil
     ) {
+        self.photo = photo
         self.origin = origin
         self.destination = destination
         self.distanceKm = distanceKm
@@ -185,13 +192,7 @@ public struct CheckInStore {
             latitude: draft.position?.latitude, longitude: draft.position?.longitude,
             occurredAt: date, syncState: .pending, ownerID: ownerID
         ))
-        if let photo = draft.photo {
-            // Saved together with the check-in, so a photo never exists without it.
-            context.insert(LocalPhoto(
-                id: UUID.v7(at: date), checkInID: id, jpeg: photo.jpeg, width: photo.width, height: photo.height,
-                createdAt: date
-            ))
-        }
+        insertPhoto(draft.photo, for: id, at: date)
         try context.save()
 
         guard let last = earlier.first else {
@@ -214,6 +215,7 @@ public struct CheckInStore {
             latitude: draft.position?.latitude, longitude: draft.position?.longitude,
             occurredAt: date, syncState: .pending, ownerID: ownerID, visitContext: draft.context.rawValue
         ))
+        insertPhoto(draft.photo, for: id, at: date)
         try context.save()
 
         guard let last = earlier.first else {
@@ -241,11 +243,21 @@ public struct CheckInStore {
             flightNumber: (flight?.isEmpty ?? true) ? nil : flight, cabin: draft.cabin?.rawValue,
             seat: draft.seat?.isEmpty ?? true ? nil : draft.seat?.uppercased()
         ))
+        insertPhoto(draft.photo, for: id, at: date)
         try context.save()
         return FlownResult(
             id: id, route: "\(draft.origin.code) → \(draft.destination.code)", distanceKm: draft.distanceKm,
             timesOnRoute: earlier.count + 1
         )
+    }
+
+    /// Saved together with the check-in, so a photo never exists without it.
+    private func insertPhoto(_ photo: PreparedPhoto?, for checkInID: UUID, at date: Date) {
+        guard let photo else { return }
+        context.insert(LocalPhoto(
+            id: UUID.v7(at: date), checkInID: checkInID, jpeg: photo.jpeg, width: photo.width, height: photo.height,
+            createdAt: date
+        ))
     }
 
     private func history(_ descriptor: FetchDescriptor<LocalCheckIn>) throws -> [LocalCheckIn] {

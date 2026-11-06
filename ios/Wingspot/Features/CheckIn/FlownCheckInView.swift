@@ -37,6 +37,8 @@ struct FlownCheckInView: View {
     @State private var seat = ""
     @State private var result: FlownResult?
     @State private var saveFailed = false
+    @State private var tripPhoto: PreparedPhoto?
+    @State private var isPreparingPhoto = false
     @State private var showCamera = false
     @State private var photo: PhotosPickerItem?
     @State private var isReadingImage = false
@@ -152,9 +154,11 @@ struct FlownCheckInView: View {
                     .autocorrectionDisabled()
             }
 
+            PhotoSection(photo: $tripPhoto, isPreparing: $isPreparingPhoto)
+
             Section {
                 Button("Check in", action: save)
-                    .disabled(!canSave)
+                    .disabled(!canSave || isPreparingPhoto)
             } footer: {
                 if hasRegistrationInput, registration == nil {
                     Text("Not a valid registration yet")
@@ -230,7 +234,8 @@ struct FlownCheckInView: View {
             origin: .init(airportID: origin.id, code: origin.code),
             destination: .init(airportID: destination.id, code: destination.code),
             distanceKm: Int(distance.rounded()), flightNumber: flightNumber, registration: registration,
-            type: type.map { .init(icaoCode: $0.icaoCode, name: $0.name) }, cabin: cabin, seat: seat
+            type: type.map { .init(icaoCode: $0.icaoCode, name: $0.name) }, cabin: cabin, seat: seat,
+            photo: tripPhoto
         )
         do {
             result = try CheckInStore(context: modelContext).saveFlown(draft, ownerID: account.userID, at: Self.moment(of: date))
@@ -257,6 +262,7 @@ struct FlownCheckInView: View {
         type = nil
         cabin = nil
         seat = ""
+        tripPhoto = nil
         result = nil
     }
 }

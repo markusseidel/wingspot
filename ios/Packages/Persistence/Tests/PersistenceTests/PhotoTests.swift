@@ -220,3 +220,38 @@ private actor FakePhotoServer: PhotoUploader {
         #expect(saved.photo.syncState == "pending")
     }
 }
+
+@MainActor @Suite struct PhotoOnOtherCheckInsTests {
+    private func context() throws -> ModelContext {
+        let container = try ModelContainer(
+            for: LocalCheckIn.self, LocalPhoto.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
+        return ModelContext(container)
+    }
+
+    @Test func anAirportCheckInKeepsItsPhoto() throws {
+        let context = try context()
+        let result = try CheckInStore(context: context).saveAirport(
+            AirportDraft(airportID: 3, code: "FRA", photo: photo)
+        )
+        let photos = try context.fetch(FetchDescriptor<LocalPhoto>())
+        #expect(photos.count == 1)
+        #expect(photos.first?.checkInID == result.id)
+        #expect(photos.first?.syncState == "pending")
+    }
+
+    @Test func aFlownCheckInKeepsItsPhoto() throws {
+        let context = try context()
+        let result = try CheckInStore(context: context).saveFlown(FlownDraft(
+            origin: .init(airportID: 3, code: "FRA"), destination: .init(airportID: 9, code: "JFK"), photo: photo
+        ))
+        let photos = try context.fetch(FetchDescriptor<LocalPhoto>())
+        #expect(photos.map(\.checkInID) == [result.id])
+    }
+
+    @Test func withoutAPhotoNothingIsStored() throws {
+        let context = try context()
+        _ = try CheckInStore(context: context).saveAirport(AirportDraft(airportID: 3, code: "FRA"))
+        #expect(try context.fetchCount(FetchDescriptor<LocalPhoto>()) == 0)
+    }
+}
