@@ -60,3 +60,31 @@ private func all(_ context: ModelContext) throws -> [LocalCheckIn] {
     #expect(CheckInStats(try all(context), userID: me).checkIns == 2)
     #expect(CheckInStats(try all(context), userID: nil).checkIns == 3)
 }
+
+@MainActor @Test func collectionsListWhatWasSeenMostOftenFirst() throws {
+    let context = try makeContext()
+    let store = CheckInStore(context: context)
+    _ = try store.saveSpotted(SpottedDraft(registration: Registration("DAIMB"), type: b744, place: dus), at: Date(timeIntervalSince1970: 1_000))
+    _ = try store.saveSpotted(SpottedDraft(registration: Registration("DAIMA"), type: a388, place: fra), at: Date(timeIntervalSince1970: 2_000))
+    _ = try store.saveSpotted(SpottedDraft(registration: Registration("DAIMA"), type: a388, place: fra), at: Date(timeIntervalSince1970: 3_000))
+    _ = try store.saveFlown(FlownDraft(origin: fra, destination: jfk), at: Date(timeIntervalSince1970: 4_000))
+
+    let lists = CheckInCollections(try all(context), userID: nil)
+    #expect(lists.aircraft.map(\.title) == ["D-AIMA", "D-AIMB"])
+    #expect(lists.aircraft.first?.count == 2)
+    #expect(lists.aircraft.first?.subtitle == "Airbus A380-800")
+    #expect(lists.aircraft.first?.lastSeen == Date(timeIntervalSince1970: 3_000))
+    #expect(lists.types.map(\.title) == ["A388", "B744"])
+    // The flight's FRA and JFK are not counted.
+    #expect(lists.airports.map(\.title) == ["FRA", "DUS"])
+    #expect(lists.airports.first?.count == 2)
+}
+
+@MainActor @Test func collectionsLeaveOutRefusedAndOtherAccountsCheckIns() throws {
+    let context = try makeContext()
+    let store = CheckInStore(context: context)
+    let me = UUID()
+    _ = try store.saveSpotted(SpottedDraft(registration: Registration("DAIMA")), ownerID: me)
+    _ = try store.saveSpotted(SpottedDraft(registration: Registration("DAIMB")), ownerID: UUID())
+    #expect(CheckInCollections(try all(context), userID: me).aircraft.map(\.title) == ["D-AIMA"])
+}

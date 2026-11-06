@@ -10,6 +10,7 @@ struct ProfileScreen: View {
     @Query private var all: [LocalCheckIn]
     @State private var isSigningIn = false
     @State private var isShowingHistory = false
+    @State private var isShowingCollections = false
 
     var body: some View {
         NavigationStack {
@@ -31,6 +32,9 @@ struct ProfileScreen: View {
             }
             .navigationDestination(isPresented: $isShowingHistory) {
                 CheckInHistoryView()
+            }
+            .navigationDestination(isPresented: $isShowingCollections) {
+                CollectionsView()
             }
         }
         .onChange(of: account.state) {
@@ -61,8 +65,13 @@ struct ProfileScreen: View {
                     Text("Sign in with email").frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                Button { isShowingHistory = true } label: {
-                    Text("Check-in history").frame(maxWidth: .infinity)
+                HStack(spacing: 12) {
+                    Button { isShowingCollections = true } label: {
+                        Text("Collections").frame(maxWidth: .infinity)
+                    }
+                    Button { isShowingHistory = true } label: {
+                        Text("Check-in history").frame(maxWidth: .infinity)
+                    }
                 }
                 .buttonStyle(.bordered)
             }
@@ -114,6 +123,7 @@ private struct ProfileDetailsView: View {
                 }
             }
             Section {
+                NavigationLink("Collections") { CollectionsView() }
                 NavigationLink("Check-in history") {
                     CheckInHistoryView()
                 }

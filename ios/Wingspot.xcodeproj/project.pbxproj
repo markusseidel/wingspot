@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		000638736A7D21777E5468DC /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 181278D0BAEE1C7A36510BCE /* Localizable.xcstrings */; };
 		0937BA0BF1EBF4732DA23138 /* ProfileEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E6559EBEC52E59BEEFE94D /* ProfileEditorView.swift */; };
+		0938348D4F0B21A4B41F7D9E /* CollectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA1AD56080AB71FB2708191 /* CollectionsView.swift */; };
 		10748D50CE99239391EE4B98 /* WingspotCore in Frameworks */ = {isa = PBXBuildFile; productRef = FA9C4D07C08E909754DE9B4F /* WingspotCore */; };
 		1427422ED2866AC007958D1A /* AccountMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4D48FF8AE3EC90CE9EB299 /* AccountMessages.swift */; };
 		14963B1634A245DD5F21D19F /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = FE4DDF37937E81A62EB60AB5 /* Account */; };
@@ -76,6 +77,7 @@
 		C2E6559EBEC52E59BEEFE94D /* ProfileEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditorView.swift; sourceTree = "<group>"; };
 		C87BF659DFCBC4828CF78129 /* PlaceholderScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderScreen.swift; sourceTree = "<group>"; };
 		C9AA754CC23E4288DF9E2262 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		CDA1AD56080AB71FB2708191 /* CollectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsView.swift; sourceTree = "<group>"; };
 		DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInSheet.swift; sourceTree = "<group>"; };
 		E539BCC329B1D95E5DE61344 /* AirportCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirportCheckInView.swift; sourceTree = "<group>"; };
 		E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 			children = (
 				BF4D48FF8AE3EC90CE9EB299 /* AccountMessages.swift */,
 				B0E18517ABA8FEAD7497EE58 /* AppleSignInButton.swift */,
+				CDA1AD56080AB71FB2708191 /* CollectionsView.swift */,
 				0BA65F3D7DF5E25F2228C346 /* EmailSignInView.swift */,
 				6CA53E0B6C7D19C0B128FFE6 /* OnboardingView.swift */,
 				C2E6559EBEC52E59BEEFE94D /* ProfileEditorView.swift */,
@@ -333,6 +336,7 @@
 				186231C28F6E7DD1B25988E6 /* CheckInHistoryView.swift in Sources */,
 				B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */,
 				666833BB5AA51A95401FAE68 /* CheckInSheet.swift in Sources */,
+				0938348D4F0B21A4B41F7D9E /* CollectionsView.swift in Sources */,
 				A165396CBFC567234392EE1F /* EmailSignInView.swift in Sources */,
 				5EFAD640812D73C675B33326 /* FlownCheckInView.swift in Sources */,
 				C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */,
