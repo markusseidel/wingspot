@@ -11,8 +11,9 @@ public struct CheckInStats: Equatable, Sendable {
     public var aircraft = 0
     /// Different aircraft types, from sightings and flights.
     public var types = 0
-    /// Different airports checked in at, by spotting or visiting. A flight's airports don't count, as on the server.
-    public var airports = 0
+    /// The airports checked in at, by spotting or visiting. A flight's airports don't count, as on the server.
+    public var airportIDs = Set<Int>()
+    public var airports: Int { airportIDs.count }
 
     public init() {}
 
@@ -29,7 +30,6 @@ public struct CheckInStats: Equatable, Sendable {
     public init(_ all: [LocalCheckIn], userID: UUID?) {
         var registrations = Set<String>()
         var typeCodes = Set<String>()
-        var airportIDs = Set<Int>()
         for checkIn in Self.counted(all, userID: userID) {
             checkIns += 1
             switch checkIn.kind {
@@ -49,6 +49,5 @@ public struct CheckInStats: Equatable, Sendable {
         }
         aircraft = registrations.count
         types = typeCodes.count
-        airports = airportIDs.count
     }
 }

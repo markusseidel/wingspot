@@ -44,6 +44,7 @@ private func all(_ context: ModelContext) throws -> [LocalCheckIn] {
     #expect(stats.types == 2)
     // FRA and DUS. The flight's JFK doesn't count.
     #expect(stats.airports == 2)
+    #expect(stats.airportIDs == [3, 7])
 }
 
 @MainActor @Test func anotherAccountsAndRejectedCheckInsAreLeftOut() throws {

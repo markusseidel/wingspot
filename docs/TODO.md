@@ -176,7 +176,7 @@ In this order:
   - [ ] Final check that Airport, Flown and photo check-ins all sync from the app to hosted
   - [ ] Draft privacy policy is in [PRIVACY-DRAFT.md](PRIVACY-DRAFT.md): fill in the brackets and publish on `wingspot.site`
   - [ ] Delete the test account `github@seidel.ruhr` on hosted
-- [ ] Milestone 6: your profile
+- [x] Milestone 6: your profile (stats, collections, badges tab with filter, airports map; the airport map and signed-in views still to see on your iPhone)
 - [ ] Milestone 7: social
 - [ ] Milestone 8: airport page and settings
 - [ ] Milestone 9: first TestFlight
