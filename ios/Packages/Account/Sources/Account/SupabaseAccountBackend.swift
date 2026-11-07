@@ -177,3 +177,181 @@ private struct ProfileUpdate: Encodable {
         try container.encode(homeAirport, forKey: .homeAirport)
     }
 }
+
+
+// MARK: - Social
+
+extension SupabaseAccountBackend: SocialBackend {
+    public func searchPeople(_ text: String, excluding me: UUID, limit: Int) async throws -> [PersonRecord] {
+        try await socialErrors {
+            let rows: [PersonRow] = try await client.from("profiles")
+                .select("id, username, display_name, is_private")
+                .ilike("username", pattern: "%\(text)%")
+                .neq("id", value: me)
+                .order("username")
+                .limit(limit)
+                .execute()
+                .value
+            return rows.map(\.record)
+        }
+    }
+
+    public func relationships(of me: UUID, among ids: [UUID]) async throws -> (following: Set<UUID>, followers: Set<UUID>) {
+        guard !ids.isEmpty else { return ([], []) }
+        return try await socialErrors {
+            let following: [FollowRow] = try await client.from("follows").select("follower, followee")
+                .eq("follower", value: me).in("followee", values: ids).execute().value
+            let followers: [FollowRow] = try await client.from("follows").select("follower, followee")
+                .eq("followee", value: me).in("follower", values: ids).execute().value
+            return (Set(following.map(\.followee)), Set(followers.map(\.follower)))
+        }
+    }
+
+    public func followingIDs(of me: UUID) async throws -> [UUID] {
+        try await socialErrors {
+            let rows: [FollowRow] = try await client.from("follows").select("follower, followee")
+                .eq("follower", value: me).order("created_at", ascending: false).execute().value
+            return rows.map(\.followee)
+        }
+    }
+
+    public func followerIDs(of me: UUID) async throws -> [UUID] {
+        try await socialErrors {
+            let rows: [FollowRow] = try await client.from("follows").select("follower, followee")
+                .eq("followee", value: me).order("created_at", ascending: false).execute().value
+            return rows.map(\.follower)
+        }
+    }
+
+    public func profiles(ids: [UUID]) async throws -> [PersonRecord] {
+        guard !ids.isEmpty else { return [] }
+        return try await socialErrors {
+            let rows: [PersonRow] = try await client.from("profiles")
+                .select("id, username, display_name, is_private")
+                .in("id", values: ids).execute().value
+            // Keep the order of `ids`, for lists that are sorted by when the follow happened.
+            let byID = Dictionary(rows.map { ($0.id, $0.record) }, uniquingKeysWith: { first, _ in first })
+            return ids.compactMap { byID[$0] }
+        }
+    }
+
+    public func follow(_ id: UUID, as me: UUID) async throws {
+        try await socialErrors {
+            do {
+                _ = try await client.from("follows").insert(FollowRow(follower: me, followee: id), returning: .minimal).execute()
+            } catch let error as PostgrestError where error.code == "23505" {
+                // Already following: the result is what was asked for.
+            }
+        }
+    }
+
+    public func unfollow(_ id: UUID, as me: UUID) async throws {
+        try await socialErrors {
+            _ = try await client.from("follows").delete().eq("follower", value: me).eq("followee", value: id).execute()
+        }
+    }
+
+    public func blockedPeople() async throws -> [PersonRecord] {
+        try await socialErrors {
+            let rows: [BlockedRow] = try await client.rpc("get_blocks").execute().value
+            return rows.map { PersonRecord(id: $0.id, username: $0.username, displayName: $0.displayName, isPrivate: false) }
+        }
+    }
+
+    public func block(_ id: UUID, as me: UUID) async throws {
+        try await socialErrors {
+            do {
+                _ = try await client.from("blocks").insert(BlockRow(blocker: me, blocked: id), returning: .minimal).execute()
+            } catch let error as PostgrestError where error.code == "23505" {
+                // Already blocked.
+            }
+        }
+    }
+
+    public func unblock(_ id: UUID, as me: UUID) async throws {
+        try await socialErrors {
+            _ = try await client.from("blocks").delete().eq("blocker", value: me).eq("blocked", value: id).execute()
+        }
+    }
+
+    public func sharing(of me: UUID) async throws -> SharingChoice {
+        try await socialErrors {
+            let details: SharingDetails = try await client.rpc("get_profile", params: ["target": me]).single().execute().value
+            return SharingChoice(rawValue: details.defaultVisibility ?? "") ?? .private
+        }
+    }
+
+    public func setSharing(_ choice: SharingChoice, applyToExisting: Bool) async throws -> Int {
+        try await socialErrors {
+            try await client.rpc("set_sharing", params: SetSharing(newDefault: choice.rawValue, applyToExisting: applyToExisting))
+                .execute().value
+        }
+    }
+
+    private func socialErrors<T: Sendable>(_ work: () async throws -> T) async throws -> T {
+        do {
+            return try await work()
+        } catch let error as URLError {
+            throw Self.map(error)
+        } catch let error as AccountError {
+            throw error
+        } catch {
+            logger.error("Social request failed: \(String(reflecting: type(of: error)), privacy: .public)")
+            throw AccountError.unknown
+        }
+    }
+}
+
+private struct PersonRow: Decodable {
+    let id: UUID
+    let username: String
+    let displayName: String?
+    let isPrivate: Bool
+
+    var record: PersonRecord { PersonRecord(id: id, username: username, displayName: displayName, isPrivate: isPrivate) }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, username
+        case displayName = "display_name"
+        case isPrivate = "is_private"
+    }
+}
+
+private struct FollowRow: Codable {
+    let follower: UUID
+    let followee: UUID
+}
+
+private struct BlockRow: Encodable {
+    let blocker: UUID
+    let blocked: UUID
+}
+
+private struct BlockedRow: Decodable {
+    let id: UUID
+    let username: String
+    let displayName: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case id, username
+        case displayName = "display_name"
+    }
+}
+
+private struct SharingDetails: Decodable {
+    let defaultVisibility: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case defaultVisibility = "default_visibility"
+    }
+}
+
+private struct SetSharing: Encodable {
+    let newDefault: String
+    let applyToExisting: Bool
+
+    private enum CodingKeys: String, CodingKey {
+        case newDefault = "new_default"
+        case applyToExisting = "apply_to_existing"
+    }
+}

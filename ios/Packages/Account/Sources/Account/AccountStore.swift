@@ -156,7 +156,7 @@ public final class AccountStore {
 }
 
 /// For builds without a backend key. The app still works, except for signing in.
-public struct UnconfiguredAccountBackend: AccountBackend {
+public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend {
     public init() {}
 
     public func currentUserID() async -> UUID? { nil }
@@ -167,4 +167,17 @@ public struct UnconfiguredAccountBackend: AccountBackend {
     public func loadProfile(id: UUID) async throws -> Profile { throw AccountError.notConfigured }
     public func saveProfile(_ profile: Profile) async throws { throw AccountError.notConfigured }
     public func signOut() async throws { throw AccountError.notConfigured }
+
+    public func searchPeople(_ text: String, excluding me: UUID, limit: Int) async throws -> [PersonRecord] { throw AccountError.notConfigured }
+    public func relationships(of me: UUID, among ids: [UUID]) async throws -> (following: Set<UUID>, followers: Set<UUID>) { throw AccountError.notConfigured }
+    public func followingIDs(of me: UUID) async throws -> [UUID] { throw AccountError.notConfigured }
+    public func followerIDs(of me: UUID) async throws -> [UUID] { throw AccountError.notConfigured }
+    public func profiles(ids: [UUID]) async throws -> [PersonRecord] { throw AccountError.notConfigured }
+    public func follow(_ id: UUID, as me: UUID) async throws { throw AccountError.notConfigured }
+    public func unfollow(_ id: UUID, as me: UUID) async throws { throw AccountError.notConfigured }
+    public func blockedPeople() async throws -> [PersonRecord] { throw AccountError.notConfigured }
+    public func block(_ id: UUID, as me: UUID) async throws { throw AccountError.notConfigured }
+    public func unblock(_ id: UUID, as me: UUID) async throws { throw AccountError.notConfigured }
+    public func sharing(of me: UUID) async throws -> SharingChoice { throw AccountError.notConfigured }
+    public func setSharing(_ choice: SharingChoice, applyToExisting: Bool) async throws -> Int { throw AccountError.notConfigured }
 }

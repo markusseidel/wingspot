@@ -13,6 +13,7 @@ struct WingspotApp: App {
     private let modelContainer: ModelContainer
     @State private var referenceData: ReferenceDataStore
     @State private var account: AccountStore
+    @State private var social: SocialStore
     @State private var sync: CheckInSyncCoordinator
     @State private var badges: BadgeStore
     @Environment(\.scenePhase) private var scenePhase
@@ -28,8 +29,10 @@ struct WingspotApp: App {
         modelContainer = container
         _referenceData = State(initialValue: Self.makeReferenceData())
 
-        let account = Self.makeAccount()
+        let accountBackend = Self.makeAccountBackend()
+        let account = AccountStore(backend: accountBackend)
         _account = State(initialValue: account)
+        _social = State(initialValue: SocialStore(backend: accountBackend, userID: { account.userID }))
         let uploader = APICheckInUploader(
             client: Self.apiClient,
             accessToken: { await account.accessToken() }
@@ -57,6 +60,7 @@ struct WingspotApp: App {
             RootView()
                 .environment(referenceData)
                 .environment(account)
+                .environment(social)
                 .environment(sync)
                 .environment(badges)
                 .modelContainer(modelContainer)
@@ -104,7 +108,7 @@ struct WingspotApp: App {
         }
     }
 
-    private static func makeAccount() -> AccountStore {
+    private static func makeAccountBackend() -> any AccountBackend & SocialBackend {
         var url = Bundle.main.object(forInfoDictionaryKey: "WingspotSupabaseURL") as? String
         var key = Bundle.main.object(forInfoDictionaryKey: "WingspotPublishableKey") as? String
         #if DEBUG
@@ -115,9 +119,9 @@ struct WingspotApp: App {
         #endif
         guard let url = url.flatMap(URL.init(string:)), let key, !key.isEmpty else {
             logger.notice("No backend key in this build, so sign-in is off")
-            return AccountStore(backend: UnconfiguredAccountBackend())
+            return UnconfiguredAccountBackend()
         }
-        return AccountStore(backend: SupabaseAccountBackend(url: url, publishableKey: key))
+        return SupabaseAccountBackend(url: url, publishableKey: key)
     }
 
     private func loadRemoteConfig() async {

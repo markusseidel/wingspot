@@ -11,11 +11,13 @@
 		0937BA0BF1EBF4732DA23138 /* ProfileEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E6559EBEC52E59BEEFE94D /* ProfileEditorView.swift */; };
 		0938348D4F0B21A4B41F7D9E /* CollectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA1AD56080AB71FB2708191 /* CollectionsView.swift */; };
 		10748D50CE99239391EE4B98 /* WingspotCore in Frameworks */ = {isa = PBXBuildFile; productRef = FA9C4D07C08E909754DE9B4F /* WingspotCore */; };
+		13A3F8B8C6248C62D540A996 /* PersonDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CABAD3AAA0CB6C6317A73DE /* PersonDetailView.swift */; };
 		1427422ED2866AC007958D1A /* AccountMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4D48FF8AE3EC90CE9EB299 /* AccountMessages.swift */; };
 		14963B1634A245DD5F21D19F /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = FE4DDF37937E81A62EB60AB5 /* Account */; };
 		186231C28F6E7DD1B25988E6 /* CheckInHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4459DE5C40C01B9A974864C6 /* CheckInHistoryView.swift */; };
 		1878E11AE259B4D66AF3B0F4 /* BCBP in Frameworks */ = {isa = PBXBuildFile; productRef = 84545F5C809788F8A6A927A8 /* BCBP */; };
 		2009AC27E2FC13DC4C52C220 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17369D1192D4BAF9721962FE /* RootView.swift */; };
+		27F83E299CBA8188CF0AA61F /* SharingSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995610FFAC434B480B981139 /* SharingSection.swift */; };
 		2E4689A87246BCE2846B568F /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82163058748258D0AE08F801 /* NetworkMonitor.swift */; };
 		39383DB2983A80C96D05EA39 /* ReferenceSearchViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */; };
 		3B16BBB37412D38A89E454BD /* PlaceholderScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87BF659DFCBC4828CF78129 /* PlaceholderScreen.swift */; };
@@ -39,6 +41,7 @@
 		C11130AF4BC7A3C72A86C5A3 /* APICheckInUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828B639D7292CFD9B11324B0 /* APICheckInUploader.swift */; };
 		C514F70DAE3982F3745EA554 /* BoardingPassScanning.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADADB9204585A1B0741191CA /* BoardingPassScanning.swift */; };
 		C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A035100ED13735493AF7BF1 /* LocationProvider.swift */; };
+		CCB6285BC5F2D2D0C2D23BAD /* PeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A6E9C03029947E148B9EBB /* PeopleView.swift */; };
 		CF3807277F1FDA241609254C /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 5B2EB62437C5BE2130BABF23 /* Persistence */; };
 		D866E9760B084CDB160CA4D5 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */; };
 		E2E45560E0A3701D1C226A90 /* CelebrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A9D215092A1385FA8E52D3A /* CelebrationView.swift */; };
@@ -58,6 +61,7 @@
 		45BFC3E5CAEEFABF9A34E20E /* Wingspot.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Wingspot.xcconfig; sourceTree = "<group>"; };
 		48B545FD209FC2942BD45E71 /* CheckInResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInResultView.swift; sourceTree = "<group>"; };
 		4ACF37D630CFB0FFE9E1E133 /* Wingspot.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Wingspot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5CABAD3AAA0CB6C6317A73DE /* PersonDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonDetailView.swift; sourceTree = "<group>"; };
 		5D8FB2291C9A4A75529A9461 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5E3C8DE707D5FBC441F2A0A4 /* AirportsMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirportsMapView.swift; sourceTree = "<group>"; };
 		626F450EEAB4D94771419C27 /* Account */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Account; path = Packages/Account; sourceTree = SOURCE_ROOT; };
@@ -70,6 +74,7 @@
 		82163058748258D0AE08F801 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		828B639D7292CFD9B11324B0 /* APICheckInUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICheckInUploader.swift; sourceTree = "<group>"; };
 		887512D89A6F5865C984DC89 /* BadgeStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeStyle.swift; sourceTree = "<group>"; };
+		995610FFAC434B480B981139 /* SharingSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingSection.swift; sourceTree = "<group>"; };
 		9A035100ED13735493AF7BF1 /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
 		A47349EC0A6768BA0A1C2F6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A96EA4033E2C1D21ED547E17 /* APIProgressSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIProgressSource.swift; sourceTree = "<group>"; };
@@ -83,6 +88,7 @@
 		C9AA754CC23E4288DF9E2262 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		CDA1AD56080AB71FB2708191 /* CollectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsView.swift; sourceTree = "<group>"; };
 		DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInSheet.swift; sourceTree = "<group>"; };
+		E3A6E9C03029947E148B9EBB /* PeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleView.swift; sourceTree = "<group>"; };
 		E539BCC329B1D95E5DE61344 /* AirportCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirportCheckInView.swift; sourceTree = "<group>"; };
 		E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		ED53FE5B4A009D5575119BB4 /* FlownCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlownCheckInView.swift; sourceTree = "<group>"; };
@@ -156,6 +162,7 @@
 				83302189B26D2355EEC08AA7 /* Badges */,
 				1EC26DAEA056854F28F4B7EE /* CheckIn */,
 				87951F4E74954155B4CA1844 /* Common */,
+				C356936431FEF869579418FC /* Social */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -231,6 +238,16 @@
 				76B04C14C68A65FD24C0D6DD /* WingspotCore */,
 			);
 			path = Packages;
+			sourceTree = "<group>";
+		};
+		C356936431FEF869579418FC /* Social */ = {
+			isa = PBXGroup;
+			children = (
+				E3A6E9C03029947E148B9EBB /* PeopleView.swift */,
+				5CABAD3AAA0CB6C6317A73DE /* PersonDetailView.swift */,
+				995610FFAC434B480B981139 /* SharingSection.swift */,
+			);
+			path = Social;
 			sourceTree = "<group>";
 		};
 		EB652108C1D4DDAA7B6F5B8A /* Products */ = {
@@ -349,12 +366,15 @@
 				C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */,
 				2E4689A87246BCE2846B568F /* NetworkMonitor.swift in Sources */,
 				3C72654BC1F78F3B175048F2 /* OnboardingView.swift in Sources */,
+				CCB6285BC5F2D2D0C2D23BAD /* PeopleView.swift in Sources */,
+				13A3F8B8C6248C62D540A996 /* PersonDetailView.swift in Sources */,
 				96D09D7A0351104460703E5B /* PhotoSection.swift in Sources */,
 				3B16BBB37412D38A89E454BD /* PlaceholderScreen.swift in Sources */,
 				0937BA0BF1EBF4732DA23138 /* ProfileEditorView.swift in Sources */,
 				A08C4CA8904388F960BBA71F /* ProfileScreen.swift in Sources */,
 				39383DB2983A80C96D05EA39 /* ReferenceSearchViews.swift in Sources */,
 				2009AC27E2FC13DC4C52C220 /* RootView.swift in Sources */,
+				27F83E299CBA8188CF0AA61F /* SharingSection.swift in Sources */,
 				F9804A44218F27F9FAC0B571 /* SpottedCheckInView.swift in Sources */,
 				63920812D725A2EE33A89EC1 /* WingspotApp.swift in Sources */,
 			);

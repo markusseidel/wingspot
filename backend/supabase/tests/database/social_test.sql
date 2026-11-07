@@ -128,6 +128,17 @@ insert into public.reports (reporter, target_type, target_id)
 select pg_temp.as_user(1);
 select is(public.report('user', pg_temp.u(3)::text, null), 'too_many', 'after 20 reports in an hour more are refused');
 
+-- Blocked list --------------------------------------------------------------------------------
+select pg_temp.as_user(1);
+select results_eq(
+  $$ select id::text from public.get_blocks() order by id $$,
+  $$ values (pg_temp.u(5)::text), (pg_temp.u(6)::text) $$,
+  'the caller sees the people they blocked, though their profiles are hidden'
+);
+select is((select count(*)::int from public.profiles where id = pg_temp.u(5)), 0, 'a blocked person''s profile is hidden');
+select pg_temp.as_user(5);
+select is((select count(*)::int from public.get_blocks()), 0, 'the blocked person does not see who blocked them');
+
 -- Word filter ---------------------------------------------------------------------------------
 select pg_temp.as_user(3);
 select throws_ok(

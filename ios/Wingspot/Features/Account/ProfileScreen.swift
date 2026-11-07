@@ -123,6 +123,7 @@ private struct ProfileDetailsView: View {
                 }
             }
             Section {
+                NavigationLink("People") { PeopleView() }
                 NavigationLink("Collections") { CollectionsView() }
                 NavigationLink("Check-in history") {
                     CheckInHistoryView()
@@ -131,6 +132,7 @@ private struct ProfileDetailsView: View {
                     ProfileEditorView(profile: profile, isFirstSetup: false)
                 }
             }
+            SharingSection()
             Section {
                 Button("Sign out", role: .destructive, action: signOut)
             } footer: {
