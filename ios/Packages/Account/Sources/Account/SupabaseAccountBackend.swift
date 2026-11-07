@@ -435,6 +435,27 @@ extension SupabaseAccountBackend: ReactionBackend {
             _ = try await client.from("comments").delete().eq("id", value: id).execute()
         }
     }
+
+    public func report(_ kind: ReportKind, target: UUID, reason: String) async throws -> ReportOutcome {
+        try await socialErrors {
+            let answer: String = try await client.rpc(
+                "report", params: ReportParams(kind: kind.rawValue, target: target.uuidString.lowercased(), reason: reason)
+            ).execute().value
+            return ReportOutcome(rawValue: answer) ?? .invalidKind
+        }
+    }
+}
+
+private struct ReportParams: Encodable {
+    let kind: String
+    let target: String
+    let reason: String
+
+    private enum CodingKeys: String, CodingKey {
+        case kind = "report_kind"
+        case target = "report_target"
+        case reason = "report_reason"
+    }
 }
 
 private struct SaluteRow: Encodable {

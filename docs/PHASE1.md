@@ -76,6 +76,10 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
 19. **Salutes and comments (milestone 7d):**
     - The salute button on a feed card changes at once and goes back if the request fails. Salutes and comments are written straight to their tables, where the database rules check that the person may see the check-in.
     - The comments screen lists comments oldest first with the author's name, takes new ones (1 to 2000 characters), and lets you delete your own, or any comment under your own check-in, by swiping. A comment the word filter refuses shows a message and stays in the field. The count on the card follows the screen.
+20. **Reports and community rules (milestone 7e):**
+    - Reports go through the server's `report` function, for a person (profile page), a check-in (menu on a feed card) and a comment (swipe). Reasons: spam, offensive, private information, other, plus optional details. You can't report your own content. Photo reports come with 7f.
+    - Before the feed, People, or sharing with anyone but yourself, a screen with the community rules asks for agreement once per account and rules version. The agreement is kept on the device for now; raise `TermsStore.currentVersion` to ask everyone again. A server-side record can be added later if proof of agreement is needed.
+    - The full terms of use for `wingspot.site` are drafted in [TERMS-DRAFT.md](TERMS-DRAFT.md).
 
 ## Before each milestone
 

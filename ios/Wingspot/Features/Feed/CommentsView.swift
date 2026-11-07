@@ -10,6 +10,7 @@ struct CommentsView: View {
     @State private var store: CheckInCommentStore?
     @State private var text = ""
     @State private var problem: AccountError?
+    @State private var report: ReportTarget?
 
     var body: some View {
         Group {
@@ -54,10 +55,17 @@ struct CommentsView: View {
                     if comment.userID == account.userID || item.userID == account.userID {
                         Button("Delete", role: .destructive) { Task { await store.delete(comment) } }
                     }
+                    if comment.userID != account.userID {
+                        Button("Report") {
+                            report = ReportTarget(kind: .comment, id: comment.id, subject: "this comment")
+                        }
+                        .tint(.orange)
+                    }
                 }
             }
         }
         .refreshable { await store.load() }
+        .sheet(item: $report) { ReportSheet(target: $0) }
         .safeAreaInset(edge: .bottom) { composer(store) }
         .alert("Couldn't complete this", isPresented: Binding(get: { problem != nil }, set: { if !$0 { problem = nil } })) {
             Button("OK", role: .cancel) {}

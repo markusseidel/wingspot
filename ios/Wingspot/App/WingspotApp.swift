@@ -15,6 +15,8 @@ struct WingspotApp: App {
     @State private var account: AccountStore
     @State private var social: SocialStore
     @State private var feed: FeedStore
+    @State private var reporter: Reporter
+    @State private var terms: TermsStore
     @State private var sync: CheckInSyncCoordinator
     @State private var badges: BadgeStore
     @Environment(\.scenePhase) private var scenePhase
@@ -35,6 +37,8 @@ struct WingspotApp: App {
         _account = State(initialValue: account)
         _social = State(initialValue: SocialStore(backend: accountBackend, userID: { account.userID }))
         _feed = State(initialValue: FeedStore(backend: accountBackend, reactions: accountBackend, userID: { account.userID }))
+        _reporter = State(initialValue: Reporter(backend: accountBackend))
+        _terms = State(initialValue: TermsStore(userID: { account.userID }))
         let uploader = APICheckInUploader(
             client: Self.apiClient,
             accessToken: { await account.accessToken() }
@@ -64,6 +68,8 @@ struct WingspotApp: App {
                 .environment(account)
                 .environment(social)
                 .environment(feed)
+                .environment(reporter)
+                .environment(terms)
                 .environment(sync)
                 .environment(badges)
                 .modelContainer(modelContainer)
