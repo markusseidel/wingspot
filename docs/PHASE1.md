@@ -66,6 +66,9 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
     - `report` stores a report of a user, check-in, comment or photo after checking the caller can see it. Reports can't be read by users, so the project owner reviews them in the database. It allows 20 reports an hour, and a repeat of an open report adds nothing.
     - A word filter refuses comments with a blocked word (whole words, any case). Words live in `private.blocked_words`, and the owner can add more with plain SQL.
     - These are database functions called directly (like `get_profile`), so they aren't in `openapi.yaml`.
+17. **People (milestone 7b):**
+    - Search finds usernames that contain the typed text (at least two letters). Following is instant. A block ends the follows between the two and hides their profiles from each other, so `get_blocks` is how the app lists and undoes blocks.
+    - The profile has a "Share my check-ins" setting (only me, friends, everyone) that asks whether to change earlier check-ins too. It needs a network. A person's page shows their name and relation, with follow and block. Their check-ins come with the feed (7c).
 
 ## Before each milestone
 
