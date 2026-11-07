@@ -100,6 +100,13 @@ public struct SupabaseAccountBackend: AccountBackend {
         }
     }
 
+    public func deleteAccount() async throws {
+        try await mappingErrors {
+            // The function acts on the person whose token is sent, which the client adds.
+            try await client.functions.invoke("me", options: FunctionInvokeOptions(method: .delete))
+        }
+    }
+
     private func mappingErrors<T: Sendable>(_ work: () async throws -> T) async throws -> T {
         do {
             return try await work()

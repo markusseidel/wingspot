@@ -42,6 +42,15 @@ function client(authorization?: string): SupabaseClient {
 /** A client without a user, limited to what the database allows anonymous visitors. */
 export const publicClient = () => client();
 
+/**
+ * A client with full access, for the few things a user can't do as themselves, such as deleting their own
+ * account. Only use it after `authenticate`, and only for the person that call returned.
+ */
+export const serviceClient = () =>
+  createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+
 export interface Authenticated {
   /** Acts as the user, so the database's access rules apply. */
   db: SupabaseClient;

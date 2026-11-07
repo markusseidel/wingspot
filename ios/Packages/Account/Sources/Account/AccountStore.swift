@@ -32,6 +32,8 @@ public protocol AccountBackend: Sendable {
     func loadProfile(id: UUID) async throws -> Profile
     func saveProfile(_ profile: Profile) async throws
     func signOut() async throws
+    /// Deletes the account on the server, for good. The session stops working.
+    func deleteAccount() async throws
 }
 
 /// The app's sign-in state. Check-ins don't depend on it, so the app also works signed out and offline.
@@ -143,6 +145,20 @@ public final class AccountStore {
         state = .signedOut
     }
 
+    /// Deletes the account on the server and signs out here. Check-ins on the phone are for the app to remove,
+    /// with the returned ID. Nothing changes here if the server fails.
+    /// - Returns: the deleted account's ID.
+    @discardableResult
+    public func deleteAccount() async throws -> UUID {
+        guard let id = userID else { throw AccountError.unknown }
+        try await backend.deleteAccount()
+        // The server already ended the session, so this only clears what is stored on the phone.
+        try? await backend.signOut()
+        userID = nil
+        state = .signedOut
+        return id
+    }
+
     private func loadProfile(id: UUID) async {
         do {
             state = .signedIn(try await backend.loadProfile(id: id))
@@ -169,6 +185,7 @@ public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend, FeedBac
     public func loadProfile(id: UUID) async throws -> Profile { throw AccountError.notConfigured }
     public func saveProfile(_ profile: Profile) async throws { throw AccountError.notConfigured }
     public func signOut() async throws { throw AccountError.notConfigured }
+    public func deleteAccount() async throws { throw AccountError.notConfigured }
 
     public func searchPeople(_ text: String, excluding me: UUID, limit: Int) async throws -> [PersonRecord] { throw AccountError.notConfigured }
     public func relationships(of me: UUID, among ids: [UUID]) async throws -> (following: Set<UUID>, followers: Set<UUID>) { throw AccountError.notConfigured }

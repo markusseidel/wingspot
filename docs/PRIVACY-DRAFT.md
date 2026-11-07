@@ -43,11 +43,11 @@ Vertragserfüllung (Art. 6 Abs. 1 lit. b DSGVO) für Konto und Check-ins, Einwil
 
 ## Deine Rechte
 
-Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit und Widerspruch, sowie Beschwerde bei einer Aufsichtsbehörde. Schreibe an [E-Mail]. [Sobald die App es kann: Konto löschen und Daten exportieren direkt in den Einstellungen.]
+Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit und Widerspruch, sowie Beschwerde bei einer Aufsichtsbehörde. Schreibe an [E-Mail]. Du kannst dein Konto direkt in der App unter Profil löschen. [Datenexport: ergänzen, sobald die App es kann.]
 
 ## Speicherdauer
 
-Bis du dein Konto löschst. Dann werden Konto, Check-ins und Fotos gelöscht. [Mit Meilenstein 8 prüfen.]
+Bis du dein Konto löschst. Dann werden Konto, Check-ins, Fotos, Kommentare, Follows und Geräte sofort und endgültig gelöscht. Meldungen, die du abgegeben hast, bleiben ohne Bezug zu dir erhalten.
 
 ## Kinder
 
@@ -96,11 +96,11 @@ Contract (Art. 6(1)(b) GDPR) for account and check-ins; consent (point (a)) for 
 
 ## Your rights
 
-Access, correction, deletion, restriction, portability and objection, and a complaint to a supervisory authority. Write to [email]. [Once the app supports it: delete your account and export your data in Settings.]
+Access, correction, deletion, restriction, portability and objection, and a complaint to a supervisory authority. Write to [email]. You can delete your account in the app under Profile. [Data export: add once the app supports it.]
 
 ## Retention
 
-Until you delete your account; then your account, check-ins and photos are deleted. [Verify with Milestone 8.]
+Until you delete your account; then your account, check-ins, photos, comments, follows and devices are deleted immediately and for good. Reports you filed remain, without a link to you.
 
 ## Children
 
