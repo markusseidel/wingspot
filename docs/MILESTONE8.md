@@ -1,6 +1,6 @@
 # Milestone 8: airport page and settings (plan)
 
-Done when: a person can see an airport's public activity, set who sees what, export their data and delete their account, and deleting removes everything of theirs ([PHASE1.md](PHASE1.md)).
+Done when: a person can see an airport's public activity, set who sees what, export their data and delete their account, and deleting removes everything of theirs ([PHASE1.md](PHASE1.md)). Export and deletion must work on hosted with a throwaway account, privacy settings must change what a second account sees, and person and airport pages must show only what the rules allow.
 
 ## What already exists
 
@@ -18,13 +18,37 @@ Done when: a person can see an airport's public activity, set who sees what, exp
 
 ## Steps, each its own pull request
 
-| # | Step | Notes |
-|---|---|---|
-| 8a | **Account deletion** | `DELETE /v1/me` Edge Function: removes the person's photo files, then the auth user (the database does the rest). App: "Delete account" in the profile, two confirmations, then signs out and removes this account's data from the phone. Database and API tests that nothing is left. |
-| 8b | **Data export** | `GET /v1/me/export` returns one JSON document; the app offers it with the share sheet. |
-| 8c | **Privacy settings screen** | Moves "Share my check-ins" in, adds private profile, post delay and units (km, nm, mi). |
-| 8d | **Check-ins on a person's page** | New function with paging that follows the visibility rules; list on the person page and a per-profile report. |
-| 8e | **Airport page** | Airport info and recent public activity there, opened from the map, collections and feed cards. |
+I deploy to hosted only on the owner's word.
+
+### 8a. Account deletion (done, function deployed)
+
+`DELETE /v1/me` removes the photo files and the auth user; the app signs out and clears the account's data from the phone. Still to try on hosted with a throwaway account.
+
+### 8b. Data export
+
+- **Server:** `GET /v1/me/export` returns one JSON document from the caller's own rows: profile, check-ins, photo list (ID, size, check-in), comments, salutes, follows, blocks, badge progress and the sharing setting. It leaves out other people's data and push tokens. The location stays in the check-in rows, since it is the person's own data.
+- **App:** "Export my data" in the profile builds the file and offers it with the share sheet.
+- **Tests:** an API test with two users (nothing of the other person leaks) and one Account test. Add it to OpenAPI.
+- **Open choice:** photo files are not included, only the list. A zip with the photos is possible later.
+- **Docs:** update the privacy draft, where export is marked to-do.
+
+### 8c. Privacy settings screen
+
+- **Server:** the columns `is_private` and `post_delay_minutes` exist, but a client can't change them yet. Add a small `set_privacy(is_private, post_delay_minutes)` function, or a column grant. A database test that a post delay of 60 minutes hides a fresh public check-in from strangers but not from friends or the owner.
+- **App:** a "Privacy" screen that takes over "Share my check-ins" and adds private profile (with an explanation of who sees what) and post delay (none, 1 hour, 6 hours, 24 hours).
+- **Units:** a local setting for km, nautical miles or miles, used where distances show: the feed card, flights and stats. Distances stay in km in the database.
+- **Strings:** German and English.
+
+### 8d. Check-ins on a person's page (needs a migration)
+
+- **Server:** `get_person_checkins(target, before_time, before_id, page_size)`, with the same rules and sensitive-aircraft handling as `get_feed`, plus the counts. A database test per relation (self, follower, mutual friend, stranger, blocked) and per visibility.
+- **App:** the person page lists their visible check-ins with paging, reusing the feed card (salute, comment, report, photos). A private profile shows a lock message if you aren't mutual. Your own profile can show the same list.
+
+### 8e. Airport page (needs a migration)
+
+- **Server:** `get_airport_activity(airport_id, ...)` returns recent public check-ins at the airport, with the same hiding rules, and a few counts: check-ins this month, distinct aircraft, top spotters among people you may see.
+- **App:** an airport page with code, name, country, a small map, your own visits and the recent activity. It opens from the airport map, the collections list, and an airport on a feed card or check-in result.
+- **Left out for now:** spotting locations, leaderboards and "rare today" (Phase 2).
 
 ## Risks
 
