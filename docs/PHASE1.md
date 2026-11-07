@@ -69,6 +69,10 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
 17. **People (milestone 7b):**
     - Search finds usernames that contain the typed text (at least two letters). Following is instant. A block ends the follows between the two and hides their profiles from each other, so `get_blocks` is how the app lists and undoes blocks.
     - The profile has a "Share my check-ins" setting (only me, friends, everyone) that asks whether to change earlier check-ins too. It needs a network. A person's page shows their name and relation, with follow and block. Their check-ins come with the feed (7c).
+18. **Feed tab (milestone 7c):**
+    - The tab shows `get_feed`: your own check-ins and those of people you follow, newest first, 30 at a time, loading older ones near the end of the list. Pull to refresh. It needs a network and keeps the old list when a refresh fails.
+    - Paging sends back the time exactly as the server sent it, because rounding it would skip or repeat check-ins.
+    - A card shows who, when, the kind, the registration or route, details and the salute and comment counts. Tapping a name opens that person's page. Salutes and comments themselves come in 7d. Photos come in 7f.
 
 ## Before each milestone
 

@@ -355,3 +355,32 @@ private struct SetSharing: Encodable {
         case applyToExisting = "apply_to_existing"
     }
 }
+
+
+// MARK: - Feed
+
+extension SupabaseAccountBackend: FeedBackend {
+    public func feed(after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem] {
+        try await socialErrors {
+            try await client.rpc("get_feed", params: FeedParams(cursor: cursor, pageSize: pageSize)).execute().value
+        }
+    }
+}
+
+private struct FeedParams: Encodable {
+    let cursor: FeedCursor?
+    let pageSize: Int
+
+    private enum CodingKeys: String, CodingKey {
+        case beforeTime = "before_time"
+        case beforeID = "before_id"
+        case pageSize = "page_size"
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(cursor?.time, forKey: .beforeTime)
+        try container.encode(cursor?.id, forKey: .beforeID)
+        try container.encode(pageSize, forKey: .pageSize)
+    }
+}

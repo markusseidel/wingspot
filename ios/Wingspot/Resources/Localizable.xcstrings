@@ -33,6 +33,16 @@
         }
       }
     },
+    "%lld" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        }
+      }
+    },
     "%lld XP" : {
       "localizations" : {
         "de" : {
@@ -65,6 +75,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld km"
+          }
+        }
+      }
+    },
+    "%lld of %lld badges earned" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld von %2$lld Badges erreicht"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld of %2$lld badges earned"
           }
         }
       }
@@ -119,12 +145,32 @@
         }
       }
     },
+    "Aircraft" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flugzeuge"
+          }
+        }
+      }
+    },
     "Aircraft and airport search needs one download while online. You can still check in by registration." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Die Suche nach Flugzeugen und Flughäfen braucht einmalig einen Download mit Internetverbindung. Du kannst trotzdem per Registrierung einchecken."
+          }
+        }
+      }
+    },
+    "Aircraft seen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesehene Flugzeuge"
           }
         }
       }
@@ -179,6 +225,16 @@
         }
       }
     },
+    "Airports map" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flughafenkarte"
+          }
+        }
+      }
+    },
     "Airports not found" : {
       "localizations" : {
         "de" : {
@@ -189,12 +245,52 @@
         }
       }
     },
+    "Airports you spot at or visit appear here." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flughäfen, an denen du spottest oder die du besuchst, erscheinen hier."
+          }
+        }
+      }
+    },
+    "All" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle"
+          }
+        }
+      }
+    },
+    "All check-ins" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Check-ins"
+          }
+        }
+      }
+    },
     "All levels reached" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Alle Level erreicht"
+          }
+        }
+      }
+    },
+    "Also change your earlier check-ins?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auch frühere Check-ins ändern?"
           }
         }
       }
@@ -235,6 +331,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Badges"
+          }
+        }
+      }
+    },
+    "Block" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blockieren"
+          }
+        }
+      }
+    },
+    "Block @%@?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "@%@ blockieren?"
+          }
+        }
+      }
+    },
+    "Blocked" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blockiert"
           }
         }
       }
@@ -349,12 +475,33 @@
         }
       }
     },
+    "Check-ins" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check-ins"
+          }
+        }
+      }
+    },
     "Check-ins from people you follow will appear here." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hier erscheinen Check-ins von Leuten, denen du folgst."
+          }
+        }
+      }
+    },
+    "Check-ins from you and the people you follow appear here. Your check-ins show once they are uploaded and shared." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier erscheinen Check-ins von dir und von Leuten, denen du folgst. Deine Check-ins erscheinen, sobald sie hochgeladen und freigegeben sind."
           }
         }
       }
@@ -439,6 +586,16 @@
         }
       }
     },
+    "Collections" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sammlungen"
+          }
+        }
+      }
+    },
     "Coming in a later app version." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -450,12 +607,52 @@
         }
       }
     },
+    "Comments: %lld" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kommentare: %lld"
+          }
+        }
+      }
+    },
+    "Couldn't complete this" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das hat nicht geklappt"
+          }
+        }
+      }
+    },
+    "Couldn't load this profile" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Profil konnte nicht geladen werden"
+          }
+        }
+      }
+    },
     "Couldn't load your badges" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Badges konnten nicht geladen werden"
+          }
+        }
+      }
+    },
+    "Couldn't load your feed" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Feed konnte nicht geladen werden"
           }
         }
       }
@@ -591,6 +788,16 @@
         }
       }
     },
+    "Earned" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erreicht"
+          }
+        }
+      }
+    },
     "Economy" : {
       "localizations" : {
         "de" : {
@@ -641,6 +848,16 @@
         }
       }
     },
+    "Everyone" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle"
+          }
+        }
+      }
+    },
     "Explore" : {
       "localizations" : {
         "de" : {
@@ -677,6 +894,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Füllt Strecke, Datum, Flugnummer und Sitz aus. Dein Name und dein Buchungscode werden nie gelesen oder gespeichert."
+          }
+        }
+      }
+    },
+    "Find people" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leute finden"
           }
         }
       }
@@ -761,6 +988,16 @@
         }
       }
     },
+    "Flights" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flüge"
+          }
+        }
+      }
+    },
     "Flown" : {
       "localizations" : {
         "de" : {
@@ -771,12 +1008,72 @@
         }
       }
     },
+    "Follow" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folgen"
+          }
+        }
+      }
+    },
     "Follow other spotters and share what you've seen." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Folge anderen Spottern und teile, was du gesehen hast."
+          }
+        }
+      }
+    },
+    "Followers" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follower"
+          }
+        }
+      }
+    },
+    "Following" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folge ich"
+          }
+        }
+      }
+    },
+    "Follows you" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folgt dir"
+          }
+        }
+      }
+    },
+    "Friends" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Freunde"
+          }
+        }
+      }
+    },
+    "Friends are people you follow who follow you back. Your exact position is never shown to others." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Freunde sind Leute, denen du folgst und die dir zurück folgen. Deine genaue Position wird anderen nie gezeigt."
           }
         }
       }
@@ -827,6 +1124,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Heimatflughafen"
+          }
+        }
+      }
+    },
+    "In progress" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Arbeit"
           }
         }
       }
@@ -983,6 +1290,26 @@
         }
       }
     },
+    "No airports yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine Flughäfen"
+          }
+        }
+      }
+    },
+    "No badges here yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine Badges hier"
+          }
+        }
+      }
+    },
     "No boarding pass found" : {
       "localizations" : {
         "de" : {
@@ -999,6 +1326,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Noch keine Check-ins"
+          }
+        }
+      }
+    },
+    "No one found" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niemand gefunden"
+          }
+        }
+      }
+    },
+    "Nobody here yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch niemand hier"
           }
         }
       }
@@ -1063,12 +1410,42 @@
         }
       }
     },
+    "Nothing here yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nichts hier"
+          }
+        }
+      }
+    },
     "OK" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "OK"
+          }
+        }
+      }
+    },
+    "Only me" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur ich"
+          }
+        }
+      }
+    },
+    "Only new check-ins" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur neue Check-ins"
           }
         }
       }
@@ -1089,6 +1466,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Optional. Wird in deinem Profil angezeigt."
+          }
+        }
+      }
+    },
+    "People" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leute"
           }
         }
       }
@@ -1139,6 +1526,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bereite vor …"
+          }
+        }
+      }
+    },
+    "Private profile" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privates Profil"
           }
         }
       }
@@ -1223,6 +1620,16 @@
         }
       }
     },
+    "Salutes: %lld" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salutes: %lld"
+          }
+        }
+      }
+    },
     "Save" : {
       "localizations" : {
         "de" : {
@@ -1249,6 +1656,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Suche nach Flugzeugen, Flughäfen und Spottern."
+          }
+        }
+      }
+    },
+    "Search by username" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach Benutzername suchen"
           }
         }
       }
@@ -1313,12 +1730,52 @@
         }
       }
     },
+    "Share my check-ins" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meine Check-ins teilen"
+          }
+        }
+      }
+    },
+    "Sharing settings need an internet connection." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Freigabe-Einstellungen brauchen eine Internetverbindung."
+          }
+        }
+      }
+    },
+    "Show" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anzeigen"
+          }
+        }
+      }
+    },
     "Sign in" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Anmelden"
+          }
+        }
+      }
+    },
+    "Sign in from the Profile tab to see check-ins from people you follow." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melde dich im Tab Profil an, um Check-ins von Leuten zu sehen, denen du folgst."
           }
         }
       }
@@ -1433,6 +1890,16 @@
         }
       }
     },
+    "The map needs the airport data. Open the app once while online." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Karte braucht die Flughafendaten. Öffne die App einmal mit Internet."
+          }
+        }
+      }
+    },
     "This boarding pass uses an airport that isn't in the app's data. Enter the flight by hand." : {
       "localizations" : {
         "de" : {
@@ -1519,6 +1986,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Erneut versuchen"
+          }
+        }
+      }
+    },
+    "Type at least two letters of a username to find people." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gib mindestens zwei Buchstaben eines Benutzernamens ein, um Leute zu finden."
+          }
+        }
+      }
+    },
+    "Types" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Typen"
+          }
+        }
+      }
+    },
+    "Unblock" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blockierung aufheben"
+          }
+        }
+      }
+    },
+    "Unfollow" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht mehr folgen"
           }
         }
       }
@@ -1633,6 +2140,26 @@
         }
       }
     },
+    "You" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du"
+          }
+        }
+      }
+    },
+    "You won't see each other's check-ins or comments anymore, and any follows between you end." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ihr seht keine Check-ins und Kommentare voneinander mehr, und bestehende Follows enden."
+          }
+        }
+      }
+    },
     "You're offline. Please connect to the internet and try again." : {
       "localizations" : {
         "de" : {
@@ -1663,6 +2190,26 @@
         }
       }
     },
+    "Your feed" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Feed"
+          }
+        }
+      }
+    },
+    "Your feed is empty" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Feed ist leer"
+          }
+        }
+      }
+    },
     "Your photo" : {
       "localizations" : {
         "de" : {
@@ -1679,442 +2226,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dein Profil"
-          }
-        }
-      }
-    },
-    "Check-ins" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check-ins"
-          }
-        }
-      }
-    },
-    "Aircraft seen" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gesehene Flugzeuge"
-          }
-        }
-      }
-    },
-    "Flights" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flüge"
-          }
-        }
-      }
-    },
-    "Collections" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sammlungen"
-          }
-        }
-      }
-    },
-    "Aircraft" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flugzeuge"
-          }
-        }
-      }
-    },
-    "Types" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Typen"
-          }
-        }
-      }
-    },
-    "Nothing here yet" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch nichts hier"
-          }
-        }
-      }
-    },
-    "All" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alle"
-          }
-        }
-      }
-    },
-    "Earned" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erreicht"
-          }
-        }
-      }
-    },
-    "In progress" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In Arbeit"
-          }
-        }
-      }
-    },
-    "Show" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Anzeigen"
-          }
-        }
-      }
-    },
-    "No badges here yet" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch keine Badges hier"
-          }
-        }
-      }
-    },
-    "%lld of %lld badges earned" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld von %2$lld Badges erreicht"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld of %2$lld badges earned"
-          }
-        }
-      }
-    },
-    "Airports map" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flughafenkarte"
-          }
-        }
-      }
-    },
-    "No airports yet" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch keine Flughäfen"
-          }
-        }
-      }
-    },
-    "The map needs the airport data. Open the app once while online." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Karte braucht die Flughafendaten. Öffne die App einmal mit Internet."
-          }
-        }
-      }
-    },
-    "Airports you spot at or visit appear here." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flughäfen, an denen du spottest oder die du besuchst, erscheinen hier."
-          }
-        }
-      }
-    },
-    "People" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Leute"
-          }
-        }
-      }
-    },
-    "Following" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Folge ich"
-          }
-        }
-      }
-    },
-    "Followers" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Follower"
-          }
-        }
-      }
-    },
-    "Blocked" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blockiert"
-          }
-        }
-      }
-    },
-    "Search by username" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nach Benutzername suchen"
-          }
-        }
-      }
-    },
-    "Type at least two letters of a username to find people." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gib mindestens zwei Buchstaben eines Benutzernamens ein, um Leute zu finden."
-          }
-        }
-      }
-    },
-    "No one found" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Niemand gefunden"
-          }
-        }
-      }
-    },
-    "Nobody here yet" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch niemand hier"
-          }
-        }
-      }
-    },
-    "Follow" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Folgen"
-          }
-        }
-      }
-    },
-    "Unfollow" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nicht mehr folgen"
-          }
-        }
-      }
-    },
-    "Follows you" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Folgt dir"
-          }
-        }
-      }
-    },
-    "Friends" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Freunde"
-          }
-        }
-      }
-    },
-    "Private profile" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Privates Profil"
-          }
-        }
-      }
-    },
-    "Block" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blockieren"
-          }
-        }
-      }
-    },
-    "Unblock" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blockierung aufheben"
-          }
-        }
-      }
-    },
-    "You won't see each other's check-ins or comments anymore, and any follows between you end." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ihr seht keine Check-ins und Kommentare voneinander mehr, und bestehende Follows enden."
-          }
-        }
-      }
-    },
-    "Couldn't complete this" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das hat nicht geklappt"
-          }
-        }
-      }
-    },
-    "Share my check-ins" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meine Check-ins teilen"
-          }
-        }
-      }
-    },
-    "Only me" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nur ich"
-          }
-        }
-      }
-    },
-    "Everyone" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alle"
-          }
-        }
-      }
-    },
-    "Friends are people you follow who follow you back. Your exact position is never shown to others." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Freunde sind Leute, denen du folgst und die dir zurück folgen. Deine genaue Position wird anderen nie gezeigt."
-          }
-        }
-      }
-    },
-    "Sharing settings need an internet connection." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Freigabe-Einstellungen brauchen eine Internetverbindung."
-          }
-        }
-      }
-    },
-    "Also change your earlier check-ins?" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Auch frühere Check-ins ändern?"
-          }
-        }
-      }
-    },
-    "Only new check-ins" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nur neue Check-ins"
-          }
-        }
-      }
-    },
-    "All check-ins" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alle Check-ins"
-          }
-        }
-      }
-    },
-    "Block @%@?" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "@%@ blockieren?"
           }
         }
       }

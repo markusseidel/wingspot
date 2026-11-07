@@ -14,6 +14,7 @@ struct WingspotApp: App {
     @State private var referenceData: ReferenceDataStore
     @State private var account: AccountStore
     @State private var social: SocialStore
+    @State private var feed: FeedStore
     @State private var sync: CheckInSyncCoordinator
     @State private var badges: BadgeStore
     @Environment(\.scenePhase) private var scenePhase
@@ -33,6 +34,7 @@ struct WingspotApp: App {
         let account = AccountStore(backend: accountBackend)
         _account = State(initialValue: account)
         _social = State(initialValue: SocialStore(backend: accountBackend, userID: { account.userID }))
+        _feed = State(initialValue: FeedStore(backend: accountBackend))
         let uploader = APICheckInUploader(
             client: Self.apiClient,
             accessToken: { await account.accessToken() }
@@ -61,6 +63,7 @@ struct WingspotApp: App {
                 .environment(referenceData)
                 .environment(account)
                 .environment(social)
+                .environment(feed)
                 .environment(sync)
                 .environment(badges)
                 .modelContainer(modelContainer)
@@ -108,7 +111,7 @@ struct WingspotApp: App {
         }
     }
 
-    private static func makeAccountBackend() -> any AccountBackend & SocialBackend {
+    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend {
         var url = Bundle.main.object(forInfoDictionaryKey: "WingspotSupabaseURL") as? String
         var key = Bundle.main.object(forInfoDictionaryKey: "WingspotPublishableKey") as? String
         #if DEBUG
