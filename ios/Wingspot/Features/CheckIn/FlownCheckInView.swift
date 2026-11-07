@@ -286,7 +286,7 @@ private struct FlownResultView: View {
                     .font(.title3)
                     .multilineTextAlignment(.center)
                 if let km = result.distanceKm {
-                    Text("\(km) km")
+                    Text(verbatim: DistanceUnit.preferred.format(km: km))
                         .foregroundStyle(.secondary)
                 }
             }
