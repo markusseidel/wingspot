@@ -156,7 +156,7 @@ public final class AccountStore {
 }
 
 /// For builds without a backend key. The app still works, except for signing in.
-public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend {
+public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend, FeedBackend {
     public init() {}
 
     public func currentUserID() async -> UUID? { nil }
@@ -180,4 +180,5 @@ public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend {
     public func unblock(_ id: UUID, as me: UUID) async throws { throw AccountError.notConfigured }
     public func sharing(of me: UUID) async throws -> SharingChoice { throw AccountError.notConfigured }
     public func setSharing(_ choice: SharingChoice, applyToExisting: Bool) async throws -> Int { throw AccountError.notConfigured }
+    public func feed(after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem] { throw AccountError.notConfigured }
 }

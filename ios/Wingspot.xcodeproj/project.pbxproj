@@ -38,6 +38,7 @@
 		A28B1AFC7227F94265B0AF01 /* BadgesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEADFFA0580043E3265322F0 /* BadgesScreen.swift */; };
 		B3051CE8DCAD5C1F29BB0B38 /* APIPhotoUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA4C2033974EBB05B5FCF5E /* APIPhotoUploader.swift */; };
 		B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B545FD209FC2942BD45E71 /* CheckInResultView.swift */; };
+		B9781CFA9DE1264E690E8F1B /* FeedScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC6390EE07C2061FC444960 /* FeedScreen.swift */; };
 		C11130AF4BC7A3C72A86C5A3 /* APICheckInUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828B639D7292CFD9B11324B0 /* APICheckInUploader.swift */; };
 		C514F70DAE3982F3745EA554 /* BoardingPassScanning.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADADB9204585A1B0741191CA /* BoardingPassScanning.swift */; };
 		C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A035100ED13735493AF7BF1 /* LocationProvider.swift */; };
@@ -78,6 +79,7 @@
 		9A035100ED13735493AF7BF1 /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
 		A47349EC0A6768BA0A1C2F6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A96EA4033E2C1D21ED547E17 /* APIProgressSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIProgressSource.swift; sourceTree = "<group>"; };
+		ACC6390EE07C2061FC444960 /* FeedScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedScreen.swift; sourceTree = "<group>"; };
 		ADADB9204585A1B0741191CA /* BoardingPassScanning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardingPassScanning.swift; sourceTree = "<group>"; };
 		AFA4C2033974EBB05B5FCF5E /* APIPhotoUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIPhotoUploader.swift; sourceTree = "<group>"; };
 		B0E18517ABA8FEAD7497EE58 /* AppleSignInButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInButton.swift; sourceTree = "<group>"; };
@@ -162,6 +164,7 @@
 				83302189B26D2355EEC08AA7 /* Badges */,
 				1EC26DAEA056854F28F4B7EE /* CheckIn */,
 				87951F4E74954155B4CA1844 /* Common */,
+				546C1542C92A1D5B03F0D633 /* Feed */,
 				C356936431FEF869579418FC /* Social */,
 			);
 			path = Features;
@@ -176,6 +179,14 @@
 				0DC91F789BDC9D057613D0CA /* Resources */,
 			);
 			path = Wingspot;
+			sourceTree = "<group>";
+		};
+		546C1542C92A1D5B03F0D633 /* Feed */ = {
+			isa = PBXGroup;
+			children = (
+				ACC6390EE07C2061FC444960 /* FeedScreen.swift */,
+			);
+			path = Feed;
 			sourceTree = "<group>";
 		};
 		628D5F429C1B6E92B5C4F2A0 = {
@@ -362,6 +373,7 @@
 				666833BB5AA51A95401FAE68 /* CheckInSheet.swift in Sources */,
 				0938348D4F0B21A4B41F7D9E /* CollectionsView.swift in Sources */,
 				A165396CBFC567234392EE1F /* EmailSignInView.swift in Sources */,
+				B9781CFA9DE1264E690E8F1B /* FeedScreen.swift in Sources */,
 				5EFAD640812D73C675B33326 /* FlownCheckInView.swift in Sources */,
 				C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */,
 				2E4689A87246BCE2846B568F /* NetworkMonitor.swift in Sources */,

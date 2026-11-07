@@ -17,8 +17,7 @@ struct RootView: View {
     var body: some View {
         TabView(selection: tabSelection) {
             Tab("Feed", systemImage: "list.bullet.rectangle", value: AppTab.feed) {
-                PlaceholderScreen(title: "Feed", systemImage: "list.bullet.rectangle",
-                                  message: "Check-ins from people you follow will appear here.")
+                FeedScreen()
             }
             Tab("Explore", systemImage: "map", value: AppTab.explore) {
                 PlaceholderScreen(title: "Explore", systemImage: "map",
