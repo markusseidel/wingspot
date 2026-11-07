@@ -14,6 +14,9 @@ extension SharingChoice {
 /// The profile setting for who sees new check-ins. It starts as "Only me", so nobody shares by accident.
 struct SharingSection: View {
     @Environment(SocialStore.self) private var social
+    @Environment(TermsStore.self) private var terms
+    @State private var showTerms = false
+    @State private var afterTerms: SharingChoice?
     @State private var choice: SharingChoice?
     @State private var pending: SharingChoice?
     @State private var failure: AccountError?
@@ -23,7 +26,11 @@ struct SharingSection: View {
         Section {
             Picker("Share my check-ins", selection: Binding(
                 get: { choice ?? .private },
-                set: { new in if new != choice { pending = new } }
+                set: { new in
+                    guard new != choice else { return }
+                    // Sharing with others needs the community rules first.
+                    if new != .private, !terms.hasAccepted { afterTerms = new; showTerms = true } else { pending = new }
+                }
             )) {
                 ForEach(SharingChoice.allCases, id: \.self) { Text($0.title).tag($0) }
             }
@@ -36,6 +43,14 @@ struct SharingSection: View {
             }
         }
         .task { await load() }
+        .sheet(isPresented: $showTerms) {
+            TermsScreen {
+                terms.accept()
+                showTerms = false
+                pending = afterTerms
+                afterTerms = nil
+            }
+        }
         .confirmationDialog(
             "Also change your earlier check-ins?",
             isPresented: Binding(get: { pending != nil }, set: { if !$0 { pending = nil } }),

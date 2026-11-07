@@ -31,6 +31,7 @@ struct PeopleView: View {
                 }
             }
         }
+        .termsGate()
         .navigationTitle("People")
         .searchable(text: $query, prompt: "Search by username")
         .textInputAutocapitalization(.never)

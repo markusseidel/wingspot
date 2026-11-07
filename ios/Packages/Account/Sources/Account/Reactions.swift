@@ -59,6 +59,7 @@ public protocol ReactionBackend: Sendable {
     func comments(checkIn: UUID) async throws -> [CheckInComment]
     func addComment(_ body: String, checkIn: UUID, as me: UUID) async throws -> CheckInComment
     func deleteComment(_ id: UUID) async throws
+    func report(_ kind: ReportKind, target: UUID, reason: String) async throws -> ReportOutcome
 }
 
 /// The comments under one check-in.

@@ -37,6 +37,18 @@ private actor FakeFeed: FeedBackend, ReactionBackend {
         if let reactionError { throw reactionError }
         for key in stored.keys { stored[key]?.removeAll { $0.id == id } }
     }
+
+    private(set) var reports: [(kind: ReportKind, target: UUID, reason: String)] = []
+    var reportOutcome = ReportOutcome.reported
+
+    func setReportOutcome(_ outcome: ReportOutcome) { reportOutcome = outcome }
+
+    func report(_ kind: ReportKind, target: UUID, reason: String) throws -> ReportOutcome {
+        if let reactionError { throw reactionError }
+        reports.append((kind, target, reason))
+        return reportOutcome
+    }
+
     func replace(_ items: [FeedItem]) { self.items = items }
 
     func feed(after cursor: FeedCursor?, pageSize: Int) throws -> [FeedItem] {
@@ -235,4 +247,43 @@ private func item(_ n: Int) -> FeedItem {
     #expect(comments[0].username == "anna_spots")
     #expect(comments[0].displayName == "Anna")
     #expect(comments[0].body == "Nice one")
+}
+
+@Test @MainActor func reportSendsReasonAndDetails() async throws {
+    let backend = FakeFeed(items: [])
+    let target = UUID()
+    try await Reporter(backend: backend).report(.comment, target: target, reason: .offensive, details: "  rude  ")
+    try await Reporter(backend: backend).report(.user, target: target, reason: .spam, details: "")
+    let sent = await backend.reports
+    #expect(sent.map(\.reason) == ["offensive: rude", "spam"])
+    #expect(sent.map(\.kind) == [.comment, .user])
+}
+
+@Test @MainActor func reportRefusalsBecomeErrors() async {
+    let backend = FakeFeed(items: [])
+    let reporter = Reporter(backend: backend)
+    await backend.setReportOutcome(.tooMany)
+    await #expect(throws: AccountError.tooManyRequests) {
+        try await reporter.report(.user, target: UUID(), reason: .other, details: "")
+    }
+    await backend.setReportOutcome(.unknownTarget)
+    await #expect(throws: AccountError.unknown) {
+        try await reporter.report(.user, target: UUID(), reason: .other, details: "")
+    }
+}
+
+@Test @MainActor func termsAreAcceptedPerAccount() throws {
+    let defaults = try #require(UserDefaults(suiteName: "TermsTests-\(UUID().uuidString)"))
+    var current: UUID? = nil
+    let terms = TermsStore(defaults: defaults, userID: { current })
+    #expect(!terms.hasAccepted)
+    let first = UUID()
+    current = first
+    #expect(!terms.hasAccepted)
+    terms.accept()
+    #expect(terms.hasAccepted)
+    current = UUID()
+    #expect(!terms.hasAccepted)
+    current = first
+    #expect(TermsStore(defaults: defaults, userID: { first }).hasAccepted)
 }

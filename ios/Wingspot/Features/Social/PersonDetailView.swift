@@ -9,6 +9,7 @@ struct PersonDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var isWorking = false
     @State private var confirmBlock = false
+    @State private var report: ReportTarget?
     @State private var failure: AccountError?
 
     var body: some View {
@@ -39,12 +40,16 @@ struct PersonDetailView: View {
             }
             .disabled(isWorking)
             Section {
+                Button("Report") {
+                    report = ReportTarget(kind: .user, id: person.id, subject: "@\(person.username)")
+                }
                 Button("Block", role: .destructive) { confirmBlock = true }
                     .disabled(isWorking)
             }
         }
         .navigationTitle(Text(verbatim: "@\(person.username)"))
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(item: $report) { ReportSheet(target: $0) }
         .confirmationDialog(
             Text("Block @\(person.username)?"), isPresented: $confirmBlock, titleVisibility: .visible
         ) {

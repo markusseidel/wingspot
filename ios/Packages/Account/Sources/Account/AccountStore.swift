@@ -187,4 +187,5 @@ public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend, FeedBac
     public func comments(checkIn: UUID) async throws -> [CheckInComment] { throw AccountError.notConfigured }
     public func addComment(_ body: String, checkIn: UUID, as me: UUID) async throws -> CheckInComment { throw AccountError.notConfigured }
     public func deleteComment(_ id: UUID) async throws { throw AccountError.notConfigured }
+    public func report(_ kind: ReportKind, target: UUID, reason: String) async throws -> ReportOutcome { throw AccountError.notConfigured }
 }

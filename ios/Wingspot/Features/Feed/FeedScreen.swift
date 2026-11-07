@@ -6,6 +6,8 @@ struct FeedScreen: View {
     @Environment(AccountStore.self) private var account
     @Environment(FeedStore.self) private var feed
     @State private var commentsFor: FeedItem?
+    @State private var report: ReportTarget?
+    @Environment(TermsStore.self) private var terms
 
     var body: some View {
         NavigationStack {
@@ -16,6 +18,8 @@ struct FeedScreen: View {
                     } description: {
                         Text("Sign in from the Profile tab to see check-ins from people you follow.")
                     }
+                } else if !terms.hasAccepted {
+                    TermsScreen { terms.accept() }
                 } else if !feed.hasLoaded {
                     if let failure = feed.failure {
                         ContentUnavailableView {
@@ -43,8 +47,9 @@ struct FeedScreen: View {
             }
             .navigationTitle("Feed")
             .navigationDestination(item: $commentsFor) { CommentsView(item: $0) }
+            .sheet(item: $report) { ReportSheet(target: $0) }
             .toolbar {
-                if account.userID != nil {
+                if account.userID != nil, terms.hasAccepted {
                     NavigationLink { PeopleView() } label: {
                         Image(systemName: "person.badge.plus")
                     }
@@ -72,7 +77,8 @@ struct FeedScreen: View {
                 FeedCard(
                     item: item, isOwn: item.userID == account.userID,
                     onSalute: { Task { await feed.toggleSalute(item.id) } },
-                    onComments: { commentsFor = item }
+                    onComments: { commentsFor = item },
+                    onReport: { report = ReportTarget(kind: .checkin, id: item.id, subject: "this check-in") }
                 )
                     .task {
                         // Close to the end: ask for older check-ins.
@@ -94,6 +100,7 @@ private struct FeedCard: View {
     let isOwn: Bool
     let onSalute: () -> Void
     let onComments: () -> Void
+    let onReport: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -109,6 +116,14 @@ private struct FeedCard: View {
                 Text(item.occurredAt, format: .relative(presentation: .named))
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                if !isOwn {
+                    Menu {
+                        Button("Report", systemImage: "flag", action: onReport)
+                    } label: {
+                        Image(systemName: "ellipsis").padding(.leading, 6)
+                    }
+                    .accessibilityLabel("More")
+                }
             }
             Label(kindTitle, systemImage: kindSymbol)
                 .font(.caption)
