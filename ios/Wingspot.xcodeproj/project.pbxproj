@@ -25,6 +25,7 @@
 		3C72654BC1F78F3B175048F2 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA53E0B6C7D19C0B128FFE6 /* OnboardingView.swift */; };
 		3FF4DDD01D1F79267517DE35 /* ReferenceData in Frameworks */ = {isa = PBXBuildFile; productRef = 16B4602119380A191047210F /* ReferenceData */; };
 		4427FE8EDAE09F2B68624303 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CCCA89A7943B8447EE7898 /* ShareSheet.swift */; };
+		44D09702BD9AEBE667B05854 /* PersonCheckInsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769842784C2049C177DB02CD /* PersonCheckInsSection.swift */; };
 		4644DCAB019919C64F9372FD /* AirportsMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C8DE707D5FBC441F2A0A4 /* AirportsMapView.swift */; };
 		5EFAD640812D73C675B33326 /* FlownCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED53FE5B4A009D5575119BB4 /* FlownCheckInView.swift */; };
 		6011B00CBD96A7EE9270C0C9 /* DistanceUnitSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D41472169C437C8D788A92 /* DistanceUnitSetting.swift */; };
@@ -78,6 +79,7 @@
 		6CA53E0B6C7D19C0B128FFE6 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		6E61A661480E1ED65178DE4B /* WingspotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WingspotApp.swift; sourceTree = "<group>"; };
 		6FD2433D565B1E9974F334CA /* ProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileScreen.swift; sourceTree = "<group>"; };
+		769842784C2049C177DB02CD /* PersonCheckInsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonCheckInsSection.swift; sourceTree = "<group>"; };
 		76B04C14C68A65FD24C0D6DD /* WingspotCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = WingspotCore; path = Packages/WingspotCore; sourceTree = SOURCE_ROOT; };
 		7A9D215092A1385FA8E52D3A /* CelebrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrationView.swift; sourceTree = "<group>"; };
 		82163058748258D0AE08F801 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
@@ -279,6 +281,7 @@
 			isa = PBXGroup;
 			children = (
 				E3A6E9C03029947E148B9EBB /* PeopleView.swift */,
+				769842784C2049C177DB02CD /* PersonCheckInsSection.swift */,
 				5CABAD3AAA0CB6C6317A73DE /* PersonDetailView.swift */,
 				9EEF8DEDA274D745C08605EB /* ReportSheet.swift */,
 				995610FFAC434B480B981139 /* SharingSection.swift */,
@@ -407,6 +410,7 @@
 				2E4689A87246BCE2846B568F /* NetworkMonitor.swift in Sources */,
 				3C72654BC1F78F3B175048F2 /* OnboardingView.swift in Sources */,
 				CCB6285BC5F2D2D0C2D23BAD /* PeopleView.swift in Sources */,
+				44D09702BD9AEBE667B05854 /* PersonCheckInsSection.swift in Sources */,
 				13A3F8B8C6248C62D540A996 /* PersonDetailView.swift in Sources */,
 				96D09D7A0351104460703E5B /* PhotoSection.swift in Sources */,
 				3B16BBB37412D38A89E454BD /* PlaceholderScreen.swift in Sources */,

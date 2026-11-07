@@ -61,6 +61,13 @@ private actor FakeFeed: FeedBackend, ReactionBackend {
         return photoRows.filter { checkIns.contains($0.checkInID) }
     }
 
+    private(set) var personRequests: [UUID] = []
+    func personCheckIns(of person: UUID, after cursor: FeedCursor?, pageSize: Int) throws -> [FeedItem] {
+        personRequests.append(person)
+        if let error { throw error }
+        return items.filter { $0.userID == person }
+    }
+
     func replace(_ items: [FeedItem]) { self.items = items }
 
     func feed(after cursor: FeedCursor?, pageSize: Int) throws -> [FeedItem] {
@@ -321,4 +328,14 @@ private func item(_ n: Int) -> FeedItem {
     #expect(store.items.count == 3)
     #expect(store.failure == nil)
     #expect(store.photos.isEmpty)
+}
+
+@Test @MainActor func aPersonsPageAsksForThatPerson() async {
+    let other = UUID()
+    let backend = FakeFeed(items: (1...3).map(item))
+    let store = FeedStore(backend: backend, reactions: backend, person: other, userID: { me })
+    await store.refresh()
+    #expect(await backend.personRequests == [other])
+    #expect(await backend.cursors.isEmpty, "the feed itself was not asked")
+    #expect(store.hasLoaded)
 }
