@@ -84,7 +84,7 @@ In this order:
 
 ### Small housekeeping
 
-- [ ] Add `.claude/settings.local.json` to `.gitignore`
+- [x] Add `.claude/settings.local.json` to `.gitignore`
 - [x] Archive the finished session "Move Edge Functions off the legacy anon key"
 
 ## Decisions still open
@@ -131,7 +131,7 @@ In this order:
   - [ ] Briefly deactivate the anon key and test
   - [ ] Remove the to-do from `backend/README.md`
 
-- [ ] Deploy badges to hosted, with the next approved deploy: the migration `20261105200000_badges.sql` and the changed `me` function. Do this before any build that shows badges
+- [x] Deploy badges to hosted, with the next approved deploy: the migration `20261105200000_badges.sql` and the changed `me` function. Do this before any build that shows badges
 - [ ] Fill in the island flag and runway lengths in the airport data, then switch on `island_hopper` and `short_field` (set their `valid_from` to null)
 
 ### TestFlight setup
@@ -178,7 +178,7 @@ In this order:
   - [ ] Delete the test account `github@seidel.ruhr` on hosted
   - [ ] Terms of use: fill in the brackets in [TERMS-DRAFT.md](TERMS-DRAFT.md) and publish on `wingspot.site` with the privacy policy; reports are read in the Supabase table `reports` (answer within 24 hours, remove content that breaks the rules)
 - [x] Milestone 6: your profile (stats, collections, badges tab with filter, airports map; the airport map and signed-in views still to see on your iPhone)
-- [ ] Milestone 7: social
+- [x] Milestone 7: social (7a to 7f are merged and deployed; still to try on your iPhone with two accounts: People, Feed, comments, reports, the rules screen and photos)
 - [ ] Milestone 8: airport page and settings (plan in [MILESTONE8.md](MILESTONE8.md); 8a account deletion built)
   - [ ] When Sign in with Apple goes live: revoke the Apple token when an account is deleted (Apple requires it)
   - [ ] Try account deletion on hosted with a throwaway account, after the deploy
