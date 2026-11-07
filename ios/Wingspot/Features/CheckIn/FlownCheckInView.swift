@@ -99,8 +99,10 @@ struct FlownCheckInView: View {
                 if BoardingPassScanning.cameraIsAvailable {
                     Button("Scan boarding pass", systemImage: "barcode.viewfinder") { showCamera = true }
                 }
+                // The label closure can't read state from the view, so the text is chosen before it.
+                let pickerTitle: LocalizedStringKey = isReadingImage ? "Reading…" : "Read from a picture"
                 PhotosPicker(selection: $photo, matching: .images) {
-                    Label(isReadingImage ? "Reading…" : "Read from a picture", systemImage: "photo")
+                    Label(pickerTitle, systemImage: "photo")
                 }
                 .disabled(isReadingImage)
             } footer: {
