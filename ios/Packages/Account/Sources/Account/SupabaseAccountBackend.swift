@@ -419,6 +419,13 @@ extension SupabaseAccountBackend: FeedBackend {
         }
     }
 
+    public func personCheckIns(of person: UUID, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem] {
+        try await socialErrors {
+            try await client.rpc("get_person_checkins", params: PersonParams(target: person, cursor: cursor, pageSize: pageSize))
+                .execute().value
+        }
+    }
+
     /// An hour is enough to scroll through a page of the feed. Refreshing signs the links again.
     private static let photoLinkLifetime = 3600
 
@@ -454,6 +461,27 @@ private struct PhotoRow: Decodable {
         case id, width, height
         case checkInID = "checkin_id"
         case storagePath = "storage_path"
+    }
+}
+
+private struct PersonParams: Encodable {
+    let target: UUID
+    let cursor: FeedCursor?
+    let pageSize: Int
+
+    private enum CodingKeys: String, CodingKey {
+        case target
+        case beforeTime = "before_time"
+        case beforeID = "before_id"
+        case pageSize = "page_size"
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(target, forKey: .target)
+        try container.encode(cursor?.time, forKey: .beforeTime)
+        try container.encode(cursor?.id, forKey: .beforeID)
+        try container.encode(pageSize, forKey: .pageSize)
     }
 }
 

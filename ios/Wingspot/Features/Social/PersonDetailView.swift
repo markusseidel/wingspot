@@ -39,6 +39,7 @@ struct PersonDetailView: View {
                 }
             }
             .disabled(isWorking)
+            PersonCheckInsSection(person: person)
             Section {
                 Button("Report") {
                     report = ReportTarget(kind: .user, id: person.id, subject: "@\(person.username)")

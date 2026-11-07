@@ -97,7 +97,7 @@ struct FeedScreen: View {
     }
 }
 
-private struct FeedCard: View {
+struct FeedCard: View {
     @AppStorage(DistanceUnit.storageKey) private var unit = DistanceUnit.kilometres
     let item: FeedItem
     let isOwn: Bool

@@ -140,6 +140,8 @@ public struct FeedPhoto: Equatable, Sendable, Identifiable {
 
 public protocol FeedBackend: Sendable {
     func feed(after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem]
+    /// One person's check-ins that the caller may see, newest first.
+    func personCheckIns(of person: UUID, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem]
     /// The photos of these check-ins that the caller may see, in order, with signed links.
     func photos(for checkIns: [UUID]) async throws -> [FeedPhoto]
 }
@@ -161,13 +163,16 @@ public final class FeedStore {
     public private(set) var photos: [UUID: [FeedPhoto]] = [:]
 
     private let backend: FeedBackend
+    /// A person's page lists only their check-ins. `nil` is the Feed tab.
+    private let person: UUID?
     private let reactions: ReactionBackend
     private let userID: @MainActor () -> UUID?
     /// Changes whenever the list restarts, so an answer to an older request is dropped.
     private var generation = 0
 
-    public init(backend: FeedBackend, reactions: ReactionBackend, userID: @escaping @MainActor () -> UUID?) {
+    public init(backend: FeedBackend, reactions: ReactionBackend, person: UUID? = nil, userID: @escaping @MainActor () -> UUID?) {
         self.backend = backend
+        self.person = person
         self.reactions = reactions
         self.userID = userID
     }
@@ -185,6 +190,11 @@ public final class FeedStore {
             if let now = items.firstIndex(where: { $0.id == id }) { items[now] = items[now].updating(salutes: before.salutes, saluted: before.saluted) }
             failure = (error as? AccountError) ?? .unknown
         }
+    }
+
+    /// A list of one person's check-ins, with the same cards, salutes and comments as the feed.
+    public func personStore(for id: UUID) -> FeedStore {
+        FeedStore(backend: backend, reactions: reactions, person: id, userID: userID)
     }
 
     /// The comments of one check-in. Its count is kept in step with the card.
@@ -208,7 +218,7 @@ public final class FeedStore {
         isLoading = true
         defer { if mine == generation { isLoading = false } }
         do {
-            let page = try await backend.feed(after: nil, pageSize: Self.pageSize)
+            let page = try await fetch(after: nil)
             guard mine == generation else { return }
             items = Self.unique(page)
             reachedEnd = page.count < Self.pageSize
@@ -229,7 +239,7 @@ public final class FeedStore {
         isLoading = true
         defer { if mine == generation { isLoading = false } }
         do {
-            let page = try await backend.feed(after: FeedCursor(time: last.cursorTime, id: last.id), pageSize: Self.pageSize)
+            let page = try await fetch(after: FeedCursor(time: last.cursorTime, id: last.id))
             guard mine == generation else { return }
             let known = Set(items.map(\.id))
             let added = Self.unique(page).filter { !known.contains($0.id) }
@@ -241,6 +251,13 @@ public final class FeedStore {
             guard mine == generation else { return }
             failure = (error as? AccountError) ?? .unknown
         }
+    }
+
+    private func fetch(after cursor: FeedCursor?) async throws -> [FeedItem] {
+        if let person {
+            return try await backend.personCheckIns(of: person, after: cursor, pageSize: Self.pageSize)
+        }
+        return try await backend.feed(after: cursor, pageSize: Self.pageSize)
     }
 
     /// Photos are a bonus: if they can't be loaded, the cards stay as they are.

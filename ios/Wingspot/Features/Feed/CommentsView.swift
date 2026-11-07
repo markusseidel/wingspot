@@ -4,6 +4,8 @@ import SwiftUI
 /// The comments under one check-in, with a field to write a new one.
 struct CommentsView: View {
     let item: FeedItem
+    /// The list the check-in comes from, so its comment count follows. The Feed tab's list if `nil`.
+    var source: FeedStore?
 
     @Environment(AccountStore.self) private var account
     @Environment(FeedStore.self) private var feed
@@ -23,7 +25,7 @@ struct CommentsView: View {
         .navigationTitle("Comments")
         .navigationBarTitleDisplayMode(.inline)
         .task {
-            let created = feed.commentStore(for: item.id)
+            let created = (source ?? feed).commentStore(for: item.id)
             store = created
             await created.load()
         }

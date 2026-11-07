@@ -95,6 +95,9 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
     - Profile has a "Settings" screen with: who sees new check-ins (the setting from Milestone 7), a private profile switch, a delay for public check-ins (none, 1, 6 or 24 hours), and the distance unit (kilometres, nautical miles or miles).
     - The server already let an account change its own `is_private` and `post_delay_minutes`, so no migration was needed; a database test now covers what they do. A private profile hides its public check-ins from strangers, and the delay holds public check-ins back from strangers while friends and the owner see them at once.
     - The distance unit is kept on the phone only. Distances are stored in kilometres and shown in the chosen unit in the feed and after a flight check-in.
+25. **Check-ins on a person's page (milestone 8d):**
+    - The database function `get_person_checkins(target, before_time, before_id, page_size)` returns one person's check-ins in the same shape as the feed, with the same rules: it runs as the caller, so own, friends-only, public (with the author's delay and private profile) and blocked are decided by the check-in rules, and the registration of a sensitive aircraft is hidden from others.
+    - A person's page shows those check-ins with the feed's cards (salute, comment, report, photos) and paging. A private profile you aren't a friend of says so.
 
 ## Before each milestone
 

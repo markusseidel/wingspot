@@ -1591,6 +1591,16 @@
         }
       }
     },
+    "No check-ins to show." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Check-ins zum Anzeigen."
+          }
+        }
+      }
+    },
     "No check-ins yet" : {
       "localizations" : {
         "de" : {
@@ -2368,6 +2378,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dieser Kommentar ist nicht erlaubt. Bitte formuliere ihn um."
+          }
+        }
+      }
+    },
+    "This profile is private." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Profil ist privat."
           }
         }
       }
