@@ -10,7 +10,7 @@ The iOS app is in TestFlight (version 0.2.0). Android is planned.
 - **Photos:** added to a check-in, shrunk and stripped of metadata on the device before upload.
 - **Profile and collections:** stats, your aircraft, types and airports, and a map of the airports you visited.
 - **Badges:** 36 launch badges, defined on the server, so new ones need no app update. See [docs/BADGES.md](docs/BADGES.md).
-- **Social:** find people, follow and block them, choose who sees your check-ins, a feed of friends' check-ins, salutes and comments with a word filter. Reporting, terms of use and photos in the feed are next.
+- **Social:** find people, follow and block them, choose who sees your check-ins, a feed of friends' check-ins, salutes and comments with a word filter, photos in the feed, reporting people, check-ins, comments and photos, and community rules to agree to first.
 
 ## Documentation
 
