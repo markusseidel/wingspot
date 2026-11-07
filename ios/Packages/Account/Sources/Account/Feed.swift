@@ -2,7 +2,7 @@ import Foundation
 import Observation
 
 /// One check-in in the feed, as `get_feed` returns it.
-public struct FeedItem: Equatable, Sendable, Identifiable, Decodable {
+public struct FeedItem: Hashable, Sendable, Identifiable, Decodable {
     public let id: UUID
     public let userID: UUID
     public let username: String
@@ -48,6 +48,17 @@ public struct FeedItem: Equatable, Sendable, Identifiable, Decodable {
         self.salutes = salutes
         self.comments = comments
         self.saluted = saluted
+    }
+
+    /// The same check-in with new counts, for updates that don't need another request.
+    public func updating(salutes: Int? = nil, comments: Int? = nil, saluted: Bool? = nil) -> FeedItem {
+        FeedItem(
+            id: id, userID: userID, username: username, displayName: displayName, kind: kind, occurredAt: occurredAt,
+            cursorTime: cursorTime, registration: registration, typeICAO: typeICAO, typeName: typeName,
+            airportCode: airportCode, originCode: originCode, destinationCode: destinationCode,
+            flightNumber: flightNumber, distanceKm: distanceKm, salutes: salutes ?? self.salutes,
+            comments: comments ?? self.comments, saluted: saluted ?? self.saluted
+        )
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -129,11 +140,44 @@ public final class FeedStore {
     public private(set) var hasLoaded = false
 
     private let backend: FeedBackend
+    private let reactions: ReactionBackend
+    private let userID: @MainActor () -> UUID?
     /// Changes whenever the list restarts, so an answer to an older request is dropped.
     private var generation = 0
 
-    public init(backend: FeedBackend) {
+    public init(backend: FeedBackend, reactions: ReactionBackend, userID: @escaping @MainActor () -> UUID?) {
         self.backend = backend
+        self.reactions = reactions
+        self.userID = userID
+    }
+
+    /// Salutes or un-salutes a check-in. The card changes at once, and goes back if the request fails.
+    public func toggleSalute(_ id: UUID) async {
+        guard let me = userID(), let index = items.firstIndex(where: { $0.id == id }) else { return }
+        let before = items[index]
+        let on = !before.saluted
+        items[index] = before.updating(salutes: max(0, before.salutes + (on ? 1 : -1)), saluted: on)
+        do {
+            try await reactions.setSalute(on, checkIn: id, as: me)
+            failure = nil
+        } catch {
+            if let now = items.firstIndex(where: { $0.id == id }) { items[now] = items[now].updating(salutes: before.salutes, saluted: before.saluted) }
+            failure = (error as? AccountError) ?? .unknown
+        }
+    }
+
+    /// The comments of one check-in. Its count is kept in step with the card.
+    public func commentStore(for id: UUID) -> CheckInCommentStore {
+        CheckInCommentStore(
+            checkIn: id, backend: reactions, userID: userID,
+            onCountChange: { [weak self] count in self?.setCommentCount(count, for: id) }
+        )
+    }
+
+    /// Keeps a card's comment count in step with the comments screen.
+    public func setCommentCount(_ count: Int, for id: UUID) {
+        guard let index = items.firstIndex(where: { $0.id == id }), items[index].comments != count else { return }
+        items[index] = items[index].updating(comments: count)
     }
 
     /// Loads the newest page and replaces the list. Keeps the old list when it fails.

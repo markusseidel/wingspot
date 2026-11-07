@@ -34,7 +34,7 @@ struct WingspotApp: App {
         let account = AccountStore(backend: accountBackend)
         _account = State(initialValue: account)
         _social = State(initialValue: SocialStore(backend: accountBackend, userID: { account.userID }))
-        _feed = State(initialValue: FeedStore(backend: accountBackend))
+        _feed = State(initialValue: FeedStore(backend: accountBackend, reactions: accountBackend, userID: { account.userID }))
         let uploader = APICheckInUploader(
             client: Self.apiClient,
             accessToken: { await account.accessToken() }
@@ -111,7 +111,7 @@ struct WingspotApp: App {
         }
     }
 
-    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend {
+    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend & ReactionBackend {
         var url = Bundle.main.object(forInfoDictionaryKey: "WingspotSupabaseURL") as? String
         var key = Bundle.main.object(forInfoDictionaryKey: "WingspotPublishableKey") as? String
         #if DEBUG

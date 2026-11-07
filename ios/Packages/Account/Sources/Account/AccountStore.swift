@@ -11,6 +11,8 @@ public enum AccountError: Error, Equatable, Sendable {
     /// Sign in with Apple isn't switched on at the backend yet.
     case appleUnavailable
     case offline
+    /// A comment the word filter refuses.
+    case contentNotAllowed
     /// This build has no backend key, see ios/Config/Wingspot.xcconfig.
     case notConfigured
     case unknown
@@ -156,7 +158,7 @@ public final class AccountStore {
 }
 
 /// For builds without a backend key. The app still works, except for signing in.
-public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend, FeedBackend {
+public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend, FeedBackend, ReactionBackend {
     public init() {}
 
     public func currentUserID() async -> UUID? { nil }
@@ -181,4 +183,8 @@ public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend, FeedBac
     public func sharing(of me: UUID) async throws -> SharingChoice { throw AccountError.notConfigured }
     public func setSharing(_ choice: SharingChoice, applyToExisting: Bool) async throws -> Int { throw AccountError.notConfigured }
     public func feed(after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem] { throw AccountError.notConfigured }
+    public func setSalute(_ on: Bool, checkIn: UUID, as me: UUID) async throws { throw AccountError.notConfigured }
+    public func comments(checkIn: UUID) async throws -> [CheckInComment] { throw AccountError.notConfigured }
+    public func addComment(_ body: String, checkIn: UUID, as me: UUID) async throws -> CheckInComment { throw AccountError.notConfigured }
+    public func deleteComment(_ id: UUID) async throws { throw AccountError.notConfigured }
 }
