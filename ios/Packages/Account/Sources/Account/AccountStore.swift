@@ -34,6 +34,8 @@ public protocol AccountBackend: Sendable {
     func signOut() async throws
     /// Deletes the account on the server, for good. The session stops working.
     func deleteAccount() async throws
+    /// The person's own data as the server sends it, one JSON document.
+    func exportMyData() async throws -> Data
 }
 
 /// The app's sign-in state. Check-ins don't depend on it, so the app also works signed out and offline.
@@ -159,6 +161,17 @@ public final class AccountStore {
         return id
     }
 
+    /// The person's data as readable JSON, for them to save or share.
+    public func exportData() async throws -> Data {
+        let raw = try await backend.exportMyData()
+        guard let object = try? JSONSerialization.jsonObject(with: raw),
+              let pretty = try? JSONSerialization.data(
+                  withJSONObject: object, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+              )
+        else { throw AccountError.unknown }
+        return pretty
+    }
+
     private func loadProfile(id: UUID) async {
         do {
             state = .signedIn(try await backend.loadProfile(id: id))
@@ -186,6 +199,7 @@ public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend, FeedBac
     public func saveProfile(_ profile: Profile) async throws { throw AccountError.notConfigured }
     public func signOut() async throws { throw AccountError.notConfigured }
     public func deleteAccount() async throws { throw AccountError.notConfigured }
+    public func exportMyData() async throws -> Data { throw AccountError.notConfigured }
 
     public func searchPeople(_ text: String, excluding me: UUID, limit: Int) async throws -> [PersonRecord] { throw AccountError.notConfigured }
     public func relationships(of me: UUID, among ids: [UUID]) async throws -> (following: Set<UUID>, followers: Set<UUID>) { throw AccountError.notConfigured }

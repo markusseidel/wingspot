@@ -26,7 +26,7 @@ I deploy to hosted only on the owner's word.
 
 ### 8b. Data export
 
-- **Server:** `GET /v1/me/export` returns one JSON document from the caller's own rows: profile, check-ins, photo list (ID, size, check-in), comments, salutes, follows, blocks, badge progress and the sharing setting. It leaves out other people's data and push tokens. The location stays in the check-in rows, since it is the person's own data.
+- **Server:** the database function `export_my_data()` (called like `get_feed`, so no Edge Function and no OpenAPI entry) returns one JSON document from the caller's own rows: profile, check-ins, photo list (ID, size, check-in), comments, salutes, follows, blocks, badge progress and the sharing setting. It leaves out other people's data and push tokens. The location stays in the check-in rows, since it is the person's own data.
 - **App:** "Export my data" in the profile builds the file and offers it with the share sheet.
 - **Tests:** an API test with two users (nothing of the other person leaks) and one Account test. Add it to OpenAPI.
 - **Open choice:** photo files are not included, only the list. A zip with the photos is possible later.

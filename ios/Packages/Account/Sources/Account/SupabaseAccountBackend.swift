@@ -107,6 +107,12 @@ public struct SupabaseAccountBackend: AccountBackend {
         }
     }
 
+    public func exportMyData() async throws -> Data {
+        try await mappingErrors {
+            try await client.rpc("export_my_data").execute().data
+        }
+    }
+
     private func mappingErrors<T: Sendable>(_ work: () async throws -> T) async throws -> T {
         do {
             return try await work()

@@ -72,9 +72,16 @@ private actor FakeBackend: AccountBackend {
         sessionUser = nil
     }
 
+    var exportData = Data(#"{"b":1,"a":{"z":"x/y"}}"#.utf8)
+    func exportMyData() throws -> Data {
+        if let deleteError { throw deleteError }
+        return exportData
+    }
+
     private(set) var deleted = false
     var deleteError: AccountError?
     func failDelete(_ error: AccountError?) { deleteError = error }
+    func setExport(_ data: Data) { exportData = data }
 
     func deleteAccount() throws {
         if let deleteError { throw deleteError }
@@ -299,6 +306,25 @@ struct AccountStoreTests {
         await #expect(throws: AccountError.offline) { try await store.deleteAccount() }
         #expect(store.userID == id)
         #expect(store.state != .signedOut)
+    }
+
+    @Test func theExportIsReadableJSONWithSortedKeys() async throws {
+        let id = UUID()
+        let store = AccountStore(backend: FakeBackend(sessionUser: id, profile: Profile(id: id, username: "spotter")))
+        await store.start()
+        let text = String(decoding: try await store.exportData(), as: UTF8.self)
+        #expect(text.contains("\n"))
+        #expect(try #require(text.range(of: "\"a\"")).lowerBound < #require(text.range(of: "\"b\"")).lowerBound)
+        #expect(text.contains("x/y"))
+    }
+
+    @Test func anExportThatIsNotJSONFails() async throws {
+        let id = UUID()
+        let backend = FakeBackend(sessionUser: id, profile: Profile(id: id, username: "spotter"))
+        await backend.setExport(Data("nope".utf8))
+        let store = AccountStore(backend: backend)
+        await store.start()
+        await #expect(throws: AccountError.unknown) { try await store.exportData() }
     }
 
     @Test func signOutEndsTheSession() async throws {

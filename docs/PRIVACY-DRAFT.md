@@ -43,7 +43,7 @@ Vertragserfüllung (Art. 6 Abs. 1 lit. b DSGVO) für Konto und Check-ins, Einwil
 
 ## Deine Rechte
 
-Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit und Widerspruch, sowie Beschwerde bei einer Aufsichtsbehörde. Schreibe an [E-Mail]. Du kannst dein Konto direkt in der App unter Profil löschen. [Datenexport: ergänzen, sobald die App es kann.]
+Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit und Widerspruch, sowie Beschwerde bei einer Aufsichtsbehörde. Schreibe an [E-Mail]. Du kannst dein Konto direkt in der App unter Profil löschen. Deine Daten kannst du dort auch als Datei exportieren.
 
 ## Speicherdauer
 
@@ -96,7 +96,7 @@ Contract (Art. 6(1)(b) GDPR) for account and check-ins; consent (point (a)) for 
 
 ## Your rights
 
-Access, correction, deletion, restriction, portability and objection, and a complaint to a supervisory authority. Write to [email]. You can delete your account in the app under Profile. [Data export: add once the app supports it.]
+Access, correction, deletion, restriction, portability and objection, and a complaint to a supervisory authority. Write to [email]. You can delete your account in the app under Profile. You can also export your data as a file there.
 
 ## Retention
 

@@ -105,6 +105,10 @@ private struct ProfileDetailsView: View {
     @State private var airport: Airport?
     @State private var signOutFailed = false
     @State private var confirmDelete = false
+    @State private var exportFile: SharedFile?
+    @State private var exportedURL: URL?
+    @State private var isExporting = false
+    @State private var exportFailure: AccountError?
     @State private var confirmDeleteAgain = false
     @State private var isDeleting = false
     @State private var deleteFailure: AccountError?
@@ -139,6 +143,14 @@ private struct ProfileDetailsView: View {
             }
             SharingSection()
             Section {
+                Button(action: exportData) {
+                    if isExporting { ProgressView() } else { Text("Export my data") }
+                }
+                .disabled(isExporting)
+            } footer: {
+                Text("A file with your profile, check-ins and everything else we store about you. Photos are listed, not included.")
+            }
+            Section {
                 Button("Sign out", role: .destructive, action: signOut)
             } footer: {
                 Text("Your check-ins stay on this iPhone.")
@@ -149,6 +161,12 @@ private struct ProfileDetailsView: View {
             } footer: {
                 Text("Deletes your account, your check-ins, photos, comments and follows on our servers for good.")
             }
+        }
+        .sheet(item: $exportFile, onDismiss: removeExportFile) { ShareSheet(file: $0.url) }
+        .alert("Couldn't export your data", isPresented: Binding(get: { exportFailure != nil }, set: { if !$0 { exportFailure = nil } })) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            if let exportFailure { Text(exportFailure.message) }
         }
         .confirmationDialog("Delete your account?", isPresented: $confirmDelete, titleVisibility: .visible) {
             Button("Continue", role: .destructive) { confirmDeleteAgain = true }
@@ -178,6 +196,30 @@ private struct ProfileDetailsView: View {
         } message: {
             Text("Please try again.")
         }
+    }
+
+    private func exportData() {
+        isExporting = true
+        Task {
+            defer { isExporting = false }
+            do {
+                let data = try await account.exportData()
+                let name = "wingspot-export-\(Date.now.formatted(.iso8601.year().month().day())).json"
+                let url = URL.temporaryDirectory.appending(path: name)
+                try data.write(to: url, options: [.atomic, .completeFileProtection])
+                exportedURL = url
+                exportFile = SharedFile(url: url)
+            } catch {
+                exportFailure = (error as? AccountError) ?? .unknown
+            }
+        }
+    }
+
+    /// The file holds personal data, so it doesn't stay in the temporary folder.
+    private func removeExportFile() {
+        guard let exportedURL else { return }
+        try? FileManager.default.removeItem(at: exportedURL)
+        self.exportedURL = nil
     }
 
     private func deleteAccount() {

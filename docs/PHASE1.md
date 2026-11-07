@@ -88,6 +88,9 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
     - Profile has "Delete account", with two confirmations. `DELETE /v1/me` removes the person's photo files (the whole folder, not just registered photos) and then the auth user; the database removes everything else by cascade. It is immediate, with no grace period, and safe to repeat after a failure. Reports the person filed stay, without their name.
     - The app then signs out and removes that account's check-ins, photos waiting for upload and badge records from the phone. Check-ins made while signed out stay.
     - Plan for the rest of the milestone: [MILESTONE8.md](MILESTONE8.md).
+23. **Data export (milestone 8b):**
+    - The database function `export_my_data()` returns one JSON document of the caller's own rows: profile, notification settings, check-ins (with registration, airport codes and the position as latitude and longitude), the photo list, comments written, salutes given, who they follow and who follows them, blocked usernames, badges, reports filed, devices and entitlements. It never includes push tokens, storage paths or anything written by other people. Photo files are not included.
+    - The profile has "Export my data": the app pretty-prints the document into a temporary file, opens the share sheet, and deletes the file afterwards.
 
 ## Before each milestone
 

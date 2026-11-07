@@ -837,3 +837,43 @@ describe("DELETE /v1/me", () => {
     assert.equal((await del(alice)).status, 401);
   });
 });
+
+describe("data export", () => {
+  let alice, bob;
+  const mine = randomUUID();
+  const theirs = randomUUID();
+  before(async () => {
+    alice = await signUp();
+    bob = await signUp();
+    const upload = (user, id, registration) => call("/v1/checkins", {
+      method: "POST", token: user.token,
+      body: { checkins: [{ id, kind: "spotted", occurred_at: new Date(Date.now() - 3600_000).toISOString(), registration, note: `note-${registration}` }] },
+    });
+    assert.equal((await upload(alice, mine, "D-AIXA")).body.results[0].status, "stored");
+    assert.equal((await upload(bob, theirs, "D-AIXB")).body.results[0].status, "stored");
+  });
+  after(async () => {
+    for (const id of [mine, theirs]) await service(`checkins?id=eq.${id}`, { method: "DELETE" });
+    await service("aircraft?registration=in.(D-AIXA,D-AIXB)", { method: "DELETE" });
+  });
+
+  test("returns the caller's data and nobody else's", async () => {
+    const response = await rest("rpc/export_my_data", { token: alice.token, body: {} });
+    assert.equal(response.status, 200, JSON.stringify(response.body));
+    const doc = response.body;
+    assert.equal(doc.profile.id, alice.id);
+    assert.deepEqual(doc.checkins.map((c) => c.id), [mine]);
+    assert.equal(doc.checkins[0].registration, "D-AIXA");
+    for (const key of ["photos", "comments_written", "salutes_given", "following", "followers", "blocked", "badges", "devices"]) {
+      assert.ok(Array.isArray(doc[key]), `${key} is a list`);
+    }
+    assert.ok(!JSON.stringify(doc).includes("D-AIXB"), "nothing of bob's");
+  });
+
+  test("needs a signed-in user", async () => {
+    const response = await fetch(`${API}/rest/v1/rpc/export_my_data`, {
+      method: "POST", headers: { apikey: ANON_KEY, "Content-Type": "application/json" }, body: "{}",
+    });
+    assert.ok([401, 403].includes(response.status), `status ${response.status}`);
+  });
+});
