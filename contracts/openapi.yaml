@@ -27,6 +27,8 @@ tags:
     description: Check-in upload from the offline outbox
   - name: config
     description: Remote configuration
+  - name: account
+    description: The signed-in person's own account
   - name: devices
     description: Installed app instances and push tokens
   - name: entitlements
@@ -196,6 +198,23 @@ paths:
           description: The device is no longer registered.
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /v1/me:
+    delete:
+      tags: [account]
+      operationId: deleteMyAccount
+      summary: Delete the current user's account
+      description: |
+        Deletes the account for good: the photo files, the profile, check-ins, comments, salutes,
+        follows, blocks, devices and badges. There is no grace period and no undo. Reports the person
+        filed stay, without their name. Safe to repeat after a failure, but the access token stops
+        working once the account is gone.
+      responses:
+        '204':
+          description: The account was deleted.
         '401':
           $ref: '#/components/responses/Unauthorized'
         '500':

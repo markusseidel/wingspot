@@ -774,3 +774,66 @@ describe("photos for other people", () => {
     assert.equal(missing.body, "unknown_target");
   });
 });
+
+describe("DELETE /v1/me", () => {
+  let alice, bob;
+  const checkin = randomUUID();
+  const photo = randomUUID();
+  const kept = randomUUID();
+  const del = (user) => fetch(`${API}/functions/v1/me`, { method: "DELETE", headers: user ? { Authorization: `Bearer ${user.token}` } : {} });
+
+  before(async () => {
+    alice = await signUp();
+    bob = await signUp();
+    const upload = (user, id) => call("/v1/checkins", {
+      method: "POST", token: user.token,
+      body: { checkins: [{ id, kind: "spotted", occurred_at: new Date(Date.now() - 3 * 3600_000).toISOString(), registration: "D-AIDL", visibility: "public" }] },
+    });
+    assert.equal((await upload(alice, checkin)).body.results[0].status, "stored");
+    assert.equal((await upload(bob, kept)).body.results[0].status, "stored");
+    const put = await fetch(`${API}/functions/v1/checkins/${checkin}/photos/${photo}`, {
+      method: "PUT", headers: { Authorization: `Bearer ${alice.token}`, "Content-Type": "image/jpeg" }, body: jpeg(JFIF, SOF),
+    });
+    assert.equal(put.status, 200);
+    await service("follows", { method: "POST", body: { follower: bob.id, followee: alice.id } });
+    await rest("comments", { token: bob.token, body: { checkin_id: checkin, user_id: bob.id, body: "Nice" } });
+    await rest("comments", { token: alice.token, body: { checkin_id: kept, user_id: alice.id, body: "Thanks" } });
+  });
+  after(async () => {
+    await service(`checkins?id=eq.${kept}`, { method: "DELETE" });
+    await service("aircraft?registration=eq.D-AIDL", { method: "DELETE" });
+    await fetch(`${API}/auth/v1/admin/users/${bob.id}`, { method: "DELETE", headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } });
+  });
+
+  test("needs a signed-in user, and refuses other methods", async () => {
+    assert.equal((await del(null)).status, 401);
+    const get = await fetch(`${API}/functions/v1/me`, { headers: { Authorization: `Bearer ${alice.token}` } });
+    assert.equal(get.status, 405);
+    assert.equal((await service(`profiles?id=eq.${alice.id}&select=id`)).length, 1, "nothing was deleted");
+  });
+
+  test("removes the account, its rows and its photo files, and leaves other people alone", async () => {
+    const response = await del(alice);
+    assert.equal(response.status, 204);
+
+    for (const table of ["profiles?id", "checkins?user_id", "follows?followee", "comments?user_id", "blocks?blocker"]) {
+      assert.equal((await service(`${table}=eq.${alice.id}&select=*`)).length, 0, `${table} is empty`);
+    }
+    assert.equal((await service(`checkin_photos?id=eq.${photo}&select=id`)).length, 0);
+    const file = await fetch(`${API}/storage/v1/object/photos/${alice.id}/${checkin}/${photo}.jpg`, {
+      headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` },
+    });
+    assert.equal(file.status, 400, "the photo file is gone");
+    const users = await fetch(`${API}/auth/v1/admin/users/${alice.id}`, { headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } });
+    assert.equal(users.status, 404, "the sign-in is gone");
+
+    assert.equal((await service(`profiles?id=eq.${bob.id}&select=id`)).length, 1, "bob is untouched");
+    assert.equal((await service(`checkins?id=eq.${kept}&select=id`)).length, 1);
+    assert.equal((await service(`comments?checkin_id=eq.${checkin}&select=id`)).length, 0, "comments under the deleted check-in are gone");
+    assert.equal((await service(`comments?checkin_id=eq.${kept}&select=id`)).length, 0, "alice's comment under bob's check-in is gone");
+  });
+
+  test("the old access token no longer works", async () => {
+    assert.equal((await del(alice)).status, 401);
+  });
+});

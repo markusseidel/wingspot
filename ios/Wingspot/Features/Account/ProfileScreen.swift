@@ -104,6 +104,11 @@ private struct ProfileDetailsView: View {
     @Query private var all: [LocalCheckIn]
     @State private var airport: Airport?
     @State private var signOutFailed = false
+    @State private var confirmDelete = false
+    @State private var confirmDeleteAgain = false
+    @State private var isDeleting = false
+    @State private var deleteFailure: AccountError?
+    @Environment(\.modelContext) private var modelContext
 
     private var stats: CheckInStats { CheckInStats(all, userID: account.userID) }
 
@@ -138,6 +143,28 @@ private struct ProfileDetailsView: View {
             } footer: {
                 Text("Your check-ins stay on this iPhone.")
             }
+            Section {
+                Button("Delete account", role: .destructive) { confirmDelete = true }
+                    .disabled(isDeleting)
+            } footer: {
+                Text("Deletes your account, your check-ins, photos, comments and follows on our servers for good.")
+            }
+        }
+        .confirmationDialog("Delete your account?", isPresented: $confirmDelete, titleVisibility: .visible) {
+            Button("Continue", role: .destructive) { confirmDeleteAgain = true }
+        } message: {
+            Text("Your profile, check-ins, photos, comments and badges are deleted from our servers. Your check-ins on this iPhone are removed too. This can't be undone.")
+        }
+        .alert("Delete account for good?", isPresented: $confirmDeleteAgain) {
+            Button("Delete account", role: .destructive, action: deleteAccount)
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("There is no way to get your account back.")
+        }
+        .alert("Couldn't delete your account", isPresented: Binding(get: { deleteFailure != nil }, set: { if !$0 { deleteFailure = nil } })) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            if let deleteFailure { Text(deleteFailure.message) }
         }
         .task(id: AirportKey(id: profile.homeAirportID, dataVersion: referenceData.database?.dataVersion)) {
             guard let id = profile.homeAirportID, let database = referenceData.database else {
@@ -150,6 +177,19 @@ private struct ProfileDetailsView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text("Please try again.")
+        }
+    }
+
+    private func deleteAccount() {
+        isDeleting = true
+        Task {
+            defer { isDeleting = false }
+            do {
+                let deleted = try await account.deleteAccount()
+                try? AccountEraser(context: modelContext).erase(userID: deleted)
+            } catch {
+                deleteFailure = (error as? AccountError) ?? .unknown
+            }
         }
     }
 

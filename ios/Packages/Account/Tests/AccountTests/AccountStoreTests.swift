@@ -71,6 +71,15 @@ private actor FakeBackend: AccountBackend {
     func signOut() {
         sessionUser = nil
     }
+
+    private(set) var deleted = false
+    var deleteError: AccountError?
+    func failDelete(_ error: AccountError?) { deleteError = error }
+
+    func deleteAccount() throws {
+        if let deleteError { throw deleteError }
+        deleted = true
+    }
 }
 
 @MainActor
@@ -267,6 +276,29 @@ struct AccountStoreTests {
             try await store.save(Profile(id: id, username: "No Spaces"))
         }
         #expect(await backend.profile == old)
+    }
+
+    @Test func deletingTheAccountSignsOutAndReturnsTheDeletedID() async throws {
+        let id = UUID()
+        let backend = FakeBackend(sessionUser: id, profile: Profile(id: id, username: "spotter"))
+        let store = AccountStore(backend: backend)
+        await store.start()
+        let deleted = try await store.deleteAccount()
+        #expect(deleted == id)
+        #expect(await backend.deleted)
+        #expect(store.state == .signedOut)
+        #expect(store.userID == nil)
+    }
+
+    @Test func aFailedDeletionKeepsTheAccountSignedIn() async throws {
+        let id = UUID()
+        let backend = FakeBackend(sessionUser: id, profile: Profile(id: id, username: "spotter"))
+        await backend.failDelete(.offline)
+        let store = AccountStore(backend: backend)
+        await store.start()
+        await #expect(throws: AccountError.offline) { try await store.deleteAccount() }
+        #expect(store.userID == id)
+        #expect(store.state != .signedOut)
     }
 
     @Test func signOutEndsTheSession() async throws {

@@ -84,6 +84,10 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
     - A photo can be seen by whoever can see its check-in (same rules as before: yourself, friends, public, blocks respected). Photos of sensitive aircraft stay with their owner, because a photo can show the registration. The photo bucket stays private; the app asks storage for a signed link (valid for an hour) for each photo it may read, and a refresh signs again.
     - The feed loads the cards first and the photos after; if the photos fail, the cards stay as they are. A card shows up to four photos in a strip. Press and hold a photo of someone else to report it.
     - Photos on a person's page and tapping a photo to enlarge it are not part of this step.
+22. **Account deletion (milestone 8a):**
+    - Profile has "Delete account", with two confirmations. `DELETE /v1/me` removes the person's photo files (the whole folder, not just registered photos) and then the auth user; the database removes everything else by cascade. It is immediate, with no grace period, and safe to repeat after a failure. Reports the person filed stay, without their name.
+    - The app then signs out and removes that account's check-ins, photos waiting for upload and badge records from the phone. Check-ins made while signed out stay.
+    - Plan for the rest of the milestone: [MILESTONE8.md](MILESTONE8.md).
 
 ## Before each milestone
 

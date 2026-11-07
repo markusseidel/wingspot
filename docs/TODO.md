@@ -179,7 +179,9 @@ In this order:
   - [ ] Terms of use: fill in the brackets in [TERMS-DRAFT.md](TERMS-DRAFT.md) and publish on `wingspot.site` with the privacy policy; reports are read in the Supabase table `reports` (answer within 24 hours, remove content that breaks the rules)
 - [x] Milestone 6: your profile (stats, collections, badges tab with filter, airports map; the airport map and signed-in views still to see on your iPhone)
 - [x] Milestone 7: social (7a to 7f are merged and deployed; still to try on your iPhone with two accounts: People, Feed, comments, reports, the rules screen and photos)
-- [ ] Milestone 8: airport page and settings
+- [ ] Milestone 8: airport page and settings (plan in [MILESTONE8.md](MILESTONE8.md); 8a account deletion built)
+  - [ ] When Sign in with Apple goes live: revoke the Apple token when an account is deleted (Apple requires it)
+  - [ ] Try account deletion on hosted with a throwaway account, after the deploy
 - [ ] Milestone 9: first TestFlight
 
 ### After Phase 1
