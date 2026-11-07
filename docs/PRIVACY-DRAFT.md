@@ -23,7 +23,7 @@ Wingspot fragt den Standort nur, wenn du ihn benutzt, etwa um den nächsten Flug
 
 ## Fotos
 
-Vor dem Hochladen verkleinert die App das Foto und speichert eine neue Datei **ohne Metadaten** (kein Standort, keine Kamera- oder Zeitangaben). Das Original wird nicht gespeichert. Der Server lehnt Fotos mit Metadaten ab. Fotos sind in einem privaten Speicher und nur für dich sichtbar. [Anpassen, sobald Teilen eingeführt wird.]
+Vor dem Hochladen verkleinert die App das Foto und speichert eine neue Datei **ohne Metadaten** (kein Standort, keine Kamera- oder Zeitangaben). Das Original wird nicht gespeichert. Der Server lehnt Fotos mit Metadaten ab. Fotos liegen in einem privaten Speicher. Sie sind nur für dich sichtbar, solange du Check-ins nicht teilst; teilst du einen Check-in, sehen sein Foto die Personen, die den Check-in sehen dürfen (Freunde oder alle, je nach Einstellung). Fotos von sensiblen Luftfahrzeugen (z. B. Militär, Regierung) werden nie anderen gezeigt.
 
 ## Bordkarten-Scan
 
@@ -76,7 +76,7 @@ Wingspot asks for your location only when you use it, for example to suggest the
 
 ## Photos
 
-Before upload, the app shrinks the photo and writes a new file **without metadata** (no location, camera or date information). The original is not kept. The server rejects photos that carry metadata. Photos are in private storage and visible only to you. [Update when sharing is added.]
+Before upload, the app shrinks the photo and writes a new file **without metadata** (no location, camera or date information). The original is not kept. The server rejects photos that carry metadata. Photos are kept in private storage. They are visible only to you while you do not share check-ins; if you share a check-in, the people who may see that check-in can see its photo (friends or everyone, depending on your setting). Photos of sensitive aircraft (for example military or government) are never shown to others.
 
 ## Boarding pass scan
 

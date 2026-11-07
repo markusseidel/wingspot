@@ -716,3 +716,61 @@ describe("social: sharing, feed, reports and comments", () => {
     assert.equal(fine.status, 201, JSON.stringify(fine.body));
   });
 });
+
+describe("photos for other people", () => {
+  let alice, bob, stranger;
+  const shared = randomUUID();
+  const hidden = randomUUID();
+  const photoOf = { [shared]: randomUUID(), [hidden]: randomUUID() };
+  const pathOf = (id) => `${alice.id}/${id}/${photoOf[id]}.jpg`;
+  const sign = (user, path) => fetch(`${API}/storage/v1/object/sign/photos/${path}`, {
+    method: "POST",
+    headers: { apikey: ANON_KEY, Authorization: `Bearer ${user.token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ expiresIn: 60 }),
+  });
+
+  before(async () => {
+    alice = await signUp();
+    bob = await signUp();
+    stranger = await signUp();
+    await service("follows", { method: "POST", body: { follower: bob.id, followee: alice.id } });
+    for (const [id, visibility] of [[shared, "public"], [hidden, "private"]]) {
+      const upload = await call("/v1/checkins", {
+        method: "POST", token: alice.token,
+        body: { checkins: [{ id, kind: "spotted", occurred_at: new Date(Date.now() - 3 * 3600_000).toISOString(), registration: "D-AIPF", visibility }] },
+      });
+      assert.equal(upload.body.results[0].status, "stored", JSON.stringify(upload.body));
+      const response = await fetch(`${API}/functions/v1/checkins/${id}/photos/${photoOf[id]}`, {
+        method: "PUT", headers: { Authorization: `Bearer ${alice.token}`, "Content-Type": "image/jpeg" }, body: jpeg(JFIF, SOF),
+      });
+      assert.equal(response.status, 200);
+    }
+  });
+  after(async () => {
+    for (const id of [shared, hidden]) await service(`checkins?id=eq.${id}`, { method: "DELETE" });
+    await service("aircraft?registration=eq.D-AIPF", { method: "DELETE" });
+  });
+
+  test("a viewer gets a working link for a shared photo, but not for a private one", async () => {
+    const rows = await rest(`checkin_photos?select=id,storage_path&checkin_id=in.(${shared},${hidden})`, { method: "GET", token: bob.token });
+    assert.deepEqual(rows.body.map((row) => row.storage_path), [pathOf(shared)]);
+
+    const ok = await sign(bob, pathOf(shared));
+    assert.equal(ok.status, 200);
+    const { signedURL } = await ok.json();
+    const file = await fetch(`${API}/storage/v1${signedURL}`);
+    assert.equal(file.status, 200);
+    assert.equal(file.headers.get("content-type"), "image/jpeg");
+
+    assert.notEqual((await sign(bob, pathOf(hidden))).status, 200, "a private photo can't be signed for someone else");
+    assert.equal((await sign(alice, pathOf(hidden))).status, 200, "the owner can");
+  });
+
+  test("a photo can be reported by someone who sees it", async () => {
+    const [{ id }] = await service(`checkin_photos?checkin_id=eq.${shared}&select=id`);
+    const report = await rest("rpc/report", { token: stranger.token, body: { report_kind: "photo", report_target: id, report_reason: "test" } });
+    assert.equal(report.body, "reported");
+    const missing = await rest("rpc/report", { token: bob.token, body: { report_kind: "photo", report_target: photoOf[hidden] } });
+    assert.equal(missing.body, "unknown_target");
+  });
+});

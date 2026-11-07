@@ -365,6 +365,43 @@ extension SupabaseAccountBackend: FeedBackend {
             try await client.rpc("get_feed", params: FeedParams(cursor: cursor, pageSize: pageSize)).execute().value
         }
     }
+
+    /// An hour is enough to scroll through a page of the feed. Refreshing signs the links again.
+    private static let photoLinkLifetime = 3600
+
+    public func photos(for checkIns: [UUID]) async throws -> [FeedPhoto] {
+        guard !checkIns.isEmpty else { return [] }
+        return try await socialErrors {
+            // The database rules decide which rows come back.
+            let rows: [PhotoRow] = try await client.from("checkin_photos")
+                .select("id, checkin_id, storage_path, width, height, position")
+                .in("checkin_id", values: checkIns)
+                .order("position", ascending: true)
+                .execute().value
+            guard !rows.isEmpty else { return [] }
+            let signed = try await client.storage.from("photos")
+                .createSignedURLs(paths: rows.map(\.storagePath), expiresIn: Self.photoLinkLifetime)
+            var urls: [String: URL] = [:]
+            for case .success(let path, let url) in signed { urls[path] = url }
+            return rows.compactMap { row in
+                urls[row.storagePath].map { FeedPhoto(id: row.id, checkInID: row.checkInID, url: $0, width: row.width, height: row.height) }
+            }
+        }
+    }
+}
+
+private struct PhotoRow: Decodable {
+    let id: UUID
+    let checkInID: UUID
+    let storagePath: String
+    let width: Int?
+    let height: Int?
+
+    private enum CodingKeys: String, CodingKey {
+        case id, width, height
+        case checkInID = "checkin_id"
+        case storagePath = "storage_path"
+    }
 }
 
 private struct FeedParams: Encodable {

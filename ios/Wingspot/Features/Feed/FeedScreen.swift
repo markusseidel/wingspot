@@ -75,10 +75,11 @@ struct FeedScreen: View {
             }
             ForEach(feed.items) { item in
                 FeedCard(
-                    item: item, isOwn: item.userID == account.userID,
+                    item: item, isOwn: item.userID == account.userID, photos: feed.photos[item.id] ?? [],
                     onSalute: { Task { await feed.toggleSalute(item.id) } },
                     onComments: { commentsFor = item },
-                    onReport: { report = ReportTarget(kind: .checkin, id: item.id, subject: "this check-in") }
+                    onReport: { report = ReportTarget(kind: .checkin, id: item.id, subject: "this check-in") },
+                    onReportPhoto: { report = ReportTarget(kind: .photo, id: $0.id, subject: "this photo") }
                 )
                     .task {
                         // Close to the end: ask for older check-ins.
@@ -98,9 +99,11 @@ struct FeedScreen: View {
 private struct FeedCard: View {
     let item: FeedItem
     let isOwn: Bool
+    let photos: [FeedPhoto]
     let onSalute: () -> Void
     let onComments: () -> Void
     let onReport: () -> Void
+    let onReportPhoto: (FeedPhoto) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -135,6 +138,9 @@ private struct FeedCard: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
+            if !photos.isEmpty {
+                photoStrip
+            }
             HStack(spacing: 20) {
                 Button(action: onSalute) {
                     Label("\(item.salutes)", systemImage: item.saluted ? "hands.clap.fill" : "hands.clap")
@@ -150,6 +156,35 @@ private struct FeedCard: View {
             .padding(.top, 2)
         }
         .padding(.vertical, 4)
+    }
+
+    private var photoStrip: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(photos) { photo in
+                    AsyncImage(url: photo.url) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image.resizable().scaledToFill()
+                        case .failure:
+                            Image(systemName: "photo").foregroundStyle(.secondary)
+                        default:
+                            ProgressView()
+                        }
+                    }
+                    .frame(width: photos.count == 1 ? 300 : 240, height: 200)
+                    .background(.quaternary)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .accessibilityLabel("Photo")
+                    .contextMenu {
+                        if !isOwn {
+                            Button("Report photo", systemImage: "flag") { onReportPhoto(photo) }
+                        }
+                    }
+                }
+            }
+        }
+        .padding(.top, 2)
     }
 
     private var kindTitle: LocalizedStringKey {
