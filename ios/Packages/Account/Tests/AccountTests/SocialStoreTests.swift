@@ -51,6 +51,10 @@ private actor FakeSocial: SocialBackend {
     }
 
     func unblock(_ id: UUID, as me: UUID) { blocks.removeAll { $0 == id } }
+    var settings = PrivacySettings()
+    func privacy(of me: UUID) -> PrivacySettings { settings }
+    func setPrivacy(_ settings: PrivacySettings, as me: UUID) { self.settings = settings }
+
     func sharing(of me: UUID) -> SharingChoice { choice }
 
     func setSharing(_ choice: SharingChoice, applyToExisting: Bool) -> Int {
@@ -140,4 +144,12 @@ private let ben = PersonRecord(id: UUID(), username: "ben_b", displayName: nil, 
     #expect(try await store.setSharing(.friends, applyToExisting: true) == 3)
     #expect(try await store.sharing() == .friends)
     #expect(await backend.applied.count == 1)
+}
+
+@MainActor @Test func privacySettingsCanBeReadAndChanged() async throws {
+    let store = makeStore(FakeSocial(people: []))
+    #expect(try await store.privacy() == PrivacySettings())
+    try await store.setPrivacy(PrivacySettings(isPrivate: true, postDelayMinutes: 360))
+    #expect(try await store.privacy() == PrivacySettings(isPrivate: true, postDelayMinutes: 360))
+    #expect(PrivacySettings.delayChoices.contains(360))
 }

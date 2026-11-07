@@ -1,5 +1,6 @@
 import Account
 import SwiftUI
+import WingspotCore
 
 /// The Feed tab: your check-ins and those of the people you follow, newest first.
 struct FeedScreen: View {
@@ -97,6 +98,7 @@ struct FeedScreen: View {
 }
 
 private struct FeedCard: View {
+    @AppStorage(DistanceUnit.storageKey) private var unit = DistanceUnit.kilometres
     let item: FeedItem
     let isOwn: Bool
     let photos: [FeedPhoto]
@@ -217,7 +219,7 @@ private struct FeedCard: View {
         case "airport":
             return nil
         case "flown":
-            let distance = item.distanceKm.map { "\($0.formatted()) km" }
+            let distance = item.distanceKm.map { unit.format(km: $0) }
             let parts = [item.flightNumber, item.registration ?? item.typeName, distance].compactMap { $0 }
             return parts.isEmpty ? nil : parts.joined(separator: " · ")
         default:

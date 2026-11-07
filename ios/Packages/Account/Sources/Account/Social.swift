@@ -51,6 +51,22 @@ public struct PersonRecord: Equatable, Sendable {
 }
 
 /// What the social screens need from the backend. Lets tests run without a network.
+/// Who can see the account, apart from the sharing choice of each check-in.
+public struct PrivacySettings: Equatable, Sendable {
+    /// A private profile shows its details and check-ins only to friends.
+    public var isPrivate: Bool
+    /// Public check-ins reach strangers only after this many minutes. Friends see them at once.
+    public var postDelayMinutes: Int
+
+    /// What the app offers. The database accepts anything from 0 to 1440.
+    public static let delayChoices = [0, 60, 360, 1440]
+
+    public init(isPrivate: Bool = false, postDelayMinutes: Int = 0) {
+        self.isPrivate = isPrivate
+        self.postDelayMinutes = postDelayMinutes
+    }
+}
+
 public protocol SocialBackend: Sendable {
     /// Profiles whose username contains `text`, without `me`, by username.
     func searchPeople(_ text: String, excluding me: UUID, limit: Int) async throws -> [PersonRecord]
@@ -67,6 +83,8 @@ public protocol SocialBackend: Sendable {
     func sharing(of me: UUID) async throws -> SharingChoice
     /// Returns how many earlier check-ins changed.
     func setSharing(_ choice: SharingChoice, applyToExisting: Bool) async throws -> Int
+    func privacy(of me: UUID) async throws -> PrivacySettings
+    func setPrivacy(_ settings: PrivacySettings, as me: UUID) async throws
 }
 
 /// Finding people, following, blocking and the sharing choice. Everything here needs a network.
@@ -145,6 +163,14 @@ public final class SocialStore {
     @discardableResult
     public func setSharing(_ choice: SharingChoice, applyToExisting: Bool) async throws -> Int {
         try await backend.setSharing(choice, applyToExisting: applyToExisting)
+    }
+
+    public func privacy() async throws -> PrivacySettings {
+        try await backend.privacy(of: try me())
+    }
+
+    public func setPrivacy(_ settings: PrivacySettings) async throws {
+        try await backend.setPrivacy(settings, as: try me())
     }
 
     private func people(_ records: [PersonRecord], me: UUID) async throws -> [Person] {

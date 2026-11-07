@@ -140,8 +140,8 @@ private struct ProfileDetailsView: View {
                 NavigationLink("Edit profile") {
                     ProfileEditorView(profile: profile, isFirstSetup: false)
                 }
+                NavigationLink("Settings") { SettingsView() }
             }
-            SharingSection()
             Section {
                 Button(action: exportData) {
                     if isExporting { ProgressView() } else { Text("Export my data") }

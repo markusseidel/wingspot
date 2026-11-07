@@ -301,6 +301,24 @@ extension SupabaseAccountBackend: SocialBackend {
         }
     }
 
+    public func privacy(of me: UUID) async throws -> PrivacySettings {
+        try await socialErrors {
+            // The delay is hidden from the table's columns and comes from get_profile, for the owner only.
+            let row: PrivateFlag = try await client.from("profiles").select("is_private").eq("id", value: me).single().execute().value
+            let details: PostDelayDetails = try await client.rpc("get_profile", params: ["target": me]).single().execute().value
+            return PrivacySettings(isPrivate: row.isPrivate, postDelayMinutes: details.postDelayMinutes ?? 0)
+        }
+    }
+
+    public func setPrivacy(_ settings: PrivacySettings, as me: UUID) async throws {
+        try await socialErrors {
+            _ = try await client.from("profiles")
+                .update(PrivacyUpdate(isPrivate: settings.isPrivate, postDelayMinutes: settings.postDelayMinutes), returning: .minimal)
+                .eq("id", value: me)
+                .execute()
+        }
+    }
+
     private func socialErrors<T: Sendable>(_ work: () async throws -> T) async throws -> T {
         do {
             return try await work()
@@ -348,6 +366,28 @@ private struct BlockedRow: Decodable {
     private enum CodingKeys: String, CodingKey {
         case id, username
         case displayName = "display_name"
+    }
+}
+
+private struct PrivateFlag: Decodable {
+    let isPrivate: Bool
+
+    private enum CodingKeys: String, CodingKey { case isPrivate = "is_private" }
+}
+
+private struct PostDelayDetails: Decodable {
+    let postDelayMinutes: Int?
+
+    private enum CodingKeys: String, CodingKey { case postDelayMinutes = "post_delay_minutes" }
+}
+
+private struct PrivacyUpdate: Encodable {
+    let isPrivate: Bool
+    let postDelayMinutes: Int
+
+    private enum CodingKeys: String, CodingKey {
+        case isPrivate = "is_private"
+        case postDelayMinutes = "post_delay_minutes"
     }
 }
 

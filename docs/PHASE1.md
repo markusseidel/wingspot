@@ -91,6 +91,10 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
 23. **Data export (milestone 8b):**
     - The database function `export_my_data()` returns one JSON document of the caller's own rows: profile, notification settings, check-ins (with registration, airport codes and the position as latitude and longitude), the photo list, comments written, salutes given, who they follow and who follows them, blocked usernames, badges, reports filed, devices and entitlements. It never includes push tokens, storage paths or anything written by other people. Photo files are not included.
     - The profile has "Export my data": the app pretty-prints the document into a temporary file, opens the share sheet, and deletes the file afterwards.
+24. **Settings (milestone 8c):**
+    - Profile has a "Settings" screen with: who sees new check-ins (the setting from Milestone 7), a private profile switch, a delay for public check-ins (none, 1, 6 or 24 hours), and the distance unit (kilometres, nautical miles or miles).
+    - The server already let an account change its own `is_private` and `post_delay_minutes`, so no migration was needed; a database test now covers what they do. A private profile hides its public check-ins from strangers, and the delay holds public check-ins back from strangers while friends and the owner see them at once.
+    - The distance unit is kept on the phone only. Distances are stored in kilometres and shown in the chosen unit in the feed and after a flight check-in.
 
 ## Before each milestone
 

@@ -69,7 +69,18 @@
         }
       }
     },
+    "%lld hours" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Stunden"
+          }
+        }
+      }
+    },
     "%lld km" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -95,12 +106,42 @@
         }
       }
     },
+    "1 hour" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 Stunde"
+          }
+        }
+      }
+    },
+    "24 hours" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "24 Stunden"
+          }
+        }
+      }
+    },
     "3 to 30 lowercase letters, numbers or underscores." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "3 bis 30 Kleinbuchstaben, Zahlen oder Unterstriche."
+          }
+        }
+      }
+    },
+    "6 hours" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6 Stunden"
           }
         }
       }
@@ -131,6 +172,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ein Flug, auf dem du warst"
+          }
+        }
+      }
+    },
+    "A private profile shows its details and check-ins only to friends. A delay holds back your public check-ins from strangers for a while, so nobody can tell where you are right now. Friends see them at once." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein privates Profil zeigt seine Angaben und Check-ins nur Freunden. Eine Verzögerung hält deine öffentlichen Check-ins für eine Weile von Fremden zurück, damit niemand sehen kann, wo du gerade bist. Freunde sehen sie sofort."
           }
         }
       }
@@ -817,6 +868,16 @@
         }
       }
     },
+    "Delay for public check-ins" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verzögerung für öffentliche Check-ins"
+          }
+        }
+      }
+    },
     "Delete" : {
       "localizations" : {
         "de" : {
@@ -883,6 +944,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Details (optional)"
+          }
+        }
+      }
+    },
+    "Distances" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entfernungen"
           }
         }
       }
@@ -1298,6 +1369,16 @@
         }
       }
     },
+    "Kilometres" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kilometer"
+          }
+        }
+      }
+    },
     "Last time at %@, %@" : {
       "localizations" : {
         "de" : {
@@ -1380,6 +1461,16 @@
         }
       }
     },
+    "Miles" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meilen"
+          }
+        }
+      }
+    },
     "Milestones" : {
       "localizations" : {
         "de" : {
@@ -1416,6 +1507,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Name"
+          }
+        }
+      }
+    },
+    "Nautical miles" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seemeilen"
           }
         }
       }
@@ -1506,6 +1607,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Noch keine Kommentare"
+          }
+        }
+      }
+    },
+    "No delay" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Verzögerung"
           }
         }
       }
@@ -1736,6 +1847,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bereite vor …"
+          }
+        }
+      }
+    },
+    "Privacy" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privatsphäre"
+          }
+        }
+      }
+    },
+    "Privacy settings need an internet connection." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Privatsphäre-Einstellungen brauchen eine Internetverbindung."
           }
         }
       }
@@ -1987,6 +2118,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Festgelegt"
+          }
+        }
+      }
+    },
+    "Settings" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstellungen"
           }
         }
       }
@@ -2347,6 +2488,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nicht mehr folgen"
+          }
+        }
+      }
+    },
+    "Units" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einheiten"
           }
         }
       }
