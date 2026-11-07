@@ -384,3 +384,77 @@ private struct FeedParams: Encodable {
         try container.encode(pageSize, forKey: .pageSize)
     }
 }
+
+
+// MARK: - Salutes and comments
+
+extension SupabaseAccountBackend: ReactionBackend {
+    public func setSalute(_ on: Bool, checkIn: UUID, as me: UUID) async throws {
+        try await socialErrors {
+            if on {
+                do {
+                    _ = try await client.from("salutes").insert(SaluteRow(userID: me, checkInID: checkIn), returning: .minimal).execute()
+                } catch let error as PostgrestError where error.code == "23505" {
+                    // Already saluted.
+                }
+            } else {
+                _ = try await client.from("salutes").delete().eq("user_id", value: me).eq("checkin_id", value: checkIn).execute()
+            }
+        }
+    }
+
+    public func comments(checkIn: UUID) async throws -> [CheckInComment] {
+        try await socialErrors {
+            try await client.from("comments")
+                .select("id, user_id, body, created_at, profiles(username, display_name)")
+                .eq("checkin_id", value: checkIn)
+                .order("created_at", ascending: true)
+                .execute()
+                .value
+        }
+    }
+
+    public func addComment(_ body: String, checkIn: UUID, as me: UUID) async throws -> CheckInComment {
+        try await socialErrors {
+            do {
+                return try await client.from("comments")
+                    .insert(CommentRow(checkInID: checkIn, userID: me, body: body))
+                    .select("id, user_id, body, created_at, profiles(username, display_name)")
+                    .single()
+                    .execute()
+                    .value
+            } catch let error as PostgrestError where error.code == "23514" {
+                // The word filter, or a text outside the allowed length.
+                throw AccountError.contentNotAllowed
+            }
+        }
+    }
+
+    public func deleteComment(_ id: UUID) async throws {
+        try await socialErrors {
+            _ = try await client.from("comments").delete().eq("id", value: id).execute()
+        }
+    }
+}
+
+private struct SaluteRow: Encodable {
+    let userID: UUID
+    let checkInID: UUID
+
+    private enum CodingKeys: String, CodingKey {
+        case userID = "user_id"
+        case checkInID = "checkin_id"
+    }
+}
+
+private struct CommentRow: Encodable {
+    let checkInID: UUID
+    let userID: UUID
+    let body: String
+
+    private enum CodingKeys: String, CodingKey {
+        case body
+        case checkInID = "checkin_id"
+        case userID = "user_id"
+    }
+}

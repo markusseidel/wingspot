@@ -5,6 +5,7 @@ import SwiftUI
 struct FeedScreen: View {
     @Environment(AccountStore.self) private var account
     @Environment(FeedStore.self) private var feed
+    @State private var commentsFor: FeedItem?
 
     var body: some View {
         NavigationStack {
@@ -41,6 +42,7 @@ struct FeedScreen: View {
                 }
             }
             .navigationTitle("Feed")
+            .navigationDestination(item: $commentsFor) { CommentsView(item: $0) }
             .toolbar {
                 if account.userID != nil {
                     NavigationLink { PeopleView() } label: {
@@ -67,7 +69,11 @@ struct FeedScreen: View {
                     .foregroundStyle(.secondary)
             }
             ForEach(feed.items) { item in
-                FeedCard(item: item, isOwn: item.userID == account.userID)
+                FeedCard(
+                    item: item, isOwn: item.userID == account.userID,
+                    onSalute: { Task { await feed.toggleSalute(item.id) } },
+                    onComments: { commentsFor = item }
+                )
                     .task {
                         // Close to the end: ask for older check-ins.
                         if item.id == feed.items.dropLast(5).last?.id || item.id == feed.items.last?.id {
@@ -86,6 +92,8 @@ struct FeedScreen: View {
 private struct FeedCard: View {
     let item: FeedItem
     let isOwn: Bool
+    let onSalute: () -> Void
+    let onComments: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -112,20 +120,19 @@ private struct FeedCard: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
-            if item.salutes > 0 || item.comments > 0 {
-                HStack(spacing: 16) {
-                    if item.salutes > 0 {
-                        Label("\(item.salutes)", systemImage: item.saluted ? "hands.clap.fill" : "hands.clap")
-                            .accessibilityLabel("Salutes: \(item.salutes)")
-                    }
-                    if item.comments > 0 {
-                        Label("\(item.comments)", systemImage: "bubble.left")
-                            .accessibilityLabel("Comments: \(item.comments)")
-                    }
+            HStack(spacing: 20) {
+                Button(action: onSalute) {
+                    Label("\(item.salutes)", systemImage: item.saluted ? "hands.clap.fill" : "hands.clap")
                 }
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .accessibilityLabel(item.saluted ? "Remove your salute. Salutes: \(item.salutes)" : "Salute. Salutes: \(item.salutes)")
+                Button(action: onComments) {
+                    Label("\(item.comments)", systemImage: "bubble.left")
+                }
+                .accessibilityLabel("Comments: \(item.comments)")
             }
+            .font(.subheadline)
+            .buttonStyle(.borderless)
+            .padding(.top, 2)
         }
         .padding(.vertical, 4)
     }

@@ -2,14 +2,41 @@ import Foundation
 import Testing
 @testable import Account
 
-private actor FakeFeed: FeedBackend {
+private actor FakeFeed: FeedBackend, ReactionBackend {
     var items: [FeedItem]
     private(set) var cursors: [FeedCursor?] = []
     var error: AccountError?
 
     init(items: [FeedItem]) { self.items = items }
 
+    private(set) var salutes: [(on: Bool, checkIn: UUID)] = []
+    var stored: [UUID: [CheckInComment]] = [:]
+    var reactionError: AccountError?
+
     func fail(_ error: AccountError?) { self.error = error }
+    func failReactions(_ error: AccountError?) { reactionError = error }
+
+    func setSalute(_ on: Bool, checkIn: UUID, as me: UUID) throws {
+        if let reactionError { throw reactionError }
+        salutes.append((on, checkIn))
+    }
+
+    func comments(checkIn: UUID) throws -> [CheckInComment] {
+        if let reactionError { throw reactionError }
+        return stored[checkIn] ?? []
+    }
+
+    func addComment(_ body: String, checkIn: UUID, as me: UUID) throws -> CheckInComment {
+        if let reactionError { throw reactionError }
+        let comment = CheckInComment(id: UUID(), userID: me, username: "me", body: body, createdAt: Date())
+        stored[checkIn, default: []].append(comment)
+        return comment
+    }
+
+    func deleteComment(_ id: UUID) throws {
+        if let reactionError { throw reactionError }
+        for key in stored.keys { stored[key]?.removeAll { $0.id == id } }
+    }
     func replace(_ items: [FeedItem]) { self.items = items }
 
     func feed(after cursor: FeedCursor?, pageSize: Int) throws -> [FeedItem] {
@@ -23,6 +50,12 @@ private actor FakeFeed: FeedBackend {
     }
 }
 
+private let me = UUID()
+
+@MainActor private func makeStore(_ backend: FakeFeed) -> FeedStore {
+    FeedStore(backend: backend, reactions: backend, userID: { me })
+}
+
 private func item(_ n: Int) -> FeedItem {
     FeedItem(
         id: UUID(uuidString: String(format: "00000000-0000-0000-0000-%012d", n))!, userID: UUID(), username: "u\(n)",
@@ -31,7 +64,7 @@ private func item(_ n: Int) -> FeedItem {
 }
 
 @MainActor @Test func theFirstPageFillsTheList() async {
-    let store = FeedStore(backend: FakeFeed(items: (1...5).map(item)))
+    let store = makeStore(FakeFeed(items: (1...5).map(item)))
     #expect(!store.hasLoaded)
     await store.refresh()
     #expect(store.items.count == 5)
@@ -41,7 +74,7 @@ private func item(_ n: Int) -> FeedItem {
 
 @MainActor @Test func moreIsLoadedFromTheLastItemUntilTheEnd() async {
     let backend = FakeFeed(items: (1...70).map(item))
-    let store = FeedStore(backend: backend)
+    let store = makeStore(backend)
     await store.refresh()
     #expect(store.items.count == 30)
     #expect(!store.reachedEnd)
@@ -58,14 +91,14 @@ private func item(_ n: Int) -> FeedItem {
 
 @MainActor @Test func loadMoreDoesNothingBeforeTheFirstPage() async {
     let backend = FakeFeed(items: (1...5).map(item))
-    let store = FeedStore(backend: backend)
+    let store = makeStore(backend)
     await store.loadMore()
     #expect(await backend.cursors.isEmpty)
 }
 
 @MainActor @Test func refreshReplacesTheList() async {
     let backend = FakeFeed(items: (1...3).map(item))
-    let store = FeedStore(backend: backend)
+    let store = makeStore(backend)
     await store.refresh()
     await backend.replace([item(9)])
     await store.refresh()
@@ -74,7 +107,7 @@ private func item(_ n: Int) -> FeedItem {
 
 @MainActor @Test func aFailedRefreshKeepsWhatWasThere() async {
     let backend = FakeFeed(items: (1...3).map(item))
-    let store = FeedStore(backend: backend)
+    let store = makeStore(backend)
     await store.refresh()
     await backend.fail(.offline)
     await store.refresh()
@@ -87,13 +120,13 @@ private func item(_ n: Int) -> FeedItem {
 
 @MainActor @Test func repeatedItemsAreDropped() async {
     let backend = FakeFeed(items: [item(1), item(1), item(2)])
-    let store = FeedStore(backend: backend)
+    let store = makeStore(backend)
     await store.refresh()
     #expect(store.items.map(\.username) == ["u1", "u2"])
 }
 
 @MainActor @Test func clearForgetsEverything() async {
-    let store = FeedStore(backend: FakeFeed(items: (1...3).map(item)))
+    let store = makeStore(FakeFeed(items: (1...3).map(item)))
     await store.refresh()
     store.clear()
     #expect(store.items.isEmpty)
@@ -122,4 +155,84 @@ private func item(_ n: Int) -> FeedItem {
     #expect(items[0].cursorTime == "2026-11-06T22:26:14.572123+00:00", "the time is kept exactly for paging")
     #expect(items[1].registration == "D-AIZZ")
     #expect(items[1].occurredAt < items[0].occurredAt)
+}
+
+@MainActor @Test func aSaluteChangesTheCardAtOnceAndTheServerHearsOfIt() async {
+    let backend = FakeFeed(items: [item(1)])
+    let store = makeStore(backend)
+    await store.refresh()
+    await store.toggleSalute(item(1).id)
+    #expect(store.items[0].saluted)
+    #expect(store.items[0].salutes == 1)
+    #expect(await backend.salutes.map(\.on) == [true])
+    await store.toggleSalute(item(1).id)
+    #expect(!store.items[0].saluted)
+    #expect(store.items[0].salutes == 0)
+    #expect(await backend.salutes.map(\.on) == [true, false])
+}
+
+@MainActor @Test func aFailedSaluteGoesBack() async {
+    let backend = FakeFeed(items: [item(1)])
+    let store = makeStore(backend)
+    await store.refresh()
+    await backend.failReactions(.offline)
+    await store.toggleSalute(item(1).id)
+    #expect(!store.items[0].saluted)
+    #expect(store.items[0].salutes == 0)
+    #expect(store.failure == .offline)
+}
+
+@MainActor @Test func theCommentCountFollowsTheCommentsScreen() async {
+    let store = makeStore(FakeFeed(items: [item(1)]))
+    await store.refresh()
+    store.setCommentCount(4, for: item(1).id)
+    #expect(store.items[0].comments == 4)
+    store.setCommentCount(2, for: UUID())
+    #expect(store.items[0].comments == 4)
+}
+
+@MainActor @Test func commentsLoadSendAndDelete() async throws {
+    let backend = FakeFeed(items: [item(1)])
+    var counts: [Int] = []
+    let box = CountBox()
+    let comments = CheckInCommentStore(checkIn: item(1).id, backend: backend, userID: { me }, onCountChange: { box.counts.append($0) })
+    await comments.load()
+    #expect(comments.hasLoaded)
+    #expect(comments.comments.isEmpty)
+    try await comments.send("  Great shot!  ")
+    #expect(comments.comments.map(\.body) == ["Great shot!"])
+    await comments.delete(comments.comments[0])
+    #expect(comments.comments.isEmpty)
+    counts = box.counts
+    #expect(counts == [0, 1, 0])
+}
+
+@MainActor private final class CountBox { var counts: [Int] = [] }
+
+@MainActor @Test func emptyOrTooLongCommentsAreNotSent() async {
+    #expect(!CheckInCommentStore.isSendable("   "))
+    #expect(CheckInCommentStore.isSendable("ok"))
+    #expect(!CheckInCommentStore.isSendable(String(repeating: "a", count: CheckInCommentStore.maxLength + 1)))
+    let comments = CheckInCommentStore(checkIn: UUID(), backend: FakeFeed(items: []), userID: { me })
+    await #expect(throws: AccountError.unknown) { try await comments.send("  ") }
+}
+
+@MainActor @Test func aRefusedCommentReachesTheCaller() async {
+    let backend = FakeFeed(items: [])
+    await backend.failReactions(.contentNotAllowed)
+    let comments = CheckInCommentStore(checkIn: UUID(), backend: backend, userID: { me })
+    await #expect(throws: AccountError.contentNotAllowed) { try await comments.send("rude") }
+    #expect(comments.comments.isEmpty)
+}
+
+@Test func aCommentWithItsEmbeddedAuthorIsDecoded() throws {
+    let json = """
+    [{"id":"60000000-0000-0000-0000-000000000001","user_id":"00000000-0000-0000-0000-000000000501",
+      "body":"Nice one","created_at":"2026-11-07T09:00:00.5+00:00",
+      "profiles":{"username":"anna_spots","display_name":"Anna"}}]
+    """
+    let comments = try JSONDecoder().decode([CheckInComment].self, from: Data(json.utf8))
+    #expect(comments[0].username == "anna_spots")
+    #expect(comments[0].displayName == "Anna")
+    #expect(comments[0].body == "Nice one")
 }

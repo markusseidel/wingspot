@@ -607,6 +607,16 @@
         }
       }
     },
+    "Comments" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kommentare"
+          }
+        }
+      }
+    },
     "Comments: %lld" : {
       "localizations" : {
         "de" : {
@@ -733,6 +743,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Datum"
+          }
+        }
+      }
+    },
+    "Delete" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Löschen"
           }
         }
       }
@@ -1330,6 +1350,16 @@
         }
       }
     },
+    "No comments yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine Kommentare"
+          }
+        }
+      }
+    },
     "No one found" : {
       "localizations" : {
         "de" : {
@@ -1620,7 +1650,28 @@
         }
       }
     },
+    "Remove your salute. Salutes: %lld" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salute entfernen. Salutes: %lld"
+          }
+        }
+      }
+    },
+    "Salute. Salutes: %lld" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salute geben. Salutes: %lld"
+          }
+        }
+      }
+    },
     "Salutes: %lld" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1696,6 +1747,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zum %@ Mal gesehen"
+          }
+        }
+      }
+    },
+    "Send" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senden"
           }
         }
       }
@@ -1906,6 +1967,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Diese Bordkarte nennt einen Flughafen, der nicht in den Daten der App ist. Gib den Flug von Hand ein."
+          }
+        }
+      }
+    },
+    "This comment isn't allowed. Please rephrase it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Kommentar ist nicht erlaubt. Bitte formuliere ihn um."
           }
         }
       }
@@ -2136,6 +2207,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Arbeit"
+          }
+        }
+      }
+    },
+    "Write a comment…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kommentar schreiben …"
           }
         }
       }

@@ -29,6 +29,7 @@
 		63A6ACF8B98323CFB9936784 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C9AA754CC23E4288DF9E2262 /* PrivacyInfo.xcprivacy */; };
 		666833BB5AA51A95401FAE68 /* CheckInSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */; };
 		6DAA715E6FB8E824FA168D2C /* APIProgressSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96EA4033E2C1D21ED547E17 /* APIProgressSource.swift */; };
+		71650165FDE3772BBD7E7A3D /* CommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6BDEE682A100CD8CE752944 /* CommentsView.swift */; };
 		761F6B7BD8870311AFC02EBB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D8FB2291C9A4A75529A9461 /* Assets.xcassets */; };
 		8A1E836A067C7D670EE85441 /* BadgeStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 887512D89A6F5865C984DC89 /* BadgeStyle.swift */; };
 		96D09D7A0351104460703E5B /* PhotoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A82AC64122C34A3DE053C4F /* PhotoSection.swift */; };
@@ -86,6 +87,7 @@
 		BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceSearchViews.swift; sourceTree = "<group>"; };
 		BF4D48FF8AE3EC90CE9EB299 /* AccountMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountMessages.swift; sourceTree = "<group>"; };
 		C2E6559EBEC52E59BEEFE94D /* ProfileEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditorView.swift; sourceTree = "<group>"; };
+		C6BDEE682A100CD8CE752944 /* CommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsView.swift; sourceTree = "<group>"; };
 		C87BF659DFCBC4828CF78129 /* PlaceholderScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderScreen.swift; sourceTree = "<group>"; };
 		C9AA754CC23E4288DF9E2262 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		CDA1AD56080AB71FB2708191 /* CollectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsView.swift; sourceTree = "<group>"; };
@@ -184,6 +186,7 @@
 		546C1542C92A1D5B03F0D633 /* Feed */ = {
 			isa = PBXGroup;
 			children = (
+				C6BDEE682A100CD8CE752944 /* CommentsView.swift */,
 				ACC6390EE07C2061FC444960 /* FeedScreen.swift */,
 			);
 			path = Feed;
@@ -372,6 +375,7 @@
 				B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */,
 				666833BB5AA51A95401FAE68 /* CheckInSheet.swift in Sources */,
 				0938348D4F0B21A4B41F7D9E /* CollectionsView.swift in Sources */,
+				71650165FDE3772BBD7E7A3D /* CommentsView.swift in Sources */,
 				A165396CBFC567234392EE1F /* EmailSignInView.swift in Sources */,
 				B9781CFA9DE1264E690E8F1B /* FeedScreen.swift in Sources */,
 				5EFAD640812D73C675B33326 /* FlownCheckInView.swift in Sources */,

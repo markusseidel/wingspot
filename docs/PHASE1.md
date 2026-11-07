@@ -73,6 +73,9 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
     - The tab shows `get_feed`: your own check-ins and those of people you follow, newest first, 30 at a time, loading older ones near the end of the list. Pull to refresh. It needs a network and keeps the old list when a refresh fails.
     - Paging sends back the time exactly as the server sent it, because rounding it would skip or repeat check-ins.
     - A card shows who, when, the kind, the registration or route, details and the salute and comment counts. Tapping a name opens that person's page. Salutes and comments themselves come in 7d. Photos come in 7f.
+19. **Salutes and comments (milestone 7d):**
+    - The salute button on a feed card changes at once and goes back if the request fails. Salutes and comments are written straight to their tables, where the database rules check that the person may see the check-in.
+    - The comments screen lists comments oldest first with the author's name, takes new ones (1 to 2000 characters), and lets you delete your own, or any comment under your own check-in, by swiping. A comment the word filter refuses shows a message and stays in the field. The count on the card follows the screen.
 
 ## Before each milestone
 

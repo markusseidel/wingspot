@@ -11,6 +11,7 @@ extension AccountError {
         case .tooManyRequests: "Too many attempts. Please wait a moment and try again."
         case .appleUnavailable: "Sign in with Apple isn't available yet. Please use your email."
         case .offline: "You're offline. Please connect to the internet and try again."
+        case .contentNotAllowed: "This comment isn't allowed. Please rephrase it."
         case .notConfigured: "Sign-in isn't available in this version of the app."
         case .unknown: "Something went wrong. Please try again."
         }
