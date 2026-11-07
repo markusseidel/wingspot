@@ -49,6 +49,18 @@ private actor FakeFeed: FeedBackend, ReactionBackend {
         return reportOutcome
     }
 
+    var photoRows: [FeedPhoto] = []
+    private(set) var photoRequests: [[UUID]] = []
+    var photoError: AccountError?
+    func setPhotos(_ rows: [FeedPhoto]) { photoRows = rows }
+    func failPhotos(_ error: AccountError?) { photoError = error }
+
+    func photos(for checkIns: [UUID]) throws -> [FeedPhoto] {
+        photoRequests.append(checkIns)
+        if let photoError { throw photoError }
+        return photoRows.filter { checkIns.contains($0.checkInID) }
+    }
+
     func replace(_ items: [FeedItem]) { self.items = items }
 
     func feed(after cursor: FeedCursor?, pageSize: Int) throws -> [FeedItem] {
@@ -286,4 +298,27 @@ private func item(_ n: Int) -> FeedItem {
     #expect(!terms.hasAccepted)
     current = first
     #expect(TermsStore(defaults: defaults, userID: { first }).hasAccepted)
+}
+
+@Test @MainActor func photosArriveWithTheirCheckIns() async throws {
+    let backend = FakeFeed(items: (1...3).map(item))
+    let first = item(1).id
+    let url = try #require(URL(string: "https://example.test/a.jpg"))
+    await backend.setPhotos([FeedPhoto(id: UUID(), checkInID: first, url: url)])
+    let store = makeStore(backend)
+    await store.refresh()
+    #expect(store.photos[first]?.count == 1)
+    #expect(store.photos[item(2).id] == nil)
+    store.clear()
+    #expect(store.photos.isEmpty)
+}
+
+@Test @MainActor func aPhotoFailureDoesNotHideTheFeed() async {
+    let backend = FakeFeed(items: (1...3).map(item))
+    await backend.failPhotos(.offline)
+    let store = makeStore(backend)
+    await store.refresh()
+    #expect(store.items.count == 3)
+    #expect(store.failure == nil)
+    #expect(store.photos.isEmpty)
 }

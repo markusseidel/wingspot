@@ -80,6 +80,10 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
     - Reports go through the server's `report` function, for a person (profile page), a check-in (menu on a feed card) and a comment (swipe). Reasons: spam, offensive, private information, other, plus optional details. You can't report your own content. Photo reports come with 7f.
     - Before the feed, People, or sharing with anyone but yourself, a screen with the community rules asks for agreement once per account and rules version. The agreement is kept on the device for now; raise `TermsStore.currentVersion` to ask everyone again. A server-side record can be added later if proof of agreement is needed.
     - The full terms of use for `wingspot.site` are drafted in [TERMS-DRAFT.md](TERMS-DRAFT.md).
+21. **Photos in the feed (milestone 7f):**
+    - A photo can be seen by whoever can see its check-in (same rules as before: yourself, friends, public, blocks respected). Photos of sensitive aircraft stay with their owner, because a photo can show the registration. The photo bucket stays private; the app asks storage for a signed link (valid for an hour) for each photo it may read, and a refresh signs again.
+    - The feed loads the cards first and the photos after; if the photos fail, the cards stay as they are. A card shows up to four photos in a strip. Press and hold a photo of someone else to report it.
+    - Photos on a person's page and tapping a photo to enlarge it are not part of this step.
 
 ## Before each milestone
 

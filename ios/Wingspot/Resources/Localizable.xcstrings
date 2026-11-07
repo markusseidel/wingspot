@@ -1760,6 +1760,16 @@
         }
       }
     },
+    "Report photo" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto melden"
+          }
+        }
+      }
+    },
     "Salute. Salutes: %lld" : {
       "localizations" : {
         "de" : {
@@ -2527,6 +2537,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "diesen Kommentar"
+          }
+        }
+      }
+    },
+    "this photo" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dieses Foto"
           }
         }
       }

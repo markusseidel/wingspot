@@ -121,8 +121,27 @@ public struct FeedCursor: Equatable, Sendable {
     }
 }
 
+/// A photo on a check-in, with a link that works for a limited time.
+public struct FeedPhoto: Equatable, Sendable, Identifiable {
+    public let id: UUID
+    public let checkInID: UUID
+    public let url: URL
+    public let width: Int?
+    public let height: Int?
+
+    public init(id: UUID, checkInID: UUID, url: URL, width: Int? = nil, height: Int? = nil) {
+        self.id = id
+        self.checkInID = checkInID
+        self.url = url
+        self.width = width
+        self.height = height
+    }
+}
+
 public protocol FeedBackend: Sendable {
     func feed(after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem]
+    /// The photos of these check-ins that the caller may see, in order, with signed links.
+    func photos(for checkIns: [UUID]) async throws -> [FeedPhoto]
 }
 
 /// The Feed tab's data: your check-ins and those of people you follow, newest first, in pages.
@@ -138,6 +157,8 @@ public final class FeedStore {
     public private(set) var failure: AccountError?
     /// True once a first page was loaded, so an empty feed isn't shown while it is still loading.
     public private(set) var hasLoaded = false
+    /// The photos of the check-ins in `items`. A card shows its photos once they arrive.
+    public private(set) var photos: [UUID: [FeedPhoto]] = [:]
 
     private let backend: FeedBackend
     private let reactions: ReactionBackend
@@ -193,6 +214,8 @@ public final class FeedStore {
             reachedEnd = page.count < Self.pageSize
             failure = nil
             hasLoaded = true
+            photos = [:]
+            await loadPhotos(for: items.map(\.id), generation: mine)
         } catch {
             guard mine == generation else { return }
             failure = (error as? AccountError) ?? .unknown
@@ -209,19 +232,28 @@ public final class FeedStore {
             let page = try await backend.feed(after: FeedCursor(time: last.cursorTime, id: last.id), pageSize: Self.pageSize)
             guard mine == generation else { return }
             let known = Set(items.map(\.id))
-            items += Self.unique(page).filter { !known.contains($0.id) }
+            let added = Self.unique(page).filter { !known.contains($0.id) }
+            items += added
             reachedEnd = page.count < Self.pageSize
             failure = nil
+            await loadPhotos(for: added.map(\.id), generation: mine)
         } catch {
             guard mine == generation else { return }
             failure = (error as? AccountError) ?? .unknown
         }
     }
 
+    /// Photos are a bonus: if they can't be loaded, the cards stay as they are.
+    private func loadPhotos(for ids: [UUID], generation mine: Int) async {
+        guard !ids.isEmpty, let found = try? await backend.photos(for: ids), mine == generation else { return }
+        for (id, group) in Dictionary(grouping: found, by: \.checkInID) { photos[id] = group }
+    }
+
     /// Forgets everything, for example after signing out.
     public func clear() {
         generation += 1
         items = []
+        photos = [:]
         isLoading = false
         reachedEnd = false
         failure = nil
