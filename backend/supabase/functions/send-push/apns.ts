@@ -46,7 +46,7 @@ export function render(row: PushRow, locale: string | null): Rendered {
       return { title: name, body: german ? "folgt dir jetzt." : "started following you." };
     case "salute": {
       const about = row.subject ? ` (${row.subject})` : "";
-      return { title: name, body: german ? `hat deinen Check-in gesalutiert${about}.` : `saluted your check-in${about}.` };
+      return { title: name, body: german ? `hat deinen Check-in salutiert${about}.` : `saluted your check-in${about}.` };
     }
     case "comment": {
       const text = (row.snippet ?? "").replace(/\s+/g, " ").trim();
@@ -55,6 +55,10 @@ export function render(row: PushRow, locale: string | null): Rendered {
   }
 }
 
+/** The app registers a notification category with this name. It holds the text the phone shows instead of the real
+ * one while previews are hidden (iPhone Settings > Notifications > Wingspot > Show Previews). */
+export const CATEGORY = "WINGSPOT_ACTIVITY";
+
 /** What the phone gets: the text and just enough to open the right screen. */
 export function payload(row: PushRow, locale: string | null): Record<string, unknown> {
   const { title, body } = render(row, locale);
@@ -62,6 +66,7 @@ export function payload(row: PushRow, locale: string | null): Record<string, unk
     aps: {
       alert: { title, body },
       sound: "default",
+      category: CATEGORY,
       "thread-id": row.checkin_id ? `${row.kind}-${row.checkin_id}` : row.kind,
     },
     type: row.kind,

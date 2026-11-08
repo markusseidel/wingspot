@@ -36,6 +36,13 @@ final class PushAppDelegate: NSObject, UIApplicationDelegate, UNUserNotification
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         UNUserNotificationCenter.current().delegate = self
+        // With previews hidden (Show Previews: When Unlocked or Never), the phone shows this instead of the name
+        // and the text, until the iPhone is unlocked.
+        let activity = UNNotificationCategory(
+            identifier: "WINGSPOT_ACTIVITY", actions: [], intentIdentifiers: [],
+            hiddenPreviewsBodyPlaceholder: String(localized: "New activity on Wingspot"), options: []
+        )
+        UNUserNotificationCenter.current().setNotificationCategories([activity])
         return true
     }
 
@@ -125,6 +132,9 @@ struct NotificationsSection: View {
                     Toggle("New followers", isOn: binding(prefs, \.newFollowers))
                     Toggle("Salutes", isOn: binding(prefs, \.salutes))
                     Toggle("Comments", isOn: binding(prefs, \.comments))
+                    Button("Hide the text until unlocked") {
+                        if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+                    }
                 } else if push.failure != nil {
                     Label("Couldn't load this. Check your connection.", systemImage: "wifi.slash").foregroundStyle(.secondary)
                 } else {
@@ -134,7 +144,7 @@ struct NotificationsSection: View {
         } header: {
             Text("Notifications")
         } footer: {
-            Text("A notification shows a name and the start of a comment, which can be visible on your lock screen.")
+            Text("A notification shows a name and the start of a comment. To show it only after you unlock your iPhone, open the system settings, tap Notifications, then Show Previews, and choose When Unlocked.")
         }
         .task {
             await push.sync()
