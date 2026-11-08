@@ -27,6 +27,7 @@
 		4427FE8EDAE09F2B68624303 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CCCA89A7943B8447EE7898 /* ShareSheet.swift */; };
 		44D09702BD9AEBE667B05854 /* PersonCheckInsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769842784C2049C177DB02CD /* PersonCheckInsSection.swift */; };
 		4644DCAB019919C64F9372FD /* AirportsMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C8DE707D5FBC441F2A0A4 /* AirportsMapView.swift */; };
+		5BF02F7F79B326015B808389 /* AirportPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1072182D625807362ADE4FB1 /* AirportPageView.swift */; };
 		5EFAD640812D73C675B33326 /* FlownCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED53FE5B4A009D5575119BB4 /* FlownCheckInView.swift */; };
 		6011B00CBD96A7EE9270C0C9 /* DistanceUnitSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D41472169C437C8D788A92 /* DistanceUnitSetting.swift */; };
 		63920812D725A2EE33A89EC1 /* WingspotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E61A661480E1ED65178DE4B /* WingspotApp.swift */; };
@@ -60,6 +61,7 @@
 /* Begin PBXFileReference section */
 		04D41472169C437C8D788A92 /* DistanceUnitSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistanceUnitSetting.swift; sourceTree = "<group>"; };
 		0BA65F3D7DF5E25F2228C346 /* EmailSignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSignInView.swift; sourceTree = "<group>"; };
+		1072182D625807362ADE4FB1 /* AirportPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirportPageView.swift; sourceTree = "<group>"; };
 		15CCCA89A7943B8447EE7898 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		17369D1192D4BAF9721962FE /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		181278D0BAEE1C7A36510BCE /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
@@ -280,6 +282,7 @@
 		C356936431FEF869579418FC /* Social */ = {
 			isa = PBXGroup;
 			children = (
+				1072182D625807362ADE4FB1 /* AirportPageView.swift */,
 				E3A6E9C03029947E148B9EBB /* PeopleView.swift */,
 				769842784C2049C177DB02CD /* PersonCheckInsSection.swift */,
 				5CABAD3AAA0CB6C6317A73DE /* PersonDetailView.swift */,
@@ -391,6 +394,7 @@
 				6DAA715E6FB8E824FA168D2C /* APIProgressSource.swift in Sources */,
 				1427422ED2866AC007958D1A /* AccountMessages.swift in Sources */,
 				E743B21C623831BB31024A48 /* AirportCheckInView.swift in Sources */,
+				5BF02F7F79B326015B808389 /* AirportPageView.swift in Sources */,
 				4644DCAB019919C64F9372FD /* AirportsMapView.swift in Sources */,
 				9A3659845BE545C339AE2055 /* AppleSignInButton.swift in Sources */,
 				8A1E836A067C7D670EE85441 /* BadgeStyle.swift in Sources */,

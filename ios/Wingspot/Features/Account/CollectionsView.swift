@@ -23,6 +23,7 @@ struct CollectionsView: View {
 
     var body: some View {
         let lists = CheckInCollections(all, userID: account.userID)
+        let airportIDs = self.airportIDs
         let entries = switch tab {
         case .aircraft: lists.aircraft
         case .types: lists.types
@@ -43,20 +44,7 @@ struct CollectionsView: View {
             } else {
                 Section {
                     ForEach(entries) { entry in
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(verbatim: entry.title).font(.headline)
-                                if let subtitle = entry.subtitle {
-                                    Text(verbatim: subtitle).font(.subheadline).foregroundStyle(.secondary)
-                                }
-                            }
-                            Spacer()
-                            VStack(alignment: .trailing, spacing: 2) {
-                                Text(verbatim: "\(entry.count)×").font(.headline)
-                                Text(entry.lastSeen, format: .dateTime.day().month().year())
-                                    .font(.caption).foregroundStyle(.secondary)
-                            }
-                        }
+                        row(entry, airportID: tab == .airports ? airportIDs[entry.title] : nil)
                     }
                 }
             }
@@ -70,6 +58,41 @@ struct CollectionsView: View {
                 Image(systemName: "map")
             }
             .accessibilityLabel("Airports map")
+        }
+    }
+
+    /// The airport rows open the airport's page, which needs the ID that the list itself doesn't carry.
+    private var airportIDs: [String: Int] {
+        var found: [String: Int] = [:]
+        for checkIn in all {
+            if let code = checkIn.airportCode, let id = checkIn.airportID { found[code] = id }
+        }
+        return found
+    }
+
+    @ViewBuilder
+    private func row(_ entry: CheckInCollections.Entry, airportID: Int?) -> some View {
+        if let airportID {
+            NavigationLink { AirportPageView(airportID: airportID) } label: { rowContent(entry) }
+        } else {
+            rowContent(entry)
+        }
+    }
+
+    private func rowContent(_ entry: CheckInCollections.Entry) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(verbatim: entry.title).font(.headline)
+                if let subtitle = entry.subtitle {
+                    Text(verbatim: subtitle).font(.subheadline).foregroundStyle(.secondary)
+                }
+            }
+            Spacer()
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(verbatim: "\(entry.count)×").font(.headline)
+                Text(entry.lastSeen, format: .dateTime.day().month().year())
+                    .font(.caption).foregroundStyle(.secondary)
+            }
         }
     }
 }

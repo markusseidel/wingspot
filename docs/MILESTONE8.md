@@ -48,6 +48,7 @@ I deploy to hosted only on the owner's word.
 
 - **Server:** `get_airport_activity(airport_id, ...)` returns recent public check-ins at the airport, with the same hiding rules, and a few counts: check-ins this month, distinct aircraft, top spotters among people you may see.
 - **App:** an airport page with code, name, country, a small map, your own visits and the recent activity. It opens from the airport map, the collections list, and an airport on a feed card or check-in result.
+- **Built as:** two functions, `get_airport_checkins` (a paged list) and `get_airport_activity` (counts over 30 days and the top three people). Country is not on the phone's airport data, so the page shows the city. Opening it from the check-in result screen is left out.
 - **Left out for now:** spotting locations, leaderboards and "rare today" (Phase 2).
 
 ## Risks

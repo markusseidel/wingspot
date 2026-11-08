@@ -12,6 +12,7 @@ struct AirportsMapView: View {
     @Query private var all: [LocalCheckIn]
     @State private var airports: [Airport] = []
     @State private var isLoading = true
+    @State private var selected: Int?
 
     private struct LoadKey: Hashable {
         let ids: Set<Int>
@@ -34,7 +35,7 @@ struct AirportsMapView: View {
                     }
                 }
             } else {
-                Map {
+                Map(selection: $selected) {
                     ForEach(airports) { airport in
                         Marker(
                             airport.code,
@@ -42,10 +43,12 @@ struct AirportsMapView: View {
                                 latitude: airport.coordinate.latitude, longitude: airport.coordinate.longitude
                             )
                         )
+                        .tag(airport.id)
                     }
                 }
             }
         }
+        .navigationDestination(item: $selected) { AirportPageView(airportID: $0) }
         .navigationTitle("Airports map")
         .navigationBarTitleDisplayMode(.inline)
         .task(id: LoadKey(ids: ids, dataVersion: referenceData.database?.dataVersion)) {

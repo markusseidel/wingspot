@@ -426,6 +426,20 @@ extension SupabaseAccountBackend: FeedBackend {
         }
     }
 
+    public func airportCheckIns(at airport: Int, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem] {
+        try await socialErrors {
+            try await client.rpc("get_airport_checkins", params: AirportParams(airport: airport, cursor: cursor, pageSize: pageSize))
+                .execute().value
+        }
+    }
+
+    public func airportActivity(at airport: Int) async throws -> AirportActivity {
+        try await socialErrors {
+            let rows: [AirportActivity] = try await client.rpc("get_airport_activity", params: ["airport": airport]).execute().value
+            return rows.first ?? AirportActivity(checkIns: 0, aircraft: 0)
+        }
+    }
+
     /// An hour is enough to scroll through a page of the feed. Refreshing signs the links again.
     private static let photoLinkLifetime = 3600
 
@@ -479,6 +493,27 @@ private struct PersonParams: Encodable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(target, forKey: .target)
+        try container.encode(cursor?.time, forKey: .beforeTime)
+        try container.encode(cursor?.id, forKey: .beforeID)
+        try container.encode(pageSize, forKey: .pageSize)
+    }
+}
+
+private struct AirportParams: Encodable {
+    let airport: Int
+    let cursor: FeedCursor?
+    let pageSize: Int
+
+    private enum CodingKeys: String, CodingKey {
+        case airport
+        case beforeTime = "before_time"
+        case beforeID = "before_id"
+        case pageSize = "page_size"
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(airport, forKey: .airport)
         try container.encode(cursor?.time, forKey: .beforeTime)
         try container.encode(cursor?.id, forKey: .beforeID)
         try container.encode(pageSize, forKey: .pageSize)

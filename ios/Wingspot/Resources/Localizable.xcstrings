@@ -206,12 +206,32 @@
         }
       }
     },
+    "Activity" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktivität"
+          }
+        }
+      }
+    },
     "Add a photo" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Foto hinzufügen"
+          }
+        }
+      }
+    },
+    "Agree to the community rules in the Feed tab to see what others checked in here." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stimme im Tab „Feed“ den Community-Regeln zu, um zu sehen, was andere hier eingecheckt haben."
           }
         }
       }
@@ -597,6 +617,16 @@
         }
       }
     },
+    "Check-ins, last 30 days" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check-ins, letzte 30 Tage"
+          }
+        }
+      }
+    },
     "Chief Pilot" : {
       "localizations" : {
         "de" : {
@@ -768,6 +798,16 @@
         }
       }
     },
+    "Couldn't load this. Check your connection." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das konnte nicht geladen werden. Prüfe deine Verbindung."
+          }
+        }
+      }
+    },
     "Couldn't load your badges" : {
       "localizations" : {
         "de" : {
@@ -844,6 +884,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Länder"
+          }
+        }
+      }
+    },
+    "Counts include only check-ins you are allowed to see." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gezählt werden nur Check-ins, die du sehen darfst."
           }
         }
       }
@@ -944,6 +994,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Details (optional)"
+          }
+        }
+      }
+    },
+    "Different aircraft" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verschiedene Flugzeuge"
           }
         }
       }
@@ -1379,6 +1439,16 @@
         }
       }
     },
+    "Last time" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zuletzt"
+          }
+        }
+      }
+    },
     "Last time at %@, %@" : {
       "localizations" : {
         "de" : {
@@ -1731,6 +1801,16 @@
         }
       }
     },
+    "Nothing to show yet." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nichts zu zeigen."
+          }
+        }
+      }
+    },
     "OK" : {
       "localizations" : {
         "de" : {
@@ -1937,6 +2017,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Anlass"
+          }
+        }
+      }
+    },
+    "Recent check-ins" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letzte Check-ins"
           }
         }
       }
@@ -2202,6 +2292,16 @@
         }
       }
     },
+    "Sign in from the Profile tab to see what others checked in here." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melde dich im Tab „Profil“ an, um zu sehen, was andere hier eingecheckt haben."
+          }
+        }
+      }
+    },
     "Sign in from the Profile tab, and your check-ins will earn badges." : {
       "localizations" : {
         "de" : {
@@ -2338,6 +2438,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Danke. Wir sehen uns deine Meldung an."
+          }
+        }
+      }
+    },
+    "The airport data isn't on this iPhone yet. Open the app once while online." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Flughafendaten sind noch nicht auf diesem iPhone. Öffne die App einmal mit Internetverbindung."
           }
         }
       }
@@ -2702,6 +2812,16 @@
         }
       }
     },
+    "You haven't checked in here yet." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast hier noch nicht eingecheckt."
+          }
+        }
+      }
+    },
     "You won't see each other's check-ins or comments anymore, and any follows between you end." : {
       "localizations" : {
         "de" : {
@@ -2728,6 +2848,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Du bist für das verantwortlich, was du postest. Kommentare mit Beleidigungen werden automatisch abgelehnt."
+          }
+        }
+      }
+    },
+    "Your check-ins" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Check-ins"
           }
         }
       }

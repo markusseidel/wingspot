@@ -18,7 +18,7 @@ public struct CheckInStats: Equatable, Sendable {
     public init() {}
 
     /// The check-ins that count: not refused by the server, and this account's or made signed out.
-    static func counted(_ all: [LocalCheckIn], userID: UUID?) -> [LocalCheckIn] {
+    public static func counted(_ all: [LocalCheckIn], userID: UUID?) -> [LocalCheckIn] {
         all.filter { checkIn in
             if checkIn.syncState == SyncState.rejected.rawValue { return false }
             if let userID, let owner = checkIn.ownerID, owner != userID { return false }

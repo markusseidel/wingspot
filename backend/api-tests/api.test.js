@@ -914,3 +914,56 @@ describe("a person's check-ins", () => {
     assert.ok([401, 403].includes(response.status), `status ${response.status}`);
   });
 });
+
+describe("an airport's activity", () => {
+  const AIRPORT_ID = 998877;
+  let alice, bob;
+  const shared = randomUUID();
+  const hidden = randomUUID();
+  before(async () => {
+    await service("airports", {
+      method: "POST",
+      body: { id: AIRPORT_ID, icao: "ZZZX", name: "Activity Test", country_code: "DE", continent: "EU", location: "POINT(8.7 50.1)" },
+    });
+    alice = await signUp();
+    bob = await signUp();
+    for (const [id, visibility] of [[shared, "public"], [hidden, "private"]]) {
+      const upload = await call("/v1/checkins", {
+        method: "POST", token: alice.token,
+        body: { checkins: [{ id, kind: "airport", occurred_at: new Date(Date.now() - 3 * 3600_000).toISOString(), airport_id: AIRPORT_ID, visibility }] },
+      });
+      assert.equal(upload.body.results[0].status, "stored", JSON.stringify(upload.body));
+    }
+  });
+  after(async () => {
+    for (const id of [shared, hidden]) await service(`checkins?id=eq.${id}`, { method: "DELETE" });
+    await service(`airports?id=eq.${AIRPORT_ID}`, { method: "DELETE" });
+  });
+
+  test("a stranger sees the shared visit, the owner sees both", async () => {
+    const seen = await rest("rpc/get_airport_checkins", { token: bob.token, body: { airport: AIRPORT_ID } });
+    assert.equal(seen.status, 200, JSON.stringify(seen.body));
+    assert.deepEqual(seen.body.map((c) => c.id), [shared]);
+    assert.equal(seen.body[0].airport_id, AIRPORT_ID);
+    const own = await rest("rpc/get_airport_checkins", { token: alice.token, body: { airport: AIRPORT_ID } });
+    assert.deepEqual(own.body.map((c) => c.id).sort(), [shared, hidden].sort());
+  });
+
+  test("the counts follow the same rules", async () => {
+    const seen = await rest("rpc/get_airport_activity", { token: bob.token, body: { airport: AIRPORT_ID } });
+    assert.equal(seen.status, 200, JSON.stringify(seen.body));
+    assert.equal(seen.body[0].checkins_30d, 1);
+    assert.equal(seen.body[0].top_spotters.length, 1);
+    const own = await rest("rpc/get_airport_activity", { token: alice.token, body: { airport: AIRPORT_ID } });
+    assert.equal(own.body[0].checkins_30d, 2);
+  });
+
+  test("need a signed-in user", async () => {
+    for (const name of ["get_airport_checkins", "get_airport_activity"]) {
+      const response = await fetch(`${API}/rest/v1/rpc/${name}`, {
+        method: "POST", headers: { apikey: ANON_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ airport: AIRPORT_ID }),
+      });
+      assert.ok([401, 403].includes(response.status), `${name}: status ${response.status}`);
+    }
+  });
+});

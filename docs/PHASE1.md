@@ -98,6 +98,10 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
 25. **Check-ins on a person's page (milestone 8d):**
     - The database function `get_person_checkins(target, before_time, before_id, page_size)` returns one person's check-ins in the same shape as the feed, with the same rules: it runs as the caller, so own, friends-only, public (with the author's delay and private profile) and blocked are decided by the check-in rules, and the registration of a sensitive aircraft is hidden from others.
     - A person's page shows those check-ins with the feed's cards (salute, comment, report, photos) and paging. A private profile you aren't a friend of says so.
+26. **Airport page (milestone 8e):**
+    - Two database functions, both running as the caller so the check-in rules decide what counts: `get_airport_checkins(airport, before_time, before_id, page_size)` lists the visits and spotted aircraft at an airport in the feed's shape (flights are left out), and `get_airport_activity(airport)` gives the check-ins and different aircraft of the last 30 days and the three most active people. A sensitive aircraft of someone else is neither shown nor counted.
+    - The page shows the airport (code, name, city, small map), your own check-ins there, the counts, and the recent check-ins with the feed's cards. It opens from the airports list in Collections, a marker on the airports map, and the airport title of an airport check-in card. Country, spotting locations, leaderboards and "rare today" are left for Phase 2; opening it from the check-in result screen is not done yet.
+    - Feed items now carry the airport's ID.
 
 ## Before each milestone
 
