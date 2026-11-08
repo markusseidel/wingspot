@@ -33,7 +33,8 @@ struct PeopleView: View {
         }
         .termsGate()
         .navigationTitle("People")
-        .searchable(text: $query, prompt: "Search by username")
+        // Always shown. The default hides the field until the list is pulled down, and testers did not find it.
+        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search by username")
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled()
         .task(id: trimmed) { await search() }
