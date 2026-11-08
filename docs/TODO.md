@@ -186,6 +186,7 @@ In this order:
 
 ### After Phase 1
 
+- [ ] Milestone 11: Entdecken tab (plan in [MILESTONE11.md](MILESTONE11.md); 11a search and nearby, 11b busy airports, 11c type page, 11d registration page, 11e map)
 - [ ] Phase 2: spotter features, Wingspot Pro and App Store 1.0 (tasks below)
 - [ ] Phase 2b: Android 1.0
 - [ ] Phase 3: growth

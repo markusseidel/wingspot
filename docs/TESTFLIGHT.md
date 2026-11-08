@@ -60,6 +60,7 @@ App Store Connect > App Privacy. Nothing is used for tracking, and everything is
 | User Content: Photos or Videos | App functionality | Yes (check-in photos) |
 | User Content: Other User Content | App functionality | Yes (check-ins, comments, reports) |
 | Location: Precise or Coarse | App functionality | Only if you sync the position of a check-in. Check [PRIVACY-DRAFT.md](PRIVACY-DRAFT.md) and answer the same way as the privacy policy |
+| Identifiers: Device ID (the push token) | App functionality | Yes, if the person allows notifications. Apple does not always count push tokens as Device ID; declaring it is harmless |
 | Diagnostics | | No, until crash reporting or analytics goes beyond Apple's own |
 
 ## 4. Sign-up emails in the user's language
