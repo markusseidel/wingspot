@@ -39,6 +39,7 @@ describe("push texts", () => {
     assert.equal(body.type, "salute");
     assert.equal(body.checkin, "c1");
     assert.equal(body.aps.alert.title, "anna");
+    assert.equal(body.aps.category, "WINGSPOT_ACTIVITY", "the app shows a neutral text for this category while previews are hidden");
     assert.equal(body.aps["thread-id"], "salute-c1");
     assert.equal(payload(row({ kind: "follow", checkin_id: null }), "en").aps["thread-id"], "follow");
   });
