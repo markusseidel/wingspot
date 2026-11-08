@@ -9,6 +9,15 @@ struct PersonCheckInsSection: View {
     @Environment(FeedStore.self) private var feed
     @State private var store: FeedStore?
 
+    /// Why nothing is shown. Most check-ins are shared with friends only, and friends follow each other.
+    private var emptyMessage: LocalizedStringKey {
+        if person.isFriend { return "No check-ins to show." }
+        if person.isPrivate { return "This profile is private. Only friends can see check-ins." }
+        if person.isFollowing { return "Most check-ins are for friends only. You become friends when this person follows you back." }
+        if person.followsYou { return "Most check-ins are for friends only. Follow back to become friends." }
+        return "Most check-ins are for friends only. Follow each other to become friends."
+    }
+
     var body: some View {
         Section {
             if let store {
@@ -20,8 +29,7 @@ struct PersonCheckInsSection: View {
                             ProgressView().frame(maxWidth: .infinity)
                         }
                     } else {
-                        Text(person.isPrivate && !person.isFriend ? "This profile is private." : "No check-ins to show.")
-                            .foregroundStyle(.secondary)
+                        Text(emptyMessage).foregroundStyle(.secondary)
                     }
                 }
                 ForEach(store.items) { item in
