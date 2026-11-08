@@ -347,6 +347,16 @@
         }
       }
     },
+    "Airports near you" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flughäfen in deiner Nähe"
+          }
+        }
+      }
+    },
     "Airports not found" : {
       "localizations" : {
         "de" : {
@@ -1722,6 +1732,16 @@
         }
       }
     },
+    "No airports within 150 km." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Flughäfen im Umkreis von 150 km."
+          }
+        }
+      }
+    },
     "No airports yet" : {
       "localizations" : {
         "de" : {
@@ -1888,6 +1908,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nicht angegeben"
+          }
+        }
+      }
+    },
+    "Nothing found" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nichts gefunden"
           }
         }
       }
@@ -2274,6 +2304,7 @@
       }
     },
     "Search aircraft, airports and spotters." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2289,6 +2320,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nach Benutzername suchen"
+          }
+        }
+      }
+    },
+    "Search people, airports and aircraft" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personen, Flughäfen und Flugzeuge suchen"
           }
         }
       }
@@ -2403,6 +2444,16 @@
         }
       }
     },
+    "Show airports near me" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flughäfen in meiner Nähe zeigen"
+          }
+        }
+      }
+    },
     "Shows private information" : {
       "localizations" : {
         "de" : {
@@ -2419,6 +2470,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Anmelden"
+          }
+        }
+      }
+    },
+    "Sign in and agree to the community rules in the Feed tab to find people." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melde dich an und stimme im Tab „Feed“ den Community-Regeln zu, um Personen zu finden."
           }
         }
       }
@@ -3070,6 +3131,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dein Feed ist leer"
+          }
+        }
+      }
+    },
+    "Your location is used on this iPhone only, to sort the list." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Standort wird nur auf diesem iPhone verwendet, um die Liste zu sortieren."
+          }
+        }
+      }
+    },
+    "Your location isn't available. You can allow it in the iPhone settings, or search for an airport." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Standort ist nicht verfügbar. Du kannst ihn in den iPhone-Einstellungen erlauben oder nach einem Flughafen suchen."
           }
         }
       }

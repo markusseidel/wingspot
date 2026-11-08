@@ -142,6 +142,32 @@ public struct ReferenceDatabase: Sendable {
         return match?.candidate.airport
     }
 
+    /// Airports with an IATA code (the ones people know and travel through) within `radiusKm`, nearest first.
+    /// Heliports, balloon ports and seaplane bases don't count.
+    public func airports(near position: GeoCoordinate, withinKm radiusKm: Double = 150, limit: Int = 10) async throws
+        -> [(airport: Airport, distanceKm: Double)] {
+        let latitudeRange = radiusKm / 111.0
+        let longitudeRange = radiusKm / (111.0 * max(0.1, cos(position.latitude * .pi / 180)))
+        let candidates = try await queue.read { db in
+            try Row.fetchAll(db, sql: """
+                SELECT * FROM airports
+                WHERE latitude BETWEEN ? AND ? AND longitude BETWEEN ? AND ?
+                  AND iata IS NOT NULL AND iata <> ''
+                  AND type NOT IN ('heliport', 'balloonport', 'seaplane_base')
+                """, arguments: [
+                    position.latitude - latitudeRange, position.latitude + latitudeRange,
+                    position.longitude - longitudeRange, position.longitude + longitudeRange,
+                ]
+            ).map(Self.airport)
+        }
+        return candidates
+            .map { (airport: $0, distanceKm: GreatCircle.distanceKm(from: position, to: $0.coordinate)) }
+            .filter { $0.distanceKm <= radiusKm }
+            .sorted { $0.distanceKm < $1.distanceKm }
+            .prefix(limit)
+            .map { $0 }
+    }
+
     private static func airport(_ row: Row) -> Airport {
         Airport(
             id: row["id"], icao: row["icao"], iata: row["iata"], name: row["name"], city: row["city"],

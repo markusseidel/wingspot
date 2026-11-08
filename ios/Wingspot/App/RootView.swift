@@ -22,8 +22,7 @@ struct RootView: View {
                 FeedScreen()
             }
             Tab("Explore", systemImage: "map", value: AppTab.explore) {
-                PlaceholderScreen(title: "Explore", systemImage: "map",
-                                  message: "Search aircraft, airports and spotters.")
+                ExploreScreen()
             }
             Tab("Check in", systemImage: "plus.circle.fill", value: AppTab.checkIn) {
                 Color.clear

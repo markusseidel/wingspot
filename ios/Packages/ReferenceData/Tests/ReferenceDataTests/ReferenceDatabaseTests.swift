@@ -82,3 +82,19 @@ func findsHyphenatedNamesHoweverTheyAreTyped(text: String) async throws {
     #expect(frankfurt.iata == "FRA")
     #expect(try await database.airport(iata: "ZZZ") == nil)
 }
+
+@Test func airportsNearbyAreSortedByDistanceAndSkipSmallFields() async throws {
+    let database = try database()
+    let nearFrankfurt = try await database.airports(near: GeoCoordinate(latitude: 50.0, longitude: 8.6), withinKm: 100)
+    #expect(nearFrankfurt.map(\.airport.id) == [3], "the airfield and the heliport have no IATA code or are heliports")
+    #expect(nearFrankfurt.first.map { $0.distanceKm < 10 } == true)
+
+    let wide = try await database.airports(near: GeoCoordinate(latitude: 49.0, longitude: 12.0), withinKm: 1000)
+    #expect(wide.map(\.airport.id) == [3, 1], "Frankfurt is closer than Vienna from here")
+    #expect(wide[0].distanceKm < wide[1].distanceKm)
+    #expect(try await database.airports(near: GeoCoordinate(latitude: 49.0, longitude: 12.0), withinKm: 1000, limit: 1).count == 1)
+}
+
+@Test func nothingIsNearInTheMiddleOfTheOcean() async throws {
+    #expect(try await database().airports(near: GeoCoordinate(latitude: 0, longitude: 0)).isEmpty)
+}

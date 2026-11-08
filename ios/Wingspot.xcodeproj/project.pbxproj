@@ -21,7 +21,6 @@
 		27F83E299CBA8188CF0AA61F /* SharingSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995610FFAC434B480B981139 /* SharingSection.swift */; };
 		2E4689A87246BCE2846B568F /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82163058748258D0AE08F801 /* NetworkMonitor.swift */; };
 		39383DB2983A80C96D05EA39 /* ReferenceSearchViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */; };
-		3B16BBB37412D38A89E454BD /* PlaceholderScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87BF659DFCBC4828CF78129 /* PlaceholderScreen.swift */; };
 		3C72654BC1F78F3B175048F2 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA53E0B6C7D19C0B128FFE6 /* OnboardingView.swift */; };
 		3FF4DDD01D1F79267517DE35 /* ReferenceData in Frameworks */ = {isa = PBXBuildFile; productRef = 16B4602119380A191047210F /* ReferenceData */; };
 		4427FE8EDAE09F2B68624303 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CCCA89A7943B8447EE7898 /* ShareSheet.swift */; };
@@ -44,6 +43,7 @@
 		A08C4CA8904388F960BBA71F /* ProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD2433D565B1E9974F334CA /* ProfileScreen.swift */; };
 		A165396CBFC567234392EE1F /* EmailSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA65F3D7DF5E25F2228C346 /* EmailSignInView.swift */; };
 		A28B1AFC7227F94265B0AF01 /* BadgesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEADFFA0580043E3265322F0 /* BadgesScreen.swift */; };
+		AFF3D1B625E8CD51404538CD /* ExploreScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB25F31CD8716D700082888A /* ExploreScreen.swift */; };
 		B3051CE8DCAD5C1F29BB0B38 /* APIPhotoUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA4C2033974EBB05B5FCF5E /* APIPhotoUploader.swift */; };
 		B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B545FD209FC2942BD45E71 /* CheckInResultView.swift */; };
 		B9781CFA9DE1264E690E8F1B /* FeedScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC6390EE07C2061FC444960 /* FeedScreen.swift */; };
@@ -104,9 +104,9 @@
 		BF4D48FF8AE3EC90CE9EB299 /* AccountMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountMessages.swift; sourceTree = "<group>"; };
 		C2E6559EBEC52E59BEEFE94D /* ProfileEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditorView.swift; sourceTree = "<group>"; };
 		C6BDEE682A100CD8CE752944 /* CommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsView.swift; sourceTree = "<group>"; };
-		C87BF659DFCBC4828CF78129 /* PlaceholderScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderScreen.swift; sourceTree = "<group>"; };
 		C9AA754CC23E4288DF9E2262 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		CDA1AD56080AB71FB2708191 /* CollectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsView.swift; sourceTree = "<group>"; };
+		DB25F31CD8716D700082888A /* ExploreScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreScreen.swift; sourceTree = "<group>"; };
 		DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInSheet.swift; sourceTree = "<group>"; };
 		E3A6E9C03029947E148B9EBB /* PeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleView.swift; sourceTree = "<group>"; };
 		E539BCC329B1D95E5DE61344 /* AirportCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirportCheckInView.swift; sourceTree = "<group>"; };
@@ -190,7 +190,7 @@
 				35AC3558947BFD2E26464CD0 /* Account */,
 				83302189B26D2355EEC08AA7 /* Badges */,
 				1EC26DAEA056854F28F4B7EE /* CheckIn */,
-				87951F4E74954155B4CA1844 /* Common */,
+				E51F4F40158CB03DC2059E8B /* Explore */,
 				546C1542C92A1D5B03F0D633 /* Feed */,
 				3A150143D00E3075C09F69A7 /* Push */,
 				99447354934294337923972A /* Settings */,
@@ -261,14 +261,6 @@
 			path = Badges;
 			sourceTree = "<group>";
 		};
-		87951F4E74954155B4CA1844 /* Common */ = {
-			isa = PBXGroup;
-			children = (
-				C87BF659DFCBC4828CF78129 /* PlaceholderScreen.swift */,
-			);
-			path = Common;
-			sourceTree = "<group>";
-		};
 		99447354934294337923972A /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -302,6 +294,14 @@
 				A0AEFDA7AFD99199BC8AC184 /* TermsGate.swift */,
 			);
 			path = Social;
+			sourceTree = "<group>";
+		};
+		E51F4F40158CB03DC2059E8B /* Explore */ = {
+			isa = PBXGroup;
+			children = (
+				DB25F31CD8716D700082888A /* ExploreScreen.swift */,
+			);
+			path = Explore;
 			sourceTree = "<group>";
 		};
 		EB652108C1D4DDAA7B6F5B8A /* Products */ = {
@@ -419,6 +419,7 @@
 				71650165FDE3772BBD7E7A3D /* CommentsView.swift in Sources */,
 				6011B00CBD96A7EE9270C0C9 /* DistanceUnitSetting.swift in Sources */,
 				A165396CBFC567234392EE1F /* EmailSignInView.swift in Sources */,
+				AFF3D1B625E8CD51404538CD /* ExploreScreen.swift in Sources */,
 				B9781CFA9DE1264E690E8F1B /* FeedScreen.swift in Sources */,
 				5EFAD640812D73C675B33326 /* FlownCheckInView.swift in Sources */,
 				C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */,
@@ -428,7 +429,6 @@
 				44D09702BD9AEBE667B05854 /* PersonCheckInsSection.swift in Sources */,
 				13A3F8B8C6248C62D540A996 /* PersonDetailView.swift in Sources */,
 				96D09D7A0351104460703E5B /* PhotoSection.swift in Sources */,
-				3B16BBB37412D38A89E454BD /* PlaceholderScreen.swift in Sources */,
 				0937BA0BF1EBF4732DA23138 /* ProfileEditorView.swift in Sources */,
 				A08C4CA8904388F960BBA71F /* ProfileScreen.swift in Sources */,
 				D85287110D33AEDB2AE2653E /* PushSupport.swift in Sources */,
