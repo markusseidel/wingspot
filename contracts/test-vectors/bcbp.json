@@ -136,6 +136,26 @@
       "barcode": "M1SMITH/ALEX          EQWE456 LAXNRTUA      001W021C0007 000",
       "referenceDate": "2026-12-30",
       "expectedError": "invalidField"
+    },
+    {
+      "name": "leg between an airport and a railway station code (Lufthansa Express Rail)",
+      "barcode": "M1DOE/JANE            EABC123 FRAQDULH 3592 308M071A0003 300",
+      "referenceDate": "2026-11-03",
+      "expected": {
+        "version": null,
+        "legs": [
+          {
+            "from": "FRA",
+            "to": "QDU",
+            "carrier": "LH",
+            "flightNumber": "3592",
+            "dayOfYear": 308,
+            "flightDate": "2026-11-04",
+            "compartmentCode": "M",
+            "seat": "71A"
+          }
+        ]
+      }
     }
   ]
 }

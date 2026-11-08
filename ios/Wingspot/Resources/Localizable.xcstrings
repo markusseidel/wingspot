@@ -1761,6 +1761,16 @@
         }
       }
     },
+    "Not an airport in the app's data: %@. A train ticket, such as Lufthansa Express Rail, is not a flight and can't be logged. Otherwise, enter the flight by hand." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kein Flughafen in den Daten der App: %@. Ein Bahnticket, etwa von Lufthansa Express Rail, ist kein Flug und kann hier nicht eingetragen werden. Sonst gib den Flug von Hand ein."
+          }
+        }
+      }
+    },
     "Not downloaded yet" : {
       "localizations" : {
         "de" : {
@@ -2468,16 +2478,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dein Konto kann nicht wiederhergestellt werden."
-          }
-        }
-      }
-    },
-    "This boarding pass uses an airport that isn't in the app's data. Enter the flight by hand." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diese Bordkarte nennt einen Flughafen, der nicht in den Daten der App ist. Gib den Flug von Hand ein."
           }
         }
       }

@@ -45,9 +45,18 @@ struct FlownCheckInView: View {
     @State private var scanProblem: ScanProblem?
     @State private var legChoices: [BoardingPass.Leg] = []
 
-    private enum ScanProblem: String, Identifiable {
-        case noBoardingPass, airportsUnknown, needsData
-        var id: String { rawValue }
+    private enum ScanProblem: Identifiable {
+        case noBoardingPass, needsData
+        /// The codes on the pass that aren't airports in the data, such as a railway station on a train ticket.
+        case airportsUnknown(String)
+
+        var id: String {
+            switch self {
+            case .noBoardingPass: "noBoardingPass"
+            case .needsData: "needsData"
+            case .airportsUnknown: "airportsUnknown"
+            }
+        }
     }
 
     private var registration: Registration? { Registration(registrationInput) }
@@ -181,7 +190,8 @@ struct FlownCheckInView: View {
     private var scanProblemMessage: LocalizedStringKey {
         switch scanProblem {
         case .noBoardingPass: "Try a clearer picture, or enter the flight by hand."
-        case .airportsUnknown: "This boarding pass uses an airport that isn't in the app's data. Enter the flight by hand."
+        case .airportsUnknown(let codes):
+            "Not an airport in the app's data: \(codes). A train ticket, such as Lufthansa Express Rail, is not a flight and can't be logged. Otherwise, enter the flight by hand."
         case .needsData: "Reading a boarding pass needs one download while online."
         case nil: "OK"
         }
@@ -215,10 +225,11 @@ struct FlownCheckInView: View {
             return
         }
         Task {
-            guard let from = try? await database.airport(iata: leg.from),
-                  let to = try? await database.airport(iata: leg.to)
-            else {
-                scanProblem = .airportsUnknown
+            let from = try? await database.airport(iata: leg.from)
+            let to = try? await database.airport(iata: leg.to)
+            guard let from, let to else {
+                let missing = [from == nil ? leg.from : nil, to == nil ? leg.to : nil].compactMap { $0 }
+                scanProblem = .airportsUnknown(missing.joined(separator: ", "))
                 return
             }
             origin = from
