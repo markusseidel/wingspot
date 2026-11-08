@@ -23,7 +23,7 @@ describe("push texts", () => {
     assert.deepEqual(render(row({ kind: "follow", subject: null }), "en_US"), { title: "anna", body: "started following you." });
     assert.equal(render(row({ kind: "follow", subject: null }), "de_DE").body, "folgt dir jetzt.");
     assert.equal(render(row(), "en").body, "saluted your check-in (D-AIPC).");
-    assert.equal(render(row(), "de").body, "hat deinen Check-in gesalutiert (D-AIPC).");
+    assert.equal(render(row(), "de").body, "hat deinen Check-in salutiert (D-AIPC).");
     assert.equal(render(row({ subject: null }), "en").body, "saluted your check-in.");
     assert.equal(render(row({ kind: "comment", snippet: "Nice  one\n!" }), "en").body, "commented: “Nice one !”");
     assert.equal(render(row({ kind: "comment", snippet: "Toll" }), "de").body, "hat kommentiert: „Toll“");
@@ -96,7 +96,7 @@ describe("sending", () => {
     assert.equal(headers["apns-topic"], "site.wingspot.ios");
     assert.equal(headers["apns-push-type"], "alert");
     assert.equal(headers["apns-collapse-id"], "salute-c1");
-    assert.equal(JSON.parse(apple.calls[0].init.body).aps.alert.body, "hat deinen Check-in gesalutiert (D-AIPC).");
+    assert.equal(JSON.parse(apple.calls[0].init.body).aps.alert.body, "hat deinen Check-in salutiert (D-AIPC).");
     assert.equal(JSON.parse(apple.calls[1].init.body).aps.alert.body, "saluted your check-in (D-AIPC).");
   });
 

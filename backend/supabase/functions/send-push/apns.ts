@@ -46,7 +46,7 @@ export function render(row: PushRow, locale: string | null): Rendered {
       return { title: name, body: german ? "folgt dir jetzt." : "started following you." };
     case "salute": {
       const about = row.subject ? ` (${row.subject})` : "";
-      return { title: name, body: german ? `hat deinen Check-in gesalutiert${about}.` : `saluted your check-in${about}.` };
+      return { title: name, body: german ? `hat deinen Check-in salutiert${about}.` : `saluted your check-in${about}.` };
     }
     case "comment": {
       const text = (row.snippet ?? "").replace(/\s+/g, " ").trim();
