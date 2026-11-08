@@ -43,7 +43,7 @@ struct PersonCheckInsSection: View {
 }
 
 /// One card with its own comments screen and report sheet.
-private struct PersonCheckInRow: View {
+struct PersonCheckInRow: View {
     let item: FeedItem
     let store: FeedStore
     let isOwn: Bool

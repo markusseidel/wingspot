@@ -133,8 +133,15 @@ struct FeedCard: View {
             Label(kindTitle, systemImage: kindSymbol)
                 .font(.caption)
                 .foregroundStyle(.secondary)
-            Text(verbatim: title)
-                .font(.system(.title3, design: .monospaced, weight: .semibold))
+            if item.kind == "airport", let airportID = item.airportID {
+                NavigationLink { AirportPageView(airportID: airportID) } label: {
+                    Text(verbatim: title)
+                        .font(.system(.title3, design: .monospaced, weight: .semibold))
+                }
+            } else {
+                Text(verbatim: title)
+                    .font(.system(.title3, design: .monospaced, weight: .semibold))
+            }
             if let detail {
                 Text(verbatim: detail)
                     .font(.subheadline)

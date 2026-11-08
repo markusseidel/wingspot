@@ -23,9 +23,9 @@ struct PhotoSection: View {
                 Button("Remove photo", role: .destructive) { self.photo = nil }
             } else {
                 // The label closure can't read state from the view, so the text is chosen before it.
-                let title: LocalizedStringKey = isPreparing ? "Preparing…" : "Add a photo"
+                let title: LocalizedStringResource = isPreparing ? "Preparing…" : "Add a photo"
                 PhotosPicker(selection: $item, matching: .images) {
-                    Label(title, systemImage: "photo")
+                    Label { Text(title) } icon: { Image(systemName: "photo") }
                 }
                 .disabled(isPreparing)
             }

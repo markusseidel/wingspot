@@ -68,6 +68,15 @@ private actor FakeFeed: FeedBackend, ReactionBackend {
         return items.filter { $0.userID == person }
     }
 
+    private(set) var airportRequests: [Int] = []
+    var activity = AirportActivity(checkIns: 0, aircraft: 0)
+    func airportCheckIns(at airport: Int, after cursor: FeedCursor?, pageSize: Int) throws -> [FeedItem] {
+        airportRequests.append(airport)
+        if let error { throw error }
+        return items.filter { $0.airportID == airport }
+    }
+    func airportActivity(at airport: Int) throws -> AirportActivity { activity }
+
     func replace(_ items: [FeedItem]) { self.items = items }
 
     func feed(after cursor: FeedCursor?, pageSize: Int) throws -> [FeedItem] {
@@ -338,4 +347,37 @@ private func item(_ n: Int) -> FeedItem {
     #expect(await backend.personRequests == [other])
     #expect(await backend.cursors.isEmpty, "the feed itself was not asked")
     #expect(store.hasLoaded)
+}
+
+@Test @MainActor func anAirportPageAsksForThatAirport() async {
+    let backend = FakeFeed(items: (1...3).map(item))
+    let store = makeStore(backend).airportStore(for: 42)
+    await store.refresh()
+    #expect(await backend.airportRequests == [42])
+    #expect(await backend.cursors.isEmpty, "the feed itself was not asked")
+    #expect(await backend.personRequests.isEmpty)
+    #expect(store.hasLoaded)
+}
+
+@Test func airportCountsAreDecoded() throws {
+    let json = """
+    [{"checkins_30d":5,"aircraft_30d":3,"top_spotters":[
+      {"user_id":"00000000-0000-0000-0000-000000000001","username":"anna","display_name":null,"checkins":4}]}]
+    """
+    let rows = try JSONDecoder().decode([AirportActivity].self, from: Data(json.utf8))
+    #expect(rows.first?.checkIns == 5)
+    #expect(rows.first?.aircraft == 3)
+    #expect(rows.first?.topSpotters.first?.username == "anna")
+    #expect(rows.first?.topSpotters.first?.checkIns == 4)
+}
+
+@Test func aFeedRowKeepsItsAirportID() throws {
+    let json = """
+    [{"id":"00000000-0000-0000-0000-000000000001","user_id":"00000000-0000-0000-0000-000000000002","username":"anna",
+      "display_name":null,"kind":"airport","occurred_at":"2026-11-07T10:00:00+00:00","registration":null,"type_icao":null,
+      "type_name":null,"airport_id":3,"airport_code":"FRA","origin_code":null,"destination_code":null,"flight_number":null,
+      "distance_km":null,"salutes":0,"comments":0,"saluted":false}]
+    """
+    let rows = try JSONDecoder().decode([FeedItem].self, from: Data(json.utf8))
+    #expect(rows.first?.airportID == 3)
 }
