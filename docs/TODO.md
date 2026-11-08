@@ -215,7 +215,7 @@ App Store 1.0:
 
 Left for later in Phase 1, with no phase set yet (PHASE1.md, decisions 4 and 6):
 
-- [ ] Push notifications (plan in [MILESTONE10.md](MILESTONE10.md); you create the Apple push key first)
+- [ ] Push notifications (plan in [MILESTONE10.md](MILESTONE10.md); Apple key stored; 10b server built, not deployed; 10c app and 10d release to do)
 - [ ] Universal links
 - [ ] Weekly reference data updates, instead of full snapshot downloads
 - [ ] Full airport outlines for location checks, instead of a simple radius

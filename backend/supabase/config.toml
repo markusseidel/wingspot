@@ -442,3 +442,6 @@ verify_jwt = false
 
 [functions.refdata]
 verify_jwt = false
+
+[functions.send-push]
+verify_jwt = false
