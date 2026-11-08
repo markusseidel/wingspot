@@ -10,6 +10,7 @@ private let logger = Logger(subsystem: "site.wingspot.ios", category: "backend")
 
 @main
 struct WingspotApp: App {
+    @UIApplicationDelegateAdaptor(PushAppDelegate.self) private var pushDelegate
     private let modelContainer: ModelContainer
     @State private var referenceData: ReferenceDataStore
     @State private var account: AccountStore
@@ -19,6 +20,7 @@ struct WingspotApp: App {
     @State private var terms: TermsStore
     @State private var sync: CheckInSyncCoordinator
     @State private var badges: BadgeStore
+    @State private var push: PushStore
     @Environment(\.scenePhase) private var scenePhase
     private let network = NetworkMonitor()
 
@@ -35,8 +37,16 @@ struct WingspotApp: App {
         let accountBackend = Self.makeAccountBackend()
         let account = AccountStore(backend: accountBackend)
         _account = State(initialValue: account)
-        _social = State(initialValue: SocialStore(backend: accountBackend, userID: { account.userID }))
-        _feed = State(initialValue: FeedStore(backend: accountBackend, reactions: accountBackend, userID: { account.userID }))
+        let socialStore = SocialStore(backend: accountBackend, userID: { account.userID })
+        let feedStore = FeedStore(backend: accountBackend, reactions: accountBackend, userID: { account.userID })
+        let pushStore = PushStore.make(backend: accountBackend, userID: { account.userID })
+        // The first follow, salute or comment is a good moment to offer notifications, once.
+        socialStore.onFollowed = { Task { await pushStore.socialActionHappened() } }
+        feedStore.onSocialAction = { Task { await pushStore.socialActionHappened() } }
+        _social = State(initialValue: socialStore)
+        _push = State(initialValue: pushStore)
+        PushAppDelegate.store = pushStore
+        _feed = State(initialValue: feedStore)
         _reporter = State(initialValue: Reporter(backend: accountBackend))
         _terms = State(initialValue: TermsStore(userID: { account.userID }))
         let uploader = APICheckInUploader(
@@ -72,6 +82,8 @@ struct WingspotApp: App {
                 .environment(terms)
                 .environment(sync)
                 .environment(badges)
+                .environment(push)
+                .environment(PushRouter.shared)
                 .modelContainer(modelContainer)
                 .task { await referenceData.prepare() }
                 .task { await loadRemoteConfig() }
@@ -79,14 +91,21 @@ struct WingspotApp: App {
                     await account.start()
                     badges.begin(userID: account.userID)
                     sync.requestSync()
+                    await push.sync()
                 }
                 .task { network.start { Task { @MainActor in sync.requestSync() } } }
                 // After signing in or out, and each time the app comes to the foreground.
                 .onChange(of: account.userID) {
                     badges.begin(userID: account.userID)
                     sync.requestSync()
+                    if account.userID == nil { push.clear() } else { Task { await push.sync() } }
                 }
-                .onChange(of: scenePhase) { if scenePhase == .active { sync.requestSync() } }
+                .onChange(of: scenePhase) {
+                    if scenePhase == .active {
+                        sync.requestSync()
+                        Task { await push.sync() }
+                    }
+                }
                 .onOpenURL(perform: handleLink)
         }
     }
@@ -117,7 +136,7 @@ struct WingspotApp: App {
         }
     }
 
-    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend & ReactionBackend {
+    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend & ReactionBackend & PushBackend {
         var url = Bundle.main.object(forInfoDictionaryKey: "WingspotSupabaseURL") as? String
         var key = Bundle.main.object(forInfoDictionaryKey: "WingspotPublishableKey") as? String
         #if DEBUG

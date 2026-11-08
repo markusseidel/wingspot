@@ -187,7 +187,7 @@ public final class AccountStore {
 }
 
 /// For builds without a backend key. The app still works, except for signing in.
-public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend, FeedBackend, ReactionBackend {
+public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend, FeedBackend, ReactionBackend, PushBackend {
     public init() {}
 
     public func currentUserID() async -> UUID? { nil }
@@ -200,6 +200,11 @@ public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend, FeedBac
     public func signOut() async throws { throw AccountError.notConfigured }
     public func deleteAccount() async throws { throw AccountError.notConfigured }
     public func exportMyData() async throws -> Data { throw AccountError.notConfigured }
+
+    public func registerDevice(_ device: DeviceRegistration) async throws { throw AccountError.notConfigured }
+    public func removeDevice(id: UUID) async throws { throw AccountError.notConfigured }
+    public func notificationPrefs(of me: UUID) async throws -> NotificationPrefs { throw AccountError.notConfigured }
+    public func setNotificationPrefs(_ prefs: NotificationPrefs, as me: UUID) async throws { throw AccountError.notConfigured }
 
     public func searchPeople(_ text: String, excluding me: UUID, limit: Int) async throws -> [PersonRecord] { throw AccountError.notConfigured }
     public func relationships(of me: UUID, among ids: [UUID]) async throws -> (following: Set<UUID>, followers: Set<UUID>) { throw AccountError.notConfigured }

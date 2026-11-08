@@ -11,7 +11,7 @@ settings:
   base:
     SWIFT_VERSION: "6.0"
     MARKETING_VERSION: "0.2.0"
-    CURRENT_PROJECT_VERSION: "7"
+    CURRENT_PROJECT_VERSION: "8"
 packages:
   WingspotCore:
     path: Packages/WingspotCore
@@ -32,6 +32,8 @@ targets:
       path: Wingspot/Wingspot.entitlements
       properties:
         com.apple.developer.applesignin: [Default]
+        # Xcode changes this to production when the app is archived for TestFlight or the App Store.
+        aps-environment: development
     configFiles:
       Debug: Config/Wingspot.xcconfig
       Release: Config/Wingspot.xcconfig

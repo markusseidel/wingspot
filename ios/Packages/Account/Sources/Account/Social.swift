@@ -140,8 +140,12 @@ public final class SocialStore {
         return try await people([record], me: me).first
     }
 
+    /// Told after a follow worked, so the app can offer notifications at a good moment.
+    @ObservationIgnored public var onFollowed: (@MainActor () -> Void)?
+
     public func follow(_ id: UUID) async throws {
         try await backend.follow(id, as: try me())
+        onFollowed?()
     }
 
     public func unfollow(_ id: UUID) async throws {

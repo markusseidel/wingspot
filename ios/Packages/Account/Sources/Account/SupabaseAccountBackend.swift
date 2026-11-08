@@ -632,3 +632,69 @@ private struct CommentRow: Encodable {
         case userID = "user_id"
     }
 }
+
+extension SupabaseAccountBackend: PushBackend {
+    public func registerDevice(_ device: DeviceRegistration) async throws {
+        try await socialErrors {
+            _ = try await client.rpc("register_device", params: DeviceParams(device: device)).execute()
+        }
+    }
+
+    public func removeDevice(id: UUID) async throws {
+        try await socialErrors {
+            _ = try await client.from("devices").delete(returning: .minimal).eq("id", value: id).execute()
+        }
+    }
+
+    public func notificationPrefs(of me: UUID) async throws -> NotificationPrefs {
+        try await socialErrors {
+            let row: PrefsRow = try await client.from("notification_prefs")
+                .select("new_followers, salutes, comments").eq("user_id", value: me).single().execute().value
+            return NotificationPrefs(newFollowers: row.newFollowers, salutes: row.salutes, comments: row.comments)
+        }
+    }
+
+    public func setNotificationPrefs(_ prefs: NotificationPrefs, as me: UUID) async throws {
+        try await socialErrors {
+            _ = try await client.from("notification_prefs")
+                .update(PrefsRow(newFollowers: prefs.newFollowers, salutes: prefs.salutes, comments: prefs.comments), returning: .minimal)
+                .eq("user_id", value: me).execute()
+        }
+    }
+}
+
+private struct PrefsRow: Codable {
+    let newFollowers: Bool
+    let salutes: Bool
+    let comments: Bool
+
+    private enum CodingKeys: String, CodingKey {
+        case salutes, comments
+        case newFollowers = "new_followers"
+    }
+}
+
+private struct DeviceParams: Encodable {
+    let device: DeviceRegistration
+
+    private enum CodingKeys: String, CodingKey {
+        case id = "device_id"
+        case platform = "device_platform"
+        case appVersion = "device_app_version"
+        case token = "device_push_token"
+        case env = "device_push_env"
+        case osVersion = "device_os_version"
+        case locale = "device_locale"
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(device.id, forKey: .id)
+        try c.encode("ios", forKey: .platform)
+        try c.encode(device.appVersion, forKey: .appVersion)
+        try c.encode(device.token, forKey: .token)
+        try c.encode(device.environment.rawValue, forKey: .env)
+        try c.encode(device.osVersion, forKey: .osVersion)
+        try c.encode(device.locale, forKey: .locale)
+    }
+}

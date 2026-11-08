@@ -52,6 +52,7 @@
 		C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A035100ED13735493AF7BF1 /* LocationProvider.swift */; };
 		CCB6285BC5F2D2D0C2D23BAD /* PeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A6E9C03029947E148B9EBB /* PeopleView.swift */; };
 		CF3807277F1FDA241609254C /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 5B2EB62437C5BE2130BABF23 /* Persistence */; };
+		D85287110D33AEDB2AE2653E /* PushSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578259FF97F6C378ABA27E94 /* PushSupport.swift */; };
 		D866E9760B084CDB160CA4D5 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */; };
 		E2E45560E0A3701D1C226A90 /* CelebrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A9D215092A1385FA8E52D3A /* CelebrationView.swift */; };
 		E743B21C623831BB31024A48 /* AirportCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E539BCC329B1D95E5DE61344 /* AirportCheckInView.swift */; };
@@ -73,6 +74,7 @@
 		45BFC3E5CAEEFABF9A34E20E /* Wingspot.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Wingspot.xcconfig; sourceTree = "<group>"; };
 		48B545FD209FC2942BD45E71 /* CheckInResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInResultView.swift; sourceTree = "<group>"; };
 		4ACF37D630CFB0FFE9E1E133 /* Wingspot.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Wingspot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		578259FF97F6C378ABA27E94 /* PushSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSupport.swift; sourceTree = "<group>"; };
 		5CABAD3AAA0CB6C6317A73DE /* PersonDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonDetailView.swift; sourceTree = "<group>"; };
 		5D8FB2291C9A4A75529A9461 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5E3C8DE707D5FBC441F2A0A4 /* AirportsMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirportsMapView.swift; sourceTree = "<group>"; };
@@ -174,6 +176,14 @@
 			path = Account;
 			sourceTree = "<group>";
 		};
+		3A150143D00E3075C09F69A7 /* Push */ = {
+			isa = PBXGroup;
+			children = (
+				578259FF97F6C378ABA27E94 /* PushSupport.swift */,
+			);
+			path = Push;
+			sourceTree = "<group>";
+		};
 		3BDC1570A716DBB398F81241 /* Features */ = {
 			isa = PBXGroup;
 			children = (
@@ -182,6 +192,7 @@
 				1EC26DAEA056854F28F4B7EE /* CheckIn */,
 				87951F4E74954155B4CA1844 /* Common */,
 				546C1542C92A1D5B03F0D633 /* Feed */,
+				3A150143D00E3075C09F69A7 /* Push */,
 				99447354934294337923972A /* Settings */,
 				C356936431FEF869579418FC /* Social */,
 			);
@@ -420,6 +431,7 @@
 				3B16BBB37412D38A89E454BD /* PlaceholderScreen.swift in Sources */,
 				0937BA0BF1EBF4732DA23138 /* ProfileEditorView.swift in Sources */,
 				A08C4CA8904388F960BBA71F /* ProfileScreen.swift in Sources */,
+				D85287110D33AEDB2AE2653E /* PushSupport.swift in Sources */,
 				39383DB2983A80C96D05EA39 /* ReferenceSearchViews.swift in Sources */,
 				66E73317F1198016C144E45B /* ReportSheet.swift in Sources */,
 				2009AC27E2FC13DC4C52C220 /* RootView.swift in Sources */,
@@ -525,7 +537,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -583,7 +595,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;

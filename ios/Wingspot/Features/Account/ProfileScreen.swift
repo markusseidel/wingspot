@@ -101,6 +101,7 @@ private struct ProfileDetailsView: View {
     @Environment(AccountStore.self) private var account
     @Environment(ReferenceDataStore.self) private var referenceData
     @Environment(BadgeStore.self) private var badges
+    @Environment(PushStore.self) private var push
     @Query private var all: [LocalCheckIn]
     @State private var airport: Airport?
     @State private var signOutFailed = false
@@ -238,6 +239,8 @@ private struct ProfileDetailsView: View {
     private func signOut() {
         Task {
             do {
+                // While the session still works, so this phone stops getting the account's notifications.
+                await push.removeDevice()
                 try await account.signOut()
             } catch {
                 signOutFailed = true

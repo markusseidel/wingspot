@@ -106,6 +106,10 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
     - Follows, salutes and comments add a row to an outbox (`notifications`) unless the actor is the recipient, either has blocked the other, the recipient switched that kind off, no iPhone is registered, the recipient already got 30 in 24 hours, or the same thing happened within the hour (comments always count).
     - The Edge function `send-push` is called by the database (a call per new row and a job every minute) with a shared secret, never by the app. It writes German or English from the device's language, sends through Apple's push service with the key stored as server secrets, removes tokens Apple says are dead, and retries a failed send up to 5 times within a day. Without the key it does nothing and rows wait.
     - Texts hold the actor's name and a short snippet only. Several salutes on one check-in replace each other on the phone.
+28. **Push notifications, app side (milestone 10c):**
+    - The app asks for permission once, after the person's first follow, salute or comment, with a short explanation first (Settings > Notifications offers it too, and links to the system settings if it was refused). It then registers this phone with `register_device` (one ID per installation, the language of the phone, Apple's test push service for builds from Xcode and the real one for TestFlight and the App Store) at start, after sign-in and when it comes to the foreground, and removes it when signing out.
+    - Settings > Notifications has switches for new followers, salutes and comments, stored in `notification_prefs`.
+    - Tapping a notification opens the Feed tab, then the person's page (follow) or the check-in's comments (salute, comment); if the check-in is not in the feed, the feed stays as it is.
 
 ## Before each milestone
 
