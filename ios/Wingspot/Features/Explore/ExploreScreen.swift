@@ -28,6 +28,7 @@ struct ExploreScreen: View {
                     results
                 } else {
                     NearbyAirportsSection()
+                    if canSearchPeople { BusyAirportsSection() }
                 }
             }
             .navigationTitle("Explore")
@@ -198,5 +199,58 @@ struct NearbyAirportsSection: View {
         }
         unavailable = false
         nearby = (try? await database.airports(near: position, withinKm: 150, limit: 10)) ?? []
+    }
+}
+
+/// The airports with the most check-ins in the last week among the ones you may see.
+struct BusyAirportsSection: View {
+    @Environment(FeedStore.self) private var feed
+    @Environment(AccountStore.self) private var account
+    @State private var airports: [ActiveAirport] = []
+    @State private var hasLoaded = false
+    @State private var failed = false
+
+    var body: some View {
+        Section {
+            if !hasLoaded {
+                if failed {
+                    Label("Couldn't load this. Check your connection.", systemImage: "wifi.slash").foregroundStyle(.secondary)
+                } else {
+                    ProgressView().frame(maxWidth: .infinity)
+                }
+            } else if airports.isEmpty {
+                Text("Nothing yet this week.").foregroundStyle(.secondary)
+            } else {
+                ForEach(airports) { airport in
+                    NavigationLink { AirportPageView(airportID: airport.airportID) } label: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(verbatim: airport.code).font(.headline)
+                                Text(verbatim: [airport.name, airport.city].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", "))
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(2)
+                            }
+                            Spacer()
+                            Text("\(airport.checkIns) check-ins").font(.subheadline).foregroundStyle(.secondary)
+                        }
+                        .accessibilityElement(children: .combine)
+                    }
+                }
+            }
+        } header: {
+            Text("Busy this week")
+        } footer: {
+            Text("Counts include only check-ins you are allowed to see.")
+        }
+        .task(id: account.userID) {
+            do {
+                airports = try await feed.activeAirports(days: 7, limit: 10)
+                hasLoaded = true
+                failed = false
+            } catch {
+                failed = true
+            }
+        }
     }
 }

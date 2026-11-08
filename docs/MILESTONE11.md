@@ -17,7 +17,7 @@ Everything respects the access rules already in place: a check-in shows only to 
 - Without text: **Airports near you**, sorted by distance from your location (asks for location once, in context; works offline), each opening the airport page. Without location permission: a short hint and the home airport if set.
 - Needs the airport data on the phone; says so if it is missing, as the map does.
 
-## 11b. Busy airports (needs a migration)
+## 11b. Busy airports (needs a migration; built)
 
 - `get_active_airports(days, limit)`: the airports with the most check-ins in the last days among check-ins the caller may see, with counts. Runs as the caller. A sensitive aircraft of someone else is not counted.
 - Shown on the Explore tab as "Busy this week" and as markers on the Explore map (11e).

@@ -69,6 +69,16 @@
         }
       }
     },
+    "%lld check-ins" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Check-ins"
+          }
+        }
+      }
+    },
     "%lld hours" : {
       "localizations" : {
         "de" : {
@@ -503,6 +513,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Business"
+          }
+        }
+      }
+    },
+    "Busy this week" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viel los diese Woche"
           }
         }
       }
@@ -1938,6 +1958,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Noch nichts zu zeigen."
+          }
+        }
+      }
+    },
+    "Nothing yet this week." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Woche noch nichts."
           }
         }
       }

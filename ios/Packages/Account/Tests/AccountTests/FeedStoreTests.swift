@@ -76,8 +76,14 @@ private actor FakeFeed: FeedBackend, ReactionBackend {
         return items.filter { $0.airportID == airport }
     }
     func airportActivity(at airport: Int) throws -> AirportActivity { activity }
+    var busy: [ActiveAirport] = []
+    func activeAirports(days: Int, limit: Int) throws -> [ActiveAirport] {
+        if let error { throw error }
+        return Array(busy.prefix(limit))
+    }
 
     func replace(_ items: [FeedItem]) { self.items = items }
+    func setBusy(_ rows: [ActiveAirport]) { busy = rows }
 
     func feed(after cursor: FeedCursor?, pageSize: Int) throws -> [FeedItem] {
         cursors.append(cursor)
@@ -380,4 +386,29 @@ private func item(_ n: Int) -> FeedItem {
     """
     let rows = try JSONDecoder().decode([FeedItem].self, from: Data(json.utf8))
     #expect(rows.first?.airportID == 3)
+}
+
+@Test func busyAirportsAreDecoded() throws {
+    let json = """
+    [{"airport_id":3,"airport_code":"FRA","airport_name":"Frankfurt am Main Airport","city":"Frankfurt","checkins":12,"people":4},
+     {"airport_id":9,"airport_code":"XYZ","airport_name":"Small Field","city":null,"checkins":1,"people":1}]
+    """
+    let rows = try JSONDecoder().decode([ActiveAirport].self, from: Data(json.utf8))
+    #expect(rows.map(\.code) == ["FRA", "XYZ"])
+    #expect(rows[0].checkIns == 12)
+    #expect(rows[0].people == 4)
+    #expect(rows[1].city == nil)
+}
+
+@Test @MainActor func busyAirportsComeFromTheBackendAndKeepTheirOrder() async throws {
+    let backend = FakeFeed(items: [])
+    await backend.setBusy([
+        ActiveAirport(airportID: 1, code: "FRA", name: "Frankfurt", checkIns: 5, people: 2),
+        ActiveAirport(airportID: 2, code: "VIE", name: "Vienna", checkIns: 3, people: 1),
+    ])
+    let store = makeStore(backend)
+    #expect(try await store.activeAirports(days: 7, limit: 10).map(\.code) == ["FRA", "VIE"])
+    #expect(try await store.activeAirports(days: 7, limit: 1).count == 1)
+    await backend.fail(.offline)
+    await #expect(throws: AccountError.self) { try await store.activeAirports() }
 }
