@@ -78,16 +78,19 @@ public final class CheckInCommentStore {
     private let backend: ReactionBackend
     private let userID: @MainActor () -> UUID?
     private let onCountChange: @MainActor (Int) -> Void
+    private let onPosted: @MainActor () -> Void
 
     /// - Parameter onCountChange: told the new number of comments, so the feed card can follow.
     public init(
         checkIn: UUID, backend: ReactionBackend, userID: @escaping @MainActor () -> UUID?,
-        onCountChange: @escaping @MainActor (Int) -> Void = { _ in }
+        onCountChange: @escaping @MainActor (Int) -> Void = { _ in },
+        onPosted: @escaping @MainActor () -> Void = {}
     ) {
         self.checkIn = checkIn
         self.backend = backend
         self.userID = userID
         self.onCountChange = onCountChange
+        self.onPosted = onPosted
     }
 
     public func load() async {
@@ -118,6 +121,7 @@ public final class CheckInCommentStore {
         let comment = try await backend.addComment(trimmed, checkIn: checkIn, as: me)
         comments.append(comment)
         onCountChange(comments.count)
+        onPosted()
     }
 
     public func delete(_ comment: CheckInComment) async {

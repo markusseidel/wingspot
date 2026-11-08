@@ -176,6 +176,16 @@
         }
       }
     },
+    "A notification shows a name and the start of a comment, which can be visible on your lock screen." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine Mitteilung zeigt einen Namen und den Anfang eines Kommentars. Das kann auf dem Sperrbildschirm sichtbar sein."
+          }
+        }
+      }
+    },
     "A private profile shows its details and check-ins only to friends. A delay holds back your public check-ins from strangers for a while, so nobody can tell where you are right now. Friends see them at once." : {
       "localizations" : {
         "de" : {
@@ -1369,6 +1379,16 @@
         }
       }
     },
+    "Get notified?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mitteilungen erhalten?"
+          }
+        }
+      }
+    },
     "Hidden" : {
       "localizations" : {
         "de" : {
@@ -1611,6 +1631,16 @@
         }
       }
     },
+    "New followers" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neue Follower"
+          }
+        }
+      }
+    },
     "Nice!" : {
       "localizations" : {
         "de" : {
@@ -1821,6 +1851,26 @@
         }
       }
     },
+    "Notifications" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mitteilungen"
+          }
+        }
+      }
+    },
+    "Notifications are off for Wingspot in the system settings." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mitteilungen sind für Wingspot in den Systemeinstellungen ausgeschaltet."
+          }
+        }
+      }
+    },
     "OK" : {
       "localizations" : {
         "de" : {
@@ -1857,6 +1907,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nur neue Check-ins"
+          }
+        }
+      }
+    },
+    "Open system settings" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Systemeinstellungen öffnen"
           }
         }
       }
@@ -2107,6 +2167,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Salute geben. Salutes: %lld"
+          }
+        }
+      }
+    },
+    "Salutes" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salutes"
           }
         }
       }
@@ -2582,6 +2652,26 @@
         }
       }
     },
+    "Turn on" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einschalten"
+          }
+        }
+      }
+    },
+    "Turn on notifications" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mitteilungen einschalten"
+          }
+        }
+      }
+    },
     "Type at least two letters of a username to find people." : {
       "localizations" : {
         "de" : {
@@ -2748,6 +2838,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Warum möchtest du %@ melden?"
+          }
+        }
+      }
+    },
+    "Wingspot can tell you when someone follows you, or salutes or comments on one of your check-ins. You can change this in Settings." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wingspot kann dir sagen, wenn dir jemand folgt oder einen deiner Check-ins salutiert oder kommentiert. Du kannst das in den Einstellungen ändern."
           }
         }
       }

@@ -9,6 +9,10 @@ struct FeedScreen: View {
     @State private var commentsFor: FeedItem?
     @State private var report: ReportTarget?
     @Environment(TermsStore.self) private var terms
+    @Environment(PushRouter.self) private var router
+    @State private var personToOpen: OpenPerson?
+
+    private struct OpenPerson: Identifiable, Hashable { let id: UUID }
 
     var body: some View {
         NavigationStack {
@@ -48,6 +52,7 @@ struct FeedScreen: View {
             }
             .navigationTitle("Feed")
             .navigationDestination(item: $commentsFor) { CommentsView(item: $0) }
+            .navigationDestination(item: $personToOpen) { PersonLoaderView(id: $0.id) }
             .sheet(item: $report) { ReportSheet(target: $0) }
             .toolbar {
                 if account.userID != nil, terms.hasAccepted {
@@ -64,6 +69,21 @@ struct FeedScreen: View {
             } else {
                 await feed.refresh()
             }
+            await openPushDestination()
+        }
+        .onChange(of: router.destination) { Task { await openPushDestination() } }
+    }
+
+    /// Opens what a tapped notification points at. If the check-in isn't in the feed, the feed stays as it is.
+    private func openPushDestination() async {
+        guard let destination = router.destination, account.userID != nil, terms.hasAccepted else { return }
+        router.destination = nil
+        switch destination {
+        case .person(let id):
+            personToOpen = OpenPerson(id: id)
+        case .checkIn(let id):
+            if !feed.items.contains(where: { $0.id == id }) { await feed.refresh() }
+            commentsFor = feed.items.first { $0.id == id }
         }
     }
 

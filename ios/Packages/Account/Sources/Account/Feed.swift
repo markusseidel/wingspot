@@ -219,6 +219,9 @@ public final class FeedStore {
     /// The photos of the check-ins in `items`. A card shows its photos once they arrive.
     public private(set) var photos: [UUID: [FeedPhoto]] = [:]
 
+    /// Told after the person saluted or commented, so the app can offer notifications at a good moment.
+    @ObservationIgnored public var onSocialAction: (@MainActor () -> Void)?
+
     private let backend: FeedBackend
     /// A person's page lists only their check-ins. `nil` is the Feed tab.
     private let person: UUID?
@@ -246,6 +249,7 @@ public final class FeedStore {
         do {
             try await reactions.setSalute(on, checkIn: id, as: me)
             failure = nil
+            if on { onSocialAction?() }
         } catch {
             if let now = items.firstIndex(where: { $0.id == id }) { items[now] = items[now].updating(salutes: before.salutes, saluted: before.saluted) }
             failure = (error as? AccountError) ?? .unknown
@@ -254,12 +258,16 @@ public final class FeedStore {
 
     /// A list of one person's check-ins, with the same cards, salutes and comments as the feed.
     public func personStore(for id: UUID) -> FeedStore {
-        FeedStore(backend: backend, reactions: reactions, person: id, userID: userID)
+        let store = FeedStore(backend: backend, reactions: reactions, person: id, userID: userID)
+        store.onSocialAction = onSocialAction
+        return store
     }
 
     /// A list of the check-ins at one airport.
     public func airportStore(for id: Int) -> FeedStore {
-        FeedStore(backend: backend, reactions: reactions, airport: id, userID: userID)
+        let store = FeedStore(backend: backend, reactions: reactions, airport: id, userID: userID)
+        store.onSocialAction = onSocialAction
+        return store
     }
 
     /// The counts for one airport page.
@@ -271,7 +279,8 @@ public final class FeedStore {
     public func commentStore(for id: UUID) -> CheckInCommentStore {
         CheckInCommentStore(
             checkIn: id, backend: reactions, userID: userID,
-            onCountChange: { [weak self] count in self?.setCommentCount(count, for: id) }
+            onCountChange: { [weak self] count in self?.setCommentCount(count, for: id) },
+            onPosted: { [weak self] in self?.onSocialAction?() }
         )
     }
 

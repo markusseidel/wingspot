@@ -13,6 +13,8 @@ struct RootView: View {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @Environment(AccountStore.self) private var account
     @Environment(BadgeStore.self) private var badges
+    @Environment(PushStore.self) private var push
+    @Environment(PushRouter.self) private var router
 
     var body: some View {
         TabView(selection: tabSelection) {
@@ -55,6 +57,17 @@ struct RootView: View {
             CelebrationView(celebrations: badges.celebrations) { badges.acknowledge() }
                 .presentationDetents([.large])
                 .interactiveDismissDisabled()
+        }
+        // Offered once, after the first follow, salute or comment.
+        .alert("Get notified?", isPresented: Bindable(push).isAsking) {
+            Button("Turn on") { Task { await push.enable() } }
+            Button("Not now", role: .cancel) {}
+        } message: {
+            Text("Wingspot can tell you when someone follows you, or salutes or comments on one of your check-ins. You can change this in Settings.")
+        }
+        // A tapped notification opens the Feed tab, which takes it from there.
+        .onChange(of: router.destination) {
+            if router.destination != nil { selection = .feed }
         }
         .onChange(of: account.state) {
             if case .signedIn = account.state { hasSeenOnboarding = true }

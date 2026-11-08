@@ -31,7 +31,7 @@ The App ID `site.wingspot.ios` gets the Push Notifications capability automatica
 - **Deploy steps (after you say so; hosted is production):** push the migration, deploy `send-push`, then create a shared secret and store it twice: as the function secret `PUSH_SECRET`, and in the Vault as `push_secret` next to `push_url` (the function's address). Until both Vault entries exist the database calls nothing.
 - **Tests:** database tests for each rule above (self, blocked, switched off, friends-only check-in, comment on a hidden check-in); function tests with a fake Apple server for the text, the language, a dead token, and "no key set" (it must not crash and must leave rows unsent).
 
-## 10c. App
+## 10c. App (built, not tried on a phone)
 
 - Ask for permission **in context**, not on launch: after the first follow, salute or comment, or in Settings > Notifications, with a short explanation first. If the user says no in the system dialog, Settings shows a link to the system settings.
 - Register for remote notifications, send the token with `register_device` on launch and whenever it changes, and remove it on sign-out (so the next account on the phone doesn't receive the old one's notifications).

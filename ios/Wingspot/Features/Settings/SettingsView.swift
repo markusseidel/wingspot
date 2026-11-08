@@ -18,6 +18,7 @@ extension Int {
 /// Who sees your check-ins and how distances are shown.
 struct SettingsView: View {
     @Environment(SocialStore.self) private var social
+    @Environment(AccountStore.self) private var account
     @AppStorage(DistanceUnit.storageKey) private var unit = DistanceUnit.kilometres
     @State private var settings: PrivacySettings?
     @State private var loadFailed = false
@@ -26,6 +27,7 @@ struct SettingsView: View {
     var body: some View {
         Form {
             SharingSection()
+            if account.userID != nil { NotificationsSection() }
             Section {
                 Toggle("Private profile", isOn: Binding(
                     get: { settings?.isPrivate ?? false },
