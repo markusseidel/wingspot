@@ -19,6 +19,7 @@ The iOS app is in TestFlight (version 0.2.0). Android is planned.
 | [docs/CONCEPT.md](docs/CONCEPT.md) | The app concept |
 | [docs/PHASE1.md](docs/PHASE1.md) | Phase 1 scope and decisions |
 | [docs/TODO.md](docs/TODO.md) | Milestone status and open tasks |
+| [docs/TESTFLIGHT.md](docs/TESTFLIGHT.md) | TestFlight texts, App Review notes, App Privacy answers |
 | [docs/MILESTONE7.md](docs/MILESTONE7.md) | Plan for the social features |
 | [docs/BADGES.md](docs/BADGES.md) | The launch badges and their rules |
 | [docs/PRIVACY-DRAFT.md](docs/PRIVACY-DRAFT.md) | Draft privacy policy (German and English) |
