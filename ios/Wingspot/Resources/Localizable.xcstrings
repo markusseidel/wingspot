@@ -1581,6 +1581,36 @@
         }
       }
     },
+    "Most check-ins are for friends only. Follow back to become friends." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die meisten Check-ins sind nur für Freunde. Folge zurück, um Freunde zu werden."
+          }
+        }
+      }
+    },
+    "Most check-ins are for friends only. Follow each other to become friends." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die meisten Check-ins sind nur für Freunde. Folgt euch gegenseitig, um Freunde zu werden."
+          }
+        }
+      }
+    },
+    "Most check-ins are for friends only. You become friends when this person follows you back." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die meisten Check-ins sind nur für Freunde. Ihr werdet Freunde, sobald diese Person dir zurückfolgt."
+          }
+        }
+      }
+    },
     "Museum or airshow" : {
       "localizations" : {
         "de" : {
@@ -2563,11 +2593,22 @@
       }
     },
     "This profile is private." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dieses Profil ist privat."
+          }
+        }
+      }
+    },
+    "This profile is private. Only friends can see check-ins." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Profil ist privat. Nur Freunde sehen Check-ins."
           }
         }
       }
