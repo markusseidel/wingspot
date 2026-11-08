@@ -6,6 +6,8 @@ Items marked **you** can only be done by the project owner.
 
 ## 9a. Backend readiness
 
+Ready-to-paste texts, answers and the email template are in [TESTFLIGHT.md](TESTFLIGHT.md). Status: the Supabase checks were looked at on 8 Nov (section 6 there), the email template is written (section 4), and Apple's own crash reports are the default (section 5). Still to do: the items marked **you**.
+
 - Confirm the live functions use the publishable key, then briefly deactivate the legacy anon key and test (**you** approve the deactivation).
 - Turn on leaked password protection (**you**: needs the Supabase Pro plan).
 - Sign-up emails in the user's language: check that the Supabase email templates can use the stored `language`, or fall back to one bilingual template.

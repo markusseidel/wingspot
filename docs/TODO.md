@@ -152,8 +152,8 @@ In this order:
 - [x] Add a string catalog and German to the iOS project (start of Milestone 2)
 - [x] Translate Milestone 1's text, including plain `String` values that SwiftUI won't translate automatically (start of Milestone 2)
 - [x] Store badge names and descriptions by language (Milestone 4, server side)
-- [ ] Send sign-up emails in the user's language. The app already stores it as `language` in the user's metadata. First confirm that Supabase email templates can use it (before Milestone 9)
-- [ ] Write the TestFlight text in both languages (Milestone 9)
+- [ ] Send sign-up emails in the user's language. Confirmed: templates can read `{{ .Data.language }}`. Paste the template from [TESTFLIGHT.md](TESTFLIGHT.md) section 4 into the Supabase dashboard (Authentication > Email Templates) and test with a German and an English phone
+- [x] Write the TestFlight text in both languages (Milestone 9): drafted in [TESTFLIGHT.md](TESTFLIGHT.md); fill in the feedback email and paste into App Store Connect
 - [ ] Build shared-link pages in both languages (when universal links are built)
 - [ ] Write the App Store text in both languages (Phase 2)
 
