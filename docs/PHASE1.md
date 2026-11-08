@@ -102,6 +102,10 @@ Each milestone is its own pull request with tests. Hosted only changes when a de
     - Two database functions, both running as the caller so the check-in rules decide what counts: `get_airport_checkins(airport, before_time, before_id, page_size)` lists the visits and spotted aircraft at an airport in the feed's shape (flights are left out), and `get_airport_activity(airport)` gives the check-ins and different aircraft of the last 30 days and the three most active people. A sensitive aircraft of someone else is neither shown nor counted.
     - The page shows the airport (code, name, city, small map), your own check-ins there, the counts, and the recent check-ins with the feed's cards. It opens from the airports list in Collections, a marker on the airports map, and the airport title of an airport check-in card. Country, spotting locations, leaderboards and "rare today" are left for Phase 2; opening it from the check-in result screen is not done yet.
     - Feed items now carry the airport's ID.
+27. **Push notifications, server side (milestone 10b):**
+    - Follows, salutes and comments add a row to an outbox (`notifications`) unless the actor is the recipient, either has blocked the other, the recipient switched that kind off, no iPhone is registered, the recipient already got 30 in 24 hours, or the same thing happened within the hour (comments always count).
+    - The Edge function `send-push` is called by the database (a call per new row and a job every minute) with a shared secret, never by the app. It writes German or English from the device's language, sends through Apple's push service with the key stored as server secrets, removes tokens Apple says are dead, and retries a failed send up to 5 times within a day. Without the key it does nothing and rows wait.
+    - Texts hold the actor's name and a short snippet only. Several salutes on one check-in replace each other on the phone.
 
 ## Before each milestone
 

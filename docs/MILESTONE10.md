@@ -21,12 +21,14 @@ supabase secrets set APNS_KEY="$(cat ~/Downloads/AuthKey_XXXXXXXXXX.p8)" APNS_KE
 
 The App ID `site.wingspot.ios` gets the Push Notifications capability automatically when the app is archived with the new entitlement (automatic signing). TestFlight builds use Apple's production push service; builds run from Xcode use the sandbox one.
 
-## 10b. Server (needs a migration and two Edge functions)
+## 10b. Server (built: one migration and one Edge function)
 
 - **Outbox:** a table `notifications` (recipient, type, actor, check-in, created, sent). Database triggers add a row when someone follows you, salutes your check-in or comments on it. No row when the actor is the recipient, when either has blocked the other, or when the recipient has switched that kind off in `notification_prefs`.
 - **Sending:** the function `send-push` takes unsent rows, writes the text in the recipient's language (from `devices.locale`; German or English), signs a token with the key from 10a and calls Apple's push service for each of the recipient's iOS devices. It removes a device when Apple says the token is dead, and marks the row sent. It is called by a database trigger right after the insert (`pg_net`), and a minute-by-minute job picks up rows that were missed.
 - **Floods:** several salutes on one check-in replace each other on the phone (Apple's collapse ID) instead of piling up; at most 30 notifications a day per person.
 - **Content:** names and a short text only: "Anna followed you", "Anna saluted your check-in at FRA", "Anna: [first 80 characters of the comment]". The payload carries the type and an ID so the app can open the right screen. Nothing about a hidden check-in or a sensitive aircraft's registration is ever included.
+- **Built as:** migration `20261108100000_push_notifications.sql` (table `notifications`, triggers on `follows`, `salutes` and `comments`, `claim_notifications` and `finish_notification` for the service role only, a `pg_net` call to the function after each insert and a `pg_cron` job every minute for leftovers) and the function `send-push` (`apns.ts` writes the texts, signs the token and sends; `index.ts` checks the secret, claims rows and reports back). A row is tried at most 5 times and dropped after a day. One device that gets it is enough; a dead token removes the device.
+- **Deploy steps (after you say so; hosted is production):** push the migration, deploy `send-push`, then create a shared secret and store it twice: as the function secret `PUSH_SECRET`, and in the Vault as `push_secret` next to `push_url` (the function's address). Until both Vault entries exist the database calls nothing.
 - **Tests:** database tests for each rule above (self, blocked, switched off, friends-only check-in, comment on a hidden check-in); function tests with a fake Apple server for the text, the language, a dead token, and "no key set" (it must not crash and must leave rows unsent).
 
 ## 10c. App
