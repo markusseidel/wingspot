@@ -25,12 +25,12 @@ Everything respects the access rules already in place: a check-in shows only to 
 ## 11c. Aircraft type page (needs a migration; built)
 
 - `get_type_checkins(type_icao, ...)` and `get_type_activity(type_icao)`, built like the airport ones: recent visible check-ins of this type, and counts for 30 days (check-ins, airports, most active people).
-- Page: type name and code, your own sightings (count, first and last time), the counts, recent check-ins with the feed's cards. Opens from search and Collections (types). A link from a feed card is not done yet.
+- Page: type name and code, your own sightings (count, first and last time), the counts, recent check-ins with the feed's cards. Opens from search, Collections (types) and a feed card (spotted check-ins link to the type when there is no registration).
 
-## 11d. Registration page (needs a migration)
+## 11d. Registration page (needs a migration; built)
 
 - Search accepts a registration such as D-AIPC. `get_registration_checkins(registration, ...)` returns the visible check-ins of that aircraft. A sensitive aircraft is neither found nor shown to anyone but its owner, and a registration nobody may see gives the same answer as one that doesn't exist.
-- Page: registration, type, your sightings, recent check-ins.
+- Page: registration, type, your sightings, recent check-ins. Opens from a search that looks like a registration ("Look up D-AIPC", the server decides whether it exists) and from a spotted feed card. Matching ignores case, hyphens and spaces. A sensitive aircraft shows each person only their own check-ins. Not done: a link from the check-in result screen to the airport page.
 
 ## 11e. Map
 

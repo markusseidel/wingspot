@@ -256,6 +256,8 @@ public protocol FeedBackend: Sendable {
     /// The check-ins of one aircraft type that the caller may see, newest first.
     func typeCheckIns(of type: String, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem]
     func typeActivity(of type: String) async throws -> TypeActivity
+    /// The check-ins of one aircraft, by registration, that the caller may see, newest first.
+    func registrationCheckIns(of registration: String, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem]
     /// The airports with the most check-ins in the last `days` days, busiest first.
     func activeAirports(days: Int, limit: Int) async throws -> [ActiveAirport]
     /// The photos of these check-ins that the caller may see, in order, with signed links.
@@ -288,17 +290,20 @@ public final class FeedStore {
     private let airport: Int?
     /// An aircraft type's page lists the check-ins of that type (its ICAO code).
     private let type: String?
+    /// An aircraft's page lists the check-ins of that registration.
+    private let registration: String?
     private let reactions: ReactionBackend
     private let userID: @MainActor () -> UUID?
     /// Changes whenever the list restarts, so an answer to an older request is dropped.
     private var generation = 0
 
     public init(backend: FeedBackend, reactions: ReactionBackend, person: UUID? = nil, airport: Int? = nil, type: String? = nil,
-                userID: @escaping @MainActor () -> UUID?) {
+                registration: String? = nil, userID: @escaping @MainActor () -> UUID?) {
         self.backend = backend
         self.person = person
         self.airport = airport
         self.type = type
+        self.registration = registration
         self.reactions = reactions
         self.userID = userID
     }
@@ -336,6 +341,13 @@ public final class FeedStore {
     /// A list of the check-ins of one aircraft type.
     public func typeStore(for code: String) -> FeedStore {
         let store = FeedStore(backend: backend, reactions: reactions, type: code, userID: userID)
+        store.onSocialAction = onSocialAction
+        return store
+    }
+
+    /// A list of the check-ins of one aircraft, by registration.
+    public func registrationStore(for registration: String) -> FeedStore {
+        let store = FeedStore(backend: backend, reactions: reactions, registration: registration, userID: userID)
         store.onSocialAction = onSocialAction
         return store
     }
@@ -415,6 +427,9 @@ public final class FeedStore {
     private func fetch(after cursor: FeedCursor?) async throws -> [FeedItem] {
         if let person {
             return try await backend.personCheckIns(of: person, after: cursor, pageSize: Self.pageSize)
+        }
+        if let registration {
+            return try await backend.registrationCheckIns(of: registration, after: cursor, pageSize: Self.pageSize)
         }
         if let type {
             return try await backend.typeCheckIns(of: type, after: cursor, pageSize: Self.pageSize)

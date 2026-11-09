@@ -84,6 +84,12 @@ private actor FakeFeed: FeedBackend, ReactionBackend {
         return items.filter { $0.typeICAO == type }
     }
     func typeActivity(of type: String) throws -> TypeActivity { typeCounts }
+    private(set) var registrationRequests: [String] = []
+    func registrationCheckIns(of registration: String, after cursor: FeedCursor?, pageSize: Int) throws -> [FeedItem] {
+        registrationRequests.append(registration)
+        if let error { throw error }
+        return items.filter { $0.registration == registration }
+    }
     var busy: [ActiveAirport] = []
     func activeAirports(days: Int, limit: Int) throws -> [ActiveAirport] {
         if let error { throw error }
@@ -440,4 +446,14 @@ private func item(_ n: Int) -> FeedItem {
     #expect(rows.first?.checkIns == 7)
     #expect(rows.first?.airports == 2)
     #expect(rows.first?.topSpotters.first?.username == "anna")
+}
+
+@Test @MainActor func anAircraftPageAsksForThatRegistration() async {
+    let backend = FakeFeed(items: (1...3).map(item))
+    let store = makeStore(backend).registrationStore(for: "D-AIXY")
+    await store.refresh()
+    #expect(await backend.registrationRequests == ["D-AIXY"])
+    #expect(await backend.cursors.isEmpty, "the feed itself was not asked")
+    #expect(await backend.typeRequests.isEmpty)
+    #expect(store.hasLoaded)
 }
