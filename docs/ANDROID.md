@@ -89,6 +89,34 @@ Hours are focused work for an experienced Android developer; the AI-assisted col
 
 These hours assume parity with the iOS app as of today, not every future feature. The ranges are wide on purpose: the first spike (section 10) will narrow them.
 
+### Updated after the first spike steps
+
+The spike has built step A0 (apart from the design tokens, a generated API client and the strings script) and most of the groundwork of A2 and A3: Gradle project and CI, email-link sign-in, the shared logic (boarding pass parser, registration rules, distances) against the iPhone app's test files, reference data download and offline search, the Spotted check-in with a local database, and the upload outbox with WorkManager. It was tried on an emulator against the local backend. These are judgment calls, not timesheets; the spike was not measured in hours.
+
+| Step | What is left | AI-assisted hours left |
+|---|---|---|
+| A0 | Design tokens, strings check script, release build setup | 5 to 10 |
+| A1 | Unchanged: Google and Apple (web) sign-in, profile setup, onboarding, terms | 30 to 45 |
+| A2 | Airport and Flown check-ins, adopting check-ins made before sign-in, sync when the app was closed for days, device testing | 40 to 60 |
+| A3 | Camera scan with ML Kit (the parser is done), screenshot import, photos | 30 to 45 |
+| A4 | Unchanged | 60 to 80 |
+| A5 | Unchanged | 85 to 115 |
+| A6 | Unchanged | 25 to 40 |
+| A7 | Unchanged | 25 to 40 |
+| A8 | Unchanged | 50 to 70 |
+| | **Left** | **350 to 505** (was 440 to 620) |
+
+What the spike changed:
+
+- **Cheaper than feared:** logic that already has shared test files ported in a few hours and passed on the first runs, and the offline-first design carried over unchanged (local database, outbox, idempotent upload). That is the main reason the AI-assisted estimate drops by about a fifth, and the same should hold for the rest of the logic in A5 to A7.
+- **No change yet** where nothing was tried: the camera scan quality, FCM push, maps, accessibility with TalkBack, the Google Play setup, and everything that needs a real phone. Those carry the most uncertainty, so the upper end of each range stays.
+- **Costs that appeared:** the build needs Android SDK platform 37 because the newest libraries require it, and a bundled SQLite (about 1 MB per CPU type) because the phone's own SQLite may not have the full-text search.
+- **Manual (human developer) hours** are not recalculated; the spike says nothing new about them.
+- **Calendar:** about 350 to 505 hours at 30 to 40 hours a week is 9 to 17 weeks, plus the 2 weeks of Google Play closed testing, which can overlap with A8.
+- **Cash costs** (section 6) are unchanged. Nothing in the spike needed an account or a payment so far.
+
+The remaining decisions in section 9 still apply, and the Maps choice (Google Maps or MapLibre) is the next one that blocks code, at A4.
+
 **Calendar:** one developer at 30 to 40 hours a week: about 18 to 31 weeks manual, 11 to 21 weeks AI-assisted. Closed testing on Google Play adds at least 2 more weeks at the end (section 8) and can overlap with A8.
 
 ## 6. Costs
