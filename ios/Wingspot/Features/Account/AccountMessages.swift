@@ -8,6 +8,7 @@ extension AccountError {
         case .invalidUsername: "Use 3 to 30 lowercase letters, numbers or underscores."
         case .usernameTaken: "This username is taken. Please try another one."
         case .invalidLink: "This sign-in link doesn't work anymore. Please request a new one on this device."
+        case .invalidLogin: "The email or password is wrong."
         case .tooManyRequests: "Too many attempts. Please wait a moment and try again."
         case .appleUnavailable: "Sign in with Apple isn't available yet. Please use your email."
         case .offline: "You're offline. Please connect to the internet and try again."

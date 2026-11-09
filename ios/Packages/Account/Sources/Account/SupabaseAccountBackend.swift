@@ -54,6 +54,12 @@ public struct SupabaseAccountBackend: AccountBackend {
         }
     }
 
+    public func signIn(email: String, password: String) async throws -> UUID {
+        try await mappingErrors {
+            try await client.auth.signIn(email: email, password: password).user.id
+        }
+    }
+
     public func signInWithApple(idToken: String, nonce: String) async throws -> UUID {
         try await mappingErrors {
             try await client.auth.signInWithIdToken(
@@ -131,6 +137,7 @@ public struct SupabaseAccountBackend: AccountBackend {
             case .overEmailSendRateLimit, .overRequestRateLimit: throw AccountError.tooManyRequests
             case .providerDisabled: throw AccountError.appleUnavailable
             case .validationFailed: throw AccountError.invalidEmail
+            case .invalidCredentials: throw AccountError.invalidLogin
             default:
                 logger.error("Account request failed: \(error.errorCode.rawValue, privacy: .public)")
                 throw AccountError.unknown
