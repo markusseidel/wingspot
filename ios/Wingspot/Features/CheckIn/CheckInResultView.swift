@@ -4,6 +4,8 @@ import SwiftUI
 /// The reward after saving (concept §4.1). Badges join this screen once they exist.
 struct CheckInResultView: View {
     let result: SpottedResult
+    /// The airport it was logged at, if any. Its page shows who else was there.
+    var airportID: Int?
     let onAnother: () -> Void
     let onDone: () -> Void
 
@@ -26,6 +28,13 @@ struct CheckInResultView: View {
                     Text(detail)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
+                }
+            }
+            if let airportID {
+                NavigationLink {
+                    AirportPageView(airportID: airportID)
+                } label: {
+                    Label("See this airport", systemImage: "building.columns")
                 }
             }
             Spacer()

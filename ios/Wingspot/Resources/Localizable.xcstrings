@@ -3427,6 +3427,23 @@
           }
         }
       }
+    },
+    "See this airport" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Flughafen ansehen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See this airport"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
