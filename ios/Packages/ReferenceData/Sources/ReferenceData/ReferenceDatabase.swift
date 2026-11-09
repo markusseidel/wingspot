@@ -105,6 +105,15 @@ public struct ReferenceDatabase: Sendable {
         }
     }
 
+    /// The type with this ICAO code, such as `A320`.
+    public func aircraftType(icao: String) async throws -> AircraftType? {
+        let code = icao.trimmingCharacters(in: .whitespaces).uppercased()
+        return try await queue.read { db in
+            try Row.fetchOne(db, sql: "SELECT icao_code, manufacturer, model FROM aircraft_types WHERE icao_code = ?", arguments: [code])
+                .map { AircraftType(icaoCode: $0["icao_code"], manufacturer: $0["manufacturer"], model: $0["model"]) }
+        }
+    }
+
     public func airport(id: Int) async throws -> Airport? {
         try await queue.read { db in
             try Row.fetchOne(db, sql: "SELECT * FROM airports WHERE id = ?", arguments: [id]).map(Self.airport)

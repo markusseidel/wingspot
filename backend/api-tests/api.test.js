@@ -1011,3 +1011,53 @@ describe("busy airports", () => {
     assert.ok([401, 403].includes(response.status), `status ${response.status}`);
   });
 });
+
+describe("an aircraft type's activity", () => {
+  const TYPE_CODE = "ZQXT";
+  let alice, bob;
+  const shared = randomUUID();
+  const hidden = randomUUID();
+  before(async () => {
+    await service("aircraft_types", { method: "POST", body: { icao_code: TYPE_CODE, manufacturer: "Test", model: "Typepage" } });
+    alice = await signUp();
+    bob = await signUp();
+    for (const [id, visibility] of [[shared, "public"], [hidden, "private"]]) {
+      const upload = await call("/v1/checkins", {
+        method: "POST", token: alice.token,
+        body: { checkins: [{ id, kind: "spotted", occurred_at: new Date(Date.now() - 3 * 3600_000).toISOString(), type_icao: TYPE_CODE, visibility }] },
+      });
+      assert.equal(upload.body.results[0].status, "stored", JSON.stringify(upload.body));
+    }
+  });
+  after(async () => {
+    for (const id of [shared, hidden]) await service(`checkins?id=eq.${id}`, { method: "DELETE" });
+    await service(`aircraft_types?icao_code=eq.${TYPE_CODE}`, { method: "DELETE" });
+  });
+
+  test("a stranger sees the shared check-in, the owner sees both", async () => {
+    const seen = await rest("rpc/get_type_checkins", { token: bob.token, body: { type_code: TYPE_CODE } });
+    assert.equal(seen.status, 200, JSON.stringify(seen.body));
+    assert.deepEqual(seen.body.map((c) => c.id), [shared]);
+    assert.equal(seen.body[0].type_name, "Test Typepage");
+    const own = await rest("rpc/get_type_checkins", { token: alice.token, body: { type_code: TYPE_CODE } });
+    assert.deepEqual(own.body.map((c) => c.id).sort(), [shared, hidden].sort());
+  });
+
+  test("the counts follow the same rules", async () => {
+    const seen = await rest("rpc/get_type_activity", { token: bob.token, body: { type_code: TYPE_CODE } });
+    assert.equal(seen.status, 200, JSON.stringify(seen.body));
+    assert.equal(seen.body[0].checkins_30d, 1);
+    assert.equal(seen.body[0].top_spotters.length, 1);
+    const own = await rest("rpc/get_type_activity", { token: alice.token, body: { type_code: TYPE_CODE } });
+    assert.equal(own.body[0].checkins_30d, 2);
+  });
+
+  test("need a signed-in user", async () => {
+    for (const name of ["get_type_checkins", "get_type_activity"]) {
+      const response = await fetch(`${API}/rest/v1/rpc/${name}`, {
+        method: "POST", headers: { apikey: ANON_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ type_code: TYPE_CODE }),
+      });
+      assert.ok([401, 403].includes(response.status), `${name}: status ${response.status}`);
+    }
+  });
+});

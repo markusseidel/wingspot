@@ -98,3 +98,11 @@ func findsHyphenatedNamesHoweverTheyAreTyped(text: String) async throws {
 @Test func nothingIsNearInTheMiddleOfTheOcean() async throws {
     #expect(try await database().airports(near: GeoCoordinate(latitude: 0, longitude: 0)).isEmpty)
 }
+
+@Test func findsATypeByItsICAOCode() async throws {
+    let database = try database()
+    let type = try #require(try await database.aircraftType(icao: "b738"))
+    #expect(type.icaoCode == "B738")
+    #expect(type.manufacturer == "Boeing")
+    #expect(try await database.aircraftType(icao: "ZZZZ") == nil)
+}

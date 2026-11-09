@@ -76,6 +76,14 @@ private actor FakeFeed: FeedBackend, ReactionBackend {
         return items.filter { $0.airportID == airport }
     }
     func airportActivity(at airport: Int) throws -> AirportActivity { activity }
+    private(set) var typeRequests: [String] = []
+    var typeCounts = TypeActivity(checkIns: 0, airports: 0)
+    func typeCheckIns(of type: String, after cursor: FeedCursor?, pageSize: Int) throws -> [FeedItem] {
+        typeRequests.append(type)
+        if let error { throw error }
+        return items.filter { $0.typeICAO == type }
+    }
+    func typeActivity(of type: String) throws -> TypeActivity { typeCounts }
     var busy: [ActiveAirport] = []
     func activeAirports(days: Int, limit: Int) throws -> [ActiveAirport] {
         if let error { throw error }
@@ -411,4 +419,25 @@ private func item(_ n: Int) -> FeedItem {
     #expect(try await store.activeAirports(days: 7, limit: 1).count == 1)
     await backend.fail(.offline)
     await #expect(throws: AccountError.self) { try await store.activeAirports() }
+}
+
+@Test @MainActor func aTypePageAsksForThatType() async {
+    let backend = FakeFeed(items: (1...3).map(item))
+    let store = makeStore(backend).typeStore(for: "A320")
+    await store.refresh()
+    #expect(await backend.typeRequests == ["A320"])
+    #expect(await backend.cursors.isEmpty, "the feed itself was not asked")
+    #expect(await backend.airportRequests.isEmpty)
+    #expect(store.hasLoaded)
+}
+
+@Test func typeCountsAreDecoded() throws {
+    let json = """
+    [{"checkins_30d":7,"airports_30d":2,"top_spotters":[
+      {"user_id":"00000000-0000-0000-0000-000000000001","username":"anna","display_name":null,"checkins":4}]}]
+    """
+    let rows = try JSONDecoder().decode([TypeActivity].self, from: Data(json.utf8))
+    #expect(rows.first?.checkIns == 7)
+    #expect(rows.first?.airports == 2)
+    #expect(rows.first?.topSpotters.first?.username == "anna")
 }

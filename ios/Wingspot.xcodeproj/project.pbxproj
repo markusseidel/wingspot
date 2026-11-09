@@ -47,6 +47,7 @@
 		B3051CE8DCAD5C1F29BB0B38 /* APIPhotoUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA4C2033974EBB05B5FCF5E /* APIPhotoUploader.swift */; };
 		B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B545FD209FC2942BD45E71 /* CheckInResultView.swift */; };
 		B9781CFA9DE1264E690E8F1B /* FeedScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC6390EE07C2061FC444960 /* FeedScreen.swift */; };
+		BADA46EC74996E2BE6DDA8FF /* TypePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C3026B7554DE42D34613B0 /* TypePageView.swift */; };
 		C11130AF4BC7A3C72A86C5A3 /* APICheckInUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828B639D7292CFD9B11324B0 /* APICheckInUploader.swift */; };
 		C514F70DAE3982F3745EA554 /* BoardingPassScanning.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADADB9204585A1B0741191CA /* BoardingPassScanning.swift */; };
 		C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A035100ED13735493AF7BF1 /* LocationProvider.swift */; };
@@ -93,6 +94,7 @@
 		9A035100ED13735493AF7BF1 /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
 		9EEF8DEDA274D745C08605EB /* ReportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSheet.swift; sourceTree = "<group>"; };
 		A0AEFDA7AFD99199BC8AC184 /* TermsGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsGate.swift; sourceTree = "<group>"; };
+		A1C3026B7554DE42D34613B0 /* TypePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypePageView.swift; sourceTree = "<group>"; };
 		A47349EC0A6768BA0A1C2F6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A62A4921DD7585EFD9F3F97A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A96EA4033E2C1D21ED547E17 /* APIProgressSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIProgressSource.swift; sourceTree = "<group>"; };
@@ -292,6 +294,7 @@
 				9EEF8DEDA274D745C08605EB /* ReportSheet.swift */,
 				995610FFAC434B480B981139 /* SharingSection.swift */,
 				A0AEFDA7AFD99199BC8AC184 /* TermsGate.swift */,
+				A1C3026B7554DE42D34613B0 /* TypePageView.swift */,
 			);
 			path = Social;
 			sourceTree = "<group>";
@@ -440,6 +443,7 @@
 				27F83E299CBA8188CF0AA61F /* SharingSection.swift in Sources */,
 				F9804A44218F27F9FAC0B571 /* SpottedCheckInView.swift in Sources */,
 				8724536D4B58E82924192AC3 /* TermsGate.swift in Sources */,
+				BADA46EC74996E2BE6DDA8FF /* TypePageView.swift in Sources */,
 				63920812D725A2EE33A89EC1 /* WingspotApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
