@@ -26,4 +26,12 @@
     <string name="registration_label">Registration</string>
     <string name="registration_valid">%1$s (%2$s)</string>
     <string name="registration_invalid">Not a valid registration yet</string>
+    <string name="search_title">Search airports and aircraft types</string>
+    <string name="search_label">Search</string>
+    <string name="search_downloading">Downloading the airport and aircraft data. This happens once.</string>
+    <string name="search_failed">Couldn\'t download the airport and aircraft data. Check your connection.</string>
+    <string name="try_again">Try again</string>
+    <string name="nothing_found">Nothing found</string>
+    <string name="airports">Airports</string>
+    <string name="aircraft_types">Aircraft types</string>
 </resources>

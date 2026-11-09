@@ -26,4 +26,12 @@
     <string name="registration_label">Kennzeichen</string>
     <string name="registration_valid">%1$s (%2$s)</string>
     <string name="registration_invalid">Noch kein gültiges Kennzeichen</string>
+    <string name="search_title">Flughäfen und Flugzeugtypen suchen</string>
+    <string name="search_label">Suchen</string>
+    <string name="search_downloading">Flughafen- und Flugzeugdaten werden geladen. Das passiert nur einmal.</string>
+    <string name="search_failed">Die Flughafen- und Flugzeugdaten konnten nicht geladen werden. Prüfe deine Verbindung.</string>
+    <string name="try_again">Erneut versuchen</string>
+    <string name="nothing_found">Nichts gefunden</string>
+    <string name="airports">Flughäfen</string>
+    <string name="aircraft_types">Flugzeugtypen</string>
 </resources>
