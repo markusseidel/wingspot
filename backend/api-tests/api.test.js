@@ -967,3 +967,47 @@ describe("an airport's activity", () => {
     }
   });
 });
+
+describe("busy airports", () => {
+  const AIRPORT_ID = 998866;
+  let alice, bob;
+  const shared = randomUUID();
+  const hidden = randomUUID();
+  before(async () => {
+    await service("airports", {
+      method: "POST",
+      body: { id: AIRPORT_ID, icao: "ZZZW", iata: "ZZW", name: "Busy Test", country_code: "DE", continent: "EU", location: "POINT(8.8 50.2)" },
+    });
+    alice = await signUp();
+    bob = await signUp();
+    for (const [id, visibility] of [[shared, "public"], [hidden, "private"]]) {
+      const upload = await call("/v1/checkins", {
+        method: "POST", token: alice.token,
+        body: { checkins: [{ id, kind: "airport", occurred_at: new Date(Date.now() - 3 * 3600_000).toISOString(), airport_id: AIRPORT_ID, visibility }] },
+      });
+      assert.equal(upload.body.results[0].status, "stored", JSON.stringify(upload.body));
+    }
+  });
+  after(async () => {
+    for (const id of [shared, hidden]) await service(`checkins?id=eq.${id}`, { method: "DELETE" });
+    await service(`airports?id=eq.${AIRPORT_ID}`, { method: "DELETE" });
+  });
+
+  test("counts follow the same rules for a stranger and for the owner", async () => {
+    const seen = await rest("rpc/get_active_airports", { token: bob.token, body: { days: 7, max_results: 30 } });
+    assert.equal(seen.status, 200, JSON.stringify(seen.body));
+    const row = seen.body.find((r) => r.airport_id === AIRPORT_ID);
+    assert.equal(row.checkins, 1);
+    assert.equal(row.people, 1);
+    assert.equal(row.airport_code, "ZZW");
+    const own = await rest("rpc/get_active_airports", { token: alice.token, body: { days: 7, max_results: 30 } });
+    assert.equal(own.body.find((r) => r.airport_id === AIRPORT_ID).checkins, 2);
+  });
+
+  test("needs a signed-in user", async () => {
+    const response = await fetch(`${API}/rest/v1/rpc/get_active_airports`, {
+      method: "POST", headers: { apikey: ANON_KEY, "Content-Type": "application/json" }, body: "{}",
+    });
+    assert.ok([401, 403].includes(response.status), `status ${response.status}`);
+  });
+});

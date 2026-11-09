@@ -192,6 +192,34 @@ public struct AirportActivity: Equatable, Sendable, Decodable {
     }
 }
 
+/// An airport with many check-ins lately, among those the caller may see.
+public struct ActiveAirport: Equatable, Sendable, Identifiable, Decodable {
+    public let airportID: Int
+    public let code: String
+    public let name: String
+    public let city: String?
+    public let checkIns: Int
+    public let people: Int
+    public var id: Int { airportID }
+
+    public init(airportID: Int, code: String, name: String, city: String? = nil, checkIns: Int, people: Int) {
+        self.airportID = airportID
+        self.code = code
+        self.name = name
+        self.city = city
+        self.checkIns = checkIns
+        self.people = people
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case people, city
+        case airportID = "airport_id"
+        case code = "airport_code"
+        case name = "airport_name"
+        case checkIns = "checkins"
+    }
+}
+
 public protocol FeedBackend: Sendable {
     func feed(after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem]
     /// One person's check-ins that the caller may see, newest first.
@@ -199,6 +227,8 @@ public protocol FeedBackend: Sendable {
     /// The check-ins at one airport that the caller may see, newest first.
     func airportCheckIns(at airport: Int, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem]
     func airportActivity(at airport: Int) async throws -> AirportActivity
+    /// The airports with the most check-ins in the last `days` days, busiest first.
+    func activeAirports(days: Int, limit: Int) async throws -> [ActiveAirport]
     /// The photos of these check-ins that the caller may see, in order, with signed links.
     func photos(for checkIns: [UUID]) async throws -> [FeedPhoto]
 }
@@ -273,6 +303,11 @@ public final class FeedStore {
     /// The counts for one airport page.
     public func airportActivity(at id: Int) async throws -> AirportActivity {
         try await backend.airportActivity(at: id)
+    }
+
+    /// The busiest airports lately, for the Explore tab.
+    public func activeAirports(days: Int = 7, limit: Int = 10) async throws -> [ActiveAirport] {
+        try await backend.activeAirports(days: days, limit: limit)
     }
 
     /// The comments of one check-in. Its count is kept in step with the card.

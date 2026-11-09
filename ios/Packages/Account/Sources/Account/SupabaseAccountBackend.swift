@@ -440,6 +440,12 @@ extension SupabaseAccountBackend: FeedBackend {
         }
     }
 
+    public func activeAirports(days: Int, limit: Int) async throws -> [ActiveAirport] {
+        try await socialErrors {
+            try await client.rpc("get_active_airports", params: ["days": days, "max_results": limit]).execute().value
+        }
+    }
+
     /// An hour is enough to scroll through a page of the feed. Refreshing signs the links again.
     private static let photoLinkLifetime = 3600
 
