@@ -57,6 +57,7 @@
 		D85287110D33AEDB2AE2653E /* PushSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578259FF97F6C378ABA27E94 /* PushSupport.swift */; };
 		D866E9760B084CDB160CA4D5 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */; };
 		E2E45560E0A3701D1C226A90 /* CelebrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A9D215092A1385FA8E52D3A /* CelebrationView.swift */; };
+		E480FE0DE9DC4CBB55FFD70B /* ExploreMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB50BDD1D3F4FB1EB8B8007 /* ExploreMapView.swift */; };
 		E743B21C623831BB31024A48 /* AirportCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E539BCC329B1D95E5DE61344 /* AirportCheckInView.swift */; };
 		F9804A44218F27F9FAC0B571 /* SpottedCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CBBBAF8DD8DAC4FD7390E9 /* SpottedCheckInView.swift */; };
 /* End PBXBuildFile section */
@@ -64,6 +65,7 @@
 /* Begin PBXFileReference section */
 		04D41472169C437C8D788A92 /* DistanceUnitSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistanceUnitSetting.swift; sourceTree = "<group>"; };
 		0BA65F3D7DF5E25F2228C346 /* EmailSignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSignInView.swift; sourceTree = "<group>"; };
+		0CB50BDD1D3F4FB1EB8B8007 /* ExploreMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreMapView.swift; sourceTree = "<group>"; };
 		1072182D625807362ADE4FB1 /* AirportPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirportPageView.swift; sourceTree = "<group>"; };
 		15CCCA89A7943B8447EE7898 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		17369D1192D4BAF9721962FE /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -305,6 +307,7 @@
 		E51F4F40158CB03DC2059E8B /* Explore */ = {
 			isa = PBXGroup;
 			children = (
+				0CB50BDD1D3F4FB1EB8B8007 /* ExploreMapView.swift */,
 				DB25F31CD8716D700082888A /* ExploreScreen.swift */,
 			);
 			path = Explore;
@@ -425,6 +428,7 @@
 				71650165FDE3772BBD7E7A3D /* CommentsView.swift in Sources */,
 				6011B00CBD96A7EE9270C0C9 /* DistanceUnitSetting.swift in Sources */,
 				A165396CBFC567234392EE1F /* EmailSignInView.swift in Sources */,
+				E480FE0DE9DC4CBB55FFD70B /* ExploreMapView.swift in Sources */,
 				AFF3D1B625E8CD51404538CD /* ExploreScreen.swift in Sources */,
 				B9781CFA9DE1264E690E8F1B /* FeedScreen.swift in Sources */,
 				5EFAD640812D73C675B33326 /* FlownCheckInView.swift in Sources */,
@@ -545,7 +549,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -603,7 +607,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;

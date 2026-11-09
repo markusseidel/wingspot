@@ -32,9 +32,9 @@ Everything respects the access rules already in place: a check-in shows only to 
 - Search accepts a registration such as D-AIPC. `get_registration_checkins(registration, ...)` returns the visible check-ins of that aircraft. A sensitive aircraft is neither found nor shown to anyone but its owner, and a registration nobody may see gives the same answer as one that doesn't exist.
 - Page: registration, type, your sightings, recent check-ins. Opens from a search that looks like a registration ("Look up D-AIPC", the server decides whether it exists) and from a spotted feed card. Matching ignores case, hyphens and spaces. A sensitive aircraft shows each person only their own check-ins. Not done: a link from the check-in result screen to the airport page.
 
-## 11e. Map
+## 11e. Map (built)
 
-- A map on the Explore tab with the busy airports (11b) and your own airports; tapping a marker opens the airport page.
+- A map on the Explore tab with the busy airports (11b) and your own airports; tapping a marker opens the airport page. Opens from the map button on the Explore tab. Busy airports (orange, last 7 days, up to 30) need no new server code; positions come from the phone's airport data.
 
 ## Left out for now (need data or decisions)
 
