@@ -10,13 +10,14 @@ import androidx.compose.material3.Surface
 
 class MainActivity : ComponentActivity() {
     private val model: AppViewModel by viewModels { AppViewModel.factory(applicationContext) }
+    private val reference: ReferenceViewModel by viewModels { ReferenceViewModel.factory(applicationContext) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handle(intent)
         setContent {
             MaterialTheme {
-                Surface { AppScreen(model) }
+                Surface { AppScreen(model, reference) }
             }
         }
     }

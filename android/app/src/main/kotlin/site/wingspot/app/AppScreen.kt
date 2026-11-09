@@ -20,6 +20,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import kotlinx.coroutines.delay
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,8 +38,9 @@ import site.wingspot.core.BoardingPass
 import site.wingspot.core.Registration
 
 @Composable
-fun AppScreen(model: AppViewModel) {
+fun AppScreen(model: AppViewModel, reference: ReferenceViewModel) {
     val state by model.state.collectAsState()
+    val refState by reference.state.collectAsState()
     Column(
         Modifier.fillMaxSize().safeDrawingPadding().padding(horizontal = 16.dp).verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -49,6 +52,8 @@ fun AppScreen(model: AppViewModel) {
             state.sentTo != null -> CheckEmail(state.sentTo!!, model::useOtherEmail)
             else -> SignInForm(state.isWorking, model::sendLink)
         }
+        HorizontalDivider()
+        SearchSection(refState, reference::search, reference::refresh)
         state.error?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error, modifier = Modifier.testTag("error")) }
     }
 }
@@ -131,4 +136,48 @@ private fun PassReader() {
         },
         onFailure = { Text(stringResource(R.string.scan_failed), color = MaterialTheme.colorScheme.error) },
     )
+}
+
+/** Airports and aircraft types, searched on the phone. The data is downloaded once and then works offline. */
+@Composable
+private fun SearchSection(state: ReferenceState, onSearch: (String) -> Unit, onRetry: () -> Unit) {
+    var text by rememberSaveable { mutableStateOf("") }
+    LaunchedEffect(text, state.database) {
+        delay(250)
+        onSearch(text)
+    }
+    Text(stringResource(R.string.search_title), style = MaterialTheme.typography.titleMedium)
+    when {
+        state.database == null && state.isDownloading -> {
+            CircularProgressIndicator(Modifier.height(24.dp))
+            Text(stringResource(R.string.search_downloading), style = MaterialTheme.typography.bodySmall)
+        }
+        state.database == null && state.failed -> {
+            Text(stringResource(R.string.search_failed), color = MaterialTheme.colorScheme.error)
+            OutlinedButton(onClick = onRetry) { Text(stringResource(R.string.try_again)) }
+        }
+        else -> {
+            OutlinedTextField(
+                value = text, onValueChange = { text = it }, singleLine = true,
+                label = { Text(stringResource(R.string.search_label)) }, modifier = Modifier.fillMaxWidth().testTag("search"),
+            )
+            if (text.isNotBlank() && state.airports.isEmpty() && state.types.isEmpty()) {
+                Text(stringResource(R.string.nothing_found), color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            if (state.airports.isNotEmpty()) Text(stringResource(R.string.airports), style = MaterialTheme.typography.labelLarge)
+            state.airports.forEach { airport ->
+                Column {
+                    Text(airport.code, style = MaterialTheme.typography.titleSmall)
+                    Text(listOfNotNull(airport.name, airport.city).joinToString(", "), style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            if (state.types.isNotEmpty()) Text(stringResource(R.string.aircraft_types), style = MaterialTheme.typography.labelLarge)
+            state.types.forEach { type ->
+                Column {
+                    Text(type.icaoCode, style = MaterialTheme.typography.titleSmall)
+                    Text(type.name, style = MaterialTheme.typography.bodySmall)
+                }
+            }
+        }
+    }
 }
