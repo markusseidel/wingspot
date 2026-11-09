@@ -192,6 +192,32 @@ public struct AirportActivity: Equatable, Sendable, Decodable {
     }
 }
 
+/// A few numbers about one aircraft type over the last 30 days, among the check-ins the caller may see.
+public struct TypeActivity: Equatable, Sendable, Decodable {
+    public let checkIns: Int
+    public let airports: Int
+    public let topSpotters: [AirportActivity.Spotter]
+
+    public init(checkIns: Int, airports: Int, topSpotters: [AirportActivity.Spotter] = []) {
+        self.checkIns = checkIns
+        self.airports = airports
+        self.topSpotters = topSpotters
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case checkIns = "checkins_30d"
+        case airports = "airports_30d"
+        case topSpotters = "top_spotters"
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        checkIns = try c.decodeIfPresent(Int.self, forKey: .checkIns) ?? 0
+        airports = try c.decodeIfPresent(Int.self, forKey: .airports) ?? 0
+        topSpotters = try c.decodeIfPresent([AirportActivity.Spotter].self, forKey: .topSpotters) ?? []
+    }
+}
+
 /// An airport with many check-ins lately, among those the caller may see.
 public struct ActiveAirport: Equatable, Sendable, Identifiable, Decodable {
     public let airportID: Int
@@ -227,6 +253,9 @@ public protocol FeedBackend: Sendable {
     /// The check-ins at one airport that the caller may see, newest first.
     func airportCheckIns(at airport: Int, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem]
     func airportActivity(at airport: Int) async throws -> AirportActivity
+    /// The check-ins of one aircraft type that the caller may see, newest first.
+    func typeCheckIns(of type: String, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem]
+    func typeActivity(of type: String) async throws -> TypeActivity
     /// The airports with the most check-ins in the last `days` days, busiest first.
     func activeAirports(days: Int, limit: Int) async throws -> [ActiveAirport]
     /// The photos of these check-ins that the caller may see, in order, with signed links.
@@ -257,15 +286,19 @@ public final class FeedStore {
     private let person: UUID?
     /// An airport's page lists the check-ins there.
     private let airport: Int?
+    /// An aircraft type's page lists the check-ins of that type (its ICAO code).
+    private let type: String?
     private let reactions: ReactionBackend
     private let userID: @MainActor () -> UUID?
     /// Changes whenever the list restarts, so an answer to an older request is dropped.
     private var generation = 0
 
-    public init(backend: FeedBackend, reactions: ReactionBackend, person: UUID? = nil, airport: Int? = nil, userID: @escaping @MainActor () -> UUID?) {
+    public init(backend: FeedBackend, reactions: ReactionBackend, person: UUID? = nil, airport: Int? = nil, type: String? = nil,
+                userID: @escaping @MainActor () -> UUID?) {
         self.backend = backend
         self.person = person
         self.airport = airport
+        self.type = type
         self.reactions = reactions
         self.userID = userID
     }
@@ -298,6 +331,18 @@ public final class FeedStore {
         let store = FeedStore(backend: backend, reactions: reactions, airport: id, userID: userID)
         store.onSocialAction = onSocialAction
         return store
+    }
+
+    /// A list of the check-ins of one aircraft type.
+    public func typeStore(for code: String) -> FeedStore {
+        let store = FeedStore(backend: backend, reactions: reactions, type: code, userID: userID)
+        store.onSocialAction = onSocialAction
+        return store
+    }
+
+    /// The counts for one aircraft type page.
+    public func typeActivity(of code: String) async throws -> TypeActivity {
+        try await backend.typeActivity(of: code)
     }
 
     /// The counts for one airport page.
@@ -370,6 +415,9 @@ public final class FeedStore {
     private func fetch(after cursor: FeedCursor?) async throws -> [FeedItem] {
         if let person {
             return try await backend.personCheckIns(of: person, after: cursor, pageSize: Self.pageSize)
+        }
+        if let type {
+            return try await backend.typeCheckIns(of: type, after: cursor, pageSize: Self.pageSize)
         }
         if let airport {
             return try await backend.airportCheckIns(at: airport, after: cursor, pageSize: Self.pageSize)

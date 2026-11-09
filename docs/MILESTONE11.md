@@ -22,10 +22,10 @@ Everything respects the access rules already in place: a check-in shows only to 
 - `get_active_airports(days, limit)`: the airports with the most check-ins in the last days among check-ins the caller may see, with counts. Runs as the caller. A sensitive aircraft of someone else is not counted.
 - Shown on the Explore tab as "Busy this week" and as markers on the Explore map (11e).
 
-## 11c. Aircraft type page (needs a migration)
+## 11c. Aircraft type page (needs a migration; built)
 
 - `get_type_checkins(type_icao, ...)` and `get_type_activity(type_icao)`, built like the airport ones: recent visible check-ins of this type, and counts for 30 days (check-ins, airports, most active people).
-- Page: type name and code, your own sightings (count, first and last time), the counts, recent check-ins with the feed's cards. Opens from search, Collections (types) and a feed card.
+- Page: type name and code, your own sightings (count, first and last time), the counts, recent check-ins with the feed's cards. Opens from search and Collections (types). A link from a feed card is not done yet.
 
 ## 11d. Registration page (needs a migration)
 

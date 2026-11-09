@@ -1059,6 +1059,16 @@
         }
       }
     },
+    "Different airports" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verschiedene Flughäfen"
+          }
+        }
+      }
+    },
     "Distances" : {
       "localizations" : {
         "de" : {
@@ -1266,6 +1276,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Erster Flug auf dieser Strecke!"
+          }
+        }
+      }
+    },
+    "First time" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zum ersten Mal"
           }
         }
       }
@@ -3081,6 +3101,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Du hast hier noch nicht eingecheckt."
+          }
+        }
+      }
+    },
+    "You haven't seen this type yet." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast diesen Typ noch nicht gesehen."
           }
         }
       }

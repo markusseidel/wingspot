@@ -70,17 +70,19 @@ struct ExploreScreen: View {
             let mine = Dictionary(uniqueKeysWithValues: CheckInCollections(all, userID: account.userID).types.map { ($0.id, $0.count) })
             Section("Aircraft types") {
                 ForEach(types) { type in
-                    HStack {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(verbatim: type.icaoCode).font(.headline)
-                            Text(verbatim: type.name).font(.subheadline).foregroundStyle(.secondary)
+                    NavigationLink { TypePageView(typeCode: type.icaoCode) } label: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(verbatim: type.icaoCode).font(.headline)
+                                Text(verbatim: type.name).font(.subheadline).foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            if let count = mine[type.icaoCode] {
+                                Text(verbatim: "\(count)×").font(.headline)
+                            }
                         }
-                        Spacer()
-                        if let count = mine[type.icaoCode] {
-                            Text(verbatim: "\(count)×").font(.headline)
-                        }
+                        .accessibilityElement(children: .combine)
                     }
-                    .accessibilityElement(children: .combine)
                 }
             }
         }

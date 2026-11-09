@@ -74,6 +74,8 @@ struct CollectionsView: View {
     private func row(_ entry: CheckInCollections.Entry, airportID: Int?) -> some View {
         if let airportID {
             NavigationLink { AirportPageView(airportID: airportID) } label: { rowContent(entry) }
+        } else if tab == .types {
+            NavigationLink { TypePageView(typeCode: entry.id) } label: { rowContent(entry) }
         } else {
             rowContent(entry)
         }
