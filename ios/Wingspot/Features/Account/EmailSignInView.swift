@@ -50,6 +50,7 @@ struct EmailSignInView: View {
                 }
                 .disabled(isSending || email.trimmingCharacters(in: .whitespaces).isEmpty)
             }
+            LegalLinksSection(compact: true)
         }
         .onAppear { isFocused = true }
     }

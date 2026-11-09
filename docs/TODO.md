@@ -174,6 +174,7 @@ In this order:
   - [ ] Add **Photos or Videos** to the App Privacy answers in App Store Connect (collected, linked to the user, not used for tracking), before external testers get 0.2.0
   - [ ] Real-iPhone checks: airplane-mode check-in of each kind, photo upload from the signed-in app, dark and tinted icons
   - [ ] Final check that Airport, Flown and photo check-ins all sync from the app to hosted
+  - [x] The app links to `https://wingspot.site/privacy`, `/terms` and `/imprint` and shows `support@wingspot.site` (Settings > About, sign-in screen; see `LegalLinks.swift`). The pages and the mailbox must exist before the next upload; change the constants if the addresses differ
   - [ ] Draft privacy policy is in [PRIVACY-DRAFT.md](PRIVACY-DRAFT.md): fill in the brackets and publish on `wingspot.site`
   - [ ] Delete the test account `github@seidel.ruhr` on hosted
   - [ ] Terms of use: fill in the brackets in [TERMS-DRAFT.md](TERMS-DRAFT.md) and publish on `wingspot.site` with the privacy policy; reports are read in the Supabase table `reports` (answer within 24 hours, remove content that breaks the rules)

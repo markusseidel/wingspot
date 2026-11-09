@@ -60,6 +60,7 @@
 		E480FE0DE9DC4CBB55FFD70B /* ExploreMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB50BDD1D3F4FB1EB8B8007 /* ExploreMapView.swift */; };
 		E743B21C623831BB31024A48 /* AirportCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E539BCC329B1D95E5DE61344 /* AirportCheckInView.swift */; };
 		F9804A44218F27F9FAC0B571 /* SpottedCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CBBBAF8DD8DAC4FD7390E9 /* SpottedCheckInView.swift */; };
+		FCE2BFC52E897A29214244A2 /* LegalLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34AD8F064D9FF554BEEE6EF /* LegalLinks.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,6 +107,7 @@
 		ADADB9204585A1B0741191CA /* BoardingPassScanning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardingPassScanning.swift; sourceTree = "<group>"; };
 		AFA4C2033974EBB05B5FCF5E /* APIPhotoUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIPhotoUploader.swift; sourceTree = "<group>"; };
 		B0E18517ABA8FEAD7497EE58 /* AppleSignInButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInButton.swift; sourceTree = "<group>"; };
+		B34AD8F064D9FF554BEEE6EF /* LegalLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalLinks.swift; sourceTree = "<group>"; };
 		BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceSearchViews.swift; sourceTree = "<group>"; };
 		BF4D48FF8AE3EC90CE9EB299 /* AccountMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountMessages.swift; sourceTree = "<group>"; };
 		C2E6559EBEC52E59BEEFE94D /* ProfileEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditorView.swift; sourceTree = "<group>"; };
@@ -271,6 +273,7 @@
 			isa = PBXGroup;
 			children = (
 				04D41472169C437C8D788A92 /* DistanceUnitSetting.swift */,
+				B34AD8F064D9FF554BEEE6EF /* LegalLinks.swift */,
 				A62A4921DD7585EFD9F3F97A /* SettingsView.swift */,
 			);
 			path = Settings;
@@ -432,6 +435,7 @@
 				AFF3D1B625E8CD51404538CD /* ExploreScreen.swift in Sources */,
 				B9781CFA9DE1264E690E8F1B /* FeedScreen.swift in Sources */,
 				5EFAD640812D73C675B33326 /* FlownCheckInView.swift in Sources */,
+				FCE2BFC52E897A29214244A2 /* LegalLinks.swift in Sources */,
 				C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */,
 				2E4689A87246BCE2846B568F /* NetworkMonitor.swift in Sources */,
 				3C72654BC1F78F3B175048F2 /* OnboardingView.swift in Sources */,
