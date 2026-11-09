@@ -181,7 +181,8 @@ In this order:
 - [x] Milestone 6: your profile (stats, collections, badges tab with filter, airports map; the airport map and signed-in views still to see on your iPhone)
 - [x] Milestone 7: social (7a to 7f are merged and deployed; still to try on your iPhone with two accounts: People, Feed, comments, reports, the rules screen and photos)
 - [ ] Milestone 8: airport page and settings (plan in [MILESTONE8.md](MILESTONE8.md); 8a account deletion, 8b data export, 8c settings, 8d person check-ins and 8e airport page built; 8e is not deployed yet)
-  - [ ] When Sign in with Apple goes live: revoke the Apple token when an account is deleted (Apple requires it)
+  - [x] Revoke the Apple token when an account is deleted: built (see [MILESTONE10.md](MILESTONE10.md)); **still to do by you:** create the Sign in with Apple key, set the secrets, deploy `me`, and try it once
+
   - [ ] Try account deletion on hosted with a throwaway account, after the deploy
 - [ ] Milestone 9: first TestFlight
 

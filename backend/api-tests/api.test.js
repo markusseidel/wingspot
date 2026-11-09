@@ -129,6 +129,7 @@ describe("authentication", () => {
     ["GET /v1/me/entitlements", "/v1/me/entitlements", {}],
     ["POST /v1/checkins", "/v1/checkins", { method: "POST", body: { checkins: [{ id: randomUUID() }] } }],
     ["GET /v1/me/progress", "/v1/me/progress", {}],
+    ["POST /v1/me/apple", "/v1/me/apple", { method: "POST", body: { code: "x" } }],
   ];
   for (const [name, path, options] of protectedCalls) {
     test(`${name} needs a token`, async () => {
@@ -1100,5 +1101,19 @@ describe("an aircraft's check-ins by registration", () => {
       method: "POST", headers: { apikey: ANON_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ registration: REG }),
     });
     assert.ok([401, 403].includes(response.status), `status ${response.status}`);
+  });
+});
+
+describe("POST /v1/me/apple", () => {
+  test("accepts a code, and does nothing while the server has no Apple key", async () => {
+    const user = await signUp();
+    const response = await call("/v1/me/apple", { method: "POST", token: user.token, body: { code: "one-time-code" } });
+    assert.equal(response.status, 204, JSON.stringify(response.body));
+  });
+
+  test("needs a code", async () => {
+    const user = await signUp();
+    assertError(await call("/v1/me/apple", { method: "POST", token: user.token, body: {} }), 400);
+    assertError(await call("/v1/me/apple", { method: "GET", token: user.token }), 405);
   });
 });

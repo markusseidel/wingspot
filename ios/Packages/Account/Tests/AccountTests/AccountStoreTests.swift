@@ -40,6 +40,14 @@ private actor FakeBackend: AccountBackend {
     var appleError: AccountError?
 
     func failApple(_ error: AccountError?) { appleError = error }
+    func setAppleCodeFails() { appleCodeFails = true }
+
+    private(set) var appleCodes: [String] = []
+    var appleCodeFails = false
+    func registerAppleAuthorization(code: String) throws {
+        appleCodes.append(code)
+        if appleCodeFails { throw AccountError.offline }
+    }
 
     func signInWithApple(idToken: String, nonce: String) throws -> UUID {
         appleTokens.append((idToken, nonce))
@@ -367,5 +375,33 @@ struct ProfileRulesTests {
     ])
     func checksEmailAddresses(email: String, plausible: Bool) {
         #expect(EmailAddress.isPlausible(email) == plausible)
+    }
+}
+
+@Suite struct AppleCodeTests {
+    @Test @MainActor func theCodeGoesToTheServerAfterSigningIn() async throws {
+        let backend = FakeBackend()
+        let store = AccountStore(backend: backend)
+        await store.start()
+        try await store.signInWithApple(idToken: "t", nonce: "n", fullName: nil, authorizationCode: "code-1")
+        #expect(await backend.appleCodes == ["code-1"])
+        #expect(store.userID != nil)
+    }
+
+    @Test @MainActor func aFailureToHandItOverDoesNotStopSignIn() async throws {
+        let backend = FakeBackend()
+        await backend.setAppleCodeFails()
+        let store = AccountStore(backend: backend)
+        await store.start()
+        try await store.signInWithApple(idToken: "t", nonce: "n", fullName: nil, authorizationCode: "code-2")
+        #expect(store.userID != nil)
+    }
+
+    @Test @MainActor func noCodeMeansNoCall() async throws {
+        let backend = FakeBackend()
+        let store = AccountStore(backend: backend)
+        await store.start()
+        try await store.signInWithApple(idToken: "t", nonce: "n", fullName: nil)
+        #expect(await backend.appleCodes.isEmpty)
     }
 }

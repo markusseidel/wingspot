@@ -62,6 +62,12 @@ public struct SupabaseAccountBackend: AccountBackend {
         }
     }
 
+    public func registerAppleAuthorization(code: String) async throws {
+        try await mappingErrors {
+            try await client.functions.invoke("me/apple", options: FunctionInvokeOptions(method: .post, body: ["code": code]))
+        }
+    }
+
     public func loadProfile(id: UUID) async throws -> Profile {
         try await mappingErrors {
             let row: ProfileRow = try await client.from("profiles")
