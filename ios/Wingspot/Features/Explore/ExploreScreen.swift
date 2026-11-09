@@ -59,6 +59,17 @@ struct ExploreScreen: View {
                 }
             }
         }
+        if canSearchPeople, Self.looksLikeRegistration(trimmed) {
+            Section("Aircraft") {
+                NavigationLink { RegistrationPageView(registration: trimmed) } label: {
+                    Label {
+                        Text("Look up \(trimmed.uppercased())")
+                    } icon: {
+                        Image(systemName: "airplane")
+                    }
+                }
+            }
+        }
         if !airports.isEmpty {
             Section("Airports") {
                 ForEach(airports) { airport in
@@ -86,7 +97,7 @@ struct ExploreScreen: View {
                 }
             }
         }
-        if people.isEmpty, airports.isEmpty, types.isEmpty {
+        if people.isEmpty, airports.isEmpty, types.isEmpty, !(canSearchPeople && Self.looksLikeRegistration(trimmed)) {
             Text("Nothing found").foregroundStyle(.secondary)
         }
         if !canSearchPeople {
@@ -94,6 +105,12 @@ struct ExploreScreen: View {
                 Text("Sign in and agree to the community rules in the Feed tab to find people.")
             }
         }
+    }
+
+    /// A registration has letters and a digit or a hyphen, such as D-AIPC or N123AB. Whether it exists is the server's answer.
+    static func looksLikeRegistration(_ text: String) -> Bool {
+        guard text.range(of: "^[A-Za-z0-9]{1,2}-?[A-Za-z0-9]{2,5}$", options: .regularExpression) != nil else { return false }
+        return text.contains("-") || text.contains { $0.isNumber }
     }
 
     private func search() async {

@@ -158,6 +158,16 @@ struct FeedCard: View {
                     Text(verbatim: title)
                         .font(.system(.title3, design: .monospaced, weight: .semibold))
                 }
+            } else if item.kind == "spotted", let registration = item.registration {
+                NavigationLink { RegistrationPageView(registration: registration) } label: {
+                    Text(verbatim: title)
+                        .font(.system(.title3, design: .monospaced, weight: .semibold))
+                }
+            } else if item.kind == "spotted", let type = item.typeICAO {
+                NavigationLink { TypePageView(typeCode: type) } label: {
+                    Text(verbatim: title)
+                        .font(.system(.title3, design: .monospaced, weight: .semibold))
+                }
             } else {
                 Text(verbatim: title)
                     .font(.system(.title3, design: .monospaced, weight: .semibold))

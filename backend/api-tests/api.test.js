@@ -1061,3 +1061,44 @@ describe("an aircraft type's activity", () => {
     }
   });
 });
+
+describe("an aircraft's check-ins by registration", () => {
+  const REG = "ZQ-RGT";
+  let alice, bob;
+  const shared = randomUUID();
+  before(async () => {
+    alice = await signUp();
+    bob = await signUp();
+    const upload = await call("/v1/checkins", {
+      method: "POST", token: alice.token,
+      body: { checkins: [{ id: shared, kind: "spotted", occurred_at: new Date(Date.now() - 3600_000).toISOString(), registration: REG, visibility: "public" }] },
+    });
+    assert.equal(upload.body.results[0].status, "stored", JSON.stringify(upload.body));
+  });
+  after(async () => {
+    await service(`checkins?id=eq.${shared}`, { method: "DELETE" });
+    await service(`aircraft?registration=eq.${REG}`, { method: "DELETE" });
+  });
+
+  test("a stranger finds it, with or without the hyphen and in any case", async () => {
+    for (const spelling of [REG, "zqrgt", "ZQ RGT"]) {
+      const seen = await rest("rpc/get_registration_checkins", { token: bob.token, body: { registration: spelling } });
+      assert.equal(seen.status, 200, JSON.stringify(seen.body));
+      assert.deepEqual(seen.body.map((c) => c.id), [shared], spelling);
+      assert.equal(seen.body[0].registration, REG);
+    }
+  });
+
+  test("an unknown registration gives an empty list", async () => {
+    const seen = await rest("rpc/get_registration_checkins", { token: bob.token, body: { registration: "ZQ-NONE" } });
+    assert.equal(seen.status, 200);
+    assert.deepEqual(seen.body, []);
+  });
+
+  test("needs a signed-in user", async () => {
+    const response = await fetch(`${API}/rest/v1/rpc/get_registration_checkins`, {
+      method: "POST", headers: { apikey: ANON_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ registration: REG }),
+    });
+    assert.ok([401, 403].includes(response.status), `status ${response.status}`);
+  });
+});

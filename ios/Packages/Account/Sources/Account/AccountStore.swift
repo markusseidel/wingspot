@@ -228,6 +228,7 @@ public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend, FeedBac
     public func activeAirports(days: Int, limit: Int) async throws -> [ActiveAirport] { throw AccountError.notConfigured }
     public func typeCheckIns(of type: String, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem] { throw AccountError.notConfigured }
     public func typeActivity(of type: String) async throws -> TypeActivity { throw AccountError.notConfigured }
+    public func registrationCheckIns(of registration: String, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem] { throw AccountError.notConfigured }
     public func setSalute(_ on: Bool, checkIn: UUID, as me: UUID) async throws { throw AccountError.notConfigured }
     public func comments(checkIn: UUID) async throws -> [CheckInComment] { throw AccountError.notConfigured }
     public func addComment(_ body: String, checkIn: UUID, as me: UUID) async throws -> CheckInComment { throw AccountError.notConfigured }
