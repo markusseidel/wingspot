@@ -75,16 +75,16 @@ export function payload(row: PushRow, locale: string | null): Record<string, unk
   };
 }
 
-const base64url = (bytes: ArrayBuffer | Uint8Array): string => {
+export const base64url = (bytes: ArrayBuffer | Uint8Array): string => {
   const view = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
   let text = "";
   for (const byte of view) text += String.fromCharCode(byte);
   return btoa(text).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 };
 
-const textBytes = (text: string) => new TextEncoder().encode(text);
+export const textBytes = (text: string) => new TextEncoder().encode(text);
 
-async function signingKey(pem: string): Promise<CryptoKey> {
+export async function signingKey(pem: string): Promise<CryptoKey> {
   const body = pem
     .replace(/\\n/g, "\n")
     .replace(/-----(BEGIN|END) PRIVATE KEY-----/g, "")

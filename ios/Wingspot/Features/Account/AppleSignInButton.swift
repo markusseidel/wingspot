@@ -47,10 +47,11 @@ struct AppleSignInButton: View {
                 return
             }
             let name = credential.fullName.map { PersonNameComponentsFormatter().string(from: $0) }
+            let code = credential.authorizationCode.flatMap { String(data: $0, encoding: .utf8) }
             let nonce = nonce
             Task {
                 do {
-                    try await account.signInWithApple(idToken: token, nonce: nonce, fullName: name)
+                    try await account.signInWithApple(idToken: token, nonce: nonce, fullName: name, authorizationCode: code)
                 } catch {
                     self.error = (error as? AccountError) ?? .unknown
                 }

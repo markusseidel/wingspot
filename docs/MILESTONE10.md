@@ -50,3 +50,25 @@ The App ID `site.wingspot.ios` gets the Push Notifications capability automatica
 - **No key, no push:** until you set the secrets, the app and the outbox work but nothing is sent. Rows stay unsent and go out once the key is there; I will cap how old a row may be so an old backlog is not sent at once.
 - **Spam and abuse:** blocking removes follows and stops notifications; the daily cap limits harm. Muting a person is not part of this milestone.
 - **Privacy:** push goes through Apple. Texts contain a username and a short snippet, so they can show on a lock screen; Settings says so.
+
+## Sign in with Apple: revoking the link when an account is deleted
+
+Apple requires an app that offers Sign in with Apple to revoke the person's Apple token when they delete their account. How it works:
+
+- Right after Sign in with Apple, the app sends the one-time authorization code to `POST /v1/me/apple`. The function trades it at Apple for a refresh token and keeps it in `public.apple_tokens`, which no client role can read.
+- `DELETE /v1/me` revokes that token at Apple first, then deletes the account. If Apple refuses or the key is missing, the failure is logged and the account is deleted anyway.
+- Accounts that signed in with Apple before this shipped have no stored token, so nothing is revoked for them. They can end the link themselves in iPhone Settings > Apple Account > Sign in with Apple.
+
+One-time setup (needs your Apple developer account; until then the code does nothing):
+
+1. developer.apple.com > Certificates, Identifiers & Profiles > Keys > + . Name it "Wingspot Sign in with Apple", tick **Sign in with Apple**, Configure, choose the primary App ID `site.wingspot.ios`, Save, Continue, Register. Download the `.p8` file (only once) and note its Key ID.
+2. Put the key on the server (replace the Key ID and the file name; the team ID is the one used for push):
+
+```bash
+supabase secrets set APPLE_SIWA_KEY="$(cat ~/Downloads/AuthKey_XXXXXXXXXX.p8)" APPLE_SIWA_KEY_ID=XXXXXXXXXX APPLE_TEAM_ID=Z6K89AW5QT --yes --workdir backend
+```
+
+3. Deploy: `supabase db push --remote --yes --workdir backend` and `supabase functions deploy me --yes --workdir backend`.
+4. Try it with a new test account: sign in with Apple, delete the account, then check iPhone Settings > Apple Account > Sign in with Apple. Wingspot should be gone from the list.
+
+Never paste the key into chat or commit it.

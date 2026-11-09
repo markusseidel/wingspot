@@ -29,6 +29,8 @@ public protocol AccountBackend: Sendable {
     func completeSignIn(from url: URL) async throws -> UUID
     /// Signs in with the identity token from Sign in with Apple. `nonce` is the unhashed value whose SHA-256 went into the request.
     func signInWithApple(idToken: String, nonce: String) async throws -> UUID
+    /// Hands the one-time code from Sign in with Apple to the server, which keeps a token to revoke when the account is deleted.
+    func registerAppleAuthorization(code: String) async throws
     func loadProfile(id: UUID) async throws -> Profile
     func saveProfile(_ profile: Profile) async throws
     func signOut() async throws
@@ -118,8 +120,10 @@ public final class AccountStore {
 
     /// Finishes Sign in with Apple. Never log the token.
     /// - Parameter fullName: Apple's name for the user, which it only gives the first time.
-    public func signInWithApple(idToken: String, nonce: String, fullName: String?) async throws {
+    public func signInWithApple(idToken: String, nonce: String, fullName: String?, authorizationCode: String? = nil) async throws {
         let id = try await backend.signInWithApple(idToken: idToken, nonce: nonce)
+        // Signing in works without this. If it fails, deleting the account just can't revoke the Apple link.
+        if let authorizationCode { try? await backend.registerAppleAuthorization(code: authorizationCode) }
         let name = fullName?.trimmingCharacters(in: .whitespacesAndNewlines)
         suggestedName = (name?.isEmpty ?? true) ? nil : name
         linkError = nil
@@ -195,6 +199,7 @@ public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend, FeedBac
     public func sendSignInLink(email: String, language: String?) async throws { throw AccountError.notConfigured }
     public func completeSignIn(from url: URL) async throws -> UUID { throw AccountError.notConfigured }
     public func signInWithApple(idToken: String, nonce: String) async throws -> UUID { throw AccountError.notConfigured }
+    public func registerAppleAuthorization(code: String) async throws { throw AccountError.notConfigured }
     public func loadProfile(id: UUID) async throws -> Profile { throw AccountError.notConfigured }
     public func saveProfile(_ profile: Profile) async throws { throw AccountError.notConfigured }
     public func signOut() async throws { throw AccountError.notConfigured }
