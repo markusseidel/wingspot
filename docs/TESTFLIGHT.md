@@ -40,7 +40,7 @@ Used under TestFlight > Test Information. The feedback email must be an address 
 
 Paste into App Store Connect > App Review Information > Notes. Add a demo account (an email address that can receive the sign-in link, or a second one the reviewer can use) in the sign-in fields.
 
-> Wingspot is a logbook for aircraft spotting. Sign-in uses an email link; there are no passwords. [Demo account and how the reviewer gets the link.]
+> Wingspot is a logbook for aircraft spotting. Sign-in uses an email link or Sign in with Apple. For review, use the demo account: on the sign-in screen tap "Sign in with a password" and enter [email and password from the seed script]. The account follows a second user and has a few check-ins, so the feed, comments, reporting (the ... menu on a check-in), blocking (a person's page) and account deletion (Profile) can be tried. Run backend/scripts/seed-review-account.sh to reset it.
 >
 > User-generated content (guideline 1.2): check-ins can be shared with friends or everyone (the default is "Only me"); comments and photos can be added. The user must accept the community rules before using any social feature (Feed tab, People, sharing). Comments pass a word filter.
 > - Report: on a person's page, in the "..." menu of a feed card, with a long press on a photo, and by swiping a comment. Reports go to a table that is read daily; content that breaks the rules is removed within 24 hours.
