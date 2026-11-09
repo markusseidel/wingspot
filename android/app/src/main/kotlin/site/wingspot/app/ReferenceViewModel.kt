@@ -1,12 +1,10 @@
 package site.wingspot.app
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import java.io.File
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -69,12 +67,8 @@ class ReferenceViewModel(private val installer: ReferenceDataInstaller) : ViewMo
     }
 
     companion object {
-        fun factory(context: Context): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                ReferenceViewModel(
-                    ReferenceDataInstaller(File(context.filesDir, "refdata"), BuildConfig.SUPABASE_URL + "/functions"),
-                )
-            }
+        fun factory(app: WingspotApp): ViewModelProvider.Factory = viewModelFactory {
+            initializer { ReferenceViewModel(app.referenceInstaller) }
         }
     }
 }

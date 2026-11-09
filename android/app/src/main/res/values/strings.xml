@@ -34,4 +34,21 @@
     <string name="nothing_found">Nothing found</string>
     <string name="airports">Airports</string>
     <string name="aircraft_types">Aircraft types</string>
+    <string name="check_in">Check in</string>
+    <string name="spotted_title">Spotted</string>
+    <string name="registration_or_type">Enter a registration, or choose a type if you couldn\'t read it.</string>
+    <string name="type_label">Aircraft type</string>
+    <string name="airport_label">Airport</string>
+    <string name="clear">Clear</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="first_time">First time seeing this one!</string>
+    <string name="seen_again">Seen for the %1$d. time</string>
+    <string name="last_time">Last time on %1$s</string>
+    <string name="check_in_another">Check in another</string>
+    <string name="done">Done</string>
+    <string name="recent_title">Your check-ins</string>
+    <string name="state_pending">Waiting to upload</string>
+    <string name="state_synced">Uploaded</string>
+    <string name="state_rejected">Not accepted</string>
 </resources>
