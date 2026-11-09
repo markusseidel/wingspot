@@ -1,0 +1,87 @@
+package site.wingspot.app
+
+import android.content.Context
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import java.util.Locale
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import site.wingspot.core.AuthException
+import site.wingspot.core.Pkce
+import site.wingspot.core.Session
+import site.wingspot.core.SupabaseAuth
+
+data class AppState(
+    val session: Session? = null,
+    val sentTo: String? = null,
+    val isWorking: Boolean = false,
+    /** A string resource ID for the message to show. */
+    val error: Int? = null,
+)
+
+class AppViewModel(private val store: SessionStore, private val auth: SupabaseAuth) : ViewModel() {
+    private val mutable = MutableStateFlow(AppState(session = store.load()))
+    val state: StateFlow<AppState> = mutable.asStateFlow()
+
+    fun sendLink(email: String) {
+        if (mutable.value.isWorking) return
+        mutable.value = mutable.value.copy(isWorking = true, error = null)
+        viewModelScope.launch {
+            try {
+                val pkce = Pkce.create()
+                store.saveVerifier(pkce.verifier)
+                auth.sendSignInLink(email.trim(), Locale.getDefault().language, pkce)
+                mutable.value = mutable.value.copy(sentTo = email.trim(), isWorking = false)
+            } catch (e: AuthException) {
+                mutable.value = mutable.value.copy(isWorking = false, error = message(e))
+            }
+        }
+    }
+
+    fun completeSignIn(link: String) {
+        val verifier = store.verifier()
+        if (verifier == null) {
+            mutable.value = mutable.value.copy(error = R.string.error_invalid_link)
+            return
+        }
+        viewModelScope.launch {
+            try {
+                val session = auth.completeSignIn(link, Pkce.fromVerifier(verifier))
+                store.save(session)
+                mutable.value = AppState(session = session)
+            } catch (e: AuthException) {
+                mutable.value = mutable.value.copy(error = message(e))
+            }
+        }
+    }
+
+    fun useOtherEmail() {
+        mutable.value = mutable.value.copy(sentTo = null, error = null)
+    }
+
+    fun signOut() {
+        store.clear()
+        mutable.value = AppState()
+    }
+
+    private fun message(e: AuthException) = when (e) {
+        AuthException.InvalidEmail -> R.string.error_invalid_email
+        AuthException.InvalidLink -> R.string.error_invalid_link
+        AuthException.TooManyRequests -> R.string.error_too_many
+        AuthException.Offline -> R.string.error_offline
+        AuthException.Unknown -> R.string.error_unknown
+    }
+
+    companion object {
+        fun factory(context: Context): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                AppViewModel(SessionStore(context), SupabaseAuth(BuildConfig.SUPABASE_URL, BuildConfig.PUBLISHABLE_KEY))
+            }
+        }
+    }
+}

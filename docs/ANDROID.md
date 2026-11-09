@@ -156,3 +156,14 @@ Before starting:
 2. Then a one-week **spike**: Gradle project, CI, generated API client, email sign-in, reference data search and one check-in type uploading through the real outbox, on a real phone. This answers the open questions (Maps, WorkManager behavior, ML Kit quality) for about 40 to 60 hours and decides whether to go on.
 3. A1 to A8 as in section 5, with a Play closed test running from the end of A5 so the 14 days are not wasted.
 4. Android 1.0 to production, then feature work on both platforms.
+
+
+## Spike log (started)
+
+The Gradle project is in [android/](../android/README.md). What it has shown so far:
+
+- **Tooling:** JDK 17, Gradle 9.8, Android Gradle Plugin 9.5, Kotlin 2.4, Compose BOM 2026.09. The newest library versions require `compileSdk` 37, so the SDK platform 37 is needed. The project builds from the command line, with no Android Studio.
+- **Shared logic carries over cheaply:** the boarding pass parser, the registration rules (about 150 prefixes) and the distance maths were ported to plain Kotlin in a few hours, and pass the same vector files the iPhone app uses (15 boarding passes, 48 registrations, 8 distances). This confirms the "what carries over" section.
+- **Sign-in:** the email link flow (PKCE) is built against the real Supabase auth endpoints and tested with a fake server. The link opens the app through the `wingspot://auth-callback` address, which is already allowed for the iPhone app. The full round trip with a real email has not been tried yet.
+- **On the emulator (Android 15):** the sign-in screen, the signed-in screen, and the registration check ("hbjna" becomes HB-JNA, CH) render and work, in English and German strings.
+- **Not tried yet:** reference data and search, check-ins with the outbox and WorkManager, the camera scan (ML Kit), maps, push, a real phone.
