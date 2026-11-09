@@ -42,6 +42,17 @@ private actor FakeBackend: AccountBackend {
     func failApple(_ error: AccountError?) { appleError = error }
     func setAppleCodeFails() { appleCodeFails = true }
 
+    private(set) var passwordLogins: [String] = []
+    var passwordError: AccountError?
+    func setPasswordError(_ error: AccountError?) { passwordError = error }
+    func signIn(email: String, password: String) throws -> UUID {
+        passwordLogins.append(email)
+        if let passwordError { throw passwordError }
+        let id = profile?.id ?? UUID()
+        sessionUser = id
+        return id
+    }
+
     private(set) var appleCodes: [String] = []
     var appleCodeFails = false
     func registerAppleAuthorization(code: String) throws {
@@ -403,5 +414,28 @@ struct ProfileRulesTests {
         await store.start()
         try await store.signInWithApple(idToken: "t", nonce: "n", fullName: nil)
         #expect(await backend.appleCodes.isEmpty)
+    }
+}
+
+@Suite struct PasswordSignInTests {
+    @Test @MainActor func signsInAndTrimsTheEmail() async throws {
+        let backend = FakeBackend()
+        let store = AccountStore(backend: backend)
+        await store.start()
+        try await store.signInWithPassword(email: "  review@wingspot.site \n", password: "pw")
+        #expect(await backend.passwordLogins == ["review@wingspot.site"])
+        #expect(store.userID != nil)
+    }
+
+    @Test @MainActor func aWrongPasswordLeavesYouSignedOut() async throws {
+        let backend = FakeBackend()
+        await backend.setPasswordError(.invalidLogin)
+        let store = AccountStore(backend: backend)
+        await store.start()
+        await #expect(throws: AccountError.invalidLogin) {
+            try await store.signInWithPassword(email: "a@b.c", password: "bad")
+        }
+        #expect(store.userID == nil)
+        #expect(store.state == .signedOut)
     }
 }

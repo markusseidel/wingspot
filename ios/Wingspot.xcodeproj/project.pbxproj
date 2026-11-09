@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		000638736A7D21777E5468DC /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 181278D0BAEE1C7A36510BCE /* Localizable.xcstrings */; };
+		03BF1BA5490802BB7BBE7871 /* PasswordSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0A9822D906C56C092225ED /* PasswordSignInView.swift */; };
 		0937BA0BF1EBF4732DA23138 /* ProfileEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E6559EBEC52E59BEEFE94D /* ProfileEditorView.swift */; };
 		0938348D4F0B21A4B41F7D9E /* CollectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA1AD56080AB71FB2708191 /* CollectionsView.swift */; };
 		10748D50CE99239391EE4B98 /* WingspotCore in Frameworks */ = {isa = PBXBuildFile; productRef = FA9C4D07C08E909754DE9B4F /* WingspotCore */; };
@@ -119,6 +120,7 @@
 		E3A6E9C03029947E148B9EBB /* PeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleView.swift; sourceTree = "<group>"; };
 		E539BCC329B1D95E5DE61344 /* AirportCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirportCheckInView.swift; sourceTree = "<group>"; };
 		E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		ED0A9822D906C56C092225ED /* PasswordSignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordSignInView.swift; sourceTree = "<group>"; };
 		ED53FE5B4A009D5575119BB4 /* FlownCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlownCheckInView.swift; sourceTree = "<group>"; };
 		EEADFFA0580043E3265322F0 /* BadgesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgesScreen.swift; sourceTree = "<group>"; };
 		F4D2C07FCB6185F02199297F /* Persistence */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Persistence; path = Packages/Persistence; sourceTree = SOURCE_ROOT; };
@@ -177,6 +179,7 @@
 				CDA1AD56080AB71FB2708191 /* CollectionsView.swift */,
 				0BA65F3D7DF5E25F2228C346 /* EmailSignInView.swift */,
 				6CA53E0B6C7D19C0B128FFE6 /* OnboardingView.swift */,
+				ED0A9822D906C56C092225ED /* PasswordSignInView.swift */,
 				C2E6559EBEC52E59BEEFE94D /* ProfileEditorView.swift */,
 				6FD2433D565B1E9974F334CA /* ProfileScreen.swift */,
 				15CCCA89A7943B8447EE7898 /* ShareSheet.swift */,
@@ -439,6 +442,7 @@
 				C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */,
 				2E4689A87246BCE2846B568F /* NetworkMonitor.swift in Sources */,
 				3C72654BC1F78F3B175048F2 /* OnboardingView.swift in Sources */,
+				03BF1BA5490802BB7BBE7871 /* PasswordSignInView.swift in Sources */,
 				CCB6285BC5F2D2D0C2D23BAD /* PeopleView.swift in Sources */,
 				44D09702BD9AEBE667B05854 /* PersonCheckInsSection.swift in Sources */,
 				13A3F8B8C6248C62D540A996 /* PersonDetailView.swift in Sources */,

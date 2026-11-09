@@ -7,6 +7,8 @@ public enum AccountError: Error, Equatable, Sendable {
     case usernameTaken
     /// The sign-in link was used already, has expired, or was requested on another device.
     case invalidLink
+    /// The email or password was wrong.
+    case invalidLogin
     case tooManyRequests
     /// Sign in with Apple isn't switched on at the backend yet.
     case appleUnavailable
@@ -27,6 +29,8 @@ public protocol AccountBackend: Sendable {
     func sendSignInLink(email: String, language: String?) async throws
     /// Finishes sign-in from the link in the email and returns the user's ID.
     func completeSignIn(from url: URL) async throws -> UUID
+    /// Signs in with an email and a password. Only the demo account for App Review has one.
+    func signIn(email: String, password: String) async throws -> UUID
     /// Signs in with the identity token from Sign in with Apple. `nonce` is the unhashed value whose SHA-256 went into the request.
     func signInWithApple(idToken: String, nonce: String) async throws -> UUID
     /// Hands the one-time code from Sign in with Apple to the server, which keeps a token to revoke when the account is deleted.
@@ -111,6 +115,15 @@ public final class AccountStore {
             linkError = error as? AccountError ?? .unknown
         }
         return true
+    }
+
+    /// Sign-in for App Review, who can't open a mailbox. People have no passwords, so only the demo account works.
+    public func signInWithPassword(email: String, password: String) async throws {
+        let id = try await backend.signIn(email: email.trimmingCharacters(in: .whitespacesAndNewlines), password: password)
+        linkError = nil
+        userID = id
+        state = .signedIn(nil)
+        await loadProfile(id: id)
     }
 
     /// For API calls that need the signed-in user. Refreshes an expired token.
@@ -198,6 +211,7 @@ public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend, FeedBac
     public func accessToken() async -> String? { nil }
     public func sendSignInLink(email: String, language: String?) async throws { throw AccountError.notConfigured }
     public func completeSignIn(from url: URL) async throws -> UUID { throw AccountError.notConfigured }
+    public func signIn(email: String, password: String) async throws -> UUID { throw AccountError.notConfigured }
     public func signInWithApple(idToken: String, nonce: String) async throws -> UUID { throw AccountError.notConfigured }
     public func registerAppleAuthorization(code: String) async throws { throw AccountError.notConfigured }
     public func loadProfile(id: UUID) async throws -> Profile { throw AccountError.notConfigured }

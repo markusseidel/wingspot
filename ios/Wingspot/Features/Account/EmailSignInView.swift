@@ -50,6 +50,11 @@ struct EmailSignInView: View {
                 }
                 .disabled(isSending || email.trimmingCharacters(in: .whitespaces).isEmpty)
             }
+            Section {
+                NavigationLink("Sign in with a password") { PasswordSignInView() }
+            } footer: {
+                Text("Only for the demo account used by App Review. Everyone else signs in with a link or Sign in with Apple.")
+            }
             LegalLinksSection(compact: true)
         }
         .onAppear { isFocused = true }

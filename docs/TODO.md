@@ -177,6 +177,7 @@ In this order:
   - [x] The app links to `https://wingspot.site/privacy`, `/terms` and `/imprint` and shows `support@wingspot.site` (Settings > About, sign-in screen; see `LegalLinks.swift`). The pages and the mailbox must exist before the next upload; change the constants if the addresses differ
   - [ ] Draft privacy policy is in [PRIVACY-DRAFT.md](PRIVACY-DRAFT.md): fill in the brackets and publish on `wingspot.site`
   - [ ] Delete the test account `github@seidel.ruhr` on hosted
+  - [x] Demo account script, password row on the sign-in screen and report alerts are built (see [MILESTONE10.md](MILESTONE10.md)); **still to do by you:** run the seed script on production, enter the account in App Store Connect, create the webhook secret
   - [ ] Terms of use: fill in the brackets in [TERMS-DRAFT.md](TERMS-DRAFT.md) and publish on `wingspot.site` with the privacy policy; reports are read in the Supabase table `reports` (answer within 24 hours, remove content that breaks the rules)
 - [x] Milestone 6: your profile (stats, collections, badges tab with filter, airports map; the airport map and signed-in views still to see on your iPhone)
 - [x] Milestone 7: social (7a to 7f are merged and deployed; still to try on your iPhone with two accounts: People, Feed, comments, reports, the rules screen and photos)

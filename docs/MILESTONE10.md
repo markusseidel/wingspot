@@ -72,3 +72,24 @@ supabase secrets set APPLE_SIWA_KEY="$(cat ~/Downloads/AuthKey_XXXXXXXXXX.p8)" A
 4. Try it with a new test account: sign in with Apple, delete the account, then check iPhone Settings > Apple Account > Sign in with Apple. Wingspot should be gone from the list.
 
 Never paste the key into chat or commit it.
+
+## App Review access and report alerts
+
+**Demo account for App Review.** The app has magic-link sign-in only, which a reviewer without access to a mailbox can't use. So the sign-in screen has a small "Sign in with a password" row that works for the demo account only (nobody else has a password).
+
+- `backend/scripts/seed-review-account.sh` creates or resets the account `review@wingspot.site` (username `appreview`), a second user `planepal` it follows both ways, four check-ins, two comments and two salutes. Run it with the password in the environment, never in the repo:
+
+```bash
+DEMO_PASSWORD='choose-a-long-password' backend/scripts/seed-review-account.sh --remote
+```
+
+  Run it again to reset the account after the reviewer deleted it. `--local` seeds the local stack for trying it.
+- Put the email and password in App Store Connect > App Review Information > Sign-in required. In the notes, say the password row is on the sign-in screen, that Sign in with Apple also works, and how to report, block and delete an account.
+
+**Report alerts.** A new row in `reports` posts a message to a chat webhook (Slack, Discord or Mattermost style), so a report is seen within the 24 hours the rules promise. One-time setup in the Supabase SQL editor or with `supabase db query --remote --yes`:
+
+```sql
+select vault.create_secret('https://hooks.slack.com/services/...', 'report_webhook_url');
+```
+
+Without the secret nothing is called, and a failing webhook never stops a report from being saved. To read the reports: `select * from reports where status = 'open'`. To remove content: delete the check-in or comment, then set the report's status to `done`.
