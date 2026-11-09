@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Wingspot</string>
+    <string name="sign_in_title">Anmelden</string>
+    <string name="email_label">E-Mail-Adresse</string>
+    <string name="send_link">Link senden</string>
+    <string name="sign_in_hint">Wir schicken dir einen Link zum Anmelden. Du brauchst kein Passwort.</string>
+    <string name="check_email_title">Prüfe dein E-Mail-Postfach</string>
+    <string name="check_email_body">Wir haben einen Link an %1$s geschickt. Öffne ihn auf diesem Handy, um dich anzumelden.</string>
+    <string name="use_other_email">Andere E-Mail-Adresse verwenden</string>
+    <string name="signed_in_as">Angemeldet als %1$s</string>
+    <string name="sign_out">Abmelden</string>
+    <string name="error_invalid_email">Bitte gib eine gültige E-Mail-Adresse ein.</string>
+    <string name="error_invalid_link">Dieser Anmeldelink funktioniert nicht mehr. Bitte fordere auf diesem Handy einen neuen an.</string>
+    <string name="error_too_many">Zu viele Versuche. Bitte warte kurz und versuche es erneut.</string>
+    <string name="error_offline">Du bist offline. Bitte verbinde dich mit dem Internet und versuche es erneut.</string>
+    <string name="error_unknown">Etwas ist schiefgelaufen. Bitte versuche es erneut.</string>
+    <string name="scan_title">Bordkarten-Leser</string>
+    <string name="scan_hint">Füge den Text eines Bordkarten-Barcodes ein. Name und Buchungscode werden nie angezeigt oder gespeichert.</string>
+    <string name="barcode_label">Barcode-Text</string>
+    <string name="read_pass">Lesen</string>
+    <string name="scan_failed">Das sieht nicht nach einer Bordkarte aus.</string>
+    <string name="leg_line">%1$s nach %2$s, %3$s %4$s, %5$s</string>
+    <string name="seat_line">Sitz %1$s</string>
+    <string name="registration_title">Kennzeichen prüfen</string>
+    <string name="registration_label">Kennzeichen</string>
+    <string name="registration_valid">%1$s (%2$s)</string>
+    <string name="registration_invalid">Noch kein gültiges Kennzeichen</string>
+</resources>
