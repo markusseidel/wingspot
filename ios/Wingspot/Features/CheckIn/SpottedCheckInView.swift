@@ -33,7 +33,7 @@ struct SpottedCheckInView: View {
     var body: some View {
         Group {
             if let result {
-                CheckInResultView(result: result, onAnother: reset, onDone: onDone)
+                CheckInResultView(result: result, airportID: airport?.id, onAnother: reset, onDone: onDone)
             } else {
                 form
             }

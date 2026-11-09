@@ -30,7 +30,7 @@ Everything respects the access rules already in place: a check-in shows only to 
 ## 11d. Registration page (needs a migration; built)
 
 - Search accepts a registration such as D-AIPC. `get_registration_checkins(registration, ...)` returns the visible check-ins of that aircraft. A sensitive aircraft is neither found nor shown to anyone but its owner, and a registration nobody may see gives the same answer as one that doesn't exist.
-- Page: registration, type, your sightings, recent check-ins. Opens from a search that looks like a registration ("Look up D-AIPC", the server decides whether it exists) and from a spotted feed card. Matching ignores case, hyphens and spaces. A sensitive aircraft shows each person only their own check-ins. Not done: a link from the check-in result screen to the airport page.
+- Page: registration, type, your sightings, recent check-ins. Opens from a search that looks like a registration ("Look up D-AIPC", the server decides whether it exists) and from a spotted feed card. Matching ignores case, hyphens and spaces. A sensitive aircraft shows each person only their own check-ins. The check-in result screen of a spotted check-in links to the airport page when an airport is set.
 
 ## 11e. Map (built)
 
