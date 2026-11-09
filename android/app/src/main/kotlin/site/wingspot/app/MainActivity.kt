@@ -9,15 +9,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 
 class MainActivity : ComponentActivity() {
-    private val model: AppViewModel by viewModels { AppViewModel.factory(applicationContext) }
-    private val reference: ReferenceViewModel by viewModels { ReferenceViewModel.factory(applicationContext) }
+    private val model: AppViewModel by viewModels { AppViewModel.factory(application as WingspotApp) }
+    private val checkIn: CheckInViewModel by viewModels { CheckInViewModel.factory(application as WingspotApp) }
+    private val reference: ReferenceViewModel by viewModels { ReferenceViewModel.factory(application as WingspotApp) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handle(intent)
+        OutboxWorker.schedule(applicationContext) // sends whatever was left from last time
         setContent {
             MaterialTheme {
-                Surface { AppScreen(model, reference) }
+                Surface { AppScreen(model, reference, checkIn) }
             }
         }
     }

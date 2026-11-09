@@ -34,4 +34,21 @@
     <string name="nothing_found">Nichts gefunden</string>
     <string name="airports">Flughäfen</string>
     <string name="aircraft_types">Flugzeugtypen</string>
+    <string name="check_in">Einchecken</string>
+    <string name="spotted_title">Gesichtet</string>
+    <string name="registration_or_type">Gib ein Kennzeichen ein, oder wähle einen Typ, wenn du es nicht lesen konntest.</string>
+    <string name="type_label">Flugzeugtyp</string>
+    <string name="airport_label">Flughafen</string>
+    <string name="clear">Entfernen</string>
+    <string name="save">Speichern</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="first_time">Zum ersten Mal gesehen!</string>
+    <string name="seen_again">Zum %1$d. Mal gesehen</string>
+    <string name="last_time">Zuletzt am %1$s</string>
+    <string name="check_in_another">Noch einen einchecken</string>
+    <string name="done">Fertig</string>
+    <string name="recent_title">Deine Check-ins</string>
+    <string name="state_pending">Wartet auf Upload</string>
+    <string name="state_synced">Hochgeladen</string>
+    <string name="state_rejected">Nicht akzeptiert</string>
 </resources>

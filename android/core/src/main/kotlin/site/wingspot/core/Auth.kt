@@ -83,6 +83,15 @@ class SupabaseAuth(
         call(Request.Builder().url(url).post(body.toString().toRequestBody(jsonType))) { }
     }
 
+    /** Trades the refresh token for a new session. */
+    suspend fun refresh(refreshToken: String): Session {
+        val url = "$base/auth/v1/token".toHttpUrl().newBuilder().addQueryParameter("grant_type", "refresh_token").build()
+        val body = buildJsonObject { put("refresh_token", refreshToken) }
+        return call(Request.Builder().url(url).post(body.toString().toRequestBody(jsonType))) { text ->
+            json.decodeFromString(Session.serializer(), text)
+        }
+    }
+
     /** Finishes sign-in from the link the phone was opened with, `wingspot://auth-callback?code=...`. */
     suspend fun completeSignIn(callback: String, pkce: Pkce): Session {
         val code = queryParameter(callback, "code") ?: throw AuthException.InvalidLink

@@ -21,8 +21,12 @@ class SessionStore(context: Context) {
     fun save(session: Session) {
         prefs.edit()
             .putString("access", session.accessToken).putString("refresh", session.refreshToken)
-            .putString("user_id", session.user.id).putString("email", session.user.email).apply()
+            .putString("user_id", session.user.id).putString("email", session.user.email)
+            .putLong("expires_at", System.currentTimeMillis() + session.expiresIn * 1000).apply()
     }
+
+    /** True when the access token is gone or has less than a minute left. A session saved without a time counts as expired. */
+    fun expiresSoon(): Boolean = prefs.getLong("expires_at", 0) - System.currentTimeMillis() < 60_000
 
     fun clear() = prefs.edit().clear().apply()
 

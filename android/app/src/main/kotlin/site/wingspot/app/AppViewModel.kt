@@ -1,6 +1,5 @@
 package site.wingspot.app
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -24,7 +23,11 @@ data class AppState(
     val error: Int? = null,
 )
 
-class AppViewModel(private val store: SessionStore, private val auth: SupabaseAuth) : ViewModel() {
+class AppViewModel(
+    private val store: SessionStore,
+    private val auth: SupabaseAuth,
+    private val onSignedIn: () -> Unit,
+) : ViewModel() {
     private val mutable = MutableStateFlow(AppState(session = store.load()))
     val state: StateFlow<AppState> = mutable.asStateFlow()
 
@@ -54,6 +57,7 @@ class AppViewModel(private val store: SessionStore, private val auth: SupabaseAu
                 val session = auth.completeSignIn(link, Pkce.fromVerifier(verifier))
                 store.save(session)
                 mutable.value = AppState(session = session)
+                onSignedIn()
             } catch (e: AuthException) {
                 mutable.value = mutable.value.copy(error = message(e))
             }
@@ -78,10 +82,8 @@ class AppViewModel(private val store: SessionStore, private val auth: SupabaseAu
     }
 
     companion object {
-        fun factory(context: Context): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                AppViewModel(SessionStore(context), SupabaseAuth(BuildConfig.SUPABASE_URL, BuildConfig.PUBLISHABLE_KEY))
-            }
+        fun factory(app: WingspotApp): ViewModelProvider.Factory = viewModelFactory {
+            initializer { AppViewModel(app.sessions, app.auth) { OutboxWorker.schedule(app) } }
         }
     }
 }

@@ -38,15 +38,25 @@ import site.wingspot.core.BoardingPass
 import site.wingspot.core.Registration
 
 @Composable
-fun AppScreen(model: AppViewModel, reference: ReferenceViewModel) {
+fun AppScreen(model: AppViewModel, reference: ReferenceViewModel, checkIn: CheckInViewModel) {
     val state by model.state.collectAsState()
     val refState by reference.state.collectAsState()
+    val checkInState by checkIn.state.collectAsState()
     Column(
         Modifier.fillMaxSize().safeDrawingPadding().padding(horizontal = 16.dp).verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Spacer(Modifier.height(24.dp))
+        if (checkInState.isOpen) {
+            CheckInScreen(checkInState, refState, checkIn)
+            return@Column
+        }
         val session = state.session
+        Button(onClick = checkIn::open, modifier = Modifier.fillMaxWidth().testTag("open-check-in")) {
+            Text(stringResource(R.string.check_in))
+        }
+        RecentCheckIns(checkInState.recent)
+        HorizontalDivider()
         when {
             session != null -> SignedIn(session.user.email ?: session.user.id, model::signOut)
             state.sentTo != null -> CheckEmail(state.sentTo!!, model::useOtherEmail)
