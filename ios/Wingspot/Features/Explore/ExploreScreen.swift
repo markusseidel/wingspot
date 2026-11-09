@@ -32,6 +32,10 @@ struct ExploreScreen: View {
                 }
             }
             .navigationTitle("Explore")
+            .toolbar {
+                NavigationLink { ExploreMapView() } label: { Image(systemName: "map") }
+                    .accessibilityLabel("Map")
+            }
             .searchable(
                 text: $query, placement: .navigationBarDrawer(displayMode: .always),
                 prompt: "Search people, airports and aircraft"

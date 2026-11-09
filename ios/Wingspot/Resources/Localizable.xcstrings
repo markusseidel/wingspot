@@ -3342,6 +3342,91 @@
           }
         }
       }
+    },
+    "No airports to show" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Flughäfen zum Anzeigen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No airports to show"
+          }
+        }
+      }
+    },
+    "Busy airports and the ones you checked in at appear here." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier erscheinen viel besuchte Flughäfen und die, an denen du eingecheckt hast."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Busy airports and the ones you checked in at appear here."
+          }
+        }
+      }
+    },
+    "Couldn't load the busy airports. Check your connection." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die gefragten Flughäfen konnten nicht geladen werden. Prüfe deine Verbindung."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't load the busy airports. Check your connection."
+          }
+        }
+      }
+    },
+    "Yours" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yours"
+          }
+        }
+      }
+    },
+    "Map" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karte"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Map"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
