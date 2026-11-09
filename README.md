@@ -21,6 +21,7 @@ The iOS app is in TestFlight (version 0.2.0). Android is planned.
 | [docs/TODO.md](docs/TODO.md) | Milestone status and open tasks |
 | [docs/MILESTONE11.md](docs/MILESTONE11.md) | Plan for the Explore (Entdecken) tab |
 | [docs/MILESTONE10.md](docs/MILESTONE10.md) | Plan for push notifications |
+| [docs/ANDROID.md](docs/ANDROID.md) | Concept, effort and costs for an Android app |
 | [docs/TESTFLIGHT.md](docs/TESTFLIGHT.md) | TestFlight texts, App Review notes, App Privacy answers |
 | [docs/MILESTONE7.md](docs/MILESTONE7.md) | Plan for the social features |
 | [docs/BADGES.md](docs/BADGES.md) | The launch badges and their rules |
