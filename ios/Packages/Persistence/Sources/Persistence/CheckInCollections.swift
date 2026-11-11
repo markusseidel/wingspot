@@ -43,7 +43,7 @@ public struct CheckInCollections: Equatable, Sendable {
             if let code = checkIn.typeICAO {
                 add(code, title: code, subtitle: checkIn.typeName, at: checkIn.occurredAt, to: &types)
             }
-            // A flight's airports don't count, as in the stats.
+            // A flight has no airport of its own. Its two airports are check-ins of their own.
             if checkIn.kind != "flown", let code = checkIn.airportCode {
                 add(code, title: code, subtitle: nil, at: checkIn.occurredAt, to: &airports)
             }

@@ -109,7 +109,13 @@ private func state(_ context: ModelContext, _ id: UUID) throws -> LocalCheckIn {
 
         _ = await CheckInOutbox(context: context, uploader: server).sync(userID: alice)
 
-        let item = try #require(await server.sent.first)
+        let sent = await server.sent
+        // The flight and a check-in at each of its two airports.
+        #expect(sent.count == 3)
+        let airports = sent.filter { $0.kind == "airport" }
+        #expect(Set(airports.compactMap(\.airportID)) == [3, 7])
+        #expect(Set(airports.compactMap(\.context)) == ["departing", "arriving"])
+        let item = try #require(sent.first { $0.kind == "flown" })
         #expect(item.kind == "flown")
         #expect(item.originID == 3)
         #expect(item.destinationID == 7)

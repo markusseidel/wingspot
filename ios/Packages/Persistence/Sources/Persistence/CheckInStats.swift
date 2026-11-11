@@ -11,7 +11,7 @@ public struct CheckInStats: Equatable, Sendable {
     public var aircraft = 0
     /// Different aircraft types, from sightings and flights.
     public var types = 0
-    /// The airports checked in at, by spotting or visiting. A flight's airports don't count, as on the server.
+    /// The airports checked in at, by spotting or visiting, including the two airports a flight checks in.
     public var airportIDs = Set<Int>()
     public var airports: Int { airportIDs.count }
 
