@@ -51,6 +51,7 @@ struct FeedScreen: View {
                 }
             }
             .navigationTitle("Feed")
+            .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(item: $commentsFor) { CommentsView(item: $0) }
             .navigationDestination(item: $personToOpen) { PersonLoaderView(id: $0.id) }
             .sheet(item: $report) { ReportSheet(target: $0) }
