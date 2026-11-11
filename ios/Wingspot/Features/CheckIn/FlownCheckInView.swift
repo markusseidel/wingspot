@@ -30,6 +30,8 @@ struct FlownCheckInView: View {
     @State private var origin: Airport?
     @State private var destination: Airport?
     @State private var date = Date()
+    /// The year the app guessed for a scanned boarding pass, which has a day but no year.
+    @State private var assumedYear: Int?
     @State private var flightNumber = ""
     @State private var registrationInput = ""
     @State private var type: AircraftType?
@@ -139,6 +141,8 @@ struct FlownCheckInView: View {
                     }
                 } else if origin != nil, origin?.id == destination?.id {
                     Text("Choose two different airports.")
+                } else if let assumedYear, Calendar.current.component(.year, from: date) == assumedYear {
+                    Text("A boarding pass has the day but not the year, so Wingspot used \(String(assumedYear)). If the flight was in an earlier year, change the date.")
                 }
             }
 
@@ -236,7 +240,10 @@ struct FlownCheckInView: View {
             destination = to
             flightNumber = leg.carrier + leg.flightNumber
             seat = leg.seat ?? ""
-            if let flightDate = leg.flightDate(near: Date()) { date = min(flightDate, Date()) }
+            if let flightDate = leg.flightDate(near: Date()) {
+                date = min(flightDate, Date())
+                assumedYear = Calendar.current.component(.year, from: date)
+            }
         }
     }
 
