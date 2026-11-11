@@ -16,53 +16,14 @@ struct FeedScreen: View {
 
     var body: some View {
         NavigationStack {
-            Group {
-                if account.userID == nil {
-                    ContentUnavailableView {
-                        Label("Your feed", systemImage: "list.bullet.rectangle")
-                    } description: {
-                        Text("Sign in from the Profile tab to see check-ins from people you follow.")
-                    }
-                } else if !terms.hasAccepted {
-                    TermsScreen { terms.accept() }
-                } else if !feed.hasLoaded {
-                    if let failure = feed.failure {
-                        ContentUnavailableView {
-                            Label("Couldn't load your feed", systemImage: "wifi.slash")
-                        } description: {
-                            Text(failure.message)
-                        } actions: {
-                            Button("Try again") { Task { await feed.refresh() } }
-                        }
-                    } else {
-                        ProgressView()
-                    }
-                } else if feed.items.isEmpty {
-                    ContentUnavailableView {
-                        Label("Your feed is empty", systemImage: "list.bullet.rectangle")
-                    } description: {
-                        Text("Check-ins from you and the people you follow appear here. Your check-ins show once they are uploaded and shared.")
-                    } actions: {
-                        NavigationLink("Find people") { PeopleView() }
-                            .buttonStyle(.borderedProminent)
-                    }
-                } else {
-                    list
-                }
+            VStack(spacing: 0) {
+                header
+                content
             }
-            .navigationTitle("Feed")
-            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(item: $commentsFor) { CommentsView(item: $0) }
             .navigationDestination(item: $personToOpen) { PersonLoaderView(id: $0.id) }
             .sheet(item: $report) { ReportSheet(target: $0) }
-            .toolbar {
-                if account.userID != nil, terms.hasAccepted {
-                    NavigationLink { PeopleView() } label: {
-                        Image(systemName: "person.badge.plus")
-                    }
-                    .accessibilityLabel("Find people")
-                }
-            }
         }
         .task(id: account.userID) {
             if account.userID == nil {
@@ -73,6 +34,62 @@ struct FeedScreen: View {
             await openPushDestination()
         }
         .onChange(of: router.destination) { Task { await openPushDestination() } }
+    }
+
+    /// The large "Feed" title, drawn here so it sits right under the status bar.
+    private var header: some View {
+        HStack {
+            Text("Feed")
+                .font(.largeTitle.bold())
+                .accessibilityAddTraits(.isHeader)
+            Spacer()
+            if account.userID != nil, terms.hasAccepted {
+                NavigationLink { PeopleView() } label: {
+                    Image(systemName: "person.badge.plus").font(.title3)
+                }
+                .accessibilityLabel("Find people")
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 4)
+        .padding(.bottom, 6)
+    }
+
+    @ViewBuilder private var content: some View {
+        Group {
+            if account.userID == nil {
+                ContentUnavailableView {
+                    Label("Your feed", systemImage: "list.bullet.rectangle")
+                } description: {
+                    Text("Sign in from the Profile tab to see check-ins from people you follow.")
+                }
+            } else if !terms.hasAccepted {
+                TermsScreen { terms.accept() }
+            } else if !feed.hasLoaded {
+                if let failure = feed.failure {
+                    ContentUnavailableView {
+                        Label("Couldn't load your feed", systemImage: "wifi.slash")
+                    } description: {
+                        Text(failure.message)
+                    } actions: {
+                        Button("Try again") { Task { await feed.refresh() } }
+                    }
+                } else {
+                    ProgressView()
+                }
+            } else if feed.items.isEmpty {
+                ContentUnavailableView {
+                    Label("Your feed is empty", systemImage: "list.bullet.rectangle")
+                } description: {
+                    Text("Check-ins from you and the people you follow appear here. Your check-ins show once they are uploaded and shared.")
+                } actions: {
+                    NavigationLink("Find people") { PeopleView() }
+                        .buttonStyle(.borderedProminent)
+                }
+            } else {
+                list
+            }
+        }
     }
 
     /// Opens what a tapped notification points at. If the check-in isn't in the feed, the feed stays as it is.
