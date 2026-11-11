@@ -55,6 +55,7 @@
 		C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A035100ED13735493AF7BF1 /* LocationProvider.swift */; };
 		CCB6285BC5F2D2D0C2D23BAD /* PeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A6E9C03029947E148B9EBB /* PeopleView.swift */; };
 		CF3807277F1FDA241609254C /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 5B2EB62437C5BE2130BABF23 /* Persistence */; };
+		D42859E57A7C92F579D0B015 /* TabHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BCA5440AA98EA8FE6080DA /* TabHeader.swift */; };
 		D85287110D33AEDB2AE2653E /* PushSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578259FF97F6C378ABA27E94 /* PushSupport.swift */; };
 		D866E9760B084CDB160CA4D5 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */; };
 		E2E45560E0A3701D1C226A90 /* CelebrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A9D215092A1385FA8E52D3A /* CelebrationView.swift */; };
@@ -85,6 +86,7 @@
 		5CABAD3AAA0CB6C6317A73DE /* PersonDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonDetailView.swift; sourceTree = "<group>"; };
 		5D8FB2291C9A4A75529A9461 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5E3C8DE707D5FBC441F2A0A4 /* AirportsMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirportsMapView.swift; sourceTree = "<group>"; };
+		60BCA5440AA98EA8FE6080DA /* TabHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabHeader.swift; sourceTree = "<group>"; };
 		626F450EEAB4D94771419C27 /* Account */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Account; path = Packages/Account; sourceTree = SOURCE_ROOT; };
 		65CF500EAA7D99B499377459 /* BCBP */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BCBP; path = Packages/BCBP; sourceTree = SOURCE_ROOT; };
 		6CA53E0B6C7D19C0B128FFE6 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 		3BDC1570A716DBB398F81241 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				60BCA5440AA98EA8FE6080DA /* TabHeader.swift */,
 				35AC3558947BFD2E26464CD0 /* Account */,
 				83302189B26D2355EEC08AA7 /* Badges */,
 				1EC26DAEA056854F28F4B7EE /* CheckIn */,
@@ -462,6 +465,7 @@
 				4427FE8EDAE09F2B68624303 /* ShareSheet.swift in Sources */,
 				27F83E299CBA8188CF0AA61F /* SharingSection.swift in Sources */,
 				F9804A44218F27F9FAC0B571 /* SpottedCheckInView.swift in Sources */,
+				D42859E57A7C92F579D0B015 /* TabHeader.swift in Sources */,
 				8724536D4B58E82924192AC3 /* TermsGate.swift in Sources */,
 				BADA46EC74996E2BE6DDA8FF /* TypePageView.swift in Sources */,
 				63920812D725A2EE33A89EC1 /* WingspotApp.swift in Sources */,
