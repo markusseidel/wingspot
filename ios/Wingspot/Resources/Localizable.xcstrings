@@ -3614,6 +3614,23 @@
           }
         }
       }
+    },
+    "Close" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schließen"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

@@ -60,6 +60,7 @@
 		E2E45560E0A3701D1C226A90 /* CelebrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A9D215092A1385FA8E52D3A /* CelebrationView.swift */; };
 		E480FE0DE9DC4CBB55FFD70B /* ExploreMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB50BDD1D3F4FB1EB8B8007 /* ExploreMapView.swift */; };
 		E743B21C623831BB31024A48 /* AirportCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E539BCC329B1D95E5DE61344 /* AirportCheckInView.swift */; };
+		EEB0DF0826C0ED40A0D1D6D3 /* PhotoViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CF16D48D79F1F5F3E7EBA1 /* PhotoViewer.swift */; };
 		F9804A44218F27F9FAC0B571 /* SpottedCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CBBBAF8DD8DAC4FD7390E9 /* SpottedCheckInView.swift */; };
 		FCE2BFC52E897A29214244A2 /* LegalLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34AD8F064D9FF554BEEE6EF /* LegalLinks.swift */; };
 /* End PBXBuildFile section */
@@ -91,6 +92,7 @@
 		6FD2433D565B1E9974F334CA /* ProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileScreen.swift; sourceTree = "<group>"; };
 		769842784C2049C177DB02CD /* PersonCheckInsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonCheckInsSection.swift; sourceTree = "<group>"; };
 		76B04C14C68A65FD24C0D6DD /* WingspotCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = WingspotCore; path = Packages/WingspotCore; sourceTree = SOURCE_ROOT; };
+		79CF16D48D79F1F5F3E7EBA1 /* PhotoViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewer.swift; sourceTree = "<group>"; };
 		7A9D215092A1385FA8E52D3A /* CelebrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrationView.swift; sourceTree = "<group>"; };
 		82163058748258D0AE08F801 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		828B639D7292CFD9B11324B0 /* APICheckInUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICheckInUploader.swift; sourceTree = "<group>"; };
@@ -226,6 +228,7 @@
 			children = (
 				C6BDEE682A100CD8CE752944 /* CommentsView.swift */,
 				ACC6390EE07C2061FC444960 /* FeedScreen.swift */,
+				79CF16D48D79F1F5F3E7EBA1 /* PhotoViewer.swift */,
 			);
 			path = Feed;
 			sourceTree = "<group>";
@@ -447,6 +450,7 @@
 				44D09702BD9AEBE667B05854 /* PersonCheckInsSection.swift in Sources */,
 				13A3F8B8C6248C62D540A996 /* PersonDetailView.swift in Sources */,
 				96D09D7A0351104460703E5B /* PhotoSection.swift in Sources */,
+				EEB0DF0826C0ED40A0D1D6D3 /* PhotoViewer.swift in Sources */,
 				0937BA0BF1EBF4732DA23138 /* ProfileEditorView.swift in Sources */,
 				A08C4CA8904388F960BBA71F /* ProfileScreen.swift in Sources */,
 				D85287110D33AEDB2AE2653E /* PushSupport.swift in Sources */,
