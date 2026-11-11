@@ -36,15 +36,16 @@ private func all(_ context: ModelContext) throws -> [LocalCheckIn] {
     _ = try store.saveFlown(FlownDraft(origin: fra, destination: jfk, type: b744))
 
     let stats = CheckInStats(try all(context), userID: nil)
-    #expect(stats.checkIns == 5)
+    // The flight adds a check-in at each of its airports.
+    #expect(stats.checkIns == 7)
     #expect(stats.sightings == 3)
-    #expect(stats.airportVisits == 1)
+    #expect(stats.airportVisits == 3)
     #expect(stats.flights == 1)
     #expect(stats.aircraft == 2)
     #expect(stats.types == 2)
-    // FRA and DUS. The flight's JFK doesn't count.
-    #expect(stats.airports == 2)
-    #expect(stats.airportIDs == [3, 7])
+    // FRA and DUS, and JFK from the flight.
+    #expect(stats.airports == 3)
+    #expect(stats.airportIDs == [3, 7, 9])
 }
 
 @MainActor @Test func anotherAccountsAndRejectedCheckInsAreLeftOut() throws {
@@ -76,9 +77,9 @@ private func all(_ context: ModelContext) throws -> [LocalCheckIn] {
     #expect(lists.aircraft.first?.subtitle == "Airbus A380-800")
     #expect(lists.aircraft.first?.lastSeen == Date(timeIntervalSince1970: 3_000))
     #expect(lists.types.map(\.title) == ["A388", "B744"])
-    // The flight's FRA and JFK are not counted.
-    #expect(lists.airports.map(\.title) == ["FRA", "DUS"])
-    #expect(lists.airports.first?.count == 2)
+    // The flight's FRA and JFK count as visits. FRA has two sightings and the flight.
+    #expect(lists.airports.map(\.title) == ["FRA", "JFK", "DUS"])
+    #expect(lists.airports.first?.count == 3)
 }
 
 @MainActor @Test func collectionsLeaveOutRefusedAndOtherAccountsCheckIns() throws {

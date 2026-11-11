@@ -224,7 +224,7 @@ public struct CheckInStore {
         return AirportResult(id: id, code: draft.code, history: .visitedBefore(count: earlier.count + 1, lastVisit: last.occurredAt))
     }
 
-    /// Saves a flight locally. `date` is the day of the flight.
+    /// Saves a flight locally, plus an airport check-in for each end of it. `date` is the day of the flight.
     public func saveFlown(_ draft: FlownDraft, ownerID: UUID? = nil, at date: Date = Date()) throws -> FlownResult {
         guard draft.origin.airportID != draft.destination.airportID else { throw CheckInError.sameAirport }
         let from = draft.origin.airportID
@@ -244,6 +244,14 @@ public struct CheckInStore {
             seat: draft.seat?.isEmpty ?? true ? nil : draft.seat?.uppercased()
         ))
         insertPhoto(draft.photo, for: id, at: date)
+        // The airports are checked in too, so they count as visited and show on the airport pages.
+        for (airport, visit) in [(draft.origin, VisitContext.departing), (draft.destination, .arriving)] {
+            context.insert(LocalCheckIn(
+                id: UUID.v7(at: date), kind: "airport", registration: nil, typeICAO: nil, typeName: nil,
+                airportID: airport.airportID, airportCode: airport.code, latitude: nil, longitude: nil,
+                occurredAt: date, syncState: .pending, ownerID: ownerID, visitContext: visit.rawValue
+            ))
+        }
         try context.save()
         return FlownResult(
             id: id, route: "\(draft.origin.code) → \(draft.destination.code)", distanceKm: draft.distanceKm,
