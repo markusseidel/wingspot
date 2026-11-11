@@ -28,7 +28,7 @@ Only you can do these, because they need your accounts, money or judgement.
 - [x] Switch on Sign in with Apple in Supabase: Authentication > Sign In / Providers > Apple. Enable it and enter `site.wingspot.ios` as the Client ID. The iPhone app needs no Services ID or key. Those are only for sign-in on the web and on Android (Phase 2b)
 - [x] Test Sign in with Apple on your iPhone with the next TestFlight build, including signing out and in again. The name field in the profile setup should be prefilled with your Apple name
 - [x] Add `wingspot://auth-callback` to the redirect URLs in Supabase's Auth settings on hosted (before testing sign-in on hosted)
-- [ ] Publish a privacy policy and Impressum on `wingspot.site`, in German and English (before Milestone 9)
+- [ ] Publish a privacy policy and Impressum on `wingspot.site`, in German and English (before Milestone 9). Then set `LegalLinks.pagesAreLive = true` in `ios/Wingspot/Features/Settings/LegalLinks.swift`: the app hides the legal links until then, and App Review needs them
 - [ ] Create Google sign-in credentials (after the first TestFlight)
 
 ### First TestFlight install on your iPhone

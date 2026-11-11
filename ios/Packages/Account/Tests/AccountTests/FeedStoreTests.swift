@@ -457,3 +457,31 @@ private func item(_ n: Int) -> FeedItem {
     #expect(await backend.typeRequests.isEmpty)
     #expect(store.hasLoaded)
 }
+
+@Suite struct FlightGroupingTests {
+    private let user = UUID()
+    private let time = Date(timeIntervalSince1970: 1_700_000_000)
+
+    private func item(_ kind: String, at date: Date? = nil, airport: String? = nil, from: String? = nil, to: String? = nil, user: UUID? = nil) -> FeedItem {
+        FeedItem(
+            id: UUID(), userID: user ?? self.user, username: "u", kind: kind, occurredAt: date ?? time,
+            airportCode: airport, originCode: from, destinationCode: to
+        )
+    }
+
+    @Test func theAirportsOfAListedFlightAreLeftOut() {
+        let flight = item("flown", from: "FRA", to: "JFK")
+        let list = [item("airport", airport: "JFK"), item("airport", airport: "FRA"), flight]
+        #expect(list.withoutAirportsOfListedFlights() == [flight])
+    }
+
+    @Test func otherAirportCheckInsStay() {
+        let other = item("airport", at: time.addingTimeInterval(3_600), airport: "FRA")
+        let someoneElse = item("airport", airport: "FRA", user: UUID())
+        let list = [item("flown", from: "FRA", to: "JFK"), other, someoneElse, item("airport", airport: "MUC")]
+        let kept = list.withoutAirportsOfListedFlights()
+        #expect(kept.contains(other))
+        #expect(kept.contains(someoneElse))
+        #expect(kept.count == 4)
+    }
+}
