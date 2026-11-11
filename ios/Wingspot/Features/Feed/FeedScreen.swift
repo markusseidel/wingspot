@@ -127,6 +127,7 @@ struct FeedCard: View {
     let onComments: () -> Void
     let onReport: () -> Void
     let onReportPhoto: (FeedPhoto) -> Void
+    @State private var viewing: FeedPhoto?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -196,6 +197,7 @@ struct FeedCard: View {
             .padding(.top, 2)
         }
         .padding(.vertical, 4)
+        .fullScreenCover(item: $viewing) { PhotoViewer(photos: photos, start: $0) }
     }
 
     private var photoStrip: some View {
@@ -216,6 +218,9 @@ struct FeedCard: View {
                     .background(.quaternary)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .accessibilityLabel("Photo")
+                    .accessibilityAddTraits(.isButton)
+                    .contentShape(RoundedRectangle(cornerRadius: 10))
+                    .onTapGesture { viewing = photo }
                     .contextMenu {
                         if !isOwn {
                             Button("Report photo", systemImage: "flag") { onReportPhoto(photo) }
