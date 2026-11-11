@@ -3648,6 +3648,23 @@
           }
         }
       }
+    },
+    "A boarding pass has the day but not the year, so Wingspot used %@. If the flight was in an earlier year, change the date." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A boarding pass has the day but not the year, so Wingspot used %@. If the flight was in an earlier year, change the date."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Boardingpass enthält den Tag, aber nicht das Jahr. Wingspot hat %@ angenommen. Wenn der Flug in einem früheren Jahr war, ändere das Datum."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
