@@ -89,13 +89,14 @@ struct FeedScreen: View {
     }
 
     private var list: some View {
-        List {
+        let visible = feed.items.withoutAirportsOfListedFlights()
+        return List {
             if let failure = feed.failure {
                 Label(failure.message, systemImage: "exclamationmark.triangle")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
-            ForEach(feed.items) { item in
+            ForEach(visible) { item in
                 FeedCard(
                     item: item, isOwn: item.userID == account.userID, photos: feed.photos[item.id] ?? [],
                     onSalute: { Task { await feed.toggleSalute(item.id) } },
@@ -105,7 +106,7 @@ struct FeedScreen: View {
                 )
                     .task {
                         // Close to the end: ask for older check-ins.
-                        if item.id == feed.items.dropLast(5).last?.id || item.id == feed.items.last?.id {
+                        if item.id == visible.dropLast(5).last?.id || item.id == visible.last?.id {
                             await feed.loadMore()
                         }
                     }

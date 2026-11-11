@@ -462,3 +462,27 @@ public final class FeedStore {
         return page.filter { seen.insert($0.id).inserted }
     }
 }
+
+extension Array where Element == FeedItem {
+    /// A flight checks in its two airports at the same moment. Those airport cards add nothing next to the flight,
+    /// so the feed leaves them out while the flight is on show.
+    public func withoutAirportsOfListedFlights() -> [FeedItem] {
+        var flightEnds = Set<FlightEnd>()
+        for item in self where item.kind == "flown" {
+            for code in [item.originCode, item.destinationCode].compactMap({ $0 }) {
+                flightEnds.insert(FlightEnd(user: item.userID, time: item.occurredAt, code: code))
+            }
+        }
+        guard !flightEnds.isEmpty else { return self }
+        return filter { item in
+            guard item.kind == "airport", let code = item.airportCode else { return true }
+            return !flightEnds.contains(FlightEnd(user: item.userID, time: item.occurredAt, code: code))
+        }
+    }
+}
+
+private struct FlightEnd: Hashable {
+    let user: UUID
+    let time: Date
+    let code: String
+}

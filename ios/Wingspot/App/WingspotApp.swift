@@ -88,6 +88,7 @@ struct WingspotApp: App {
                 .task { await referenceData.prepare() }
                 .task { await loadRemoteConfig() }
                 .task {
+                    Self.addAirportsToEarlierFlights(in: modelContainer)
                     await account.start()
                     badges.begin(userID: account.userID)
                     sync.requestSync()
@@ -150,6 +151,15 @@ struct WingspotApp: App {
             return UnconfiguredAccountBackend()
         }
         return SupabaseAccountBackend(url: url, publishableKey: key)
+    }
+
+    /// Once: flights saved before a flight checked in its airports get those check-ins.
+    private static func addAirportsToEarlierFlights(in container: ModelContainer) {
+        let key = "flightAirportsAdded"
+        guard !UserDefaults.standard.bool(forKey: key) else { return }
+        if (try? FlightAirportBackfill(context: container.mainContext).run()) != nil {
+            UserDefaults.standard.set(true, forKey: key)
+        }
     }
 
     private func loadRemoteConfig() async {
