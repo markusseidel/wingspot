@@ -16,11 +16,13 @@ struct FeedScreen: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                header
-                content
+            content
+            .tabHeader("Feed") {
+                if account.userID != nil, terms.hasAccepted {
+                    NavigationLink { PeopleView() } label: { Image(systemName: "person.badge.plus") }
+                        .accessibilityLabel("Find people")
+                }
             }
-            .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(item: $commentsFor) { CommentsView(item: $0) }
             .navigationDestination(item: $personToOpen) { PersonLoaderView(id: $0.id) }
             .sheet(item: $report) { ReportSheet(target: $0) }
@@ -34,25 +36,6 @@ struct FeedScreen: View {
             await openPushDestination()
         }
         .onChange(of: router.destination) { Task { await openPushDestination() } }
-    }
-
-    /// The large "Feed" title, drawn here so it sits right under the status bar.
-    private var header: some View {
-        HStack {
-            Text("Feed")
-                .font(.largeTitle.bold())
-                .accessibilityAddTraits(.isHeader)
-            Spacer()
-            if account.userID != nil, terms.hasAccepted {
-                NavigationLink { PeopleView() } label: {
-                    Image(systemName: "person.badge.plus").font(.title3)
-                }
-                .accessibilityLabel("Find people")
-            }
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 4)
-        .padding(.bottom, 6)
     }
 
     @ViewBuilder private var content: some View {

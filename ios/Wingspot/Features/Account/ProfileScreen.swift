@@ -26,7 +26,7 @@ struct ProfileScreen: View {
                     ProfileDetailsView(profile: profile)
                 }
             }
-            .navigationTitle("Profile")
+            .tabHeader("Profile")
             .navigationDestination(isPresented: $isSigningIn) {
                 EmailSignInView()
             }

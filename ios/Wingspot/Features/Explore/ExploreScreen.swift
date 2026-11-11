@@ -23,29 +23,44 @@ struct ExploreScreen: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                if isSearching {
-                    results
-                } else {
-                    NearbyAirportsSection()
-                    if canSearchPeople { BusyAirportsSection() }
+            VStack(spacing: 0) {
+                searchField
+                List {
+                    if isSearching {
+                        results
+                    } else {
+                        NearbyAirportsSection()
+                        if canSearchPeople { BusyAirportsSection() }
+                    }
                 }
             }
-            .navigationTitle("Explore")
-            .toolbar {
+            .tabHeader("Explore") {
                 NavigationLink { ExploreMapView() } label: { Image(systemName: "map") }
                     .accessibilityLabel("Map")
             }
-            .searchable(
-                text: $query, placement: .navigationBarDrawer(displayMode: .always),
-                prompt: "Search people, airports and aircraft"
-            )
-            .textInputAutocapitalization(.never)
-            .autocorrectionDisabled()
             .task(id: SearchKey(text: trimmed, dataVersion: referenceData.database?.dataVersion, people: canSearchPeople)) {
                 await search()
             }
         }
+    }
+
+    private var searchField: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
+            TextField("Search people, airports and aircraft", text: $query)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .submitLabel(.search)
+            if !query.isEmpty {
+                Button { query = "" } label: { Image(systemName: "xmark.circle.fill") }
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabel("Clear")
+            }
+        }
+        .padding(10)
+        .background(.background.secondary, in: .rect(cornerRadius: 12))
+        .padding(.horizontal, 20)
+        .padding(.bottom, 8)
     }
 
     private struct SearchKey: Hashable {

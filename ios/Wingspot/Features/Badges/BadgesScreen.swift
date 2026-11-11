@@ -34,7 +34,7 @@ struct BadgesScreen: View {
                     ProgressView()
                 }
             }
-            .navigationTitle("Badges")
+            .tabHeader("Badges")
         }
         .task(id: account.userID) { await badges.refresh() }
     }
