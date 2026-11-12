@@ -470,7 +470,7 @@ describe("POST /v1/checkins", () => {
     await upload(alice, [flight]);
     const plane = registration();
     const fixed = { ...flight, registration: plane, type_icao: TYPE, flight_number: "lh400", seat: "3a",
-      origin_id: AIRPORT_2, visibility: "private" };
+      origin_id: AIRPORT_2, destination_id: AIRPORT, visibility: "private" };
     assert.equal((await upload(alice, [fixed])).body.results[0].status, "stored");
     const rows = await stored(flight.id);
     assert.equal(rows.length, 1);

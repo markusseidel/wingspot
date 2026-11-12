@@ -1176,7 +1176,6 @@
       }
     },
     "Details" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1288,7 +1287,6 @@
       }
     },
     "Edit details" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1299,7 +1297,6 @@
       }
     },
     "Edit flight" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1826,7 +1823,6 @@
       }
     },
     "Look up the aircraft on Flightradar24" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1837,7 +1833,6 @@
       }
     },
     "Look up the flight on Flightradar24" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2356,7 +2351,6 @@
       }
     },
     "Opens Flightradar24 in your browser. Nothing from Wingspot is sent there." : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
