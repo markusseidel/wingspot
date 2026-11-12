@@ -63,6 +63,7 @@
 		E743B21C623831BB31024A48 /* AirportCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E539BCC329B1D95E5DE61344 /* AirportCheckInView.swift */; };
 		EEB0DF0826C0ED40A0D1D6D3 /* PhotoViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CF16D48D79F1F5F3E7EBA1 /* PhotoViewer.swift */; };
 		F9804A44218F27F9FAC0B571 /* SpottedCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CBBBAF8DD8DAC4FD7390E9 /* SpottedCheckInView.swift */; };
+		FCBB4985FC51D2F3A7B55D66 /* FlownEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346D15D5FD800AAFC82408CF /* FlownEditView.swift */; };
 		FCE2BFC52E897A29214244A2 /* LegalLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34AD8F064D9FF554BEEE6EF /* LegalLinks.swift */; };
 /* End PBXBuildFile section */
 
@@ -76,6 +77,7 @@
 		181278D0BAEE1C7A36510BCE /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		2A600D9AC1C5768A9B274FA0 /* ReferenceData */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ReferenceData; path = Packages/ReferenceData; sourceTree = SOURCE_ROOT; };
 		2EEAE6B7A1B3E5CE0F43789E /* Wingspot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Wingspot.entitlements; sourceTree = "<group>"; };
+		346D15D5FD800AAFC82408CF /* FlownEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlownEditView.swift; sourceTree = "<group>"; };
 		3A82AC64122C34A3DE053C4F /* PhotoSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSection.swift; sourceTree = "<group>"; };
 		41CBBBAF8DD8DAC4FD7390E9 /* SpottedCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpottedCheckInView.swift; sourceTree = "<group>"; };
 		4459DE5C40C01B9A974864C6 /* CheckInHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInHistoryView.swift; sourceTree = "<group>"; };
@@ -231,6 +233,7 @@
 			children = (
 				C6BDEE682A100CD8CE752944 /* CommentsView.swift */,
 				ACC6390EE07C2061FC444960 /* FeedScreen.swift */,
+				346D15D5FD800AAFC82408CF /* FlownEditView.swift */,
 				79CF16D48D79F1F5F3E7EBA1 /* PhotoViewer.swift */,
 			);
 			path = Feed;
@@ -444,6 +447,7 @@
 				AFF3D1B625E8CD51404538CD /* ExploreScreen.swift in Sources */,
 				B9781CFA9DE1264E690E8F1B /* FeedScreen.swift in Sources */,
 				5EFAD640812D73C675B33326 /* FlownCheckInView.swift in Sources */,
+				FCBB4985FC51D2F3A7B55D66 /* FlownEditView.swift in Sources */,
 				FCE2BFC52E897A29214244A2 /* LegalLinks.swift in Sources */,
 				C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */,
 				2E4689A87246BCE2846B568F /* NetworkMonitor.swift in Sources */,
