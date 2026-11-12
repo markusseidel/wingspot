@@ -166,6 +166,23 @@
         }
       }
     },
+    "A boarding pass has the day but not the year, so Wingspot used %@. If the flight was in an earlier year, change the date." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Boardingpass enthält den Tag, aber nicht das Jahr. Wingspot hat %@ angenommen. Wenn der Flug in einem früheren Jahr war, ändere das Datum."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A boarding pass has the day but not the year, so Wingspot used %@. If the flight was in an earlier year, change the date."
+          }
+        }
+      }
+    },
     "A file with your profile, check-ins and everything else we store about you. Photos are listed, not included." : {
       "localizations" : {
         "de" : {
@@ -223,6 +240,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A388, Boeing 737, CRJ900"
+          }
+        }
+      }
+    },
+    "About" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Über Wingspot"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About"
           }
         }
       }
@@ -517,12 +551,46 @@
         }
       }
     },
+    "Busy airports and the ones you checked in at appear here." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier erscheinen viel besuchte Flughäfen und die, an denen du eingecheckt hast."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Busy airports and the ones you checked in at appear here."
+          }
+        }
+      }
+    },
     "Busy this week" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Viel los diese Woche"
+          }
+        }
+      }
+    },
+    "By signing in you accept the terms of use and the privacy policy." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit der Anmeldung akzeptierst du die Nutzungsbedingungen und die Datenschutzerklärung."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By signing in you accept the terms of use and the privacy policy."
           }
         }
       }
@@ -738,6 +806,40 @@
         }
       }
     },
+    "Clear" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Löschen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear"
+          }
+        }
+      }
+    },
+    "Close" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schließen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        }
+      }
+    },
     "Collect aircraft types, airlines and airports as you go." : {
       "localizations" : {
         "de" : {
@@ -799,6 +901,23 @@
         }
       }
     },
+    "Contact" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kontakt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contact"
+          }
+        }
+      }
+    },
     "Continue" : {
       "localizations" : {
         "de" : {
@@ -835,6 +954,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Daten konnten nicht exportiert werden"
+          }
+        }
+      }
+    },
+    "Couldn't load the busy airports. Check your connection." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die gefragten Flughäfen konnten nicht geladen werden. Prüfe deine Verbindung."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't load the busy airports. Check your connection."
           }
         }
       }
@@ -1039,6 +1175,16 @@
         }
       }
     },
+    "Details" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Details"
+          }
+        }
+      }
+    },
     "Details (optional)" : {
       "localizations" : {
         "de" : {
@@ -1136,6 +1282,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Economy"
+          }
+        }
+      }
+    },
+    "Edit details" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Details bearbeiten"
+          }
+        }
+      }
+    },
+    "Edit flight" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flug bearbeiten"
           }
         }
       }
@@ -1510,6 +1676,23 @@
         }
       }
     },
+    "Imprint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impressum"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imprint"
+          }
+        }
+      }
+    },
     "In progress" : {
       "localizations" : {
         "de" : {
@@ -1618,6 +1801,60 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Halte jedes Flugzeug fest"
+          }
+        }
+      }
+    },
+    "Look up %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ nachschlagen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Look up %@"
+          }
+        }
+      }
+    },
+    "Look up the aircraft on Flightradar24" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flugzeug auf Flightradar24 nachschlagen"
+          }
+        }
+      }
+    },
+    "Look up the flight on Flightradar24" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flug auf Flightradar24 nachschlagen"
+          }
+        }
+      }
+    },
+    "Map" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karte"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Map"
           }
         }
       }
@@ -1768,6 +2005,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kein Flughafen"
+          }
+        }
+      }
+    },
+    "No airports to show" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Flughäfen zum Anzeigen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No airports to show"
           }
         }
       }
@@ -2032,6 +2286,40 @@
         }
       }
     },
+    "Only check-ins you are allowed to see are shown." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es werden nur Check-ins angezeigt, die du sehen darfst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only check-ins you are allowed to see are shown."
+          }
+        }
+      }
+    },
+    "Only for the demo account used by App Review. Everyone else signs in with a link or Sign in with Apple." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur für das Demokonto des App-Reviews. Alle anderen melden sich mit einem Link oder mit Apple an."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only for the demo account used by App Review. Everyone else signs in with a link or Sign in with Apple."
+          }
+        }
+      }
+    },
     "Only me" : {
       "localizations" : {
         "de" : {
@@ -2062,6 +2350,16 @@
         }
       }
     },
+    "Opens Flightradar24 in your browser. Nothing from Wingspot is sent there." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffnet Flightradar24 im Browser. Wingspot sendet dorthin nichts."
+          }
+        }
+      }
+    },
     "Optional" : {
       "localizations" : {
         "de" : {
@@ -2078,6 +2376,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Optional. Wird in deinem Profil angezeigt."
+          }
+        }
+      }
+    },
+    "Password" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passwort"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Password"
           }
         }
       }
@@ -2158,6 +2473,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Privatsphäre"
+          }
+        }
+      }
+    },
+    "Privacy policy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datenschutzerklärung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy policy"
           }
         }
       }
@@ -2404,6 +2736,23 @@
         }
       }
     },
+    "See this airport" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Flughafen ansehen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See this airport"
+          }
+        }
+      }
+    },
     "Seen for the %@ time" : {
       "localizations" : {
         "de" : {
@@ -2584,6 +2933,23 @@
         }
       }
     },
+    "Sign in with a password" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Passwort anmelden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign in with a password"
+          }
+        }
+      }
+    },
     "Sign in with email" : {
       "localizations" : {
         "de" : {
@@ -2684,6 +3050,23 @@
         }
       }
     },
+    "Terms of use" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nutzungsbedingungen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terms of use"
+          }
+        }
+      }
+    },
     "Thank you. We'll look at your report." : {
       "localizations" : {
         "de" : {
@@ -2700,6 +3083,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Die Flughafendaten sind noch nicht auf diesem iPhone. Öffne die App einmal mit Internetverbindung."
+          }
+        }
+      }
+    },
+    "The email or password is wrong." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die E-Mail-Adresse oder das Passwort ist falsch."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The email or password is wrong."
           }
         }
       }
@@ -2851,6 +3251,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mitteilungen einschalten"
+          }
+        }
+      }
+    },
+    "Type" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Typ"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
           }
         }
       }
@@ -3105,6 +3522,23 @@
         }
       }
     },
+    "You haven't seen this aircraft yet." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast dieses Flugzeug noch nicht gesehen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You haven't seen this aircraft yet."
+          }
+        }
+      }
+    },
     "You haven't seen this type yet." : {
       "localizations" : {
         "de" : {
@@ -3245,6 +3679,23 @@
         }
       }
     },
+    "Yours" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yours"
+          }
+        }
+      }
+    },
     "this check-in" : {
       "localizations" : {
         "de" : {
@@ -3271,397 +3722,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "dieses Foto"
-          }
-        }
-      }
-    },
-    "Look up %@" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ nachschlagen"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Look up %@"
-          }
-        }
-      }
-    },
-    "You haven't seen this aircraft yet." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast dieses Flugzeug noch nicht gesehen."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You haven't seen this aircraft yet."
-          }
-        }
-      }
-    },
-    "Only check-ins you are allowed to see are shown." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Es werden nur Check-ins angezeigt, die du sehen darfst."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Only check-ins you are allowed to see are shown."
-          }
-        }
-      }
-    },
-    "Type" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Typ"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Type"
-          }
-        }
-      }
-    },
-    "No airports to show" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keine Flughäfen zum Anzeigen"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No airports to show"
-          }
-        }
-      }
-    },
-    "Busy airports and the ones you checked in at appear here." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hier erscheinen viel besuchte Flughäfen und die, an denen du eingecheckt hast."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Busy airports and the ones you checked in at appear here."
-          }
-        }
-      }
-    },
-    "Couldn't load the busy airports. Check your connection." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die gefragten Flughäfen konnten nicht geladen werden. Prüfe deine Verbindung."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couldn't load the busy airports. Check your connection."
-          }
-        }
-      }
-    },
-    "Yours" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yours"
-          }
-        }
-      }
-    },
-    "Map" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Karte"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Map"
-          }
-        }
-      }
-    },
-    "See this airport" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diesen Flughafen ansehen"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "See this airport"
-          }
-        }
-      }
-    },
-    "Privacy policy" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Datenschutzerklärung"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Privacy policy"
-          }
-        }
-      }
-    },
-    "Terms of use" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nutzungsbedingungen"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terms of use"
-          }
-        }
-      }
-    },
-    "Imprint" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Impressum"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Imprint"
-          }
-        }
-      }
-    },
-    "Contact" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kontakt"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Contact"
-          }
-        }
-      }
-    },
-    "About" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Über Wingspot"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "About"
-          }
-        }
-      }
-    },
-    "By signing in you accept the terms of use and the privacy policy." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit der Anmeldung akzeptierst du die Nutzungsbedingungen und die Datenschutzerklärung."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "By signing in you accept the terms of use and the privacy policy."
-          }
-        }
-      }
-    },
-    "The email or password is wrong." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die E-Mail-Adresse oder das Passwort ist falsch."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The email or password is wrong."
-          }
-        }
-      }
-    },
-    "Sign in with a password" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit Passwort anmelden"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sign in with a password"
-          }
-        }
-      }
-    },
-    "Only for the demo account used by App Review. Everyone else signs in with a link or Sign in with Apple." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nur für das Demokonto des App-Reviews. Alle anderen melden sich mit einem Link oder mit Apple an."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Only for the demo account used by App Review. Everyone else signs in with a link or Sign in with Apple."
-          }
-        }
-      }
-    },
-    "Password" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Passwort"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Password"
-          }
-        }
-      }
-    },
-    "Clear" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Clear"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Löschen"
-          }
-        }
-      }
-    },
-    "Close" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Close"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Schließen"
-          }
-        }
-      }
-    },
-    "A boarding pass has the day but not the year, so Wingspot used %@. If the flight was in an earlier year, change the date." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A boarding pass has the day but not the year, so Wingspot used %@. If the flight was in an earlier year, change the date."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ein Boardingpass enthält den Tag, aber nicht das Jahr. Wingspot hat %@ angenommen. Wenn der Flug in einem früheren Jahr war, ändere das Datum."
           }
         }
       }

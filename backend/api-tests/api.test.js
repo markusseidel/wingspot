@@ -462,6 +462,26 @@ describe("POST /v1/checkins", () => {
     assert.equal((await stored(mine.id))[0].user_id, alice.id);
   });
 
+  test("sending your own check-in again corrects its aircraft and flight details, nothing else", async () => {
+    const flight = item({
+      kind: "flown", origin_id: AIRPORT, destination_id: AIRPORT_2, registration: undefined, type_icao: undefined,
+      visibility: "public",
+    });
+    await upload(alice, [flight]);
+    const plane = registration();
+    const fixed = { ...flight, registration: plane, type_icao: TYPE, flight_number: "lh400", seat: "3a",
+      origin_id: AIRPORT_2, destination_id: AIRPORT, visibility: "private" };
+    assert.equal((await upload(alice, [fixed])).body.results[0].status, "stored");
+    const rows = await stored(flight.id);
+    assert.equal(rows.length, 1);
+    assert.equal(rows[0].type_icao, TYPE);
+    assert.equal(rows[0].flight_number, "LH400");
+    assert.equal(rows[0].seat, "3A");
+    assert.ok(rows[0].aircraft_id, "the registration is linked");
+    assert.equal(rows[0].origin_id, AIRPORT, "the route stays");
+    assert.equal(rows[0].visibility, "public", "the sharing stays");
+  });
+
   test("a bad item is rejected and the rest of the batch is stored", async () => {
     const good = item();
     const cases = [

@@ -1,4 +1,6 @@
 import Account
+import Persistence
+import SwiftData
 import SwiftUI
 import WingspotCore
 
@@ -11,6 +13,12 @@ struct FeedScreen: View {
     @Environment(TermsStore.self) private var terms
     @Environment(PushRouter.self) private var router
     @State private var personToOpen: OpenPerson?
+    @Environment(CheckInSyncCoordinator.self) private var sync: CheckInSyncCoordinator?
+    /// The flights saved on this device. Only these can be edited, because the details are sent from here.
+    @Query(filter: #Predicate<LocalCheckIn> { $0.kind == "flown" }) private var localFlights: [LocalCheckIn]
+    @State private var editing: EditedFlight?
+
+    private struct EditedFlight: Identifiable { let id: UUID }
 
     private struct OpenPerson: Identifiable, Hashable { let id: UUID }
 
@@ -26,6 +34,14 @@ struct FeedScreen: View {
             .navigationDestination(item: $commentsFor) { CommentsView(item: $0) }
             .navigationDestination(item: $personToOpen) { PersonLoaderView(id: $0.id) }
             .sheet(item: $report) { ReportSheet(target: $0) }
+            .sheet(item: $editing) { flight in
+                FlownEditView(flightID: flight.id) {
+                    Task {
+                        await sync?.waitUntilIdle()
+                        await feed.refresh()
+                    }
+                }
+            }
         }
         .task(id: account.userID) {
             if account.userID == nil {
@@ -90,6 +106,7 @@ struct FeedScreen: View {
 
     private var list: some View {
         let visible = feed.items.withoutAirportsOfListedFlights()
+        let editable = Set(localFlights.map(\.id))
         return List {
             if let failure = feed.failure {
                 Label(failure.message, systemImage: "exclamationmark.triangle")
@@ -102,7 +119,8 @@ struct FeedScreen: View {
                     onSalute: { Task { await feed.toggleSalute(item.id) } },
                     onComments: { commentsFor = item },
                     onReport: { report = ReportTarget(kind: .checkin, id: item.id, subject: "this check-in") },
-                    onReportPhoto: { report = ReportTarget(kind: .photo, id: $0.id, subject: "this photo") }
+                    onReportPhoto: { report = ReportTarget(kind: .photo, id: $0.id, subject: "this photo") },
+                    onEdit: item.userID == account.userID && editable.contains(item.id) ? { editing = EditedFlight(id: item.id) } : nil
                 )
                     .task {
                         // Close to the end: ask for older check-ins.
@@ -128,6 +146,8 @@ struct FeedCard: View {
     let onComments: () -> Void
     let onReport: () -> Void
     let onReportPhoto: (FeedPhoto) -> Void
+    /// Set for your own flights that can be edited.
+    var onEdit: (() -> Void)?
     @State private var viewing: FeedPhoto?
 
     var body: some View {
@@ -144,9 +164,13 @@ struct FeedCard: View {
                 Text(item.occurredAt, format: .relative(presentation: .named))
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                if !isOwn {
+                if !isOwn || onEdit != nil {
                     Menu {
-                        Button("Report", systemImage: "flag", action: onReport)
+                        if let onEdit {
+                            Button("Edit details", systemImage: "pencil", action: onEdit)
+                        } else {
+                            Button("Report", systemImage: "flag", action: onReport)
+                        }
                     } label: {
                         Image(systemName: "ellipsis").padding(.leading, 6)
                     }

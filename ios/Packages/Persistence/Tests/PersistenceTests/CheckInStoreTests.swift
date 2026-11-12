@@ -134,3 +134,28 @@ private let dus = SpottedDraft.Place(airportID: 7, code: "DUS")
     }
     #expect(try context.fetchCount(FetchDescriptor<LocalCheckIn>()) == 0)
 }
+
+@MainActor @Test func aFlightCanGetItsAircraftLaterAndIsSentAgain() throws {
+    let context = try makeContext()
+    let store = CheckInStore(context: context)
+    let result = try store.saveFlown(FlownDraft(origin: SpottedDraft.Place(airportID: 3, code: "FRA"), destination: SpottedDraft.Place(airportID: 9, code: "JFK")))
+    let flight = try #require(try context.fetch(FetchDescriptor<LocalCheckIn>()).first { $0.id == result.id })
+    flight.syncState = SyncState.synced.rawValue
+
+    let type = SpottedDraft.AircraftTypeChoice(icaoCode: "A388", name: "Airbus A380-800")
+    #expect(try store.updateFlown(id: result.id, registration: Registration("DAIMA"), type: type, flightNumber: "lh 400", cabin: .economy, seat: " 12a "))
+
+    #expect(flight.registration == "D-AIMA")
+    #expect(flight.typeICAO == "A388")
+    #expect(flight.typeName == "Airbus A380-800")
+    #expect(flight.flightNumber == "LH400")
+    #expect(flight.cabin == CabinClass.economy.rawValue)
+    #expect(flight.seat == "12A")
+    #expect(flight.syncState == SyncState.pending.rawValue)
+    #expect(flight.originCode == "FRA")
+}
+
+@MainActor @Test func editingAFlightThisDeviceDoesNotHaveChangesNothing() throws {
+    let context = try makeContext()
+    #expect(try CheckInStore(context: context).updateFlown(id: UUID(), registration: nil, type: nil, flightNumber: nil, cabin: nil, seat: nil) == false)
+}

@@ -259,6 +259,30 @@ public struct CheckInStore {
         )
     }
 
+    /// Corrects the details of a saved flight and sends them again. The route, the day and the photos stay as they were.
+    /// Returns `false` when this device has no such flight, for example one made on another device.
+    @discardableResult
+    public func updateFlown(
+        id: UUID, registration: Registration?, type: SpottedDraft.AircraftTypeChoice?, flightNumber: String?,
+        cabin: CabinClass?, seat: String?
+    ) throws -> Bool {
+        let matches = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id && $0.kind == "flown" }))
+        guard let flight = matches.first else { return false }
+        let number = flightNumber?.filter { !$0.isWhitespace }.uppercased()
+        let seat = seat?.trimmingCharacters(in: .whitespaces).uppercased()
+        flight.registration = registration?.value
+        flight.typeICAO = type?.icaoCode
+        flight.typeName = type?.name
+        flight.flightNumber = (number?.isEmpty ?? true) ? nil : number
+        flight.cabin = cabin?.rawValue
+        flight.seat = (seat?.isEmpty ?? true) ? nil : seat
+        // The server takes the corrected details when the flight is sent again.
+        flight.syncState = SyncState.pending.rawValue
+        flight.syncError = nil
+        try context.save()
+        return true
+    }
+
     /// Saved together with the check-in, so a photo never exists without it.
     private func insertPhoto(_ photo: PreparedPhoto?, for checkInID: UUID, at date: Date) {
         guard let photo else { return }
