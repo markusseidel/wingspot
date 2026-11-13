@@ -24,6 +24,18 @@ private actor FakePushBackend: PushBackend {
         if let failure { throw failure }
         saved.append(prefs)
     }
+
+    var rules: [AlertRule] = []
+    private(set) var savedRules: [AlertRule] = []
+    func setRules(_ rules: [AlertRule]) { self.rules = rules }
+    func alertRules(of me: UUID) throws -> [AlertRule] {
+        if let failure { throw failure }
+        return rules
+    }
+    func saveAlertRule(_ rule: AlertRule, as me: UUID) throws {
+        if let failure { throw failure }
+        savedRules.append(rule)
+    }
 }
 
 private final class FakeSystem: PushSystem, @unchecked Sendable {
@@ -188,4 +200,41 @@ private let token = Data([0xAB, 0x01, 0xFF])
     await store.setPrefs(NotificationPrefs(newFollowers: false, salutes: false, comments: true))
     #expect(store.prefs?.newFollowers == true, "back to what the server has")
     #expect(store.failure != nil)
+}
+
+private let anna = UUID()
+
+@MainActor @Test func alertsForOnePersonAreSwitchedOnAndOffAndSaved() async {
+    let backend = FakePushBackend()
+    let store = makeStore(backend, FakeSystem(status: .allowed))
+    #expect(!store.alertRule(for: anna).isOn)
+
+    await store.setAlert(.flown, on: true, for: anna)
+    await store.setAlert(.spotted, on: true, for: anna)
+    #expect(store.alertRule(for: anna).flown && store.alertRule(for: anna).spotted && !store.alertRule(for: anna).airport)
+    #expect(await backend.savedRules.last == AlertRule(target: anna, spotted: true, flown: true))
+
+    await store.setAlert(.flown, on: false, for: anna)
+    await store.setAlert(.spotted, on: false, for: anna)
+    #expect(store.alertRules[anna] == nil, "a rule with every switch off is dropped")
+    #expect(await backend.savedRules.last?.isOn == false, "and the server is told, so it removes the row")
+}
+
+@MainActor @Test func aRefusedAlertGoesBack() async {
+    let backend = FakePushBackend()
+    let store = makeStore(backend, FakeSystem(status: .allowed))
+    await backend.fail(.unknown)
+    await store.setAlert(.airport, on: true, for: anna)
+    #expect(!store.alertRule(for: anna).isOn)
+    #expect(store.failure != nil)
+}
+
+@MainActor @Test func theAlertsAreLoadedWithNames() async {
+    let backend = FakePushBackend()
+    await backend.setRules([AlertRule(target: anna, spotted: true, username: "anna", displayName: "Anna B.")])
+    let store = makeStore(backend, FakeSystem(status: .allowed))
+    await store.loadAlertRules()
+    #expect(store.alertRules[anna]?.displayName == "Anna B.")
+    store.clear()
+    #expect(store.alertRules.isEmpty)
 }

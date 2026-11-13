@@ -39,6 +39,7 @@ struct PersonDetailView: View {
                 }
             }
             .disabled(isWorking)
+            if person.isFollowing { PersonAlertsSection(person: person) }
             PersonCheckInsSection(person: person)
             Section {
                 Button("Report") {

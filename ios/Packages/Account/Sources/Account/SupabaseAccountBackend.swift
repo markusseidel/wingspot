@@ -742,17 +742,87 @@ extension SupabaseAccountBackend: PushBackend {
     public func notificationPrefs(of me: UUID) async throws -> NotificationPrefs {
         try await socialErrors {
             let row: PrefsRow = try await client.from("notification_prefs")
-                .select("new_followers, salutes, comments").eq("user_id", value: me).single().execute().value
-            return NotificationPrefs(newFollowers: row.newFollowers, salutes: row.salutes, comments: row.comments)
+                .select("new_followers, salutes, comments, followed_checkins").eq("user_id", value: me).single().execute().value
+            return NotificationPrefs(
+                newFollowers: row.newFollowers, salutes: row.salutes, comments: row.comments,
+                followedCheckins: row.followedCheckins
+            )
         }
     }
 
     public func setNotificationPrefs(_ prefs: NotificationPrefs, as me: UUID) async throws {
         try await socialErrors {
             _ = try await client.from("notification_prefs")
-                .update(PrefsRow(newFollowers: prefs.newFollowers, salutes: prefs.salutes, comments: prefs.comments), returning: .minimal)
+                .update(
+                    PrefsRow(
+                        newFollowers: prefs.newFollowers, salutes: prefs.salutes, comments: prefs.comments,
+                        followedCheckins: prefs.followedCheckins
+                    ),
+                    returning: .minimal
+                )
                 .eq("user_id", value: me).execute()
         }
+    }
+
+    public func alertRules(of me: UUID) async throws -> [AlertRule] {
+        try await socialErrors {
+            let rows: [AlertRuleRow] = try await client.from("notification_rules")
+                .select("target, spotted, flown, airport, profiles!notification_rules_target_fkey(username, display_name)")
+                .eq("watcher", value: me).execute().value
+            return rows.map { $0.rule }
+        }
+    }
+
+    public func saveAlertRule(_ rule: AlertRule, as me: UUID) async throws {
+        try await socialErrors {
+            if rule.isOn {
+                _ = try await client.from("notification_rules")
+                    .upsert(AlertRuleWrite(watcher: me, rule: rule), onConflict: "watcher,target", returning: .minimal).execute()
+            } else {
+                _ = try await client.from("notification_rules").delete(returning: .minimal)
+                    .eq("watcher", value: me).eq("target", value: rule.target).execute()
+            }
+        }
+    }
+}
+
+private struct AlertRuleWrite: Encodable {
+    let watcher: UUID
+    let target: UUID
+    let spotted: Bool
+    let flown: Bool
+    let airport: Bool
+
+    init(watcher: UUID, rule: AlertRule) {
+        self.watcher = watcher
+        target = rule.target
+        spotted = rule.spotted
+        flown = rule.flown
+        airport = rule.airport
+    }
+}
+
+private struct AlertRuleRow: Decodable {
+    struct Person: Decodable {
+        let username: String
+        let displayName: String?
+        private enum CodingKeys: String, CodingKey {
+            case username
+            case displayName = "display_name"
+        }
+    }
+
+    let target: UUID
+    let spotted: Bool
+    let flown: Bool
+    let airport: Bool
+    let profiles: Person?
+
+    var rule: AlertRule {
+        AlertRule(
+            target: target, spotted: spotted, flown: flown, airport: airport,
+            username: profiles?.username, displayName: profiles?.displayName
+        )
     }
 }
 
@@ -760,10 +830,12 @@ private struct PrefsRow: Codable {
     let newFollowers: Bool
     let salutes: Bool
     let comments: Bool
+    let followedCheckins: Bool
 
     private enum CodingKeys: String, CodingKey {
         case salutes, comments
         case newFollowers = "new_followers"
+        case followedCheckins = "followed_checkins"
     }
 }
 

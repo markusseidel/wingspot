@@ -132,6 +132,8 @@ struct NotificationsSection: View {
                     Toggle("New followers", isOn: binding(prefs, \.newFollowers))
                     Toggle("Salutes", isOn: binding(prefs, \.salutes))
                     Toggle("Comments", isOn: binding(prefs, \.comments))
+                    Toggle("Check-ins of people you follow", isOn: binding(prefs, \.followedCheckins))
+                    NavigationLink("People you get alerts from") { AlertRulesView() }
                     Button("Hide the text until unlocked") {
                         if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
                     }

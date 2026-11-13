@@ -21,6 +21,7 @@
 		2419BA1DA1B17C761D9D0036 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62A4921DD7585EFD9F3F97A /* SettingsView.swift */; };
 		27F83E299CBA8188CF0AA61F /* SharingSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995610FFAC434B480B981139 /* SharingSection.swift */; };
 		2E4689A87246BCE2846B568F /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82163058748258D0AE08F801 /* NetworkMonitor.swift */; };
+		3450A879ADAE02CB4E496D96 /* AlertRulesViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29AD035B27FB3BE30BCB737 /* AlertRulesViews.swift */; };
 		34EDCAD11D0A2B6F135DD128 /* RegistrationPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB0A4D42441D44A92BC24E5 /* RegistrationPageView.swift */; };
 		39383DB2983A80C96D05EA39 /* ReferenceSearchViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */; };
 		3C72654BC1F78F3B175048F2 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA53E0B6C7D19C0B128FFE6 /* OnboardingView.swift */; };
@@ -107,6 +108,7 @@
 		9EEF8DEDA274D745C08605EB /* ReportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSheet.swift; sourceTree = "<group>"; };
 		A0AEFDA7AFD99199BC8AC184 /* TermsGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsGate.swift; sourceTree = "<group>"; };
 		A1C3026B7554DE42D34613B0 /* TypePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypePageView.swift; sourceTree = "<group>"; };
+		A29AD035B27FB3BE30BCB737 /* AlertRulesViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertRulesViews.swift; sourceTree = "<group>"; };
 		A47349EC0A6768BA0A1C2F6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A62A4921DD7585EFD9F3F97A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A96EA4033E2C1D21ED547E17 /* APIProgressSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIProgressSource.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 		3A150143D00E3075C09F69A7 /* Push */ = {
 			isa = PBXGroup;
 			children = (
+				A29AD035B27FB3BE30BCB737 /* AlertRulesViews.swift */,
 				578259FF97F6C378ABA27E94 /* PushSupport.swift */,
 			);
 			path = Push;
@@ -431,6 +434,7 @@
 				E743B21C623831BB31024A48 /* AirportCheckInView.swift in Sources */,
 				5BF02F7F79B326015B808389 /* AirportPageView.swift in Sources */,
 				4644DCAB019919C64F9372FD /* AirportsMapView.swift in Sources */,
+				3450A879ADAE02CB4E496D96 /* AlertRulesViews.swift in Sources */,
 				9A3659845BE545C339AE2055 /* AppleSignInButton.swift in Sources */,
 				8A1E836A067C7D670EE85441 /* BadgeStyle.swift in Sources */,
 				A28B1AFC7227F94265B0AF01 /* BadgesScreen.swift in Sources */,
@@ -569,7 +573,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -627,7 +631,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
