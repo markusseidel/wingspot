@@ -530,6 +530,7 @@ C500,Cessna,500/Citation I,,jet,2,L
 C501,Cessna,1SP,,jet,2,L
 C510,Cessna,Citation Mustang,,jet,2,L
 C525,Cessna,CitationJet/CJ1,,jet,2,L
+C526,Cessna,526 CitationJet,,jet,2,L
 C550,Cessna,Citation II/Bravo,,jet,2,L
 C551,Cessna,Citation II/SP,,jet,2,L
 C55B,Cessna,Citation Bravo,,jet,2,L
@@ -664,6 +665,7 @@ COL3,Cessna,Lancair LC-40 Columbia 300,,piston,1,L
 COL4,Cessna,Lancair LC-41 Columbia 400,,piston,1,L
 COLT,Texas Aircraft,Colt,,piston,1,L
 COMU,Helicom,H-1 Commuter,,helicopter,1,L
+CONC,Aérospatiale-BAC,Concorde,,jet,4,H
 CONI,Lockheed,C-121 Constellation,,piston,4,M
 COOT,Aerocad,Coot,,piston,1,L
 CORO,Corvus,CA-21 Phantom,,piston,1,L
@@ -1390,6 +1392,7 @@ KLBR,Kolb,King Kolbra,,piston,1,L
 KM2,Fuji,KM-2,,piston,1,L
 KMAX,Kaman,K-1200 K-Max,,helicopter,1,L
 KNTW,Payne,Knight Twister,,piston,1,L
+KODI,Quest,Kodiak 100,,turboprop,1,L
 KOLL,Kolb,Laser,,piston,1,L
 KP2,Jihlavan,KP-2 Rapid 200,,piston,1,L
 KP5,Jihlavan,KP-5 Rapid 500,,piston,1,L

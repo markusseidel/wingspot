@@ -318,6 +318,13 @@ class FaaAircraftTypesTests(unittest.TestCase):
         self.assertEqual(len(conflicts["wtc"]), 1)
         self.assertEqual(report["spreadsheet_not_in_order"], ["XTRA"])
 
+    def test_writes_a_type_the_order_lacks_when_its_override_is_complete(self):
+        with self.overrides.open("a", encoding="utf-8") as file:
+            file.write("CONC,Aérospatiale-BAC,Concorde,,jet,4,H\nHALF,Some,Partial,,,,\n")
+        rows, _ = self.generate()
+        self.assertEqual((rows["CONC"]["model"], rows["CONC"]["engine_count"], rows["CONC"]["wtc"]), ("Concorde", "4", "H"))
+        self.assertNotIn("HALF", rows)
+
     def test_needs_appendix_a(self):
         with self.assertRaisesRegex(faa_aircraft_types.InputError, "Appendix A not found"):
             faa_aircraft_types.generate("nothing", self.overrides, self.families, {})

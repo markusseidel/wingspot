@@ -115,7 +115,7 @@ In this order:
 - [ ] Publish the 2,699 aircraft types, after ICAO answers. Import into Postgres first, then publish the snapshot
 - [ ] Fix maker names with wrong capitals, such as `AIR Tractor` and `NEW Zealand`
 - [ ] Review about 214 model names that use a military-style prefix
-- [ ] Add the missing types `CONC` (Concorde), `C526` and `KODI`. This needs a small generator change
+- [x] Add the missing types `CONC` (Concorde), `C526` and `KODI` (complete override rows are now written even if the order lacks them)
 - [ ] Decide on family labels: `777` in the data, `B777` in the concept
 - [ ] Curate the remaining type names, as needed
 

@@ -207,6 +207,16 @@ def generate(text: str, overrides_path: Path, families_path: Path, spreadsheet: 
             continue
         output.append(result)
 
+    # Types the order lacks (Concorde, for one) are written when their override row is complete.
+    for code, override in sorted(overrides.items()):
+        if code in parsed:
+            continue
+        row = {column: override.get(column, "") for column in OUTPUT_COLUMNS}
+        row["family"] = row["family"] or families.get(code, {}).get("family", "")
+        if row["manufacturer"] and row["model"] and row["engine_type"] and row["engine_count"] and row["wtc"]:
+            output.append(row)
+    output.sort(key=lambda r: r["icao_code"])
+
     report = _report(output, parsed, problems, overrides, families, spreadsheet, no_name, undecided)
     return output, report
 
