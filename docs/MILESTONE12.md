@@ -1,4 +1,6 @@
-# Milestone 12: Check-in page and alerts for people you follow (plan)
+# Milestone 12: Check-in page and alerts for people you follow
+
+Status: 12a to 12d are built and merged on iOS and Android. The migrations up to `20261114100000` and the `checkins`-related functions are deployed; `20261114200000_android_push.sql` and the FCM version of `send-push` wait for the Firebase setup and your go-ahead.
 
 Done when: tapping a check-in of someone you follow opens a page about that check-in, not their profile. On a person's profile you can choose which of their check-ins (spotted, flown, airport visits) send you a push notification.
 
