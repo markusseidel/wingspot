@@ -79,7 +79,10 @@ fun ExploreTab(app: WingspotApp, model: SocialViewModel, me: String?, reference:
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(stringResource(R.string.tab_explore), style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top = 16.dp))
+        Row(Modifier.fillMaxWidth().padding(top = 16.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+            Text(stringResource(R.string.tab_explore), style = MaterialTheme.typography.headlineMedium, modifier = Modifier.weight(1f))
+            OutlinedButton(onClick = { model.open(Route.ExploreMap) }, modifier = Modifier.testTag("explore-map")) { Text(stringResource(R.string.map)) }
+        }
         OutlinedTextField(
             value = query, onValueChange = { query = it }, singleLine = true, modifier = Modifier.fillMaxWidth().testTag("explore-search"),
             label = { Text(stringResource(R.string.search_everything)) },
@@ -294,6 +297,7 @@ fun AirportPage(app: WingspotApp, model: SocialViewModel, id: Long, me: String?,
         airport?.let { a ->
             Text(a.name, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Text(listOfNotNull(listOfNotNull(a.iata, a.icao).joinToString(" · "), a.city).filter { it.isNotBlank() }.joinToString(" — "), color = MaterialTheme.colorScheme.onSurfaceVariant)
+            AirportMiniMap(a)
         } ?: if (reference.database == null) Text(stringResource(R.string.no_airport_data)) else CircularProgressIndicator()
         YouSection(mine.size, null, mine.maxOfOrNull { it.occurredAt }, R.string.not_checked_in_here)
         ActivitySection(app, me, model, R.string.different_aircraft) { app.social.airportActivity(id) }

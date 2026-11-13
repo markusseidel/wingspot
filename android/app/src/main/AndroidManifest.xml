@@ -29,6 +29,7 @@
                 <data android:scheme="wingspot" android:host="auth-callback" />
             </intent-filter>
         </activity>
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="${mapsApiKey}" />
         <service android:name=".PushService" android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

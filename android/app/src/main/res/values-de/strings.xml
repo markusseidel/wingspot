@@ -269,4 +269,12 @@
     <string name="stop">Beenden</string>
     <string name="notify_me">Benachrichtige mich</string>
     <string name="notify_me_hint">Du bekommst eine Mitteilung, wenn die Person etwas eincheckt, das du sehen kannst. Sie erfährt davon nichts.</string>
+    <string name="map">Karte</string>
+    <string name="airports_map">Flughafenkarte</string>
+    <string name="yours">Deine</string>
+    <string name="map_not_set_up">Die Karte ist in dieser Version noch nicht eingerichtet.</string>
+    <string name="map_needs_data">Die Karte braucht die Flughafendaten. Öffne die App einmal mit Internet.</string>
+    <string name="no_airports_to_show">Viel besuchte Flughäfen und die, an denen du eingecheckt hast, erscheinen hier.</string>
+    <string name="no_airports_yet">Flughäfen, an denen du spottest oder die du besuchst, erscheinen hier.</string>
+    <string name="busy_load_failed">Die viel besuchten Flughäfen konnten nicht geladen werden. Prüfe deine Verbindung.</string>
 </resources>
