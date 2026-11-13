@@ -492,7 +492,7 @@ private fun visitTitle(context: VisitContext) = when (context) {
     VisitContext.MUSEUM -> R.string.visit_museum
 }
 
-private fun cabinTitle(cabin: CabinClass) = when (cabin) {
+internal fun cabinTitle(cabin: CabinClass) = when (cabin) {
     CabinClass.ECONOMY -> R.string.cabin_economy
     CabinClass.PREMIUM_ECONOMY -> R.string.cabin_premium
     CabinClass.BUSINESS -> R.string.cabin_business

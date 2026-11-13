@@ -3,11 +3,13 @@ package site.wingspot.app
 import android.graphics.BitmapFactory
 import android.text.format.DateUtils
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -54,10 +56,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import site.wingspot.core.ApiException
+import site.wingspot.core.CabinClass
 import site.wingspot.core.CheckInComment
 import site.wingspot.core.Downloads
 import site.wingspot.core.FeedItem
 import site.wingspot.core.FeedPhoto
+import site.wingspot.core.Flightradar24
 import site.wingspot.core.ReportKind
 
 /** "2 hours ago", from the time the server sent. */
@@ -167,6 +171,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
     var confirmDelete by remember { mutableStateOf(false) }
     var reporting by remember { mutableStateOf<Pair<ReportKind, String>?>(null) }
     var localFlight by remember { mutableStateOf(false) }
+    var viewing by remember { mutableStateOf<FeedPhoto?>(null) }
 
     // The list's copy has the live counts. The copy loaded by id has the airports and your own cabin and seat.
     val fromList = feed.items.firstOrNull { it.id == id } ?: model.opened[id]
@@ -217,18 +222,36 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                         shown.originId?.let { o -> OutlinedButton(onClick = { model.open(Route.AirportPage(o)) }) { Text(stringResource(R.string.from_airport, shown.originCode ?: "?")) } }
                         shown.destinationId?.let { d -> OutlinedButton(onClick = { model.open(Route.AirportPage(d)) }) { Text(stringResource(R.string.to_airport, shown.destinationCode ?: "?")) } }
                     }
-                    Text(relativeTime(shown.occurredAt), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    if (shown.registration != null && shown.kind == "flown") Text(shown.registration!!, fontFamily = FontFamily.Monospace)
-                    if (shown.userId == me) listOfNotNull(shown.cabin, shown.seat).takeIf { it.isNotEmpty() }?.let { Text(it.joinToString(" · ")) }
+                    Text(fullTime(shown.occurredAt), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    val unit = app.prefs.unit
+                    shown.flightNumber?.let { InfoRow(stringResource(R.string.flight_label), it) }
+                    shown.registration?.let { r -> InfoRow(stringResource(R.string.aircraft_label), r, if (shown.kind == "spotted") null else ({ model.open(Route.RegistrationPage(r)) })) }
+                    shown.typeIcao?.let { t -> InfoRow(stringResource(R.string.type_label), shown.typeName ?: t) { model.open(Route.TypePage(t)) } }
+                    if (shown.kind == "spotted") shown.airportId?.let { a -> InfoRow(stringResource(R.string.airport_label), shown.airportCode ?: "?") { model.open(Route.AirportPage(a)) } }
+                    if (shown.kind == "flown") {
+                        shown.cabin?.let { c -> CabinClass.fromWire(c)?.let { InfoRow(stringResource(R.string.cabin_label), stringResource(cabinTitle(it))) } }
+                        shown.seat?.let { InfoRow(stringResource(R.string.seat_row_label), it) }
+                        shown.distanceKm?.let { InfoRow(stringResource(R.string.distance_label), unit.format(it)) }
+                    }
                 }
             }
             items(photos, key = { it.id }) { photo ->
                 Box {
-                    RemoteImage(photo, Modifier.fillMaxWidth().clip(MaterialTheme.shapes.medium))
+                    RemoteImage(photo, Modifier.fillMaxWidth().clip(MaterialTheme.shapes.medium).clickable { viewing = photo })
                     if (shown.userId != me) TextButton(onClick = { reporting = ReportKind.PHOTO to photo.id }, modifier = Modifier.align(Alignment.TopEnd)) { Text(stringResource(R.string.report)) }
                 }
             }
             item { SaluteButton(shown) { model.toggleSalute(id) } }
+            val flightPage = if (shown.userId == me && shown.kind == "flown") shown.flightNumber?.let(Flightradar24::flight) else null
+            val aircraftPage = if (shown.userId == me && shown.kind == "flown") shown.registration?.let(Flightradar24::aircraft) else null
+            if (flightPage != null || aircraftPage != null) item {
+                val uri = androidx.compose.ui.platform.LocalUriHandler.current
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    flightPage?.let { TextButton(onClick = { uri.openUri(it) }) { Text(stringResource(R.string.lookup_flight)) } }
+                    aircraftPage?.let { TextButton(onClick = { uri.openUri(it) }) { Text(stringResource(R.string.lookup_aircraft)) } }
+                    Text(stringResource(R.string.lookup_footer), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
             item { HorizontalDivider() }
             if (commentsFailed) item { Text(stringResource(R.string.comments_failed), color = MaterialTheme.colorScheme.error) }
             else if (comments.isEmpty()) item { Text(stringResource(R.string.no_comments), color = MaterialTheme.colorScheme.onSurfaceVariant) }
@@ -303,6 +326,49 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
         )
     }
     reporting?.let { (kind, target) -> ReportDialog(app, kind, target) { reporting = null } }
+    viewing?.let { start -> PhotoViewer(photos, start) { viewing = null } }
+}
+
+/** A label and its value; with [onClick] the value is a link to the page of the aircraft, type or airport. */
+@Composable
+private fun InfoRow(label: String, value: String, onClick: (() -> Unit)? = null) {
+    Row(Modifier.fillMaxWidth().then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier).padding(vertical = 4.dp)) {
+        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f))
+        Text(value, color = if (onClick != null) MaterialTheme.colorScheme.primary else androidx.compose.ui.graphics.Color.Unspecified)
+    }
+}
+
+/** The day and time of a check-in, in the phone's language. */
+fun fullTime(iso: String): String = try {
+    java.time.format.DateTimeFormatter.ofLocalizedDateTime(java.time.format.FormatStyle.MEDIUM, java.time.format.FormatStyle.SHORT)
+        .format(OffsetDateTime.parse(iso).atZoneSameInstant(java.time.ZoneId.systemDefault()))
+} catch (e: Exception) {
+    ""
+}
+
+/** The photos of a check-in full screen, swiping between them. A tap on the close button leaves. */
+@Composable
+private fun PhotoViewer(photos: List<FeedPhoto>, start: FeedPhoto, onClose: () -> Unit) {
+    androidx.compose.ui.window.Dialog(onDismissRequest = onClose, properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false)) {
+        val pager = androidx.compose.foundation.pager.rememberPagerState(initialPage = photos.indexOfFirst { it.id == start.id }.coerceAtLeast(0)) { photos.size }
+        Box(Modifier.fillMaxSize().background(androidx.compose.ui.graphics.Color.Black)) {
+            androidx.compose.foundation.pager.HorizontalPager(pager) { page ->
+                RemoteImageFit(photos[page], Modifier.fillMaxSize())
+            }
+            TextButton(onClick = onClose, modifier = Modifier.align(Alignment.TopEnd).padding(8.dp)) { Text(stringResource(R.string.close), color = androidx.compose.ui.graphics.Color.White) }
+        }
+    }
+}
+
+/** Like [RemoteImage] but shows the whole picture. */
+@Composable
+private fun RemoteImageFit(photo: FeedPhoto, modifier: Modifier = Modifier) {
+    val bitmap by produceState<androidx.compose.ui.graphics.ImageBitmap?>(null, photo.url) {
+        value = Downloads.bytes(photo.url)?.let { withContext(Dispatchers.Default) { BitmapFactory.decodeByteArray(it, 0, it.size)?.asImageBitmap() } }
+    }
+    val image = bitmap
+    if (image != null) Image(image, contentDescription = stringResource(R.string.photo_of_check_in), modifier = modifier, contentScale = ContentScale.Fit)
+    else Box(modifier) { CircularProgressIndicator(Modifier.size(24.dp).align(Alignment.Center)) }
 }
 
 /** Asks why, then sends the report. The server stores the reason as free text. */

@@ -301,4 +301,12 @@
     <string name="allow_camera">Allow camera</string>
     <string name="scan_aim">Hold the barcode inside the picture</string>
     <string name="ok">OK</string>
+    <string name="flight_label">Flight</string>
+    <string name="aircraft_label">Aircraft</string>
+    <string name="seat_row_label">Seat</string>
+    <string name="distance_label">Distance</string>
+    <string name="lookup_flight">Look up the flight on Flightradar24</string>
+    <string name="lookup_aircraft">Look up the aircraft on Flightradar24</string>
+    <string name="lookup_footer">Opens Flightradar24 in your browser. Nothing from Wingspot is sent there.</string>
+    <string name="close">Close</string>
 </resources>
