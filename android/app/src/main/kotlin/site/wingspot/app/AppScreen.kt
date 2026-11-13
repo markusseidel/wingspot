@@ -47,6 +47,11 @@ fun AppScreen(model: AppViewModel, reference: ReferenceViewModel, checkIn: Check
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Spacer(Modifier.height(24.dp))
+        val editing = checkInState.editing
+        if (editing != null) {
+            FlownEditScreen(editing, checkInState, refState, checkIn)
+            return@Column
+        }
         if (checkInState.isOpen) {
             CheckInScreen(checkInState, refState, checkIn)
             return@Column
@@ -55,7 +60,10 @@ fun AppScreen(model: AppViewModel, reference: ReferenceViewModel, checkIn: Check
         Button(onClick = checkIn::open, modifier = Modifier.fillMaxWidth().testTag("open-check-in")) {
             Text(stringResource(R.string.check_in))
         }
-        RecentCheckIns(checkInState.recent)
+        if (checkInState.deleteFailed) {
+            Text(stringResource(R.string.delete_failed), color = MaterialTheme.colorScheme.error, modifier = Modifier.testTag("delete-failed"))
+        }
+        RecentCheckIns(checkInState.recent, onEdit = checkIn::edit, onDelete = checkIn::delete)
         HorizontalDivider()
         when {
             session != null -> SignedIn(session.user.email ?: session.user.id, model::signOut)
