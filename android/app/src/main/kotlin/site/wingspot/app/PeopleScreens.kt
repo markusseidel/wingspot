@@ -43,34 +43,6 @@ import site.wingspot.core.FeedItem
 import site.wingspot.core.Person
 import site.wingspot.core.ReportKind
 
-/** Finds people by username. */
-@Composable
-fun PeopleTab(app: WingspotApp, model: SocialViewModel, me: String) {
-    var text by remember { mutableStateOf("") }
-    var results by remember { mutableStateOf(emptyList<Person>()) }
-    var failed by remember { mutableStateOf(false) }
-    LaunchedEffect(text) {
-        delay(300)
-        if (text.trim().length < 2) { results = emptyList(); return@LaunchedEffect }
-        try { results = app.social.searchPeople(text, me); failed = false } catch (e: ApiException) { failed = true }
-    }
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(stringResource(R.string.tab_people), style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top = 16.dp))
-        OutlinedTextField(
-            value = text, onValueChange = { text = it }, singleLine = true, modifier = Modifier.fillMaxWidth().testTag("people-search"),
-            label = { Text(stringResource(R.string.find_people)) },
-        )
-        if (failed) Text(stringResource(R.string.error_unknown), color = MaterialTheme.colorScheme.error)
-        else if (text.trim().length >= 2 && results.isEmpty()) Text(stringResource(R.string.nothing_found), color = MaterialTheme.colorScheme.onSurfaceVariant)
-        results.forEach { person ->
-            Column(Modifier.fillMaxWidth().clickable { model.openPerson(person.id) }.padding(vertical = 8.dp)) {
-                Text(person.who, fontWeight = FontWeight.Bold)
-                Text("@" + person.username, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-        }
-    }
-}
-
 /** Someone's page: follow, block, report, and the check-ins you may see. */
 @Composable
 fun PersonPage(app: WingspotApp, model: SocialViewModel, id: String, me: String) {

@@ -93,6 +93,29 @@ private data class PhotoRow(
     val height: Int? = null,
 )
 
+/** A few numbers about one airport or aircraft type over the last 30 days. [other] is the aircraft (airport) or airports (type). */
+data class Activity(val checkIns: Int, val other: Int, val topSpotters: List<Spotter>)
+
+@Serializable
+data class Spotter(
+    @SerialName("user_id") val userId: String,
+    val username: String,
+    @SerialName("display_name") val displayName: String? = null,
+    @SerialName("checkins") val checkIns: Int,
+) {
+    val who: String get() = displayName?.takeIf { it.isNotBlank() } ?: username
+}
+
+@Serializable
+data class ActiveAirport(
+    @SerialName("airport_id") val airportId: Long,
+    @SerialName("airport_code") val code: String,
+    @SerialName("airport_name") val name: String,
+    val city: String? = null,
+    @SerialName("checkins") val checkIns: Int,
+    val people: Int = 0,
+)
+
 /** Who may see your check-ins. The names are what the server stores. */
 enum class SharingChoice(val wire: String) { ONLY_ME("private"), FRIENDS("friends"), EVERYONE("public") }
 
@@ -190,6 +213,38 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
         ListSerializer(Person.serializer()),
         rest.call("GET", "/rest/v1/profiles?select=id,username,display_name,is_private&username=ilike.*${enc(text.trim())}*&id=neq.$me&order=username.asc&limit=$limit"),
     )
+
+    /** The check-ins at one airport that the caller may see, newest first. */
+    suspend fun airportCheckIns(airport: Long, after: FeedCursor?, pageSize: Int = 30): List<FeedItem> =
+        items(rest.call("POST", "/rest/v1/rpc/get_airport_checkins", feedParams(after, pageSize).withKey("airport", airport.toString(), number = true)))
+
+    /** The check-ins of one aircraft type that the caller may see, newest first. */
+    suspend fun typeCheckIns(type: String, after: FeedCursor?, pageSize: Int = 30): List<FeedItem> =
+        items(rest.call("POST", "/rest/v1/rpc/get_type_checkins", feedParams(after, pageSize).withKey("type_code", type)))
+
+    /** The check-ins of one aircraft, by registration, that the caller may see, newest first. */
+    suspend fun registrationCheckIns(registration: String, after: FeedCursor?, pageSize: Int = 30): List<FeedItem> =
+        items(rest.call("POST", "/rest/v1/rpc/get_registration_checkins", feedParams(after, pageSize).withKey("registration", registration)))
+
+    suspend fun airportActivity(airport: Long): Activity? = activity(rest.call("POST", "/rest/v1/rpc/get_airport_activity", """{"airport":$airport}"""), "aircraft_30d")
+
+    suspend fun typeActivity(type: String): Activity? = activity(rest.call("POST", "/rest/v1/rpc/get_type_activity", """{"type_code":"$type"}"""), "airports_30d")
+
+    private fun activity(text: String, otherKey: String): Activity? {
+        val row = json.parseToJsonElement(text).jsonArray.firstOrNull()?.jsonObject ?: return null
+        val spotters = row["top_spotters"]?.takeIf { it !is kotlinx.serialization.json.JsonNull }?.let {
+            json.decodeFromJsonElement(ListSerializer(Spotter.serializer()), it)
+        }.orEmpty()
+        return Activity(row["checkins_30d"]?.jsonPrimitive?.content?.toIntOrNull() ?: 0, row[otherKey]?.jsonPrimitive?.content?.toIntOrNull() ?: 0, spotters)
+    }
+
+    /** The airports with the most check-ins in the last [days] days among the ones the caller may see, busiest first. */
+    suspend fun activeAirports(days: Int = 7, limit: Int = 10): List<ActiveAirport> = json.decodeFromString(
+        ListSerializer(ActiveAirport.serializer()), rest.call("POST", "/rest/v1/rpc/get_active_airports", """{"days":$days,"max_results":$limit}"""),
+    )
+
+    private fun String.withKey(key: String, value: String, number: Boolean = false): String =
+        removeSuffix("}") + ",\"$key\":" + (if (number) value else "\"$value\"") + "}"
 
     suspend fun person(id: String): Person? = json.decodeFromString(
         ListSerializer(Person.serializer()),

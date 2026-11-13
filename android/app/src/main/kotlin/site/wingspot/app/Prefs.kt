@@ -19,6 +19,15 @@ class Prefs(context: Context) {
         prefs.edit().putString("unit", value.name).apply()
     }
 
+    /** True once the person chose to show airports near them. */
+    var usesLocation: Boolean by mutableStateOf(prefs.getBoolean("usesLocation", false))
+        private set
+
+    fun chooseLocation(value: Boolean) {
+        usesLocation = value
+        prefs.edit().putBoolean("usesLocation", value).apply()
+    }
+
     /** The highest level of each badge that was shown as a celebration. */
     fun acks(user: String): Map<String, Int> =
         prefs.all.filterKeys { it.startsWith("ack.$user.") }.mapKeys { it.key.removePrefix("ack.$user.") }.mapValues { (it.value as? Int) ?: 0 }

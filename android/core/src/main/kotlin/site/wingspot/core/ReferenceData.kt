@@ -102,6 +102,22 @@ class ReferenceDatabase private constructor(private val connection: SQLiteConnec
         { it.bindText(1, iata.trim().uppercase()) },
     ) { airport(it) }.firstOrNull()
 
+    /** Airports with an IATA code within [radiusKm] of a position, nearest first. Heliports and seaplane bases are left out. */
+    suspend fun airportsNear(latitude: Double, longitude: Double, radiusKm: Double = 150.0, limit: Int = 10): List<Pair<Airport, Double>> {
+        val latRange = radiusKm / 111.0
+        val lonRange = radiusKm / (111.0 * maxOf(0.1, Math.cos(Math.toRadians(latitude))))
+        val candidates = query(
+            """
+            SELECT id, icao, iata, name, city, latitude, longitude FROM airports
+            WHERE latitude BETWEEN ? AND ? AND longitude BETWEEN ? AND ?
+              AND iata IS NOT NULL AND iata <> '' AND type NOT IN ('heliport', 'balloonport', 'seaplane_base')
+            """,
+            { it.bindDouble(1, latitude - latRange); it.bindDouble(2, latitude + latRange); it.bindDouble(3, longitude - lonRange); it.bindDouble(4, longitude + lonRange) },
+        ) { airport(it) }
+        return candidates.map { it to GreatCircle.distanceKm(GeoCoordinate(latitude, longitude), GeoCoordinate(it.latitude, it.longitude)) }
+            .filter { it.second <= radiusKm }.sortedBy { it.second }.take(limit)
+    }
+
     /** The airport with this id in the reference data, for example a home airport saved on the server. */
     suspend fun airport(id: Long): Airport? = query(
         "SELECT id, icao, iata, name, city, latitude, longitude FROM airports WHERE id = ?",

@@ -133,3 +133,44 @@ class UsernameTests {
         assertTrue(!Username.isPlaceholder("user_abc"))
     }
 }
+
+class ExploreApiTests {
+    private fun withApi(block: suspend (MockWebServer, SocialApi) -> Unit) {
+        MockWebServer().use { server ->
+            server.start()
+            runBlocking { block(server, SocialApi(Rest(server.url("/").toString(), "k", { "t" }), "http://x")) }
+        }
+    }
+
+    private fun ok(body: String) = MockResponse.Builder().code(200).body(body).build()
+
+    @Test
+    fun airportAndTypePagesSendTheirKeyAlongWithTheCursor() = withApi { server, api ->
+        server.enqueue(ok("[]"))
+        api.airportCheckIns(3, FeedCursor("2026-11-01T00:00:00+00:00", "id1"), 10)
+        val airport = Rest("http://x", "k", { "t" }).json.parseToJsonElement(server.takeRequest().body!!.utf8()).jsonObject
+        assertEquals("3", airport["airport"]!!.jsonPrimitive.content)
+        assertEquals("id1", airport["before_id"]!!.jsonPrimitive.content)
+        server.enqueue(ok("[]"))
+        api.typeCheckIns("A388", null)
+        val type = server.takeRequest()
+        assertEquals("/rest/v1/rpc/get_type_checkins", type.url.encodedPath)
+        assertEquals("A388", Rest("http://x", "k", { "t" }).json.parseToJsonElement(type.body!!.utf8()).jsonObject["type_code"]!!.jsonPrimitive.content)
+        server.enqueue(ok("[]"))
+        api.registrationCheckIns("D-AIMA", null)
+        assertEquals("/rest/v1/rpc/get_registration_checkins", server.takeRequest().url.encodedPath)
+    }
+
+    @Test
+    fun activityAndBusyAirportsAreRead() = withApi { server, api ->
+        server.enqueue(ok("""[{"checkins_30d":12,"aircraft_30d":5,"top_spotters":[{"user_id":"u1","username":"anna","display_name":null,"checkins":7}]}]"""))
+        val activity = api.airportActivity(3)!!
+        assertEquals(12, activity.checkIns)
+        assertEquals(5, activity.other)
+        assertEquals("anna", activity.topSpotters.single().who)
+        server.enqueue(ok("""[{"checkins_30d":0,"airports_30d":0,"top_spotters":null}]"""))
+        assertEquals(emptyList(), api.typeActivity("A388")!!.topSpotters)
+        server.enqueue(ok("""[{"airport_id":3,"airport_code":"FRA","airport_name":"Frankfurt","city":"Frankfurt","checkins":40,"people":9}]"""))
+        assertEquals("FRA", api.activeAirports().single().code)
+    }
+}
