@@ -174,3 +174,56 @@ class ExploreApiTests {
         assertEquals("FRA", api.activeAirports().single().code)
     }
 }
+
+class AlertTests {
+    private fun withApi(block: suspend (MockWebServer, SocialApi) -> Unit) {
+        MockWebServer().use { server ->
+            server.start()
+            runBlocking { block(server, SocialApi(Rest(server.url("/").toString(), "k", { "t" }), "http://x")) }
+        }
+    }
+
+    private fun ok(body: String, code: Int = 200) = MockResponse.Builder().code(code).body(body).build()
+
+    @Test
+    fun prefsAreReadWithEverythingOnByDefault() = withApi { server, api ->
+        server.enqueue(ok("[]"))
+        assertEquals(SocialApi.NotificationPrefs(), api.notificationPrefs(ME))
+        server.enqueue(ok("""[{"new_followers":true,"salutes":false,"comments":true,"followed_checkins":false}]"""))
+        assertEquals(SocialApi.NotificationPrefs(salutes = false, followedCheckins = false), api.notificationPrefs(ME))
+        server.enqueue(ok("", 204))
+        api.setNotificationPrefs(ME, SocialApi.NotificationPrefs(comments = false))
+        server.takeRequest(); server.takeRequest()
+        val patch = server.takeRequest()
+        assertEquals("PATCH", patch.method)
+        assertTrue(patch.body!!.utf8().contains(""""comments":false"""))
+    }
+
+    @Test
+    fun aRuleIsSavedOrRemovedWhenEverythingIsOff() = withApi { server, api ->
+        server.enqueue(ok("", 201))
+        api.saveAlertRule(ME, SocialApi.AlertRule(OTHER, spotted = true))
+        val save = server.takeRequest()
+        assertEquals("watcher,target", save.url.queryParameter("on_conflict"))
+        assertEquals("resolution=merge-duplicates,return=minimal", save.headers["Prefer"])
+        server.enqueue(ok("", 204))
+        api.saveAlertRule(ME, SocialApi.AlertRule(OTHER))
+        assertEquals("DELETE", server.takeRequest().method)
+        server.enqueue(ok("""[{"target":"$OTHER","spotted":true,"flown":false,"airport":true,"profiles":{"username":"anna","display_name":null}}]"""))
+        val rule = api.alertRules(ME).single()
+        assertEquals("anna", rule.who)
+        assertTrue(rule.isOn)
+    }
+
+    @Test
+    fun aDeviceIsRegisteredAsAndroidAndRemoved() = withApi { server, api ->
+        server.enqueue(ok("{}"))
+        api.registerDevice("dev1", "0.1.0", "fcm-token", "15", "de")
+        val body = Rest("http://x", "k", { "t" }).json.parseToJsonElement(server.takeRequest().body!!.utf8()).jsonObject
+        assertEquals("android", body["device_platform"]!!.jsonPrimitive.content)
+        assertEquals("fcm-token", body["device_push_token"]!!.jsonPrimitive.content)
+        server.enqueue(ok("", 204))
+        api.removeDevice("dev1")
+        assertEquals("/rest/v1/devices", server.takeRequest().url.encodedPath)
+    }
+}

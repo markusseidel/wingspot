@@ -32,3 +32,4 @@ ios/Config/Local.xcconfig
 
 # Node
 node_modules/
+android/app/google-services.json

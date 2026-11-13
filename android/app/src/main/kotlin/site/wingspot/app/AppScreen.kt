@@ -56,7 +56,7 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
     val page = social.stack.lastOrNull()
     // Badges follow the signed-in person and are refreshed when check-ins reach the server.
     val synced = checkInState.recent.count { it.syncState == site.wingspot.core.SyncState.SYNCED }
-    LaunchedEffect(me) { badges.begin(me) }
+    LaunchedEffect(me) { badges.begin(me); if (me != null) Push.register(app) }
     LaunchedEffect(synced) { if (me != null && synced > 0) badges.refresh() }
     CelebrationDialog(badges)
 

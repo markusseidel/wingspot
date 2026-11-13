@@ -337,6 +337,66 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
         rest.call("PATCH", "/rest/v1/profiles?id=eq.$me", """{"home_airport":${airportId ?: "null"}}""", prefer = "return=minimal")
     }
 
+    // Notifications ---------------------------------------------------------------------------------------------------
+
+    /** Which kinds of notification you get. `followedCheckins` is the master switch for alerts about people you follow. */
+    @Serializable
+    data class NotificationPrefs(
+        @SerialName("new_followers") val newFollowers: Boolean = true,
+        val salutes: Boolean = true,
+        val comments: Boolean = true,
+        @SerialName("followed_checkins") val followedCheckins: Boolean = true,
+    )
+
+    suspend fun notificationPrefs(me: String): NotificationPrefs = json.decodeFromString(
+        ListSerializer(NotificationPrefs.serializer()),
+        rest.call("GET", "/rest/v1/notification_prefs?select=new_followers,salutes,comments,followed_checkins&user_id=eq.$me"),
+    ).firstOrNull() ?: NotificationPrefs()
+
+    suspend fun setNotificationPrefs(me: String, prefs: NotificationPrefs) {
+        rest.call("PATCH", "/rest/v1/notification_prefs?user_id=eq.$me", json.encodeToString(NotificationPrefs.serializer(), prefs), prefer = "return=minimal")
+    }
+
+    /** What you want to hear about one person you follow. All three off means no rule. */
+    @Serializable
+    data class AlertRule(
+        val target: String,
+        val spotted: Boolean = false,
+        val flown: Boolean = false,
+        val airport: Boolean = false,
+        val profiles: CommentAuthor? = null,
+    ) {
+        val isOn: Boolean get() = spotted || flown || airport
+        val who: String get() = profiles?.displayName?.takeIf { it.isNotBlank() } ?: profiles?.username ?: "?"
+    }
+
+    suspend fun alertRules(me: String): List<AlertRule> = json.decodeFromString(
+        ListSerializer(AlertRule.serializer()),
+        rest.call("GET", "/rest/v1/notification_rules?select=target,spotted,flown,airport,profiles!notification_rules_target_fkey(username,display_name)&watcher=eq.$me"),
+    )
+
+    suspend fun saveAlertRule(me: String, rule: AlertRule) {
+        if (rule.isOn) {
+            val payload = """{"watcher":"$me","target":"${rule.target}","spotted":${rule.spotted},"flown":${rule.flown},"airport":${rule.airport}}"""
+            rest.call("POST", "/rest/v1/notification_rules?on_conflict=watcher,target", payload, prefer = "resolution=merge-duplicates,return=minimal")
+        } else {
+            rest.call("DELETE", "/rest/v1/notification_rules?watcher=eq.$me&target=eq.${rule.target}")
+        }
+    }
+
+    /** Tells the server this phone's Firebase token, so it can send notifications here. Safe to repeat. */
+    suspend fun registerDevice(deviceId: String, appVersion: String, token: String, osVersion: String, locale: String) {
+        val payload = buildJsonObject {
+            put("device_id", deviceId); put("device_platform", "android"); put("device_app_version", appVersion)
+            put("device_push_token", token); put("device_push_env", "production"); put("device_os_version", osVersion); put("device_locale", locale)
+        }.toString()
+        rest.call("POST", "/rest/v1/rpc/register_device", payload)
+    }
+
+    suspend fun removeDevice(deviceId: String) {
+        rest.call("DELETE", "/rest/v1/devices?id=eq.$deviceId", prefer = "return=minimal")
+    }
+
     suspend fun saveProfile(me: String, username: String, displayName: String?) {
         val payload = buildJsonObject {
             put("username", username)

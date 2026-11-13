@@ -28,6 +28,9 @@ class Prefs(context: Context) {
         prefs.edit().putBoolean("usesLocation", value).apply()
     }
 
+    /** This phone's id on the server, made once. */
+    fun deviceId(): String = prefs.getString("deviceId", null) ?: java.util.UUID.randomUUID().toString().also { prefs.edit().putString("deviceId", it).apply() }
+
     /** The highest level of each badge that was shown as a celebration. */
     fun acks(user: String): Map<String, Int> =
         prefs.all.filterKeys { it.startsWith("ack.$user.") }.mapKeys { it.key.removePrefix("ack.$user.") }.mapValues { (it.value as? Int) ?: 0 }

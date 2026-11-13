@@ -253,4 +253,20 @@
     <string name="type_page">Typ %1$s</string>
     <string name="from_airport">Von %1$s</string>
     <string name="to_airport">Nach %1$s</string>
+    <string name="channel_name">Aktivität</string>
+    <string name="notifications_title">Mitteilungen</string>
+    <string name="push_not_in_build">Diese Version kann noch keine Push-Mitteilungen empfangen.</string>
+    <string name="notifications_denied">Mitteilungen sind für Wingspot auf diesem Telefon ausgeschaltet.</string>
+    <string name="open_phone_settings">Telefoneinstellungen öffnen</string>
+    <string name="notify_followers">Neue Follower</string>
+    <string name="notify_salutes">Salutes</string>
+    <string name="notify_comments">Kommentare</string>
+    <string name="notify_followed">Check-ins von Leuten, denen du folgst</string>
+    <string name="alerts_from">Leute, von denen du Hinweise bekommst</string>
+    <string name="alert_spotted">Gespottet</string>
+    <string name="alert_flown">Geflogen</string>
+    <string name="alert_airport">Flughafenbesuche</string>
+    <string name="stop">Beenden</string>
+    <string name="notify_me">Benachrichtige mich</string>
+    <string name="notify_me_hint">Du bekommst eine Mitteilung, wenn die Person etwas eincheckt, das du sehen kannst. Sie erfährt davon nichts.</string>
 </resources>
