@@ -43,7 +43,17 @@ struct ProfileScreen: View {
     }
 
     /// Laid out like the first screen: the text in the middle, the buttons at the bottom, as wide as the screen allows.
+    /// It scrolls, so nothing is cut off at the largest text sizes; at normal sizes it fills the screen as before.
     private var signedOut: some View {
+        GeometryReader { screen in
+            ScrollView {
+                signedOutContent.frame(minHeight: screen.size.height)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+        }
+    }
+
+    private var signedOutContent: some View {
         VStack(spacing: 16) {
             Spacer()
             ContentUnavailableView {
@@ -65,13 +75,9 @@ struct ProfileScreen: View {
                     Text("Sign in with email").frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                HStack(spacing: 12) {
-                    Button { isShowingCollections = true } label: {
-                        Text("Collections").frame(maxWidth: .infinity)
-                    }
-                    Button { isShowingHistory = true } label: {
-                        Text("Check-in history").frame(maxWidth: .infinity)
-                    }
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 12) { signedOutLinks }
+                    VStack(spacing: 12) { signedOutLinks }
                 }
                 .buttonStyle(.bordered)
             }
@@ -79,6 +85,15 @@ struct ProfileScreen: View {
             .padding(.horizontal)
         }
         .padding(.bottom)
+    }
+
+    @ViewBuilder private var signedOutLinks: some View {
+        Button { isShowingCollections = true } label: {
+            Text("Collections").frame(maxWidth: .infinity)
+        }
+        Button { isShowingHistory = true } label: {
+            Text("Check-in history").frame(maxWidth: .infinity)
+        }
     }
 
     private var profileMissing: some View {

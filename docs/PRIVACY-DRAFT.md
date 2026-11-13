@@ -12,11 +12,11 @@ This is a working draft, not legal advice. It describes what the app does today 
 
 ## Was Wingspot speichert
 
-- **Konto:** deine E-Mail-Adresse oder die Kennung von „Anmelden mit Apple" (bei Apple ggf. eine Relay-Adresse), dein Anzeigename und dein Heimatflughafen.
+- **Konto:** deine E-Mail-Adresse oder die Kennung von „Anmelden mit Apple" (iPhone; bei Apple ggf. eine Relay-Adresse) oder von „Anmelden mit Google" (Android), dein Anzeigename und dein Heimatflughafen.
 - **Check-ins:** Art (Gespottet, Flughafen, Geflogen), Zeitpunkt, Flughafen, Kennzeichen und Flugzeugtyp, bei Flügen Strecke, Flugnummer, Kabine und Sitz. Dazu der Standort, den du beim Check-in mitgibst.
 - **Fotos:** Fotos, die du einem Check-in hinzufügst.
 - **Soziales:** dein Benutzername, wem du folgst und wer dir folgt, wen du blockiert hast, deine Freigabe-Einstellungen (zu Beginn „Nur ich“), Kommentare und Salutes, die du schreibst oder gibst, und Meldungen, die du abschickst. Check-ins sind nur für die sichtbar, die du zugelassen hast: nur du, Freunde (ihr folgt euch gegenseitig) oder alle. Eine Verzögerung kann öffentliche Check-ins für Fremde zurückhalten. Dein genauer Standort wird anderen nie gezeigt.
-- **Mitteilungen:** wenn du Mitteilungen erlaubst, speichern wir eine Gerätekennung für Mitteilungen (Push-Token), die Sprache deines Geräts und die App-Version, damit wir dir Mitteilungen schicken können, wenn dir jemand folgt oder einen deiner Check-ins salutiert oder kommentiert. Sie werden über den Apple-Dienst für Mitteilungen zugestellt und enthalten einen Namen und den Anfang eines Kommentars; ob das auf dem Sperrbildschirm erscheint, stellst du in den iPhone-Einstellungen ein. Du kannst jede Art in der App ausschalten. Beim Abmelden wird das Gerät entfernt.
+- **Mitteilungen:** wenn du Mitteilungen erlaubst, speichern wir eine Gerätekennung für Mitteilungen (Push-Token), die Sprache deines Geräts und die App-Version, damit wir dir Mitteilungen schicken können, wenn dir jemand folgt oder einen deiner Check-ins salutiert oder kommentiert. Sie werden über den Apple-Dienst für Mitteilungen (iPhone) bzw. Firebase Cloud Messaging von Google (Android) zugestellt und enthalten einen Namen und den Anfang eines Kommentars; ob das auf dem Sperrbildschirm erscheint, stellst du in den Geräteeinstellungen ein. Du kannst jede Art in der App ausschalten. Beim Abmelden wird das Gerät entfernt.
 - **Auf deinem Gerät:** Check-ins werden zuerst offline auf dem Gerät gespeichert und später hochgeladen. Ohne Konto bleiben sie auf dem Gerät.
 
 ## Standort
@@ -33,7 +33,7 @@ Die Bordkarte wird **nur auf deinem Gerät** gelesen. Aus dem Code werden nur St
 
 ## Wo die Daten liegen
 
-Bei Supabase, in Frankfurt (EU). [Auftragsverarbeitungsvertrag mit Supabase abschließen und hier bestätigen.] Der Versand von Anmelde-E-Mails läuft über [Dienst eintragen]. Apps werden über Apple (App Store, TestFlight) verteilt; Apple verarbeitet dabei eigene Daten nach seiner Datenschutzerklärung.
+Bei Supabase, in Frankfurt (EU). [Auftragsverarbeitungsvertrag mit Supabase abschließen und hier bestätigen.] Der Versand von Anmelde-E-Mails läuft über [Dienst eintragen]. Apps werden über Apple (App Store, TestFlight) bzw. Google (Play Store) verteilt; diese verarbeiten dabei eigene Daten nach ihren Datenschutzerklärungen. Die Android-App lädt Kartenkacheln von Google Maps; dabei erhält Google deine IP-Adresse und den angezeigten Kartenausschnitt. Das Lesen einer Bordkarte (Kamera oder Bild) passiert nur auf deinem Gerät; Name und Buchungscode werden weder gelesen noch gespeichert.
 
 ## Analyse und Abstürze
 
@@ -67,11 +67,11 @@ Stand: [Datum]
 
 ## What Wingspot stores
 
-- **Account:** your email address or your "Sign in with Apple" identifier (possibly an Apple relay address), your display name and your home airport.
+- **Account:** your email address your "Sign in with Apple" identifier (iPhone; possibly an Apple relay address) or your "Sign in with Google" identifier (Android), your display name and your home airport.
 - **Check-ins:** type (Spotted, Airport, Flown), time, airport, registration and aircraft type, and for flights the route, flight number, cabin and seat. Plus the location you share when checking in.
 - **Photos:** photos you add to a check-in.
 - **Social:** your username, who you follow and who follows you, who you blocked, your sharing settings ("Only me" at first), comments and salutes you write or give, and reports you send. A check-in is visible only to those you allow: only you, friends (you follow each other) or everyone. A delay can hold public check-ins back from strangers. Your exact location is never shown to others.
-- **Notifications:** if you allow notifications, we store a device identifier for notifications (push token), your device's language and the app version, so we can notify you when someone follows you or salutes or comments on one of your check-ins. They are delivered through Apple's notification service and contain a name and the start of a comment; whether that shows on the lock screen is set in the iPhone settings. You can switch off each kind in the app. Signing out removes the device.
+- **Notifications:** if you allow notifications, we store a device identifier for notifications (push token), your device's language and the app version, so we can notify you when someone follows you or salutes or comments on one of your check-ins. They are delivered through Apple's notification service (iPhone) or Google's Firebase Cloud Messaging (Android) and contain a name and the start of a comment; whether that shows on the lock screen is set in the device settings. You can switch off each kind in the app. Signing out removes the device.
 - **On your device:** check-ins are saved offline first and uploaded later. Without an account they stay on the device.
 
 ## Location
@@ -88,7 +88,7 @@ The boarding pass is read **only on your device**. Only route, date, flight numb
 
 ## Where data is kept
 
-With Supabase, in Frankfurt (EU). [Sign a data processing agreement with Supabase and confirm here.] Sign-in emails are sent through [service]. The app is distributed through Apple (App Store, TestFlight); Apple processes its own data under its privacy policy.
+With Supabase, in Frankfurt (EU). [Sign a data processing agreement with Supabase and confirm here.] Sign-in emails are sent through [service]. The apps are distributed through Apple (App Store, TestFlight) and Google (Play Store); they process their own data under their privacy policies. The Android app loads map tiles from Google Maps, so Google receives your IP address and the map area shown. Reading a boarding pass (camera or picture) happens on your device only; the name and booking code are neither read nor stored.
 
 ## Analytics and crashes
 
