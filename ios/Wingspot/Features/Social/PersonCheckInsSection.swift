@@ -63,11 +63,11 @@ struct PersonCheckInRow: View {
         FeedCard(
             item: item, isOwn: isOwn, photos: store.photos[item.id] ?? [],
             onSalute: { Task { await store.toggleSalute(item.id) } },
-            onComments: { commentsFor = item },
+            onOpen: { commentsFor = item },
             onReport: { report = ReportTarget(kind: .checkin, id: item.id, subject: "this check-in") },
             onReportPhoto: { report = ReportTarget(kind: .photo, id: $0.id, subject: "this photo") }
         )
-        .navigationDestination(item: $commentsFor) { CommentsView(item: $0, source: store) }
+        .navigationDestination(item: $commentsFor) { CheckInDetailView(item: $0, source: store) }
         .sheet(item: $report) { ReportSheet(target: $0) }
     }
 }
