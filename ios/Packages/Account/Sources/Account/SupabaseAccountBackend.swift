@@ -432,6 +432,13 @@ extension SupabaseAccountBackend: FeedBackend {
         }
     }
 
+    public func checkIn(_ id: UUID) async throws -> FeedItem? {
+        let rows: [FeedItem] = try await socialErrors {
+            try await client.rpc("get_checkin", params: CheckInParams(target: id)).execute().value
+        }
+        return rows.first
+    }
+
     public func personCheckIns(of person: UUID, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem] {
         try await socialErrors {
             try await client.rpc("get_person_checkins", params: PersonParams(target: person, cursor: cursor, pageSize: pageSize))
@@ -516,6 +523,10 @@ private struct PhotoRow: Decodable {
         case checkInID = "checkin_id"
         case storagePath = "storage_path"
     }
+}
+
+private struct CheckInParams: Encodable {
+    let target: UUID
 }
 
 private struct PersonParams: Encodable {

@@ -14,6 +14,11 @@ private actor FakeFeed: FeedBackend, ReactionBackend {
     var reactionError: AccountError?
 
     func fail(_ error: AccountError?) { self.error = error }
+
+    func checkIn(_ id: UUID) throws -> FeedItem? {
+        if let error { throw error }
+        return items.first { $0.id == id }
+    }
     func failReactions(_ error: AccountError?) { reactionError = error }
 
     func setSalute(_ on: Bool, checkIn: UUID, as me: UUID) throws {
@@ -484,4 +489,28 @@ private func item(_ n: Int) -> FeedItem {
         #expect(kept.contains(someoneElse))
         #expect(kept.count == 4)
     }
+}
+
+@MainActor @Test func oneCheckInIsLoadedById() async {
+    let backend = FakeFeed(items: (1...3).map(item))
+    let store = makeStore(backend)
+    #expect(await store.checkIn(item(2).id)?.registration == "D-A2")
+    #expect(await store.checkIn(UUID()) == nil)
+    await backend.fail(.unknown)
+    #expect(await store.checkIn(item(2).id) == nil)
+}
+
+@Test func aCheckInByIdCarriesTheAirportsOfAFlight() throws {
+    let json = """
+    {"id":"00000000-0000-0000-0000-000000000001","user_id":"00000000-0000-0000-0000-000000000002","username":"anna",
+     "display_name":null,"kind":"flown","occurred_at":"2026-11-01T12:00:00+00:00","registration":null,"type_icao":null,
+     "type_name":null,"airport_id":null,"airport_code":null,"origin_id":3,"destination_id":9,"origin_code":"FRA",
+     "destination_code":"JFK","flight_number":"LH400","distance_km":6200,"cabin":"economy","seat":"12A",
+     "salutes":0,"comments":0,"saluted":false}
+    """
+    let item = try JSONDecoder().decode(FeedItem.self, from: Data(json.utf8))
+    #expect(item.originID == 3)
+    #expect(item.destinationID == 9)
+    #expect(item.cabin == "economy")
+    #expect(item.seat == "12A")
 }

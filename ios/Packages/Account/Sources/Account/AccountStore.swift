@@ -240,6 +240,7 @@ public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend, FeedBac
     public func privacy(of me: UUID) async throws -> PrivacySettings { throw AccountError.notConfigured }
     public func setPrivacy(_ settings: PrivacySettings, as me: UUID) async throws { throw AccountError.notConfigured }
     public func feed(after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem] { throw AccountError.notConfigured }
+    public func checkIn(_ id: UUID) async throws -> FeedItem? { throw AccountError.notConfigured }
     public func photos(for checkIns: [UUID]) async throws -> [FeedPhoto] { throw AccountError.notConfigured }
     public func personCheckIns(of person: UUID, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem] { throw AccountError.notConfigured }
     public func airportCheckIns(at airport: Int, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem] { throw AccountError.notConfigured }

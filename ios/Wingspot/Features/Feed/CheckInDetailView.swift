@@ -19,6 +19,7 @@ struct CheckInDetailView: View {
     @Query(filter: #Predicate<LocalCheckIn> { $0.kind == "flown" }) private var localFlights: [LocalCheckIn]
     @State private var viewing: FeedPhoto?
     @State private var editing = false
+    @State private var full: FeedItem?
     @State private var store: CheckInCommentStore?
     @State private var text = ""
     @State private var problem: AccountError?
@@ -37,12 +38,19 @@ struct CheckInDetailView: View {
         .task {
             let created = (source ?? feed).commentStore(for: item.id)
             store = created
-            await created.load()
+            async let loaded: Void = created.load()
+            full = await (source ?? feed).checkIn(item.id)
+            await loaded
         }
     }
 
     private var list: FeedStore { source ?? feed }
     private var current: FeedItem { list.items.first { $0.id == item.id } ?? item }
+    /// The check-in as loaded by id, which has the airports of a flight, with the counts of the list.
+    private var shown: FeedItem {
+        guard let full else { return current }
+        return full.updating(salutes: current.salutes, comments: current.comments, saluted: current.saluted)
+    }
     private var photos: [FeedPhoto] { list.photos[item.id] ?? [] }
     private var isOwn: Bool { item.userID == account.userID }
     private var canEdit: Bool { isOwn && item.kind == "flown" && localFlights.contains { $0.id == item.id } }
@@ -113,8 +121,8 @@ struct CheckInDetailView: View {
                 if isOwn {
                     Text("You").font(.subheadline.bold())
                 } else {
-                    NavigationLink { PersonLoaderView(id: item.userID) } label: {
-                        Text(verbatim: item.displayName ?? item.username).font(.subheadline.bold())
+                    NavigationLink { PersonLoaderView(id: shown.userID) } label: {
+                        Text(verbatim: shown.displayName ?? shown.username).font(.subheadline.bold())
                     }
                 }
                 Label(kindTitle, systemImage: kindSymbol)
@@ -122,31 +130,41 @@ struct CheckInDetailView: View {
                     .foregroundStyle(.secondary)
                 Text(verbatim: title)
                     .font(.system(.largeTitle, design: .monospaced, weight: .semibold))
-                Text(item.occurredAt, format: .dateTime.day().month(.wide).year().hour().minute())
+                Text(shown.occurredAt, format: .dateTime.day().month(.wide).year().hour().minute())
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
             .padding(.vertical, 4)
-            if let airportID = item.airportID, item.kind == "airport" {
+            if let airportID = shown.airportID, shown.kind == "airport" {
                 NavigationLink { AirportPageView(airportID: airportID) } label: {
                     Label("Airport page", systemImage: "building.columns")
                 }
             }
-            if item.kind == "flown" {
-                if let number = item.flightNumber { LabeledContent("Flight", value: number) }
-                if let km = item.distanceKm { LabeledContent("Distance", value: unit.format(km: km)) }
+            if shown.kind == "flown" {
+                if let origin = shown.originID, let destination = shown.destinationID {
+                    NavigationLink { AirportPageView(airportID: origin) } label: {
+                        LabeledContent("From", value: shown.originCode ?? "?")
+                    }
+                    NavigationLink { AirportPageView(airportID: destination) } label: {
+                        LabeledContent("To", value: shown.destinationCode ?? "?")
+                    }
+                }
+                if let number = shown.flightNumber { LabeledContent("Flight", value: number) }
+                if let cabin = shown.cabin.flatMap(CabinClass.init(rawValue:)) { LabeledContent("Cabin", value: String(localized: cabin.title)) }
+                if let seat = shown.seat { LabeledContent("Seat", value: seat) }
+                if let km = shown.distanceKm { LabeledContent("Distance", value: unit.format(km: km)) }
             }
-            if let registration = item.registration {
+            if let registration = shown.registration {
                 NavigationLink { RegistrationPageView(registration: registration) } label: {
                     LabeledContent("Aircraft", value: registration)
                 }
             }
-            if let type = item.typeICAO {
+            if let type = shown.typeICAO {
                 NavigationLink { TypePageView(typeCode: type) } label: {
-                    LabeledContent("Type", value: item.typeName ?? type)
+                    LabeledContent("Type", value: shown.typeName ?? type)
                 }
             }
-            if item.kind == "spotted", let airport = item.airportCode, let airportID = item.airportID {
+            if shown.kind == "spotted", let airport = shown.airportCode, let airportID = shown.airportID {
                 NavigationLink { AirportPageView(airportID: airportID) } label: {
                     LabeledContent("Airport", value: airport)
                 }
@@ -187,7 +205,7 @@ struct CheckInDetailView: View {
     private var reactions: some View {
         Section {
             Button {
-                Task { await list.toggleSalute(item.id) }
+                Task { await list.toggleSalute(shown.id) }
             } label: {
                 Label("\(current.salutes)", systemImage: current.saluted ? "hands.clap.fill" : "hands.clap")
             }
@@ -204,14 +222,14 @@ struct CheckInDetailView: View {
         } else if !isOwn {
             Section {
                 Button("Report", systemImage: "flag") {
-                    report = ReportTarget(kind: .checkin, id: item.id, subject: "this check-in")
+                    report = ReportTarget(kind: .checkin, id: shown.id, subject: "this check-in")
                 }
             }
         }
     }
 
     private var kindTitle: LocalizedStringKey {
-        switch item.kind {
+        switch shown.kind {
         case "flown": "Flown"
         case "airport": "Airport"
         default: "Spotted"
@@ -219,7 +237,7 @@ struct CheckInDetailView: View {
     }
 
     private var kindSymbol: String {
-        switch item.kind {
+        switch shown.kind {
         case "flown": "airplane"
         case "airport": "building.columns"
         default: "binoculars"
@@ -228,10 +246,10 @@ struct CheckInDetailView: View {
 
     /// The registration if there is one, otherwise the type. A flight shows its route.
     private var title: String {
-        switch item.kind {
-        case "airport": return item.airportCode ?? "?"
-        case "flown": return "\(item.originCode ?? "?") → \(item.destinationCode ?? "?")"
-        default: return item.registration ?? item.typeICAO ?? "?"
+        switch shown.kind {
+        case "airport": return shown.airportCode ?? "?"
+        case "flown": return "\(shown.originCode ?? "?") → \(shown.destinationCode ?? "?")"
+        default: return shown.registration ?? shown.typeICAO ?? "?"
         }
     }
 
