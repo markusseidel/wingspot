@@ -89,6 +89,8 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
                 page is Route.AirportPage -> Scrolling { AirportPage(app, social, page.id, me, refState, checkInState.all) }
                 page is Route.TypePage -> Scrolling { TypePage(app, social, page.code, me, checkInState.all) }
                 page is Route.RegistrationPage -> Scrolling { RegistrationPage(app, social, page.registration, me, checkInState.all) }
+                page is Route.ExploreMap -> ExploreMapPage(app, me, checkInState.all, refState, social)
+                page is Route.AirportsMap -> AirportsMapPage(checkInState.all, refState, social)
                 page is Route.Collections -> CollectionsPage(checkInState.all, social)
                 page is Route.Settings -> SettingsPage(app, me, social)
                 page is Route.EditProfile && me != null -> EditProfilePage(app, me, refState, social)

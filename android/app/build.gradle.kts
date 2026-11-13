@@ -19,6 +19,12 @@ android {
         // -PwingspotSupabaseUrl=... when pointing at a local stack.
         val url = providers.gradleProperty("wingspotSupabaseUrl").getOrElse("https://gsfeuxowjymdqbopcpdo.supabase.co")
         val key = providers.gradleProperty("wingspotPublishableKey").getOrElse("sb_publishable_lWulnPUXjeRfnM8VNu50lw_A0vESCcF")
+        // The Google Maps key: restrict it to this app (package name and signing certificate) in Google Cloud. Without a
+        // key the app works and the maps explain that they are not set up. Give it with -PwingspotMapsKey=... or the
+        // WINGSPOT_MAPS_API_KEY environment variable.
+        val mapsKey = providers.gradleProperty("wingspotMapsKey").orElse(providers.environmentVariable("WINGSPOT_MAPS_API_KEY")).getOrElse("")
+        manifestPlaceholders["mapsApiKey"] = mapsKey
+        buildConfigField("boolean", "MAPS_KEY_SET", (mapsKey.isNotBlank()).toString())
         buildConfigField("String", "SUPABASE_URL", "\"$url\"")
         buildConfigField("String", "PUBLISHABLE_KEY", "\"$key\"")
     }
@@ -58,6 +64,8 @@ dependencies {
     implementation(project(":core"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.work.runtime)
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
     implementation(libs.androidx.activity.compose)

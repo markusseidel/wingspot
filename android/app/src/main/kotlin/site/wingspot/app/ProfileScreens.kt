@@ -210,6 +210,7 @@ fun CollectionsPage(local: List<LocalCheckIn>, social: SocialViewModel) {
     val entries: List<CollectionEntry> = when (tab) { 0 -> lists.aircraft; 1 -> lists.types; else -> lists.airports }
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         item { PageHeader(stringResource(R.string.collections), social::back) }
+        item { OutlinedButton(onClick = { social.open(Route.AirportsMap) }, modifier = Modifier.fillMaxWidth().testTag("airports-map")) { Text(stringResource(R.string.airports_map)) } }
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 for ((i, label) in listOf(R.string.tab_aircraft, R.string.tab_types, R.string.airports).withIndex()) {

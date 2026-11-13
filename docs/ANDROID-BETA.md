@@ -6,10 +6,9 @@ Prices and Google's rules change. Check them in the Play Console before you rely
 
 ## What works and what doesn't yet
 
-Same as iOS: the three check-in kinds with photos, edit and delete, the Feed with salutes and comments, the check-in page, Explore (people, airports, types, registrations, airports near you, busy airports), Badges, Profile with collections, settings, privacy, units, data export and account deletion, alerts (Notify me) and the notification switches, German and English, the iPhone colours.
+Same as iOS: maps (once the Google Maps key is set, see below), the three check-in kinds with photos, edit and delete, the Feed with salutes and comments, the check-in page, Explore (people, airports, types, registrations, airports near you, busy airports), Badges, Profile with collections, settings, privacy, units, data export and account deletion, alerts (Notify me) and the notification switches, German and English, the iPhone colours.
 
 Not on Android yet:
-- Maps (the airports map and the Explore map). Needs a decision: Google Maps (an API key) or MapLibre (a tile provider).
 - Boarding pass scan with the camera.
 - Sign in with Apple, Google or a password. Android has the email link only.
 - Push notifications until the Firebase steps below are done. Everything else about alerts (the rules and switches) already works and is stored on the server.
@@ -47,6 +46,14 @@ One-time setup (you):
 Every later version: run the workflow, upload the new `.aab` as a new internal release. The version code goes up by itself (the run number).
 
 Later, for a wider test or the public release: Closed testing needs a review by Google. For a personal developer account created recently, Google asks for a closed test with at least 12 testers over 14 days in a row before the app may go to production. Plan for that early, because it adds two weeks.
+
+## Maps (Google Maps)
+
+The airport page, the airports map (Profile > Collections) and the Explore map use Google Maps. They show a note until the build has a key.
+1. console.cloud.google.com > create or pick a project > enable **Maps SDK for Android** (billing must be on; mobile maps have a free usage allowance, check the current terms) > Credentials > Create API key.
+2. Restrict the key to Android apps: package `site.wingspot.android` and the SHA-1 of the signing certificate. You need two entries: the Play App Signing certificate (Play Console > Setup > App signing) for store builds, and the certificate of the build you sideload (debug builds use the debug keystore).
+3. GitHub secret `MAPS_API_KEY` with the key. For a local build: `export WINGSPOT_MAPS_API_KEY=...` before `./gradlew assembleDebug`.
+4. Run **Android beta** again.
 
 ## Push notifications (Firebase)
 
