@@ -14,6 +14,12 @@ import site.wingspot.core.SupabaseAuth
 
 /** The pieces the screens and the background upload share. */
 class WingspotApp : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        Push.createChannel(this)
+    }
+
+
     val sessions by lazy { SessionStore(this) }
     val auth by lazy { SupabaseAuth(BuildConfig.SUPABASE_URL, BuildConfig.PUBLISHABLE_KEY) }
     val checkIns by lazy { CheckInStore.open(File(filesDir, "checkins.sqlite").path) }

@@ -20,6 +20,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         handle(intent)
         OutboxWorker.schedule(applicationContext) // sends whatever was left from last time
+        Push.register(application as WingspotApp)
         setContent {
             WingspotTheme {
                 Surface { AppScreen(application as WingspotApp, model, reference, checkIn, social, badges) }
@@ -34,6 +35,12 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handle(intent: Intent?) {
+        // A notification carries what it is about in its extras: open that screen.
+        val extras = listOf("type", "checkin", "actor").associateWith { intent?.getStringExtra(it) }
+        Push.destination(extras)?.let { (kind, id) ->
+            social.tab = Tab.FEED
+            if (kind == "person") social.openPerson(id) else social.stack.add(Route.CheckInPage(id))
+        }
         val link = intent?.data?.toString() ?: return
         if (link.startsWith("wingspot://auth-callback")) model.completeSignIn(link)
     }

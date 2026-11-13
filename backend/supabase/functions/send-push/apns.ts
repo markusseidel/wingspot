@@ -6,6 +6,8 @@ export interface PushDevice {
   token: string;
   env: "sandbox" | "production";
   locale: string | null;
+  /** `ios` or `android`. Missing means `ios`, for rows made before Android existed. */
+  platform?: "ios" | "android";
 }
 
 /** One row from `claim_notifications`. */
@@ -167,25 +169,44 @@ export interface Outcome {
  * a reason that may pass, such as Apple being unreachable.
  */
 export async function deliver(
-  rows: PushRow[], config: ApnsConfig, nowSeconds: number, fetchImpl: typeof fetch = fetch,
+  rows: PushRow[], config: ApnsConfig | null, nowSeconds: number, fetchImpl: typeof fetch = fetch,
+  android: AndroidSender | null = null,
 ): Promise<Outcome[]> {
-  const token = rows.some((row) => row.devices.length > 0) ? await providerToken(config, nowSeconds) : "";
+  const wantsApple = config !== null && rows.some((row) => row.devices.some((d) => (d.platform ?? "ios") === "ios"));
+  const token = wantsApple ? await providerToken(config, nowSeconds) : "";
+  const androidToken = android !== null && rows.some((row) => row.devices.some((d) => d.platform === "android"))
+    ? await android.token(nowSeconds, fetchImpl)
+    : null;
   const outcomes: Outcome[] = [];
   for (const row of rows) {
     const dead: string[] = [];
     let sent = 0;
     let retryable = 0;
     for (const device of row.devices) {
-      const result = await sendToDevice(config, token, device, row, fetchImpl);
+      let result: SendResult;
+      if (device.platform === "android") {
+        if (!android) continue; // Firebase isn't set up: nothing can be sent to this phone yet
+        if (androidToken === null) { retryable++; continue; }
+        result = await android.send(androidToken, device, row, fetchImpl);
+      } else {
+        if (!config) continue;
+        result = await sendToDevice(config, token, device, row, fetchImpl);
+      }
       if (result.ok) sent++;
       else if (result.dead) dead.push(device.id);
       else {
         retryable++;
-        // Only the status and Apple's reason, never the token or the text.
+        // Only the status and the service's reason, never the token or the text.
         console.error(`push not sent: status ${result.status} ${result.reason}`);
       }
     }
     outcomes.push({ id: row.id, delivered: sent > 0 || retryable === 0, dead });
   }
   return outcomes;
+}
+
+/** Sends to Android phones. Kept as an interface so this file doesn't depend on fcm.ts. */
+export interface AndroidSender {
+  token(nowSeconds: number, fetchImpl: typeof fetch): Promise<string | null>;
+  send(token: string, device: PushDevice, row: PushRow, fetchImpl: typeof fetch): Promise<SendResult>;
 }

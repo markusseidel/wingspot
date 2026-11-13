@@ -98,7 +98,7 @@ select is((select count(*)::int from public.claim_notifications(10)), 5, 'claim 
 select is((select count(*)::int from public.claim_notifications(10)), 0, 'and nobody else can take them for five minutes');
 select is((select jsonb_array_length(devices) from public.claim_notifications(10)), null, 'nothing left to claim');
 update public.notifications set claimed_at = null;
-select is((select jsonb_array_length(devices) from public.claim_notifications(1)), 2, 'a row carries the iPhones of its recipient, but not the Android phone');
+select is((select jsonb_array_length(devices) from public.claim_notifications(1)), 3, 'a row carries every phone of its recipient, iPhones and Android');
 update public.notifications set claimed_at = null;
 select is((select subject from public.claim_notifications(10) where kind = 'salute'), 'D-AIPC', 'a salute says what it was about');
 update public.notifications set claimed_at = null;

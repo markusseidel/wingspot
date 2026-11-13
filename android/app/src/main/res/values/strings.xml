@@ -253,4 +253,20 @@
     <string name="type_page">Type %1$s</string>
     <string name="from_airport">From %1$s</string>
     <string name="to_airport">To %1$s</string>
+    <string name="channel_name">Activity</string>
+    <string name="notifications_title">Notifications</string>
+    <string name="push_not_in_build">This build can\'t receive push notifications yet.</string>
+    <string name="notifications_denied">Notifications are turned off for Wingspot on this phone.</string>
+    <string name="open_phone_settings">Open phone settings</string>
+    <string name="notify_followers">New followers</string>
+    <string name="notify_salutes">Salutes</string>
+    <string name="notify_comments">Comments</string>
+    <string name="notify_followed">Check-ins of people you follow</string>
+    <string name="alerts_from">People you get alerts from</string>
+    <string name="alert_spotted">Spotted</string>
+    <string name="alert_flown">Flown</string>
+    <string name="alert_airport">Airport visits</string>
+    <string name="stop">Stop</string>
+    <string name="notify_me">Notify me</string>
+    <string name="notify_me_hint">You get a notification when they check in something you can see. They are not told.</string>
 </resources>

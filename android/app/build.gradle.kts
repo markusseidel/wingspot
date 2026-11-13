@@ -37,10 +37,18 @@ dependencies {
     implementation(project(":core"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.work.runtime)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.material3)
     implementation(libs.compose.ui.tooling.preview)
+}
+
+// Push needs the Firebase project's google-services.json (not in the repository). Without it the app still builds and
+// runs, and just has no push: see docs/ANDROID-BETA.md.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
 }

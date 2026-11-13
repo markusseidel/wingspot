@@ -1,5 +1,6 @@
 import { error, json, methodNotAllowed, serverError, serviceClient } from "../_shared/http.ts";
-import { type ApnsConfig, deliver, type PushRow } from "./apns.ts";
+import { type ApnsConfig, type AndroidSender, deliver, type PushRow } from "./apns.ts";
+import { accessToken, fcmConfigFrom, sendFcm } from "./fcm.ts";
 
 /** Compares without stopping at the first difference. */
 function sameSecret(a: string, b: string): boolean {
@@ -20,8 +21,8 @@ function config(): ApnsConfig | null {
 
 /**
  * Called by the database when a notification is added (and every minute for leftovers), never by the app. It
- * knows the caller by a shared secret in the x-push-secret header. Without Apple's key it does nothing and leaves
- * the rows waiting.
+ * knows the caller by a shared secret in the x-push-secret header. Without Apple's key and Firebase's service account it
+ * does nothing and leaves the rows waiting.
  */
 Deno.serve(async (request) => {
   if (request.method !== "POST") return methodNotAllowed();
@@ -31,14 +32,18 @@ Deno.serve(async (request) => {
     return error(401, "unauthorized", "A valid secret is required.");
   }
   const apns = config();
-  if (!apns) return json({ status: "not_configured" });
+  const fcm = fcmConfigFrom(Deno.env.get("FCM_SERVICE_ACCOUNT"));
+  if (!apns && !fcm) return json({ status: "not_configured" });
+  const android: AndroidSender | null = fcm
+    ? { token: (now, f) => accessToken(fcm, now, f), send: (token, device, row, f) => sendFcm(fcm, token, device, row, f) }
+    : null;
 
   const db = serviceClient();
   const { data, error: failure } = await db.rpc("claim_notifications", { batch_size: 50 });
   if (failure) return serverError(failure);
   const rows = (data ?? []) as PushRow[];
 
-  const outcomes = await deliver(rows, apns, Math.floor(Date.now() / 1000));
+  const outcomes = await deliver(rows, apns, Math.floor(Date.now() / 1000), fetch, android);
   for (const outcome of outcomes) {
     const { error: finishFailure } = await db.rpc("finish_notification", {
       notification: outcome.id, delivered: outcome.delivered, dead_devices: outcome.dead,

@@ -134,7 +134,7 @@ fun ProfileTab(
                 },
             ) { Text(stringResource(R.string.export_data)) }
             Text(stringResource(R.string.export_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            OutlinedButton(onClick = { social.clear(); badges.begin(null); model.signOut() }, modifier = Modifier.fillMaxWidth().testTag("sign-out")) { Text(stringResource(R.string.sign_out)) }
+            OutlinedButton(onClick = { scope.launch { Push.unregister(app); social.clear(); badges.begin(null); model.signOut() } }, modifier = Modifier.fillMaxWidth().testTag("sign-out")) { Text(stringResource(R.string.sign_out)) }
             Text(stringResource(R.string.sign_out_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             TextButton(onClick = { confirmDelete = true }, enabled = !deleting, modifier = Modifier.testTag("delete-account")) {
                 Text(stringResource(R.string.delete_account), color = MaterialTheme.colorScheme.error)
@@ -257,6 +257,8 @@ fun SettingsPage(app: WingspotApp, me: String?, social: SocialViewModel) {
         PageHeader(stringResource(R.string.settings), social::back)
         if (me != null) {
             SocialSettings(app, me)
+            HorizontalDivider()
+            NotificationSettings(app, me)
             HorizontalDivider()
             Text(stringResource(R.string.privacy_title), style = MaterialTheme.typography.titleMedium)
             Row(verticalAlignment = Alignment.CenterVertically) {

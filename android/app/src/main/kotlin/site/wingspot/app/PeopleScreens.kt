@@ -109,6 +109,7 @@ fun PersonPage(app: WingspotApp, model: SocialViewModel, id: String, me: String)
                                 try { if (now) app.social.follow(id, me) else app.social.unfollow(id, me); page(null) } catch (e: ApiException) { following = !now }
                             }
                         }
+                        if (following) PersonAlerts(app, me, id)
                         if (following) OutlinedButton(onClick = toggle, modifier = Modifier.testTag("follow")) { Text(stringResource(R.string.following)) }
                         else Button(onClick = toggle, modifier = Modifier.testTag("follow")) { Text(stringResource(R.string.follow)) }
                     }

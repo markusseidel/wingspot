@@ -29,7 +29,7 @@ class AirportAndFlownStoreTests {
     fun anAirportVisitCountsTheVisitsHere() = runBlocking {
         val s = store()
         assertEquals(1, s.saveAirport(AirportDraft(FRA)).visitsHere)
-        assertEquals(2, s.saveAirport(AirportDraft(FRA, VisitContext.WORKING)).visitsHere)
+        assertEquals(2, s.saveAirport(AirportDraft(FRA, VisitContext.WORKING), Instant.now().plusSeconds(60)).visitsHere)
         val newest = s.recent().first()
         assertEquals("airport", newest.kind)
         assertEquals("working", newest.visitContext)
