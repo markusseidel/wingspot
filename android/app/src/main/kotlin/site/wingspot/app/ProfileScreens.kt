@@ -95,7 +95,7 @@ fun ProfileTab(
         }
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(Modifier.fillMaxWidth().verticalScrollState(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(stringResource(R.string.tab_profile), style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top = 16.dp))
         if (session == null) {
             when {
