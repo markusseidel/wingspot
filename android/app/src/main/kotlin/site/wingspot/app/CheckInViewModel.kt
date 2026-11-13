@@ -35,6 +35,8 @@ data class CheckInState(
     val kind: Kind = Kind.SPOTTED,
     val result: SavedResult? = null,
     val recent: List<LocalCheckIn> = emptyList(),
+    /** Every check-in on this phone, for the profile numbers and collections. */
+    val all: List<LocalCheckIn> = emptyList(),
     val saveFailed: Boolean = false,
     /** The flight being edited. */
     val editing: LocalCheckIn? = null,
@@ -151,7 +153,7 @@ class CheckInViewModel(
 
     /** Called after an upload may have changed the states. */
     fun reload() {
-        viewModelScope.launch { mutable.value = mutable.value.copy(recent = store.recent(20)) }
+        viewModelScope.launch { val everything = store.all(); mutable.value = mutable.value.copy(recent = everything.take(200), all = everything) }
     }
 
     companion object {

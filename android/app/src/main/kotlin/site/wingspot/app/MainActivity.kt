@@ -12,6 +12,7 @@ class MainActivity : ComponentActivity() {
     private val model: AppViewModel by viewModels { AppViewModel.factory(application as WingspotApp) }
     private val checkIn: CheckInViewModel by viewModels { CheckInViewModel.factory(application as WingspotApp) }
     private val social: SocialViewModel by viewModels { SocialViewModel.factory(application as WingspotApp) }
+    private val badges: BadgesViewModel by viewModels { BadgesViewModel.factory(application as WingspotApp) }
     private val reference: ReferenceViewModel by viewModels { ReferenceViewModel.factory(application as WingspotApp) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,7 +22,7 @@ class MainActivity : ComponentActivity() {
         OutboxWorker.schedule(applicationContext) // sends whatever was left from last time
         setContent {
             WingspotTheme {
-                Surface { AppScreen(application as WingspotApp, model, reference, checkIn, social) }
+                Surface { AppScreen(application as WingspotApp, model, reference, checkIn, social, badges) }
             }
         }
     }

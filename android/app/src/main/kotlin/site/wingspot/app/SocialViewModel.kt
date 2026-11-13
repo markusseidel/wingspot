@@ -19,12 +19,15 @@ import site.wingspot.core.FeedItem
 import site.wingspot.core.FeedPhoto
 import site.wingspot.core.SocialApi
 
-enum class Tab { FEED, CHECK_IN, PEOPLE, ACCOUNT }
+enum class Tab { FEED, CHECK_IN, PEOPLE, BADGES, PROFILE }
 
 /** A page above the tabs. */
 sealed class Route {
     data class CheckInPage(val id: String) : Route()
     data class PersonPage(val id: String) : Route()
+    object Collections : Route()
+    object Settings : Route()
+    object EditProfile : Route()
 }
 
 data class FeedState(
@@ -51,6 +54,11 @@ class SocialViewModel(private val api: SocialApi, private val me: () -> String?)
     fun open(item: FeedItem) {
         opened[item.id] = item
         stack.add(Route.CheckInPage(item.id))
+    }
+
+    /** Opens a page above the tabs that needs no check-in, such as Settings. */
+    fun open(route: Route) {
+        stack.add(route)
     }
 
     fun openPerson(id: String) {

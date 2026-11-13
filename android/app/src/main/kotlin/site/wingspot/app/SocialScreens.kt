@@ -129,7 +129,8 @@ fun KindAndTitle(item: FeedItem) {
         style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
     Text(item.title, style = MaterialTheme.typography.titleLarge, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.SemiBold)
-    val details = listOfNotNull(item.typeName, item.flightNumber, item.distanceKm?.let { "$it km" }).joinToString(" · ")
+    val unit = (androidx.compose.ui.platform.LocalContext.current.applicationContext as WingspotApp).prefs.unit
+    val details = listOfNotNull(item.typeName, item.flightNumber, item.distanceKm?.let { unit.format(it) }).joinToString(" · ")
     if (details.isNotBlank()) Text(details, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 

@@ -217,6 +217,11 @@ private fun TypePicker(reference: ReferenceState, type: AircraftType?, onPick: (
     )
 }
 
+/** The airport search for other screens, such as the home airport. */
+@Composable
+fun AirportPickerPublic(reference: ReferenceState, airport: Airport?, onPick: (Airport?) -> Unit) =
+    AirportPicker(stringResource(R.string.airport_label), reference, airport, onPick)
+
 @Composable
 private fun AirportPicker(label: String, reference: ReferenceState, airport: Airport?, onPick: (Airport?) -> Unit) {
     Picker(

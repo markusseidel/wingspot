@@ -102,6 +102,12 @@ class ReferenceDatabase private constructor(private val connection: SQLiteConnec
         { it.bindText(1, iata.trim().uppercase()) },
     ) { airport(it) }.firstOrNull()
 
+    /** The airport with this id in the reference data, for example a home airport saved on the server. */
+    suspend fun airport(id: Long): Airport? = query(
+        "SELECT id, icao, iata, name, city, latitude, longitude FROM airports WHERE id = ?",
+        { it.bindLong(1, id) },
+    ) { airport(it) }.firstOrNull()
+
     private fun airport(row: androidx.sqlite.SQLiteStatement) = Airport(
         row.getLong(0), row.textOrNull(1), row.textOrNull(2), row.getText(3), row.textOrNull(4), row.getDouble(5), row.getDouble(6),
     )

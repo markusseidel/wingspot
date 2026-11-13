@@ -27,6 +27,7 @@ class AppViewModel(
     private val store: SessionStore,
     private val auth: SupabaseAuth,
     private val onSignedIn: () -> Unit,
+    private val deleteRemote: suspend () -> Unit,
 ) : ViewModel() {
     private val mutable = MutableStateFlow(AppState(session = store.load()))
     val state: StateFlow<AppState> = mutable.asStateFlow()
@@ -68,6 +69,13 @@ class AppViewModel(
         mutable.value = mutable.value.copy(sentTo = null, error = null)
     }
 
+    /** Deletes the account on the server, for good, and then forgets the session. Throws when the server can't be reached. */
+    suspend fun deleteAccount() {
+        deleteRemote()
+        store.clear()
+        mutable.value = AppState()
+    }
+
     fun signOut() {
         store.clear()
         mutable.value = AppState()
@@ -83,7 +91,7 @@ class AppViewModel(
 
     companion object {
         fun factory(app: WingspotApp): ViewModelProvider.Factory = viewModelFactory {
-            initializer { AppViewModel(app.sessions, app.auth) { OutboxWorker.schedule(app) } }
+            initializer { AppViewModel(app.sessions, app.auth, { OutboxWorker.schedule(app) }, app::deleteAccount) }
         }
     }
 }

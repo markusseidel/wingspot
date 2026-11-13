@@ -244,6 +244,44 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
         return rest.call("POST", "/rest/v1/rpc/set_sharing", payload).trim().toIntOrNull() ?: 0
     }
 
+    /** XP, level and badges. Also catches up on badges for check-ins uploaded before they existed. Returns the answer as sent, to keep for offline use. */
+    suspend fun progressJson(): String = rest.call("POST", "/rest/v1/rpc/get_my_progress", "{}")
+
+    fun parseProgress(text: String): UserProgress = json.decodeFromString(UserProgress.serializer(), text)
+
+    /** Everything stored about you, as the server's JSON. */
+    suspend fun exportMyData(): String = rest.call("POST", "/rest/v1/rpc/export_my_data", "{}")
+
+    /** The private-profile switch and the delay for public check-ins, in minutes. */
+    data class Privacy(val isPrivate: Boolean, val postDelayMinutes: Int)
+
+    suspend fun privacy(me: String): Privacy {
+        val flag = json.parseToJsonElement(rest.call("GET", "/rest/v1/profiles?select=is_private&id=eq.$me")).jsonArray.firstOrNull()
+            ?.jsonObject?.get("is_private")?.jsonPrimitive?.content == "true"
+        val delay = json.parseToJsonElement(rest.call("POST", "/rest/v1/rpc/get_profile", """{"target":"$me"}""")).jsonArray.firstOrNull()
+            ?.jsonObject?.get("post_delay_minutes")?.jsonPrimitive?.content?.toIntOrNull() ?: 0
+        return Privacy(flag, delay)
+    }
+
+    suspend fun setPrivacy(me: String, privacy: Privacy) {
+        val payload = """{"is_private":${privacy.isPrivate},"post_delay_minutes":${privacy.postDelayMinutes}}"""
+        rest.call("PATCH", "/rest/v1/profiles?id=eq.$me", payload, prefer = "return=minimal")
+    }
+
+    /** Your own profile: username, name and home airport id. */
+    data class MyProfile(val username: String, val displayName: String?, val homeAirport: Long?)
+
+    suspend fun myProfile(me: String): MyProfile? {
+        val row = json.parseToJsonElement(rest.call("GET", "/rest/v1/profiles?select=username,display_name&id=eq.$me")).jsonArray.firstOrNull()?.jsonObject ?: return null
+        val home = json.parseToJsonElement(rest.call("POST", "/rest/v1/rpc/get_profile", """{"target":"$me"}""")).jsonArray.firstOrNull()
+            ?.jsonObject?.get("home_airport")?.jsonPrimitive?.content?.toLongOrNull()
+        return MyProfile(row["username"]!!.jsonPrimitive.content, row["display_name"]?.jsonPrimitive?.content?.takeIf { it != "null" }, home)
+    }
+
+    suspend fun setHomeAirport(me: String, airportId: Long?) {
+        rest.call("PATCH", "/rest/v1/profiles?id=eq.$me", """{"home_airport":${airportId ?: "null"}}""", prefer = "return=minimal")
+    }
+
     suspend fun saveProfile(me: String, username: String, displayName: String?) {
         val payload = buildJsonObject {
             put("username", username)
