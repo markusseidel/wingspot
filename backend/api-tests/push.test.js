@@ -29,6 +29,18 @@ describe("push texts", () => {
     assert.equal(render(row({ kind: "comment", snippet: "Toll" }), "de").body, "hat kommentiert: „Toll“");
   });
 
+  test("alerts about new check-ins say what was done, in English and German", () => {
+    const alert = (checkin_kind, subject) => row({ kind: "checkin", checkin_kind, subject });
+    assert.equal(render(alert("flown", "FRA → JFK"), "en").body, "flew FRA → JFK.");
+    assert.equal(render(alert("flown", "FRA → JFK"), "de").body, "ist FRA → JFK geflogen.");
+    assert.equal(render(alert("spotted", "D-AIMA"), "en").body, "spotted D-AIMA.");
+    assert.equal(render(alert("spotted", "D-AIMA"), "de").body, "hat D-AIMA gespottet.");
+    assert.equal(render(alert("airport", "FRA"), "en").body, "checked in at FRA.");
+    assert.equal(render(alert("airport", "FRA"), "de").body, "hat in FRA eingecheckt.");
+    assert.equal(render(alert("spotted", null), "en").body, "checked in.");
+    assert.equal(render(alert(null, null), "de").body, "hat eingecheckt.");
+  });
+
   test("the display name wins over the username, and no locale means English", () => {
     assert.equal(render(row({ actor_name: "Anna B." }), null).title, "Anna B.");
     assert.equal(render(row(), null).body, "saluted your check-in (D-AIPC).");
