@@ -18,14 +18,24 @@ class WingspotApp : Application() {
     val auth by lazy { SupabaseAuth(BuildConfig.SUPABASE_URL, BuildConfig.PUBLISHABLE_KEY) }
     val checkIns by lazy { CheckInStore.open(File(filesDir, "checkins.sqlite").path) }
     val referenceInstaller by lazy { ReferenceDataInstaller(File(filesDir, "refdata"), BuildConfig.SUPABASE_URL + "/functions") }
+    val prefs by lazy { Prefs(this) }
     val terms by lazy { TermsStore(this) }
     val rest by lazy { Rest(BuildConfig.SUPABASE_URL, BuildConfig.PUBLISHABLE_KEY, ::accessToken) }
     val social by lazy { SocialApi(rest, BuildConfig.SUPABASE_URL + "/storage/v1") }
-    val outbox by lazy { Outbox(
-        checkIns,
-        ApiClient(BuildConfig.SUPABASE_URL + "/functions", restUrl = BuildConfig.SUPABASE_URL + "/rest/v1", apiKey = BuildConfig.PUBLISHABLE_KEY),
-        ::accessToken,
-    ) }
+    val api by lazy {
+        ApiClient(BuildConfig.SUPABASE_URL + "/functions", restUrl = BuildConfig.SUPABASE_URL + "/rest/v1", apiKey = BuildConfig.PUBLISHABLE_KEY)
+    }
+    val outbox by lazy { Outbox(checkIns, api, ::accessToken) }
+
+    /** Deletes the account on the server for good. A refused token is refreshed once. Throws [ApiException] when it fails. */
+    suspend fun deleteAccount() {
+        val token = accessToken(false) ?: throw ApiException.Unauthorized
+        try {
+            api.deleteAccount(token)
+        } catch (e: ApiException.Unauthorized) {
+            api.deleteAccount(accessToken(true) ?: throw ApiException.Unauthorized)
+        }
+    }
 
     /** A valid access token, refreshed when it is about to expire or after the server refused it. Null if signed out. */
     suspend fun accessToken(forceRefresh: Boolean): String? {

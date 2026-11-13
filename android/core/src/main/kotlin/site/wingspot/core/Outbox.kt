@@ -99,6 +99,26 @@ class ApiClient(
             }
         }
 
+    /**
+     * `DELETE /v1/me`: deletes the account for good, with its check-ins, photos, comments and follows. Nothing can undo
+     * it, and the access token stops working afterwards. Safe to repeat after a failure.
+     */
+    suspend fun deleteAccount(accessToken: String) = withContext(Dispatchers.IO) {
+        val request = Request.Builder().url("$base/v1/me").header("Authorization", "Bearer $accessToken").delete().build()
+        try {
+            client.newCall(request).execute().use { response ->
+                when {
+                    response.isSuccessful -> Unit
+                    response.code == 401 -> throw ApiException.Unauthorized
+                    response.code >= 500 || response.code == 429 || response.code == 408 -> throw ApiException.Retry
+                    else -> throw ApiException.Unexpected(response.code)
+                }
+            }
+        } catch (e: IOException) {
+            throw ApiException.Retry
+        }
+    }
+
     /** Deletes one of your own check-ins, with its photos, salutes and comments. Does nothing if it is already gone. */
     suspend fun deleteCheckin(id: java.util.UUID, accessToken: String) = withContext(Dispatchers.IO) {
         val request = Request.Builder().url("${rest ?: throw ApiException.Unexpected(0)}/rpc/delete_checkin")

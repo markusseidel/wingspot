@@ -45,7 +45,7 @@ import site.wingspot.core.Registration
 import site.wingspot.core.Username
 
 @Composable
-fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewModel, checkIn: CheckInViewModel, social: SocialViewModel) {
+fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewModel, checkIn: CheckInViewModel, social: SocialViewModel, badges: BadgesViewModel) {
     val state by model.state.collectAsState()
     val refState by reference.state.collectAsState()
     val checkInState by checkIn.state.collectAsState()
@@ -54,6 +54,11 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
     val editing = checkInState.editing
     val formOpen = checkInState.isOpen || editing != null
     val page = social.stack.lastOrNull()
+    // Badges follow the signed-in person and are refreshed when check-ins reach the server.
+    val synced = checkInState.recent.count { it.syncState == site.wingspot.core.SyncState.SYNCED }
+    LaunchedEffect(me) { badges.begin(me) }
+    LaunchedEffect(synced) { if (me != null && synced > 0) badges.refresh() }
+    CelebrationDialog(badges)
 
     BackHandler(enabled = page != null) { social.back() }
     BackHandler(enabled = page == null && formOpen) { if (editing != null) checkIn.cancelEdit() else checkIn.close() }
@@ -64,7 +69,7 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
             if (!formOpen && page == null) NavigationBar {
                 for ((tab, label, glyph) in listOf(
                     Triple(Tab.FEED, R.string.tab_feed, "📰"), Triple(Tab.CHECK_IN, R.string.tab_check_in, "✈️"),
-                    Triple(Tab.PEOPLE, R.string.tab_people, "👥"), Triple(Tab.ACCOUNT, R.string.tab_account, "👤"),
+                    Triple(Tab.PEOPLE, R.string.tab_people, "👥"), Triple(Tab.BADGES, R.string.tab_badges, "🎖"), Triple(Tab.PROFILE, R.string.tab_profile, "👤"),
                 )) NavigationBarItem(
                     selected = social.tab == tab, onClick = { social.tab = tab },
                     icon = { Text(glyph) }, label = { Text(stringResource(label)) }, modifier = Modifier.testTag("tab-$tab"),
@@ -81,9 +86,12 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
                 checkInState.isOpen -> Scrolling { CheckInScreen(checkInState, refState, checkIn) }
                 page is Route.CheckInPage && me != null -> CheckInPage(app, social, checkIn, page.id, me)
                 page is Route.PersonPage && me != null -> PersonPage(app, social, page.id, me)
+                page is Route.Collections -> CollectionsPage(checkInState.all, social)
+                page is Route.Settings -> SettingsPage(app, me, social)
+                page is Route.EditProfile && me != null -> EditProfilePage(app, me, refState, social)
                 else -> when (social.tab) {
-                    Tab.FEED -> SocialGate(app, me, onSignIn = { social.tab = Tab.ACCOUNT }) { FeedTab(social, it) }
-                    Tab.PEOPLE -> SocialGate(app, me, onSignIn = { social.tab = Tab.ACCOUNT }) { PeopleTab(app, social, it) }
+                    Tab.FEED -> SocialGate(app, me, onSignIn = { social.tab = Tab.PROFILE }) { FeedTab(social, it) }
+                    Tab.PEOPLE -> SocialGate(app, me, onSignIn = { social.tab = Tab.PROFILE }) { PeopleTab(app, social, it) }
                     Tab.CHECK_IN -> Scrolling {
                         Spacer(Modifier.height(16.dp))
                         Button(onClick = checkIn::open, modifier = Modifier.fillMaxWidth().testTag("open-check-in")) { Text(stringResource(R.string.check_in)) }
@@ -92,20 +100,9 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
                         }
                         RecentCheckIns(checkInState.recent, onEdit = checkIn::edit, onDelete = checkIn::delete)
                     }
-                    Tab.ACCOUNT -> Scrolling {
-                        Spacer(Modifier.height(16.dp))
-                        when {
-                            session != null -> SignedIn(session.user.email ?: session.user.id, onSignOut = { social.clear(); model.signOut() })
-                            state.sentTo != null -> CheckEmail(state.sentTo!!, model::useOtherEmail)
-                            else -> SignInForm(state.isWorking, model::sendLink)
-                        }
-                        if (me != null) {
-                            HorizontalDivider()
-                            SocialSettings(app, me)
-                        }
-                        HorizontalDivider()
-                        SearchSection(refState, reference::search, reference::refresh)
-                        state.error?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error, modifier = Modifier.testTag("error")) }
+                    Tab.BADGES -> BadgesTab(badges, me != null) { social.tab = Tab.PROFILE }
+                    Tab.PROFILE -> Scrolling {
+                        ProfileTab(app, state, model, badges, social, refState, reference::search, reference::refresh, checkInState.all, checkIn::reload)
                     }
                 }
             }
@@ -146,7 +143,7 @@ private fun SocialGate(app: WingspotApp, me: String?, onSignIn: () -> Unit, cont
 }
 
 @Composable
-private fun SignInForm(isWorking: Boolean, onSend: (String) -> Unit) {
+internal fun SignInForm(isWorking: Boolean, onSend: (String) -> Unit) {
     var email by rememberSaveable { mutableStateOf("") }
     Text(stringResource(R.string.sign_in_title), style = MaterialTheme.typography.headlineMedium)
     OutlinedTextField(
@@ -162,72 +159,15 @@ private fun SignInForm(isWorking: Boolean, onSend: (String) -> Unit) {
 }
 
 @Composable
-private fun CheckEmail(address: String, onOther: () -> Unit) {
+internal fun CheckEmail(address: String, onOther: () -> Unit) {
     Text(stringResource(R.string.check_email_title), style = MaterialTheme.typography.headlineMedium)
     Text(stringResource(R.string.check_email_body, address))
     TextButton(onClick = onOther) { Text(stringResource(R.string.use_other_email)) }
 }
 
-@Composable
-private fun SignedIn(who: String, onSignOut: () -> Unit) {
-    Text(stringResource(R.string.signed_in_as, who), style = MaterialTheme.typography.titleMedium)
-    OutlinedButton(onClick = onSignOut) { Text(stringResource(R.string.sign_out)) }
-    HorizontalDivider()
-    RegistrationCheck()
-    HorizontalDivider()
-    PassReader()
-}
-
-/** Shows the shared registration rules at work: type D-AIMA or hbjna. */
-@Composable
-private fun RegistrationCheck() {
-    var text by rememberSaveable { mutableStateOf("") }
-    Text(stringResource(R.string.registration_title), style = MaterialTheme.typography.titleMedium)
-    OutlinedTextField(
-        value = text, onValueChange = { text = it }, singleLine = true,
-        label = { Text(stringResource(R.string.registration_label)) }, modifier = Modifier.fillMaxWidth(),
-    )
-    if (text.isNotBlank()) {
-        val registration = Registration.parse(text)
-        if (registration != null) {
-            Text(
-                stringResource(R.string.registration_valid, registration.value, registration.countryCode),
-                fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.titleLarge,
-            )
-        } else {
-            Text(stringResource(R.string.registration_invalid))
-        }
-    }
-}
-
-/** Reads pasted barcode text with the shared parser. The camera scan comes later (ML Kit). */
-@Composable
-private fun PassReader() {
-    var barcode by rememberSaveable { mutableStateOf("") }
-    var result by remember { mutableStateOf<Result<BoardingPass>?>(null) }
-    Text(stringResource(R.string.scan_title), style = MaterialTheme.typography.titleMedium)
-    Text(stringResource(R.string.scan_hint), style = MaterialTheme.typography.bodySmall)
-    OutlinedTextField(
-        value = barcode, onValueChange = { barcode = it },
-        label = { Text(stringResource(R.string.barcode_label)) }, modifier = Modifier.fillMaxWidth(),
-    )
-    Button(onClick = { result = runCatching { BoardingPass.parse(barcode) } }, enabled = barcode.isNotBlank()) {
-        Text(stringResource(R.string.read_pass))
-    }
-    result?.fold(
-        onSuccess = { pass ->
-            pass.legs.forEach { leg ->
-                Text(stringResource(R.string.leg_line, leg.from, leg.to, leg.carrier, leg.flightNumber, leg.flightDate(java.time.LocalDate.now()).toString()))
-                leg.seat?.let { Text(stringResource(R.string.seat_line, it)) }
-            }
-        },
-        onFailure = { Text(stringResource(R.string.scan_failed), color = MaterialTheme.colorScheme.error) },
-    )
-}
-
 /** Airports and aircraft types, searched on the phone. The data is downloaded once and then works offline. */
 @Composable
-private fun SearchSection(state: ReferenceState, onSearch: (String) -> Unit, onRetry: () -> Unit) {
+internal fun SearchSection(state: ReferenceState, onSearch: (String) -> Unit, onRetry: () -> Unit) {
     var text by rememberSaveable { mutableStateOf("") }
     LaunchedEffect(text, state.database) {
         delay(250)

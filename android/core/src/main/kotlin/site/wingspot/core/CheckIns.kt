@@ -307,6 +307,15 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
             if (count == 0) null else count to Instant.ofEpochMilli(it.getLong(1))
         }
 
+    /** Every check-in on this phone, newest first. For the profile numbers and collections. */
+    suspend fun all(): List<LocalCheckIn> = select("ORDER BY occurred_at DESC, id DESC")
+
+    /** Removes everything on this phone, for example after the account was deleted. */
+    suspend fun deleteEverything() = db {
+        connection.execSQL("DELETE FROM photos")
+        connection.execSQL("DELETE FROM checkins")
+    }
+
     /** Newest first. */
     suspend fun recent(limit: Int = 50): List<LocalCheckIn> = select("ORDER BY occurred_at DESC, id DESC LIMIT $limit")
 
