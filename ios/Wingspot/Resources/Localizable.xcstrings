@@ -988,6 +988,16 @@
         }
       }
     },
+    "Couldn't delete this check-in" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check-in konnte nicht gelöscht werden"
+          }
+        }
+      }
+    },
     "Couldn't delete your account" : {
       "localizations" : {
         "de" : {
@@ -1191,6 +1201,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Konto endgültig löschen?"
+          }
+        }
+      }
+    },
+    "Delete this check-in?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Check-in löschen?"
           }
         }
       }
@@ -1759,6 +1779,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "In Arbeit"
+          }
+        }
+      }
+    },
+    "It is removed for good, with its photos, salutes and comments." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Er wird endgültig gelöscht, mit Fotos, Salutes und Kommentaren."
           }
         }
       }
@@ -2503,6 +2533,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Foto"
+          }
+        }
+      }
+    },
+    "Please check your connection and try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte prüfe deine Verbindung und versuche es erneut."
           }
         }
       }

@@ -19,6 +19,9 @@ struct CheckInDetailView: View {
     @Query(filter: #Predicate<LocalCheckIn> { $0.kind == "flown" }) private var localFlights: [LocalCheckIn]
     @State private var viewing: FeedPhoto?
     @State private var editing = false
+    @State private var confirmDelete = false
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
     @State private var full: FeedItem?
     @State private var store: CheckInCommentStore?
     @State private var text = ""
@@ -97,6 +100,20 @@ struct CheckInDetailView: View {
         .refreshable { await store.load() }
         .sheet(item: $report) { ReportSheet(target: $0) }
         .fullScreenCover(item: $viewing) { PhotoViewer(photos: photos, start: $0) }
+        .confirmationDialog("Delete this check-in?", isPresented: $confirmDelete, titleVisibility: .visible) {
+            Button("Delete", role: .destructive) {
+                Task {
+                    let others = source == nil ? [] : [feed]
+                    if await CheckInDeletion.delete(item.id, feed: list, others: others, context: modelContext) {
+                        dismiss()
+                    } else {
+                        problem = list.failure ?? .unknown
+                    }
+                }
+            }
+        } message: {
+            Text("It is removed for good, with its photos, salutes and comments.")
+        }
         .sheet(isPresented: $editing) {
             FlownEditView(flightID: item.id) {
                 Task {
@@ -215,11 +232,14 @@ struct CheckInDetailView: View {
 
     /// Edit and look up your own flight, or report someone else's check-in.
     @ViewBuilder private var actions: some View {
-        if canEdit {
+        if isOwn {
             Section {
-                Button("Edit details", systemImage: "pencil") { editing = true }
+                if canEdit {
+                    Button("Edit details", systemImage: "pencil") { editing = true }
+                }
+                Button("Delete", systemImage: "trash", role: .destructive) { confirmDelete = true }
             }
-        } else if !isOwn {
+        } else {
             Section {
                 Button("Report", systemImage: "flag") {
                     report = ReportTarget(kind: .checkin, id: shown.id, subject: "this check-in")

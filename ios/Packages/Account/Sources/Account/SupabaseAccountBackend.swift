@@ -439,6 +439,12 @@ extension SupabaseAccountBackend: FeedBackend {
         return rows.first
     }
 
+    public func deleteCheckIn(_ id: UUID) async throws {
+        try await socialErrors {
+            _ = try await client.rpc("delete_checkin", params: CheckInParams(target: id)).execute()
+        }
+    }
+
     public func personCheckIns(of person: UUID, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem] {
         try await socialErrors {
             try await client.rpc("get_person_checkins", params: PersonParams(target: person, cursor: cursor, pageSize: pageSize))

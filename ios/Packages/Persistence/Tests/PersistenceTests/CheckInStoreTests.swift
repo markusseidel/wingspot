@@ -159,3 +159,16 @@ private let dus = SpottedDraft.Place(airportID: 7, code: "DUS")
     let context = try makeContext()
     #expect(try CheckInStore(context: context).updateFlown(id: UUID(), registration: nil, type: nil, flightNumber: nil, cabin: nil, seat: nil) == false)
 }
+
+@MainActor @Test func deletingACheckInRemovesItAndItsPhotoFromThisDevice() throws {
+    let context = try makeContext()
+    let store = CheckInStore(context: context)
+    let kept = try store.saveSpotted(SpottedDraft(registration: Registration("DAIMA")))
+    let gone = try store.saveSpotted(SpottedDraft(registration: Registration("DAIMB")))
+
+    try store.deleteLocal(id: gone.id)
+    try store.deleteLocal(id: UUID())
+
+    let left = try context.fetch(FetchDescriptor<LocalCheckIn>())
+    #expect(left.map(\.id) == [kept.id])
+}

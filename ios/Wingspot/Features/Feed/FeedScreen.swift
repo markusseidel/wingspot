@@ -17,6 +17,9 @@ struct FeedScreen: View {
     /// The flights saved on this device. Only these can be edited, because the details are sent from here.
     @Query(filter: #Predicate<LocalCheckIn> { $0.kind == "flown" }) private var localFlights: [LocalCheckIn]
     @State private var editing: EditedFlight?
+    @State private var deleting: FeedItem?
+    @State private var deleteFailed = false
+    @Environment(\.modelContext) private var modelContext
 
     private struct EditedFlight: Identifiable { let id: UUID }
 
@@ -34,6 +37,20 @@ struct FeedScreen: View {
             .navigationDestination(item: $commentsFor) { CheckInDetailView(item: $0) }
             .navigationDestination(item: $personToOpen) { PersonLoaderView(id: $0.id) }
             .sheet(item: $report) { ReportSheet(target: $0) }
+            .confirmationDialog("Delete this check-in?", isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }), titleVisibility: .visible) {
+                Button("Delete", role: .destructive) {
+                    guard let item = deleting else { return }
+                    deleting = nil
+                    Task { deleteFailed = !(await CheckInDeletion.delete(item.id, feed: feed, context: modelContext)) }
+                }
+            } message: {
+                Text("It is removed for good, with its photos, salutes and comments.")
+            }
+            .alert("Couldn't delete this check-in", isPresented: $deleteFailed) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("Please check your connection and try again.")
+            }
             .sheet(item: $editing) { flight in
                 FlownEditView(flightID: flight.id) {
                     Task {
@@ -124,7 +141,8 @@ struct FeedScreen: View {
                     onOpen: { commentsFor = item },
                     onReport: { report = ReportTarget(kind: .checkin, id: item.id, subject: "this check-in") },
                     onReportPhoto: { report = ReportTarget(kind: .photo, id: $0.id, subject: "this photo") },
-                    onEdit: item.userID == account.userID && editable.contains(item.id) ? { editing = EditedFlight(id: item.id) } : nil
+                    onEdit: item.userID == account.userID && editable.contains(item.id) ? { editing = EditedFlight(id: item.id) } : nil,
+                    onDelete: item.userID == account.userID ? { deleting = item } : nil
                 )
                     .task {
                         // Close to the end: ask for older check-ins.
@@ -152,6 +170,8 @@ struct FeedCard: View {
     let onReportPhoto: (FeedPhoto) -> Void
     /// Set for your own flights that can be edited.
     var onEdit: (() -> Void)?
+    /// Set for your own check-ins.
+    var onDelete: (() -> Void)?
     @State private var viewing: FeedPhoto?
 
     var body: some View {
@@ -168,16 +188,25 @@ struct FeedCard: View {
                 Text(item.occurredAt, format: .relative(presentation: .named))
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                if !isOwn || onEdit != nil {
+                if !isOwn || onEdit != nil || onDelete != nil {
                     Menu {
                         if let onEdit {
                             Button("Edit details", systemImage: "pencil", action: onEdit)
-                        } else {
+                        }
+                        if let onDelete {
+                            Button("Delete", systemImage: "trash", role: .destructive, action: onDelete)
+                        }
+                        if !isOwn {
                             Button("Report", systemImage: "flag", action: onReport)
                         }
                     } label: {
-                        Image(systemName: "ellipsis").padding(.leading, 6)
+                        // A full-size touch target: the dots alone are too small to hit reliably.
+                        Image(systemName: "ellipsis")
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
                     }
+                    .buttonStyle(.borderless)
+                    .padding(.trailing, -10)
                     .accessibilityLabel("More")
                 }
             }

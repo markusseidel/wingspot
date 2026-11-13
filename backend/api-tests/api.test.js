@@ -938,6 +938,23 @@ describe("a person's check-ins", () => {
     assert.deepEqual((await rest("rpc/get_checkin", { token: alice.token, body: { target: hidden } })).body.map((c) => c.id), [hidden]);
   });
 
+  test("you can delete your own check-in, nobody else's, and deleting twice does nothing", async () => {
+    const extra = randomUUID();
+    const upload = await call("/v1/checkins", {
+      method: "POST", token: alice.token,
+      body: { checkins: [{ id: extra, kind: "spotted", occurred_at: new Date(Date.now() - 3 * 3600_000).toISOString(), registration: "D-AIPP", visibility: "public" }] },
+    });
+    assert.equal(upload.body.results[0].status, "stored", JSON.stringify(upload.body));
+    const byBob = await rest("rpc/delete_checkin", { token: bob.token, body: { target: extra } });
+    assert.equal(byBob.status, 204, JSON.stringify(byBob.body));
+    assert.deepEqual((await rest("rpc/get_checkin", { token: alice.token, body: { target: extra } })).body.map((c) => c.id), [extra]);
+    for (let i = 0; i < 2; i++) {
+      const byAlice = await rest("rpc/delete_checkin", { token: alice.token, body: { target: extra } });
+      assert.equal(byAlice.status, 204, JSON.stringify(byAlice.body));
+    }
+    assert.deepEqual((await rest("rpc/get_checkin", { token: alice.token, body: { target: extra } })).body, []);
+  });
+
   test("needs a signed-in user", async () => {
     const response = await fetch(`${API}/rest/v1/rpc/get_person_checkins`, {
       method: "POST", headers: { apikey: ANON_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ target: alice.id }),

@@ -19,6 +19,12 @@ private actor FakeFeed: FeedBackend, ReactionBackend {
         if let error { throw error }
         return items.first { $0.id == id }
     }
+    var deleted: [UUID] = []
+    func deleteCheckIn(_ id: UUID) throws {
+        if let error { throw error }
+        deleted.append(id)
+        items.removeAll { $0.id == id }
+    }
     func failReactions(_ error: AccountError?) { reactionError = error }
 
     func setSalute(_ on: Bool, checkIn: UUID, as me: UUID) throws {
@@ -513,4 +519,18 @@ private func item(_ n: Int) -> FeedItem {
     #expect(item.destinationID == 9)
     #expect(item.cabin == "economy")
     #expect(item.seat == "12A")
+}
+
+@MainActor @Test func deletingACheckInRemovesItFromTheListOnlyWhenTheServerDid() async {
+    let backend = FakeFeed(items: (1...3).map(item))
+    let store = makeStore(backend)
+    await store.refresh()
+
+    await backend.fail(.unknown)
+    #expect(await store.deleteCheckIn(item(2).id) == false)
+    #expect(store.items.count == 3)
+
+    await backend.fail(nil)
+    #expect(await store.deleteCheckIn(item(2).id))
+    #expect(store.items.map(\.id) == [item(1).id, item(3).id])
 }
