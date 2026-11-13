@@ -8,6 +8,8 @@ import site.wingspot.core.AuthException
 import site.wingspot.core.CheckInStore
 import site.wingspot.core.Outbox
 import site.wingspot.core.ReferenceDataInstaller
+import site.wingspot.core.Rest
+import site.wingspot.core.SocialApi
 import site.wingspot.core.SupabaseAuth
 
 /** The pieces the screens and the background upload share. */
@@ -16,6 +18,9 @@ class WingspotApp : Application() {
     val auth by lazy { SupabaseAuth(BuildConfig.SUPABASE_URL, BuildConfig.PUBLISHABLE_KEY) }
     val checkIns by lazy { CheckInStore.open(File(filesDir, "checkins.sqlite").path) }
     val referenceInstaller by lazy { ReferenceDataInstaller(File(filesDir, "refdata"), BuildConfig.SUPABASE_URL + "/functions") }
+    val terms by lazy { TermsStore(this) }
+    val rest by lazy { Rest(BuildConfig.SUPABASE_URL, BuildConfig.PUBLISHABLE_KEY, ::accessToken) }
+    val social by lazy { SocialApi(rest, BuildConfig.SUPABASE_URL + "/storage/v1") }
     val outbox by lazy { Outbox(
         checkIns,
         ApiClient(BuildConfig.SUPABASE_URL + "/functions", restUrl = BuildConfig.SUPABASE_URL + "/rest/v1", apiKey = BuildConfig.PUBLISHABLE_KEY),
@@ -23,7 +28,7 @@ class WingspotApp : Application() {
     ) }
 
     /** A valid access token, refreshed when it is about to expire or after the server refused it. Null if signed out. */
-    private suspend fun accessToken(forceRefresh: Boolean): String? {
+    suspend fun accessToken(forceRefresh: Boolean): String? {
         val session = sessions.load() ?: return null
         if (!forceRefresh && !sessions.expiresSoon()) return session.accessToken
         return try {

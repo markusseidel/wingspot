@@ -28,6 +28,8 @@ sealed class ApiException(message: String) : Exception(message) {
     object Retry : ApiException("retry")
     /** Any other answer, such as a 400: the request itself is wrong. */
     class Unexpected(val status: Int) : ApiException("unexpected $status")
+    /** The server refused this request. [code] is the database's error code, for example `23505` for "already there". */
+    class Failed(val status: Int, val code: String?) : ApiException("failed $status $code")
 }
 
 /** The Wingspot API (`contracts/openapi.yaml`) as the phone uses it. */

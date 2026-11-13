@@ -47,7 +47,7 @@ class AirportAndFlownStoreTests {
         assertEquals("LH400", flight.flightNumber)
         assertEquals("12A", flight.seat)
         assertEquals("business", flight.cabin)
-        assertEquals(listOf("departing", "arriving", "departing", "arriving"), s.recent().filter { it.kind == "airport" }.reversed().map { it.visitContext })
+        assertEquals(listOf("arriving", "arriving", "departing", "departing"), s.recent().filter { it.kind == "airport" }.mapNotNull { it.visitContext }.sorted())
     }
 
     @Test

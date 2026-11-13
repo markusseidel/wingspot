@@ -3,23 +3,25 @@ package site.wingspot.app
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 
 class MainActivity : ComponentActivity() {
     private val model: AppViewModel by viewModels { AppViewModel.factory(application as WingspotApp) }
     private val checkIn: CheckInViewModel by viewModels { CheckInViewModel.factory(application as WingspotApp) }
+    private val social: SocialViewModel by viewModels { SocialViewModel.factory(application as WingspotApp) }
     private val reference: ReferenceViewModel by viewModels { ReferenceViewModel.factory(application as WingspotApp) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         handle(intent)
         OutboxWorker.schedule(applicationContext) // sends whatever was left from last time
         setContent {
-            MaterialTheme {
-                Surface { AppScreen(model, reference, checkIn) }
+            WingspotTheme {
+                Surface { AppScreen(application as WingspotApp, model, reference, checkIn, social) }
             }
         }
     }
