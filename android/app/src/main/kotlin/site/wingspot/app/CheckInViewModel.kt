@@ -92,13 +92,14 @@ class CheckInViewModel(
 
     fun saveFlight(
         origin: Airport, destination: Airport, flightNumber: String, registration: Registration?, type: AircraftType?,
-        cabin: CabinClass?, seat: String, photo: PreparedPhoto?,
+        cabin: CabinClass?, seat: String, photo: PreparedPhoto?, at: Instant = Instant.now(),
     ) = run(photo) {
         val result = store.saveFlown(
             FlownDraft(
                 Place(origin.id, origin.code), Place(destination.id, destination.code), flightNumber, registration,
                 type?.icaoCode, cabin, seat,
             ),
+            at,
         )
         result.id to SavedResult(Kind.FLOWN, result.route, result.timesOnRoute, null)
     }

@@ -148,18 +148,39 @@ private fun SocialGate(app: WingspotApp, me: String?, onSignIn: () -> Unit, cont
 }
 
 @Composable
-internal fun SignInForm(isWorking: Boolean, onSend: (String) -> Unit) {
+internal fun SignInForm(isWorking: Boolean, onSend: (String) -> Unit, onPassword: (String, String) -> Unit, onGoogle: (() -> Unit)?) {
     var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    var withPassword by rememberSaveable { mutableStateOf(false) }
     Text(stringResource(R.string.sign_in_title), style = MaterialTheme.typography.headlineMedium)
+    if (onGoogle != null) {
+        OutlinedButton(onClick = onGoogle, enabled = !isWorking, modifier = Modifier.fillMaxWidth().testTag("google")) { Text(stringResource(R.string.sign_in_google)) }
+        Text(stringResource(R.string.or_with_email), style = MaterialTheme.typography.bodySmall)
+    }
     OutlinedTextField(
         value = email, onValueChange = { email = it }, singleLine = true,
         label = { Text(stringResource(R.string.email_label)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         modifier = Modifier.fillMaxWidth().testTag("email"),
     )
-    Text(stringResource(R.string.sign_in_hint), style = MaterialTheme.typography.bodySmall)
-    Button(onClick = { onSend(email) }, enabled = !isWorking && email.isNotBlank(), modifier = Modifier.fillMaxWidth().testTag("send")) {
-        if (isWorking) CircularProgressIndicator(Modifier.height(20.dp)) else Text(stringResource(R.string.send_link))
+    if (withPassword) {
+        OutlinedTextField(
+            value = password, onValueChange = { password = it }, singleLine = true,
+            label = { Text(stringResource(R.string.password_label)) },
+            visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            modifier = Modifier.fillMaxWidth().testTag("password"),
+        )
+        Button(onClick = { onPassword(email, password) }, enabled = !isWorking && email.isNotBlank() && password.isNotEmpty(), modifier = Modifier.fillMaxWidth().testTag("sign-in-password")) {
+            if (isWorking) CircularProgressIndicator(Modifier.height(20.dp)) else Text(stringResource(R.string.sign_in_title))
+        }
+        TextButton(onClick = { withPassword = false }) { Text(stringResource(R.string.use_link_instead)) }
+    } else {
+        Text(stringResource(R.string.sign_in_hint), style = MaterialTheme.typography.bodySmall)
+        Button(onClick = { onSend(email) }, enabled = !isWorking && email.isNotBlank(), modifier = Modifier.fillMaxWidth().testTag("send")) {
+            if (isWorking) CircularProgressIndicator(Modifier.height(20.dp)) else Text(stringResource(R.string.send_link))
+        }
+        TextButton(onClick = { withPassword = true }, modifier = Modifier.testTag("use-password")) { Text(stringResource(R.string.use_password_instead)) }
     }
 }
 

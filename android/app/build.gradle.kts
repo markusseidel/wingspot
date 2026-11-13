@@ -24,6 +24,10 @@ android {
         // WINGSPOT_MAPS_API_KEY environment variable.
         val mapsKey = providers.gradleProperty("wingspotMapsKey").orElse(providers.environmentVariable("WINGSPOT_MAPS_API_KEY")).getOrElse("")
         manifestPlaceholders["mapsApiKey"] = mapsKey
+        // The "Web application" OAuth client id from Google Cloud (not the Android one), which Supabase also has in its
+        // Google provider settings. Without it the Google button is hidden.
+        val googleClient = providers.gradleProperty("wingspotGoogleClientId").orElse(providers.environmentVariable("WINGSPOT_GOOGLE_CLIENT_ID")).getOrElse("")
+        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleClient\"")
         buildConfigField("boolean", "MAPS_KEY_SET", (mapsKey.isNotBlank()).toString())
         buildConfigField("String", "SUPABASE_URL", "\"$url\"")
         buildConfigField("String", "PUBLISHABLE_KEY", "\"$key\"")
@@ -64,6 +68,14 @@ dependencies {
     implementation(project(":core"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.work.runtime)
+    implementation(libs.camerax.core)
+    implementation(libs.camerax.camera2)
+    implementation(libs.camerax.lifecycle)
+    implementation(libs.camerax.view)
+    implementation(libs.mlkit.barcode)
+    implementation(libs.credentials)
+    implementation(libs.credentials.play)
+    implementation(libs.google.id)
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
     implementation(platform(libs.firebase.bom))

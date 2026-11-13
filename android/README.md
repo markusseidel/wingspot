@@ -24,4 +24,4 @@ The app talks to the same Supabase project as the iPhone app. Its address and pu
 
 ## Not done yet
 
-The boarding pass camera scan, Sign in with Apple, Google and password, token storage in the Android Keystore. Push needs the Firebase project, and the maps need a Google Maps key: see [docs/ANDROID-BETA.md](../docs/ANDROID-BETA.md).
+Sign in with Apple (iPhone only), token storage in the Android Keystore. Push needs the Firebase project, maps need a Google Maps key and Google sign-in needs OAuth client ids: see [docs/ANDROID-BETA.md](../docs/ANDROID-BETA.md).

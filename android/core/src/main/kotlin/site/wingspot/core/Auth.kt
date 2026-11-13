@@ -53,6 +53,8 @@ sealed class AuthException(message: String) : Exception(message) {
     object InvalidLink : AuthException("invalidLink")
     object TooManyRequests : AuthException("tooManyRequests")
     object InvalidEmail : AuthException("invalidEmail")
+    /** The email or password was wrong, or the Google sign-in was refused. */
+    object InvalidLogin : AuthException("invalidLogin")
     object Offline : AuthException("offline")
     object Unknown : AuthException("unknown")
 }
@@ -83,6 +85,31 @@ class SupabaseAuth(
         call(Request.Builder().url(url).post(body.toString().toRequestBody(jsonType))) { }
     }
 
+    /** Signs in with an email and a password. Throws [AuthException.InvalidLogin] when they are wrong. */
+    suspend fun signInWithPassword(email: String, password: String): Session {
+        val url = "$base/auth/v1/token".toHttpUrl().newBuilder().addQueryParameter("grant_type", "password").build()
+        val body = buildJsonObject { put("email", email); put("password", password) }
+        return call(Request.Builder().url(url).post(body.toString().toRequestBody(jsonType)), badRequest = AuthException.InvalidLogin) { text ->
+            json.decodeFromString(Session.serializer(), text)
+        }
+    }
+
+    /**
+     * Signs in with an identity token from Google (or another provider). [nonce] is the raw nonce whose hash was given to
+     * Google when the token was asked for. Throws [AuthException.InvalidLogin] when the server refuses the token.
+     */
+    suspend fun signInWithIdToken(provider: String, idToken: String, nonce: String?): Session {
+        val url = "$base/auth/v1/token".toHttpUrl().newBuilder().addQueryParameter("grant_type", "id_token").build()
+        val body = buildJsonObject {
+            put("provider", provider)
+            put("id_token", idToken)
+            if (nonce != null) put("nonce", nonce)
+        }
+        return call(Request.Builder().url(url).post(body.toString().toRequestBody(jsonType)), badRequest = AuthException.InvalidLogin) { text ->
+            json.decodeFromString(Session.serializer(), text)
+        }
+    }
+
     /** Trades the refresh token for a new session. */
     suspend fun refresh(refreshToken: String): Session {
         val url = "$base/auth/v1/token".toHttpUrl().newBuilder().addQueryParameter("grant_type", "refresh_token").build()
@@ -105,7 +132,7 @@ class SupabaseAuth(
         }
     }
 
-    private suspend fun <T> call(builder: Request.Builder, parse: (String) -> T): T = withContext(Dispatchers.IO) {
+    private suspend fun <T> call(builder: Request.Builder, badRequest: AuthException? = null, parse: (String) -> T): T = withContext(Dispatchers.IO) {
         val request = builder.header("apikey", publishableKey).build()
         try {
             client.newCall(request).execute().use { response ->
@@ -113,6 +140,7 @@ class SupabaseAuth(
                 when {
                     response.isSuccessful -> parse(text)
                     response.code == 429 -> throw AuthException.TooManyRequests
+                    badRequest != null && response.code in 400..422 -> throw badRequest
                     response.code == 422 || response.code == 400 && "email" in text.lowercase() -> throw AuthException.InvalidEmail
                     response.code in 400..403 -> throw AuthException.InvalidLink
                     else -> throw AuthException.Unknown
