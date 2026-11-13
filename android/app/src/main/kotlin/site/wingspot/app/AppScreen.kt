@@ -69,7 +69,7 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
             if (!formOpen && page == null) NavigationBar {
                 for ((tab, label, glyph) in listOf(
                     Triple(Tab.FEED, R.string.tab_feed, "📰"), Triple(Tab.CHECK_IN, R.string.tab_check_in, "✈️"),
-                    Triple(Tab.PEOPLE, R.string.tab_people, "👥"), Triple(Tab.BADGES, R.string.tab_badges, "🎖"), Triple(Tab.PROFILE, R.string.tab_profile, "👤"),
+                    Triple(Tab.EXPLORE, R.string.tab_explore, "🧭"), Triple(Tab.BADGES, R.string.tab_badges, "🎖"), Triple(Tab.PROFILE, R.string.tab_profile, "👤"),
                 )) NavigationBarItem(
                     selected = social.tab == tab, onClick = { social.tab = tab },
                     icon = { Text(glyph) }, label = { Text(stringResource(label)) }, modifier = Modifier.testTag("tab-$tab"),
@@ -86,12 +86,15 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
                 checkInState.isOpen -> Scrolling { CheckInScreen(checkInState, refState, checkIn) }
                 page is Route.CheckInPage && me != null -> CheckInPage(app, social, checkIn, page.id, me)
                 page is Route.PersonPage && me != null -> PersonPage(app, social, page.id, me)
+                page is Route.AirportPage -> Scrolling { AirportPage(app, social, page.id, me, refState, checkInState.all) }
+                page is Route.TypePage -> Scrolling { TypePage(app, social, page.code, me, checkInState.all) }
+                page is Route.RegistrationPage -> Scrolling { RegistrationPage(app, social, page.registration, me, checkInState.all) }
                 page is Route.Collections -> CollectionsPage(checkInState.all, social)
                 page is Route.Settings -> SettingsPage(app, me, social)
                 page is Route.EditProfile && me != null -> EditProfilePage(app, me, refState, social)
                 else -> when (social.tab) {
                     Tab.FEED -> SocialGate(app, me, onSignIn = { social.tab = Tab.PROFILE }) { FeedTab(social, it) }
-                    Tab.PEOPLE -> SocialGate(app, me, onSignIn = { social.tab = Tab.PROFILE }) { PeopleTab(app, social, it) }
+                    Tab.EXPLORE -> Scrolling { ExploreTab(app, social, me, refState, checkInState.all) }
                     Tab.CHECK_IN -> Scrolling {
                         Spacer(Modifier.height(16.dp))
                         Button(onClick = checkIn::open, modifier = Modifier.fillMaxWidth().testTag("open-check-in")) { Text(stringResource(R.string.check_in)) }

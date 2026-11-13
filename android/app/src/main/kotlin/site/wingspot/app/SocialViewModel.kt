@@ -19,12 +19,15 @@ import site.wingspot.core.FeedItem
 import site.wingspot.core.FeedPhoto
 import site.wingspot.core.SocialApi
 
-enum class Tab { FEED, CHECK_IN, PEOPLE, BADGES, PROFILE }
+enum class Tab { FEED, CHECK_IN, EXPLORE, BADGES, PROFILE }
 
 /** A page above the tabs. */
 sealed class Route {
     data class CheckInPage(val id: String) : Route()
     data class PersonPage(val id: String) : Route()
+    data class AirportPage(val id: Long) : Route()
+    data class TypePage(val code: String) : Route()
+    data class RegistrationPage(val registration: String) : Route()
     object Collections : Route()
     object Settings : Route()
     object EditProfile : Route()

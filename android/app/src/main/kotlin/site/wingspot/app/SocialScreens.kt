@@ -123,12 +123,23 @@ fun FeedCard(item: FeedItem, me: String, photos: List<FeedPhoto>, onOpen: () -> 
 }
 
 @Composable
-fun KindAndTitle(item: FeedItem) {
+fun KindAndTitle(item: FeedItem, model: SocialViewModel? = null) {
     Text(
         stringResource(when (item.kind) { "flown" -> R.string.flown_title; "airport" -> R.string.airport_title; else -> R.string.spotted_title }),
         style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
-    Text(item.title, style = MaterialTheme.typography.titleLarge, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.SemiBold)
+    // The title opens the page of the registration, the type or the airport.
+    val target: Route? = when {
+        item.kind == "airport" && item.airportId != null -> Route.AirportPage(item.airportId!!)
+        item.kind == "spotted" && item.registration != null -> Route.RegistrationPage(item.registration!!)
+        item.kind == "spotted" && item.typeIcao != null -> Route.TypePage(item.typeIcao!!)
+        else -> null
+    }
+    Text(
+        item.title, style = MaterialTheme.typography.titleLarge, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.SemiBold,
+        color = if (target != null && model != null) MaterialTheme.colorScheme.primary else androidx.compose.ui.graphics.Color.Unspecified,
+        modifier = if (target != null && model != null) Modifier.clickable { model.open(target) }.padding(vertical = 4.dp) else Modifier,
+    )
     val unit = (androidx.compose.ui.platform.LocalContext.current.applicationContext as WingspotApp).prefs.unit
     val details = listOfNotNull(item.typeName, item.flightNumber, item.distanceKm?.let { unit.format(it) }).joinToString(" · ")
     if (details.isNotBlank()) Text(details, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -201,7 +212,11 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     if (shown.userId == me) Text(stringResource(R.string.you), fontWeight = FontWeight.Bold)
                     else Text(shown.who, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.clickable { model.openPerson(shown.userId) }.padding(vertical = 8.dp))
-                    KindAndTitle(shown)
+                    KindAndTitle(shown, model)
+                    if (shown.kind == "flown") Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        shown.originId?.let { o -> OutlinedButton(onClick = { model.open(Route.AirportPage(o)) }) { Text(stringResource(R.string.from_airport, shown.originCode ?: "?")) } }
+                        shown.destinationId?.let { d -> OutlinedButton(onClick = { model.open(Route.AirportPage(d)) }) { Text(stringResource(R.string.to_airport, shown.destinationCode ?: "?")) } }
+                    }
                     Text(relativeTime(shown.occurredAt), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     if (shown.registration != null && shown.kind == "flown") Text(shown.registration!!, fontFamily = FontFamily.Monospace)
                     if (shown.userId == me) listOfNotNull(shown.cabin, shown.seat).takeIf { it.isNotEmpty() }?.let { Text(it.joinToString(" · ")) }
