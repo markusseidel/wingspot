@@ -24,4 +24,4 @@ The app talks to the same Supabase project as the iPhone app. Its address and pu
 
 ## Not done yet
 
-Google Maps for the airport page, the airports map and the Explore map (needs a key, see docs/ANDROID-BETA.md), maps, Sign in with Google and Apple, release signing, token storage in the Android Keystore. See docs/ANDROID.md.
+The boarding pass camera scan, Sign in with Apple, Google and password, token storage in the Android Keystore. Push needs the Firebase project, and the maps need a Google Maps key: see [docs/ANDROID-BETA.md](../docs/ANDROID-BETA.md).
