@@ -5,7 +5,7 @@ create extension if not exists pgtap with schema extensions;
 select * from no_plan();
 
 insert into auth.users (id, aud, role, email)
-select ('00000000-0000-0000-0000-0000000009' || lpad(n::text, 2, '0'))::uuid, 'authenticated', 'android' || n || '@example.test'
+select ('00000000-0000-0000-0000-0000000009' || lpad(n::text, 2, '0'))::uuid, 'authenticated', 'authenticated', 'android' || n || '@example.test'
 from generate_series(1, 2) n;
 create function pg_temp.u(n integer) returns uuid language sql as $$
   select ('00000000-0000-0000-0000-0000000009' || lpad(n::text, 2, '0'))::uuid;
