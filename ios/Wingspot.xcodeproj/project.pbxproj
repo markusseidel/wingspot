@@ -59,6 +59,7 @@
 		D42859E57A7C92F579D0B015 /* TabHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BCA5440AA98EA8FE6080DA /* TabHeader.swift */; };
 		D85287110D33AEDB2AE2653E /* PushSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578259FF97F6C378ABA27E94 /* PushSupport.swift */; };
 		D866E9760B084CDB160CA4D5 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */; };
+		DF77734F90690A4AEB359E70 /* CheckInDeletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A459FFDFC00F28185B70D33B /* CheckInDeletion.swift */; };
 		E2E45560E0A3701D1C226A90 /* CelebrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A9D215092A1385FA8E52D3A /* CelebrationView.swift */; };
 		E480FE0DE9DC4CBB55FFD70B /* ExploreMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB50BDD1D3F4FB1EB8B8007 /* ExploreMapView.swift */; };
 		E743B21C623831BB31024A48 /* AirportCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E539BCC329B1D95E5DE61344 /* AirportCheckInView.swift */; };
@@ -109,6 +110,7 @@
 		A0AEFDA7AFD99199BC8AC184 /* TermsGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsGate.swift; sourceTree = "<group>"; };
 		A1C3026B7554DE42D34613B0 /* TypePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypePageView.swift; sourceTree = "<group>"; };
 		A29AD035B27FB3BE30BCB737 /* AlertRulesViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertRulesViews.swift; sourceTree = "<group>"; };
+		A459FFDFC00F28185B70D33B /* CheckInDeletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInDeletion.swift; sourceTree = "<group>"; };
 		A47349EC0A6768BA0A1C2F6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A62A4921DD7585EFD9F3F97A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A96EA4033E2C1D21ED547E17 /* APIProgressSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIProgressSource.swift; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 		546C1542C92A1D5B03F0D633 /* Feed */ = {
 			isa = PBXGroup;
 			children = (
+				A459FFDFC00F28185B70D33B /* CheckInDeletion.swift */,
 				CAF19EBCDF218D5810AAEA61 /* CheckInDetailView.swift */,
 				ACC6390EE07C2061FC444960 /* FeedScreen.swift */,
 				346D15D5FD800AAFC82408CF /* FlownEditView.swift */,
@@ -440,6 +443,7 @@
 				A28B1AFC7227F94265B0AF01 /* BadgesScreen.swift in Sources */,
 				C514F70DAE3982F3745EA554 /* BoardingPassScanning.swift in Sources */,
 				E2E45560E0A3701D1C226A90 /* CelebrationView.swift in Sources */,
+				DF77734F90690A4AEB359E70 /* CheckInDeletion.swift in Sources */,
 				9370EEC0F52860F9BEB227EB /* CheckInDetailView.swift in Sources */,
 				186231C28F6E7DD1B25988E6 /* CheckInHistoryView.swift in Sources */,
 				B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */,

@@ -269,6 +269,8 @@ public protocol FeedBackend: Sendable {
     func feed(after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem]
     /// One check-in by id, or `nil` when it doesn't exist or the caller may not see it.
     func checkIn(_ id: UUID) async throws -> FeedItem?
+    /// Deletes one of your own check-ins, with its photos, salutes and comments. Does nothing if it is already gone.
+    func deleteCheckIn(_ id: UUID) async throws
     /// One person's check-ins that the caller may see, newest first.
     func personCheckIns(of person: UUID, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem]
     /// The check-ins at one airport that the caller may see, newest first.
@@ -332,6 +334,25 @@ public final class FeedStore {
     /// One check-in by id, for opening it from a notification. `nil` when it doesn't exist or can't be seen.
     public func checkIn(_ id: UUID) async -> FeedItem? {
         try? await backend.checkIn(id)
+    }
+
+    /// Deletes one of your own check-ins on the server and takes it out of this list. Returns `false` if that failed,
+    /// in which case the check-in stays.
+    public func deleteCheckIn(_ id: UUID) async -> Bool {
+        do {
+            try await backend.deleteCheckIn(id)
+            remove(id)
+            return true
+        } catch {
+            failure = (error as? AccountError) ?? .unknown
+            return false
+        }
+    }
+
+    /// Takes a check-in out of this list, for example one that was deleted from another list.
+    public func remove(_ id: UUID) {
+        items.removeAll { $0.id == id }
+        photos[id] = nil
     }
 
     /// Salutes or un-salutes a check-in. The card changes at once, and goes back if the request fails.

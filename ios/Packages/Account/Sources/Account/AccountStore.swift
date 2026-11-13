@@ -243,6 +243,7 @@ public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend, FeedBac
     public func alertRules(of me: UUID) async throws -> [AlertRule] { throw AccountError.notConfigured }
     public func saveAlertRule(_ rule: AlertRule, as me: UUID) async throws { throw AccountError.notConfigured }
     public func checkIn(_ id: UUID) async throws -> FeedItem? { throw AccountError.notConfigured }
+    public func deleteCheckIn(_ id: UUID) async throws { throw AccountError.notConfigured }
     public func photos(for checkIns: [UUID]) async throws -> [FeedPhoto] { throw AccountError.notConfigured }
     public func personCheckIns(of person: UUID, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem] { throw AccountError.notConfigured }
     public func airportCheckIns(at airport: Int, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem] { throw AccountError.notConfigured }

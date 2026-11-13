@@ -283,6 +283,17 @@ public struct CheckInStore {
         return true
     }
 
+    /// Removes a check-in from this device, with its photos. Does nothing if there is none.
+    public func deleteLocal(id: UUID) throws {
+        for checkIn in try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id })) {
+            context.delete(checkIn)
+        }
+        for photo in try context.fetch(FetchDescriptor<LocalPhoto>(predicate: #Predicate { $0.checkInID == id })) {
+            context.delete(photo)
+        }
+        try context.save()
+    }
+
     /// Saved together with the check-in, so a photo never exists without it.
     private func insertPhoto(_ photo: PreparedPhoto?, for checkInID: UUID, at date: Date) {
         guard let photo else { return }
