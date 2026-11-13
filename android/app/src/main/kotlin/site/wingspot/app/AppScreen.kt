@@ -1,6 +1,8 @@
 package site.wingspot.app
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +14,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -35,44 +40,108 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import site.wingspot.core.BoardingPass
+import site.wingspot.core.ApiException
 import site.wingspot.core.Registration
+import site.wingspot.core.Username
 
 @Composable
-fun AppScreen(model: AppViewModel, reference: ReferenceViewModel, checkIn: CheckInViewModel) {
+fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewModel, checkIn: CheckInViewModel, social: SocialViewModel) {
     val state by model.state.collectAsState()
     val refState by reference.state.collectAsState()
     val checkInState by checkIn.state.collectAsState()
-    Column(
-        Modifier.fillMaxSize().safeDrawingPadding().padding(horizontal = 16.dp).verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Spacer(Modifier.height(24.dp))
-        val editing = checkInState.editing
-        if (editing != null) {
-            FlownEditScreen(editing, checkInState, refState, checkIn)
-            return@Column
+    val session = state.session
+    val me = session?.user?.id
+    val editing = checkInState.editing
+    val formOpen = checkInState.isOpen || editing != null
+    val page = social.stack.lastOrNull()
+
+    BackHandler(enabled = page != null) { social.back() }
+    BackHandler(enabled = page == null && formOpen) { if (editing != null) checkIn.cancelEdit() else checkIn.close() }
+
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        bottomBar = {
+            if (!formOpen && page == null) NavigationBar {
+                for ((tab, label, glyph) in listOf(
+                    Triple(Tab.FEED, R.string.tab_feed, "📰"), Triple(Tab.CHECK_IN, R.string.tab_check_in, "✈️"),
+                    Triple(Tab.PEOPLE, R.string.tab_people, "👥"), Triple(Tab.ACCOUNT, R.string.tab_account, "👤"),
+                )) NavigationBarItem(
+                    selected = social.tab == tab, onClick = { social.tab = tab },
+                    icon = { Text(glyph) }, label = { Text(stringResource(label)) }, modifier = Modifier.testTag("tab-$tab"),
+                )
+            }
+        },
+    ) { padding ->
+        Column(
+            Modifier.fillMaxSize().padding(padding).safeDrawingPadding().padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            when {
+                editing != null -> Scrolling { FlownEditScreen(editing, checkInState, refState, checkIn) }
+                checkInState.isOpen -> Scrolling { CheckInScreen(checkInState, refState, checkIn) }
+                page is Route.CheckInPage && me != null -> CheckInPage(app, social, checkIn, page.id, me)
+                page is Route.PersonPage && me != null -> PersonPage(app, social, page.id, me)
+                else -> when (social.tab) {
+                    Tab.FEED -> SocialGate(app, me, onSignIn = { social.tab = Tab.ACCOUNT }) { FeedTab(social, it) }
+                    Tab.PEOPLE -> SocialGate(app, me, onSignIn = { social.tab = Tab.ACCOUNT }) { PeopleTab(app, social, it) }
+                    Tab.CHECK_IN -> Scrolling {
+                        Spacer(Modifier.height(16.dp))
+                        Button(onClick = checkIn::open, modifier = Modifier.fillMaxWidth().testTag("open-check-in")) { Text(stringResource(R.string.check_in)) }
+                        if (checkInState.deleteFailed) {
+                            Text(stringResource(R.string.delete_failed), color = MaterialTheme.colorScheme.error, modifier = Modifier.testTag("delete-failed"))
+                        }
+                        RecentCheckIns(checkInState.recent, onEdit = checkIn::edit, onDelete = checkIn::delete)
+                    }
+                    Tab.ACCOUNT -> Scrolling {
+                        Spacer(Modifier.height(16.dp))
+                        when {
+                            session != null -> SignedIn(session.user.email ?: session.user.id, onSignOut = { social.clear(); model.signOut() })
+                            state.sentTo != null -> CheckEmail(state.sentTo!!, model::useOtherEmail)
+                            else -> SignInForm(state.isWorking, model::sendLink)
+                        }
+                        if (me != null) {
+                            HorizontalDivider()
+                            SocialSettings(app, me)
+                        }
+                        HorizontalDivider()
+                        SearchSection(refState, reference::search, reference::refresh)
+                        state.error?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error, modifier = Modifier.testTag("error")) }
+                    }
+                }
+            }
         }
-        if (checkInState.isOpen) {
-            CheckInScreen(checkInState, refState, checkIn)
-            return@Column
+    }
+}
+
+@Composable
+private fun Scrolling(content: @Composable ColumnScope.() -> Unit) {
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp), content = content)
+}
+
+/**
+ * The social tabs need a signed-in person with a chosen username who has agreed to the community rules.
+ * Shows what is missing instead, and the content once everything is in place.
+ */
+@Composable
+private fun SocialGate(app: WingspotApp, me: String?, onSignIn: () -> Unit, content: @Composable (String) -> Unit) {
+    if (me == null) {
+        Scrolling {
+            Spacer(Modifier.height(24.dp))
+            Text(stringResource(R.string.sign_in_for_social), style = MaterialTheme.typography.titleMedium)
+            Button(onClick = onSignIn) { Text(stringResource(R.string.sign_in_title)) }
         }
-        val session = state.session
-        Button(onClick = checkIn::open, modifier = Modifier.fillMaxWidth().testTag("open-check-in")) {
-            Text(stringResource(R.string.check_in))
-        }
-        if (checkInState.deleteFailed) {
-            Text(stringResource(R.string.delete_failed), color = MaterialTheme.colorScheme.error, modifier = Modifier.testTag("delete-failed"))
-        }
-        RecentCheckIns(checkInState.recent, onEdit = checkIn::edit, onDelete = checkIn::delete)
-        HorizontalDivider()
-        when {
-            session != null -> SignedIn(session.user.email ?: session.user.id, model::signOut)
-            state.sentTo != null -> CheckEmail(state.sentTo!!, model::useOtherEmail)
-            else -> SignInForm(state.isWorking, model::sendLink)
-        }
-        HorizontalDivider()
-        SearchSection(refState, reference::search, reference::refresh)
-        state.error?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error, modifier = Modifier.testTag("error")) }
+        return
+    }
+    var needsName by remember(me) { mutableStateOf<Boolean?>(null) }
+    var accepted by remember(me) { mutableStateOf(app.terms.hasAccepted(me)) }
+    LaunchedEffect(me) {
+        needsName = try { app.social.person(me)?.username?.let(Username::isPlaceholder) ?: false } catch (e: ApiException) { false }
+    }
+    when {
+        needsName == null -> CircularProgressIndicator()
+        needsName == true -> Scrolling { ProfileSetup(app, me) { needsName = false } }
+        !accepted -> Scrolling { TermsScreen { app.terms.accept(me); accepted = true } }
+        else -> content(me)
     }
 }
 
