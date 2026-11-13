@@ -146,7 +146,7 @@ begin
               when c.kind = 'flown' then coalesce(o.iata, o.icao) || ' → ' || coalesce(d.iata, d.icao)
               when c.kind = 'airport' then coalesce(ap.iata, ap.icao)
               else coalesce(case when a.is_sensitive and c.user_id <> m.recipient then null else a.registration end,
-                            c.type_icao, ap.iata, ap.icao)
+                            c.type_icao, a.type_icao, ap.iata, ap.icao)
             end
      from public.checkins c
      left join public.aircraft a on a.id = c.aircraft_id
