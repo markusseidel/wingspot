@@ -11,8 +11,9 @@ android {
         applicationId = "site.wingspot.android"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        // The beta workflow passes the run number as -PwingspotVersionCode, so every upload to Google Play is higher than the last.
+        versionCode = providers.gradleProperty("wingspotVersionCode").map { it.toInt() }.getOrElse(1)
+        versionName = "0.2.0"
 
         // Both are public: the same address and publishable key the iPhone app ships with. Override with
         // -PwingspotSupabaseUrl=... when pointing at a local stack.
@@ -20,6 +21,26 @@ android {
         val key = providers.gradleProperty("wingspotPublishableKey").getOrElse("sb_publishable_lWulnPUXjeRfnM8VNu50lw_A0vESCcF")
         buildConfigField("String", "SUPABASE_URL", "\"$url\"")
         buildConfigField("String", "PUBLISHABLE_KEY", "\"$key\"")
+    }
+
+    // The upload key is never in the repository. The beta workflow gives its location and passwords as environment
+    // variables; without them the release build is simply unsigned.
+    signingConfigs {
+        val keystorePath = System.getenv("WINGSPOT_KEYSTORE_PATH")
+        if (keystorePath != null) {
+            create("release") {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("WINGSPOT_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("WINGSPOT_KEY_ALIAS")
+                keyPassword = System.getenv("WINGSPOT_KEY_PASSWORD")
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.findByName("release")
+        }
     }
 
     buildFeatures {
