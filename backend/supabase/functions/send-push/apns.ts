@@ -11,13 +11,15 @@ export interface PushDevice {
 /** One row from `claim_notifications`. */
 export interface PushRow {
   id: string;
-  kind: "follow" | "salute" | "comment";
+  kind: "follow" | "salute" | "comment" | "checkin";
   actor_id: string;
   actor_username: string;
   actor_name: string | null;
   checkin_id: string | null;
   subject: string | null;
   snippet: string | null;
+  /** For an alert about a new check-in: `spotted`, `flown` or `airport`. */
+  checkin_kind?: string | null;
   devices: PushDevice[];
 }
 
@@ -47,6 +49,15 @@ export function render(row: PushRow, locale: string | null): Rendered {
     case "salute": {
       const about = row.subject ? ` (${row.subject})` : "";
       return { title: name, body: german ? `hat deinen Check-in salutiert${about}.` : `saluted your check-in${about}.` };
+    }
+    case "checkin": {
+      const what = row.subject ?? "";
+      if (row.checkin_kind === "flown" && what) return { title: name, body: german ? `ist ${what} geflogen.` : `flew ${what}.` };
+      if (row.checkin_kind === "spotted" && what) return { title: name, body: german ? `hat ${what} gespottet.` : `spotted ${what}.` };
+      if (row.checkin_kind === "airport" && what) {
+        return { title: name, body: german ? `hat in ${what} eingecheckt.` : `checked in at ${what}.` };
+      }
+      return { title: name, body: german ? "hat eingecheckt." : "checked in." };
     }
     case "comment": {
       const text = (row.snippet ?? "").replace(/\s+/g, " ").trim();
