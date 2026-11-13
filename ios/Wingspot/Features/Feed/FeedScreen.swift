@@ -31,7 +31,7 @@ struct FeedScreen: View {
                         .accessibilityLabel("Find people")
                 }
             }
-            .navigationDestination(item: $commentsFor) { CommentsView(item: $0) }
+            .navigationDestination(item: $commentsFor) { CheckInDetailView(item: $0) }
             .navigationDestination(item: $personToOpen) { PersonLoaderView(id: $0.id) }
             .sheet(item: $report) { ReportSheet(target: $0) }
             .sheet(item: $editing) { flight in
@@ -117,7 +117,7 @@ struct FeedScreen: View {
                 FeedCard(
                     item: item, isOwn: item.userID == account.userID, photos: feed.photos[item.id] ?? [],
                     onSalute: { Task { await feed.toggleSalute(item.id) } },
-                    onComments: { commentsFor = item },
+                    onOpen: { commentsFor = item },
                     onReport: { report = ReportTarget(kind: .checkin, id: item.id, subject: "this check-in") },
                     onReportPhoto: { report = ReportTarget(kind: .photo, id: $0.id, subject: "this photo") },
                     onEdit: item.userID == account.userID && editable.contains(item.id) ? { editing = EditedFlight(id: item.id) } : nil
@@ -143,7 +143,7 @@ struct FeedCard: View {
     let isOwn: Bool
     let photos: [FeedPhoto]
     let onSalute: () -> Void
-    let onComments: () -> Void
+    let onOpen: () -> Void
     let onReport: () -> Void
     let onReportPhoto: (FeedPhoto) -> Void
     /// Set for your own flights that can be edited.
@@ -212,7 +212,7 @@ struct FeedCard: View {
                     Label("\(item.salutes)", systemImage: item.saluted ? "hands.clap.fill" : "hands.clap")
                 }
                 .accessibilityLabel(item.saluted ? "Remove your salute. Salutes: \(item.salutes)" : "Salute. Salutes: \(item.salutes)")
-                Button(action: onComments) {
+                Button(action: onOpen) {
                     Label("\(item.comments)", systemImage: "bubble.left")
                 }
                 .accessibilityLabel("Comments: \(item.comments)")
@@ -222,6 +222,8 @@ struct FeedCard: View {
             .padding(.top, 2)
         }
         .padding(.vertical, 4)
+        .contentShape(Rectangle())
+        .onTapGesture(perform: onOpen)
         .fullScreenCover(item: $viewing) { PhotoViewer(photos: photos, start: $0) }
     }
 

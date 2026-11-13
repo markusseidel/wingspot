@@ -371,6 +371,16 @@
         }
       }
     },
+    "Airport page" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flughafenseite"
+          }
+        }
+      }
+    },
     "Airports" : {
       "localizations" : {
         "de" : {
@@ -681,6 +691,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Schau in dein E-Mail-Postfach"
+          }
+        }
+      }
+    },
+    "Check-in" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check-in"
           }
         }
       }
@@ -1211,6 +1231,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verschiedene Flughäfen"
+          }
+        }
+      }
+    },
+    "Distance" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entfernung"
           }
         }
       }
