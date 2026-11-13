@@ -91,7 +91,7 @@ struct FeedScreen: View {
         }
     }
 
-    /// Opens what a tapped notification points at. If the check-in isn't in the feed, the feed stays as it is.
+    /// Opens what a tapped notification points at. A check-in that can't be seen any more opens nothing.
     private func openPushDestination() async {
         guard let destination = router.destination, account.userID != nil, terms.hasAccepted else { return }
         router.destination = nil
@@ -99,8 +99,12 @@ struct FeedScreen: View {
         case .person(let id):
             personToOpen = OpenPerson(id: id)
         case .checkIn(let id):
-            if !feed.items.contains(where: { $0.id == id }) { await feed.refresh() }
-            commentsFor = feed.items.first { $0.id == id }
+            // The check-in may be older than the pages loaded, or someone else's, so it is asked for by id.
+            if let known = feed.items.first(where: { $0.id == id }) {
+                commentsFor = known
+            } else {
+                commentsFor = await feed.checkIn(id)
+            }
         }
     }
 

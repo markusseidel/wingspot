@@ -2756,6 +2756,16 @@
         }
       }
     },
+    "Seat" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sitz"
+          }
+        }
+      }
+    },
     "Seat, e.g. 34K" : {
       "localizations" : {
         "de" : {

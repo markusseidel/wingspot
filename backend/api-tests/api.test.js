@@ -928,6 +928,16 @@ describe("a person's check-ins", () => {
     assert.deepEqual(own.body.map((c) => c.id).sort(), [shared, hidden].sort());
   });
 
+  test("one check-in by id: a stranger gets the shared one, a hidden one looks like it doesn't exist", async () => {
+    const seen = await rest("rpc/get_checkin", { token: bob.token, body: { target: shared } });
+    assert.equal(seen.status, 200, JSON.stringify(seen.body));
+    assert.deepEqual(seen.body.map((c) => c.id), [shared]);
+    assert.equal(seen.body[0].cabin, null, "cabin and seat are private");
+    assert.deepEqual((await rest("rpc/get_checkin", { token: bob.token, body: { target: hidden } })).body, []);
+    assert.deepEqual((await rest("rpc/get_checkin", { token: bob.token, body: { target: randomUUID() } })).body, []);
+    assert.deepEqual((await rest("rpc/get_checkin", { token: alice.token, body: { target: hidden } })).body.map((c) => c.id), [hidden]);
+  });
+
   test("needs a signed-in user", async () => {
     const response = await fetch(`${API}/rest/v1/rpc/get_person_checkins`, {
       method: "POST", headers: { apikey: ANON_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ target: alice.id }),

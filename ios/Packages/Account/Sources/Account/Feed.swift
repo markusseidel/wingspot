@@ -22,6 +22,12 @@ public struct FeedItem: Hashable, Sendable, Identifiable, Decodable {
     public let destinationCode: String?
     public let flightNumber: String?
     public let distanceKm: Int?
+    /// The airports of a flight, for opening their pages. Only from `get_checkin`.
+    public let originID: Int?
+    public let destinationID: Int?
+    /// Your own flight's cabin and seat. Never sent for other people's check-ins.
+    public let cabin: String?
+    public let seat: String?
     public let salutes: Int
     public let comments: Int
     public let saluted: Bool
@@ -30,7 +36,8 @@ public struct FeedItem: Hashable, Sendable, Identifiable, Decodable {
         id: UUID, userID: UUID, username: String, displayName: String? = nil, kind: String, occurredAt: Date,
         cursorTime: String? = nil, registration: String? = nil, typeICAO: String? = nil, typeName: String? = nil,
         airportCode: String? = nil, airportID: Int? = nil, originCode: String? = nil, destinationCode: String? = nil,
-        flightNumber: String? = nil, distanceKm: Int? = nil, salutes: Int = 0, comments: Int = 0, saluted: Bool = false
+        flightNumber: String? = nil, distanceKm: Int? = nil, originID: Int? = nil, destinationID: Int? = nil,
+        cabin: String? = nil, seat: String? = nil, salutes: Int = 0, comments: Int = 0, saluted: Bool = false
     ) {
         self.id = id
         self.userID = userID
@@ -48,6 +55,10 @@ public struct FeedItem: Hashable, Sendable, Identifiable, Decodable {
         self.destinationCode = destinationCode
         self.flightNumber = flightNumber
         self.distanceKm = distanceKm
+        self.originID = originID
+        self.destinationID = destinationID
+        self.cabin = cabin
+        self.seat = seat
         self.salutes = salutes
         self.comments = comments
         self.saluted = saluted
@@ -59,7 +70,8 @@ public struct FeedItem: Hashable, Sendable, Identifiable, Decodable {
             id: id, userID: userID, username: username, displayName: displayName, kind: kind, occurredAt: occurredAt,
             cursorTime: cursorTime, registration: registration, typeICAO: typeICAO, typeName: typeName,
             airportCode: airportCode, airportID: airportID, originCode: originCode, destinationCode: destinationCode,
-            flightNumber: flightNumber, distanceKm: distanceKm, salutes: salutes ?? self.salutes,
+            flightNumber: flightNumber, distanceKm: distanceKm, originID: originID, destinationID: destinationID,
+            cabin: cabin, seat: seat, salutes: salutes ?? self.salutes,
             comments: comments ?? self.comments, saluted: saluted ?? self.saluted
         )
     }
@@ -77,6 +89,9 @@ public struct FeedItem: Hashable, Sendable, Identifiable, Decodable {
         case destinationCode = "destination_code"
         case flightNumber = "flight_number"
         case distanceKm = "distance_km"
+        case originID = "origin_id"
+        case destinationID = "destination_id"
+        case cabin, seat
     }
 
     public init(from decoder: Decoder) throws {
@@ -101,6 +116,10 @@ public struct FeedItem: Hashable, Sendable, Identifiable, Decodable {
         destinationCode = try c.decodeIfPresent(String.self, forKey: .destinationCode)
         flightNumber = try c.decodeIfPresent(String.self, forKey: .flightNumber)
         distanceKm = try c.decodeIfPresent(Int.self, forKey: .distanceKm)
+        originID = try c.decodeIfPresent(Int.self, forKey: .originID)
+        destinationID = try c.decodeIfPresent(Int.self, forKey: .destinationID)
+        cabin = try c.decodeIfPresent(String.self, forKey: .cabin)
+        seat = try c.decodeIfPresent(String.self, forKey: .seat)
         salutes = try c.decodeIfPresent(Int.self, forKey: .salutes) ?? 0
         comments = try c.decodeIfPresent(Int.self, forKey: .comments) ?? 0
         saluted = try c.decodeIfPresent(Bool.self, forKey: .saluted) ?? false
@@ -248,6 +267,8 @@ public struct ActiveAirport: Equatable, Sendable, Identifiable, Decodable {
 
 public protocol FeedBackend: Sendable {
     func feed(after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem]
+    /// One check-in by id, or `nil` when it doesn't exist or the caller may not see it.
+    func checkIn(_ id: UUID) async throws -> FeedItem?
     /// One person's check-ins that the caller may see, newest first.
     func personCheckIns(of person: UUID, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem]
     /// The check-ins at one airport that the caller may see, newest first.
@@ -306,6 +327,11 @@ public final class FeedStore {
         self.registration = registration
         self.reactions = reactions
         self.userID = userID
+    }
+
+    /// One check-in by id, for opening it from a notification. `nil` when it doesn't exist or can't be seen.
+    public func checkIn(_ id: UUID) async -> FeedItem? {
+        try? await backend.checkIn(id)
     }
 
     /// Salutes or un-salutes a check-in. The card changes at once, and goes back if the request fails.
