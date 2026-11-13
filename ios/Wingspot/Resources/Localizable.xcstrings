@@ -381,6 +381,16 @@
         }
       }
     },
+    "Airport visits" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flughafenbesuche"
+          }
+        }
+      }
+    },
     "Airports" : {
       "localizations" : {
         "de" : {
@@ -427,6 +437,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Flughäfen, an denen du spottest oder die du besuchst, erscheinen hier."
+          }
+        }
+      }
+    },
+    "Alerts for people you follow are switched off in Settings." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hinweise zu Leuten, denen du folgst, sind in den Einstellungen ausgeschaltet."
           }
         }
       }
@@ -742,6 +762,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hier erscheinen Check-ins von dir und von Leuten, denen du folgst. Deine Check-ins erscheinen, sobald sie hochgeladen und freigegeben sind."
+          }
+        }
+      }
+    },
+    "Check-ins of people you follow" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check-ins von Leuten, denen du folgst"
           }
         }
       }
@@ -2076,6 +2106,16 @@
         }
       }
     },
+    "No alerts yet. Open the profile of someone you follow to set one." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine Hinweise. Öffne das Profil von jemandem, dem du folgst, um einen einzurichten."
+          }
+        }
+      }
+    },
     "No badges here yet" : {
       "localizations" : {
         "de" : {
@@ -2296,6 +2336,16 @@
         }
       }
     },
+    "Notify me" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Benachrichtige mich"
+          }
+        }
+      }
+    },
     "OK" : {
       "localizations" : {
         "de" : {
@@ -2433,6 +2483,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Leute"
+          }
+        }
+      }
+    },
+    "People you get alerts from" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leute, von denen du Hinweise bekommst"
           }
         }
       }
@@ -3080,6 +3140,16 @@
         }
       }
     },
+    "Stop" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beenden"
+          }
+        }
+      }
+    },
     "Student Pilot" : {
       "localizations" : {
         "de" : {
@@ -3548,6 +3618,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Du kannst Personen, Check-ins und Kommentare melden und jeden blockieren. Wir prüfen Meldungen und können Inhalte oder Konten entfernen, die gegen diese Regeln verstoßen."
+          }
+        }
+      }
+    },
+    "You get a notification when this person checks in, for the check-ins you can see. They are not told." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du bekommst eine Mitteilung, wenn diese Person eincheckt, für Check-ins, die du sehen kannst. Die Person erfährt davon nichts."
           }
         }
       }

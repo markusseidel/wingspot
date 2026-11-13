@@ -6,11 +6,61 @@ public struct NotificationPrefs: Equatable, Sendable {
     public var newFollowers: Bool
     public var salutes: Bool
     public var comments: Bool
+    /// The master switch for alerts about the check-ins of people you follow. Each person has switches of their own.
+    public var followedCheckins: Bool
 
-    public init(newFollowers: Bool = true, salutes: Bool = true, comments: Bool = true) {
+    public init(newFollowers: Bool = true, salutes: Bool = true, comments: Bool = true, followedCheckins: Bool = true) {
         self.newFollowers = newFollowers
         self.salutes = salutes
         self.comments = comments
+        self.followedCheckins = followedCheckins
+    }
+}
+
+/// Which of one person's new check-ins send you a push.
+public struct AlertRule: Equatable, Sendable, Identifiable {
+    public enum Kind: Sendable, CaseIterable { case spotted, flown, airport }
+
+    public let target: UUID
+    public var spotted: Bool
+    public var flown: Bool
+    public var airport: Bool
+    /// The person's name, for the list of alerts. Not needed to change a rule.
+    public var username: String?
+    public var displayName: String?
+
+    public var id: UUID { target }
+    /// At least one switch is on. A rule with all switches off doesn't exist on the server.
+    public var isOn: Bool { spotted || flown || airport }
+
+    public init(
+        target: UUID, spotted: Bool = false, flown: Bool = false, airport: Bool = false,
+        username: String? = nil, displayName: String? = nil
+    ) {
+        self.target = target
+        self.spotted = spotted
+        self.flown = flown
+        self.airport = airport
+        self.username = username
+        self.displayName = displayName
+    }
+
+    public func isOn(_ kind: Kind) -> Bool {
+        switch kind {
+        case .spotted: spotted
+        case .flown: flown
+        case .airport: airport
+        }
+    }
+
+    public func setting(_ kind: Kind, to on: Bool) -> AlertRule {
+        var copy = self
+        switch kind {
+        case .spotted: copy.spotted = on
+        case .flown: copy.flown = on
+        case .airport: copy.airport = on
+        }
+        return copy
     }
 }
 
@@ -41,6 +91,10 @@ public protocol PushBackend: Sendable {
     func removeDevice(id: UUID) async throws
     func notificationPrefs(of me: UUID) async throws -> NotificationPrefs
     func setNotificationPrefs(_ prefs: NotificationPrefs, as me: UUID) async throws
+    /// Your alerts for the check-ins of people you follow, with their names.
+    func alertRules(of me: UUID) async throws -> [AlertRule]
+    /// Saves one person's alerts. A rule with every switch off is removed.
+    func saveAlertRule(_ rule: AlertRule, as me: UUID) async throws
 }
 
 /// What the phone says about notifications.
@@ -65,6 +119,8 @@ public final class PushStore {
     /// True while the app should explain notifications and ask. Set after the first follow, salute or comment.
     public var isAsking = false
     public private(set) var prefs: NotificationPrefs?
+    /// Your alerts, by the person they are for. Only rules with a switch on.
+    public private(set) var alertRules: [UUID: AlertRule] = [:]
     public private(set) var failure: AccountError?
 
     private let backend: PushBackend
@@ -179,8 +235,39 @@ public final class PushStore {
         }
     }
 
+    public func loadAlertRules() async {
+        guard let me = userID() else { return }
+        do {
+            alertRules = Dictionary(uniqueKeysWithValues: try await backend.alertRules(of: me).map { ($0.target, $0) })
+            failure = nil
+        } catch {
+            failure = (error as? AccountError) ?? .unknown
+        }
+    }
+
+    /// The alerts for one person, with every switch off if there are none.
+    public func alertRule(for person: UUID) -> AlertRule {
+        alertRules[person] ?? AlertRule(target: person)
+    }
+
+    /// Turns one kind of check-in of one person on or off. Shows the change at once and goes back if the server refuses.
+    public func setAlert(_ kind: AlertRule.Kind, on: Bool, for person: UUID) async {
+        guard let me = userID() else { return }
+        let before = alertRules[person]
+        let new = alertRule(for: person).setting(kind, to: on)
+        alertRules[person] = new.isOn ? new : nil
+        do {
+            try await backend.saveAlertRule(new, as: me)
+            failure = nil
+        } catch {
+            alertRules[person] = before
+            failure = (error as? AccountError) ?? .unknown
+        }
+    }
+
     /// Forgets what belongs to the signed-in person.
     public func clear() {
+        alertRules = [:]
         prefs = nil
         failure = nil
         registered = nil
