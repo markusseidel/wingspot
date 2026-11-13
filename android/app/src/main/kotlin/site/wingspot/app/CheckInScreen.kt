@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -44,6 +45,7 @@ import java.util.UUID
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import site.wingspot.core.AircraftType
+import site.wingspot.core.BoardingPass
 import site.wingspot.core.Airport
 import site.wingspot.core.CabinClass
 import site.wingspot.core.LocalCheckIn
@@ -111,8 +113,11 @@ private fun AirportForm(state: CheckInState, reference: ReferenceState, model: C
     SaveBar(state, enabled = airport != null, onSave = { model.saveAirport(airport!!, context, photo) }, onCancel = model::close)
 }
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 private fun FlownForm(state: CheckInState, reference: ReferenceState, model: CheckInViewModel) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var origin by remember { mutableStateOf<Airport?>(null) }
     var destination by remember { mutableStateOf<Airport?>(null) }
     var flightNumber by rememberSaveable { mutableStateOf("") }
@@ -121,23 +126,123 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
     var cabin by rememberSaveable { mutableStateOf<CabinClass?>(null) }
     var seat by rememberSaveable { mutableStateOf("") }
     var photo by remember { mutableStateOf<PreparedPhoto?>(null) }
+    var date by rememberSaveable { mutableStateOf(LocalDate.now().toString()) }
+    var pickDate by remember { mutableStateOf(false) }
+    var scanning by remember { mutableStateOf(false) }
+    var reading by remember { mutableStateOf(false) }
+    var choices by remember { mutableStateOf(emptyList<BoardingPass.Leg>()) }
+    var problem by remember { mutableStateOf<Int?>(null) }
+    var missing by remember { mutableStateOf("") }
     val registration = Registration.parse(input)
     val sameAirport = origin != null && origin?.id == destination?.id
     val canSave = origin != null && destination != null && !sameAirport && (input.isBlank() || registration != null)
+    val day = LocalDate.parse(date)
+
+    /** Fills the form from one flight on the pass. The cabin stays as it is, because the booking class letter means different things at different airlines. */
+    fun apply(leg: BoardingPass.Leg) {
+        val db = reference.database
+        if (db == null) { problem = R.string.scan_needs_data; return }
+        scope.launch {
+            val from = db.airport(leg.from)
+            val to = db.airport(leg.to)
+            if (from == null || to == null) {
+                missing = listOfNotNull(if (from == null) leg.from else null, if (to == null) leg.to else null).joinToString(", ")
+                problem = R.string.scan_airports_unknown
+                return@launch
+            }
+            origin = from; destination = to
+            flightNumber = leg.carrier + leg.flightNumber
+            seat = leg.seat.orEmpty()
+            leg.flightDate(LocalDate.now())?.let { date = minOf(it, LocalDate.now()).toString() }
+        }
+    }
+    fun handle(pass: BoardingPass) {
+        if (pass.legs.size == 1) apply(pass.legs.first()) else choices = pass.legs
+    }
+
+    if (scanning) {
+        BoardingPassScanner(onPass = { scanning = false; handle(it) }, onClose = { scanning = false })
+        return
+    }
+    val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) scope.launch {
+            reading = true
+            val pass = boardingPassInImage(context, uri)
+            reading = false
+            if (pass == null) problem = R.string.scan_none_found else handle(pass)
+        }
+    }
 
     Text(stringResource(R.string.flown_title), style = MaterialTheme.typography.headlineMedium)
+    OutlinedButton(onClick = { scanning = true }, modifier = Modifier.fillMaxWidth().testTag("scan-pass")) { Text(stringResource(R.string.scan_boarding_pass)) }
+    OutlinedButton(
+        onClick = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }, enabled = !reading,
+        modifier = Modifier.fillMaxWidth(),
+    ) { Text(stringResource(if (reading) R.string.reading else R.string.read_from_picture)) }
+    Text(stringResource(R.string.scan_footer), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     AirportPicker(stringResource(R.string.from_label), reference, origin) { origin = it }
     AirportPicker(stringResource(R.string.to_label), reference, destination) { destination = it }
     if (sameAirport) Text(stringResource(R.string.same_airport), color = MaterialTheme.colorScheme.error)
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+        Text(stringResource(R.string.date_label))
+        TextButton(onClick = { pickDate = true }, modifier = Modifier.testTag("flight-date")) { Text(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(day)) }
+    }
     FlightDetails(
         flightNumber, { flightNumber = it }, input, { input = it }, registration, reference, type, { type = it }, cabin, { cabin = it }, seat, { seat = it },
     )
     PhotoField(photo) { photo = it }
     SaveBar(
         state, enabled = canSave,
-        onSave = { model.saveFlight(origin!!, destination!!, flightNumber, registration, type, cabin, seat, photo) },
+        onSave = {
+            // A flight has a day but no time here. Today keeps the real time; any other day uses midday, which stays on that day.
+            val at = if (day == LocalDate.now()) java.time.Instant.now() else day.atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant()
+            model.saveFlight(origin!!, destination!!, flightNumber, registration, type, cabin, seat, photo, at)
+        },
         onCancel = model::close,
     )
+
+    if (pickDate) {
+        val startMillis = day.atStartOfDay(java.time.ZoneOffset.UTC).toInstant().toEpochMilli()
+        val pickerState = androidx.compose.material3.rememberDatePickerState(
+            initialSelectedDateMillis = startMillis,
+            selectableDates = object : androidx.compose.material3.SelectableDates {
+                override fun isSelectableDate(utcTimeMillis: Long) = utcTimeMillis <= LocalDate.now().plusDays(1).atStartOfDay(java.time.ZoneOffset.UTC).toInstant().toEpochMilli()
+            },
+        )
+        androidx.compose.material3.DatePickerDialog(
+            onDismissRequest = { pickDate = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    pickerState.selectedDateMillis?.let { date = minOf(java.time.Instant.ofEpochMilli(it).atZone(java.time.ZoneOffset.UTC).toLocalDate(), LocalDate.now()).toString() }
+                    pickDate = false
+                }) { Text(stringResource(R.string.done)) }
+            },
+            dismissButton = { TextButton(onClick = { pickDate = false }) { Text(stringResource(R.string.cancel)) } },
+        ) { androidx.compose.material3.DatePicker(state = pickerState) }
+    }
+    if (choices.isNotEmpty()) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { choices = emptyList() },
+            title = { Text(stringResource(R.string.which_flight)) },
+            text = {
+                Column {
+                    choices.forEach { leg ->
+                        TextButton(onClick = { choices = emptyList(); apply(leg) }, modifier = Modifier.fillMaxWidth()) { Text("${leg.from} → ${leg.to} · ${leg.carrier}${leg.flightNumber}") }
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = { TextButton(onClick = { choices = emptyList() }) { Text(stringResource(R.string.cancel)) } },
+        )
+    }
+    problem?.let { res ->
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { problem = null },
+            title = { Text(stringResource(if (res == R.string.scan_none_found) R.string.scan_none_title else R.string.scan_problem_title)) },
+            text = { Text(if (res == R.string.scan_airports_unknown) stringResource(res, missing) else stringResource(res)) },
+            confirmButton = { TextButton(onClick = { problem = null }) { Text(stringResource(R.string.ok)) } },
+        )
+    }
 }
 
 /** Fills in or corrects the details of a saved flight. The route, the day and the photos stay as they were. */

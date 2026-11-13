@@ -4,6 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
@@ -86,5 +87,48 @@ class AuthTests {
         assertEquals("a b", SupabaseAuth.queryParameter("wingspot://auth-callback?code=a%20b&x=1", "code"))
         assertNull(SupabaseAuth.queryParameter("wingspot://auth-callback?x=1", "code"))
         assertNull(SupabaseAuth.queryParameter("not a url", "code"))
+    }
+}
+
+class PasswordAndGoogleSignInTests {
+    private val sessionJson = """{"access_token":"a1","refresh_token":"r1","expires_in":3600,"user":{"id":"u1","email":"a@b.c"}}"""
+
+    private fun withAuth(block: suspend (MockWebServer, SupabaseAuth) -> Unit) {
+        MockWebServer().use { server ->
+            server.start()
+            kotlinx.coroutines.runBlocking { block(server, SupabaseAuth(server.url("/").toString(), "key")) }
+        }
+    }
+
+    @Test
+    fun aPasswordSignsIn() = withAuth { server, auth ->
+        server.enqueue(MockResponse.Builder().code(200).body(sessionJson).build())
+        assertEquals("a1", auth.signInWithPassword("a@b.c", "secret").accessToken)
+        val request = server.takeRequest()
+        assertEquals("password", request.url.queryParameter("grant_type"))
+        assertEquals("key", request.headers["apikey"])
+        assertTrue(request.body!!.utf8().contains(""""password":"secret""""))
+    }
+
+    @Test
+    fun aWrongPasswordIsAnInvalidLoginAndNotAnInvalidLink() = withAuth { server, auth ->
+        server.enqueue(MockResponse.Builder().code(400).body("""{"error_code":"invalid_credentials","msg":"Invalid login credentials"}""").build())
+        assertFailsWith<AuthException.InvalidLogin> { auth.signInWithPassword("a@b.c", "wrong") }
+        server.enqueue(MockResponse.Builder().code(429).body("{}").build())
+        assertFailsWith<AuthException.TooManyRequests> { auth.signInWithPassword("a@b.c", "x") }
+        server.close()
+        assertFailsWith<AuthException.Offline> { auth.signInWithPassword("a@b.c", "x") }
+    }
+
+    @Test
+    fun aGoogleTokenIsTradedForASession() = withAuth { server, auth ->
+        server.enqueue(MockResponse.Builder().code(200).body(sessionJson).build())
+        assertEquals("u1", auth.signInWithIdToken("google", "google-token", "raw-nonce").user.id)
+        val request = server.takeRequest()
+        assertEquals("id_token", request.url.queryParameter("grant_type"))
+        val body = request.body!!.utf8()
+        assertTrue(body.contains(""""provider":"google"""") && body.contains(""""id_token":"google-token"""") && body.contains(""""nonce":"raw-nonce""""))
+        server.enqueue(MockResponse.Builder().code(400).body("{}").build())
+        assertFailsWith<AuthException.InvalidLogin> { auth.signInWithIdToken("google", "bad", null) }
     }
 }

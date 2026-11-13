@@ -102,7 +102,9 @@ fun ProfileTab(
                 state.sentTo != null -> CheckEmail(state.sentTo, model::useOtherEmail)
                 else -> {
                     Text(stringResource(R.string.profile_signed_out))
-                    SignInForm(state.isWorking, model::sendLink)
+                    val context = LocalContext.current
+                    SignInForm(state.isWorking, model::sendLink, model::signInWithPassword,
+                        if (GoogleSignIn.isAvailable) ({ scope.launch { GoogleSignIn.idToken(context)?.let { (token, nonce) -> model.signInWithGoogle(token, nonce) } ?: model.googleFailed() } }) else null)
                 }
             }
             state.error?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error, modifier = Modifier.testTag("error")) }

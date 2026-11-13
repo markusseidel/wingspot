@@ -13,6 +13,10 @@ work = "2.12.0"
 firebaseBom = "35.2.0"
 googleServices = "4.6.0"
 mapsCompose = "9.0.1"
+cameraX = "1.6.2"
+mlkitBarcode = "17.3.0"
+credentials = "1.6.0"
+googleId = "1.2.1"
 playServicesMaps = "20.1.0"
 
 [libraries]
@@ -33,6 +37,14 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
+camerax-core = { module = "androidx.camera:camera-core", version.ref = "cameraX" }
+camerax-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraX" }
+camerax-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraX" }
+camerax-view = { module = "androidx.camera:camera-view", version.ref = "cameraX" }
+mlkit-barcode = { module = "com.google.mlkit:barcode-scanning", version.ref = "mlkitBarcode" }
+credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
+credentials-play = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
+google-id = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleId" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 
 [plugins]

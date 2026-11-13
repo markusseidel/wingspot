@@ -6,11 +6,10 @@ Prices and Google's rules change. Check them in the Play Console before you rely
 
 ## What works and what doesn't yet
 
-Same as iOS: maps (once the Google Maps key is set, see below), the three check-in kinds with photos, edit and delete, the Feed with salutes and comments, the check-in page, Explore (people, airports, types, registrations, airports near you, busy airports), Badges, Profile with collections, settings, privacy, units, data export and account deletion, alerts (Notify me) and the notification switches, German and English, the iPhone colours.
+Same as iOS: sign-in with an email link, a password or Google, the boarding pass scan (camera or a picture), maps (once the Google Maps key is set, see below), the three check-in kinds with photos, edit and delete, the Feed with salutes and comments, the check-in page, Explore (people, airports, types, registrations, airports near you, busy airports), Badges, Profile with collections, settings, privacy, units, data export and account deletion, alerts (Notify me) and the notification switches, German and English, the iPhone colours.
 
 Not on Android yet:
-- Boarding pass scan with the camera.
-- Sign in with Apple, Google or a password. Android has the email link only.
+- Sign in with Apple (Apple's own sign-in is for iPhones; Android uses Google, a password or the email link).
 - Push notifications until the Firebase steps below are done. Everything else about alerts (the rules and switches) already works and is stored on the server.
 
 ## Way 1: a file for friends (works today)
@@ -46,6 +45,17 @@ One-time setup (you):
 Every later version: run the workflow, upload the new `.aab` as a new internal release. The version code goes up by itself (the run number).
 
 Later, for a wider test or the public release: Closed testing needs a review by Google. For a personal developer account created recently, Google asks for a closed test with at least 12 testers over 14 days in a row before the app may go to production. Plan for that early, because it adds two weeks.
+
+## Sign in with Google
+
+The button shows only when the build knows the Google client id. Until then people use the email link or a password.
+1. Google Cloud (the same project as Maps is fine) > APIs and services > OAuth consent screen: set it up (app name Wingspot, support email, the privacy URL). Add yourself and the testers as test users while it is in testing mode, or publish it.
+2. Credentials > Create credentials > OAuth client ID, twice:
+   - Type **Web application**. Its client id is the one the app and Supabase use. Keep the client secret for Supabase.
+   - Type **Android**, package `site.wingspot.android`, with the SHA-1 of the signing certificate. Again one for the debug keystore and one for Play App Signing. Google accepts several Android clients for the same package.
+3. Supabase dashboard > Authentication > Providers > **Google**: switch it on and enter the Web client id and secret. Also add the Android client id under "Authorized client IDs" if the dashboard asks for it. Leave "Skip nonce check" off.
+4. GitHub secret `GOOGLE_WEB_CLIENT_ID` with the Web client id. For a local build: `export WINGSPOT_GOOGLE_CLIENT_ID=...`. Then run **Android beta** again.
+5. A person who signed up on the iPhone with the same email gets the same account only if Supabase links identities by email; check that in a test before you tell friends.
 
 ## Maps (Google Maps)
 

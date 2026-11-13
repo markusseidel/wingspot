@@ -18,6 +18,7 @@ jobs:
         working-directory: android
     env:
       WINGSPOT_MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+      WINGSPOT_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_WEB_CLIENT_ID }}
       WINGSPOT_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
       WINGSPOT_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
       WINGSPOT_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}

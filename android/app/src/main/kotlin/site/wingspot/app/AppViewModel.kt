@@ -65,6 +65,32 @@ class AppViewModel(
         }
     }
 
+    /** Signs in with an email and a password. */
+    fun signInWithPassword(email: String, password: String) = signInWith { auth.signInWithPassword(email.trim(), password) }
+
+    /** Signs in with an identity token from Google. [nonce] is the raw nonce whose hash Google put into the token. */
+    fun signInWithGoogle(idToken: String, nonce: String) = signInWith { auth.signInWithIdToken("google", idToken, nonce) }
+
+    /** The person closed or refused the Google sheet, or Google isn't available on this phone. */
+    fun googleFailed() {
+        mutable.value = mutable.value.copy(isWorking = false, error = R.string.error_google)
+    }
+
+    private fun signInWith(get: suspend () -> site.wingspot.core.Session) {
+        if (mutable.value.isWorking) return
+        mutable.value = mutable.value.copy(isWorking = true, error = null)
+        viewModelScope.launch {
+            try {
+                val session = get()
+                store.save(session)
+                mutable.value = AppState(session = session)
+                onSignedIn()
+            } catch (e: AuthException) {
+                mutable.value = mutable.value.copy(isWorking = false, error = message(e))
+            }
+        }
+    }
+
     fun useOtherEmail() {
         mutable.value = mutable.value.copy(sentTo = null, error = null)
     }
@@ -83,6 +109,7 @@ class AppViewModel(
 
     private fun message(e: AuthException) = when (e) {
         AuthException.InvalidEmail -> R.string.error_invalid_email
+        AuthException.InvalidLogin -> R.string.error_invalid_login
         AuthException.InvalidLink -> R.string.error_invalid_link
         AuthException.TooManyRequests -> R.string.error_too_many
         AuthException.Offline -> R.string.error_offline
