@@ -218,3 +218,12 @@ class RefreshTests {
         }
     }
 }
+
+class Flightradar24Tests {
+    @Test
+    fun linksMatchTheIphoneApp() {
+        assertEquals("https://www.flightradar24.com/data/flights/lh400", Flightradar24.flight("LH 400"))
+        assertNull(Flightradar24.flight(" - "))
+        assertEquals("https://www.flightradar24.com/data/aircraft/d-aima", Flightradar24.aircraft("D-AIMA"))
+    }
+}

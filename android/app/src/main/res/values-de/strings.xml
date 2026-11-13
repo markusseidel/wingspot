@@ -301,4 +301,12 @@
     <string name="allow_camera">Kamera erlauben</string>
     <string name="scan_aim">Halte den Barcode ins Bild</string>
     <string name="ok">OK</string>
+    <string name="flight_label">Flug</string>
+    <string name="aircraft_label">Flugzeuge</string>
+    <string name="seat_row_label">Sitz</string>
+    <string name="distance_label">Entfernung</string>
+    <string name="lookup_flight">Flug auf Flightradar24 nachschlagen</string>
+    <string name="lookup_aircraft">Flugzeug auf Flightradar24 nachschlagen</string>
+    <string name="lookup_footer">Öffnet Flightradar24 im Browser. Wingspot sendet dorthin nichts.</string>
+    <string name="close">Schließen</string>
 </resources>

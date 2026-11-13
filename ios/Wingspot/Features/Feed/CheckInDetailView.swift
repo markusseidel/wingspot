@@ -64,6 +64,7 @@ struct CheckInDetailView: View {
             if !photos.isEmpty { photoSection }
             reactions
             actions
+            lookup
             if store.isLoading, !store.hasLoaded {
                 ProgressView().frame(maxWidth: .infinity)
             } else if let failure = store.failure, !store.hasLoaded {
@@ -244,6 +245,24 @@ struct CheckInDetailView: View {
                 Button("Report", systemImage: "flag") {
                     report = ReportTarget(kind: .checkin, id: shown.id, subject: "this check-in")
                 }
+            }
+        }
+    }
+
+    /// Links to look up your own flight on Flightradar24. Nothing from Wingspot is sent there.
+    @ViewBuilder private var lookup: some View {
+        let flightPage = isOwn && shown.kind == "flown" ? shown.flightNumber.flatMap(Flightradar24.flight) : nil
+        let aircraftPage = isOwn && shown.kind == "flown" ? shown.registration.flatMap { Registration($0) }.flatMap(Flightradar24.aircraft) : nil
+        if flightPage != nil || aircraftPage != nil {
+            Section {
+                if let flightPage {
+                    Link(destination: flightPage) { Label("Look up the flight on Flightradar24", systemImage: "arrow.up.right.square") }
+                }
+                if let aircraftPage {
+                    Link(destination: aircraftPage) { Label("Look up the aircraft on Flightradar24", systemImage: "arrow.up.right.square") }
+                }
+            } footer: {
+                Text("Opens Flightradar24 in your browser. Nothing from Wingspot is sent there.")
             }
         }
     }
