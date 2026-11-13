@@ -3,7 +3,7 @@
 Native Kotlin / Jetpack Compose app, started as the spike described in [docs/ANDROID.md](../docs/ANDROID.md).
 
 - `core/`: plain Kotlin (no Android), tested on the JVM against the same vectors as the iPhone app (`contracts/test-vectors`): boarding pass parser, registration rules, great-circle distance, and email-link sign-in with PKCE against Supabase, and the reference data installer and search (bundled SQLite with FTS5).
-- `app/`: the Compose app. So far: email-link sign-in (English and German), reference data download and offline search of airports and aircraft types, the Spotted check-in with a local database and an upload outbox (WorkManager), a registration check and a boarding pass text reader that use `core/`.
+- `app/`: the Compose app. So far: email-link sign-in (English and German), reference data download and offline search of airports and aircraft types, the Spotted, Airport and Flown check-ins with a local database and an upload outbox (WorkManager), photos from the system photo picker (metadata removed on the phone), editing the details of a flight, and deleting a check-in, a registration check and a boarding pass text reader that use `core/`.
 
 ## Building
 
@@ -24,4 +24,4 @@ The app talks to the same Supabase project as the iPhone app. Its address and pu
 
 ## Not done yet
 
-Airport and Flown check-ins, photos, push (Firebase), maps, Sign in with Google and Apple, release signing, token storage in the Android Keystore. See docs/ANDROID.md.
+The feed, check-in page, comments, people, profile and badges, explore, alert rules, push (Firebase), maps, Sign in with Google and Apple, release signing, token storage in the Android Keystore. See docs/ANDROID.md.

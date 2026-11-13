@@ -31,7 +31,14 @@ sealed class ApiException(message: String) : Exception(message) {
 }
 
 /** The Wingspot API (`contracts/openapi.yaml`) as the phone uses it. */
-class ApiClient(functionsUrl: String, private val client: OkHttpClient = OkHttpClient()) {
+class ApiClient(
+    functionsUrl: String,
+    private val client: OkHttpClient = OkHttpClient(),
+    /** The database API (`<project>/rest/v1`) and its public key, for the few calls that are not in `/v1`. Null in tests. */
+    restUrl: String? = null,
+    private val apiKey: String? = null,
+) {
+    private val rest = restUrl?.trimEnd('/')
     private val base = functionsUrl.trimEnd('/')
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -60,6 +67,55 @@ class ApiClient(functionsUrl: String, private val client: OkHttpClient = OkHttpC
         }
     }
 
+    /** What the server said about one photo: [status] is `stored` or `rejected`, with the code when rejected. */
+    data class PhotoResult(val stored: Boolean, val code: String?)
+
+    /**
+     * `PUT /v1/checkins/{id}/photos/{photoId}`. The check-in has to be on the server first: if it isn't (404), this
+     * throws [ApiException.Retry] so the photo waits. Safe to repeat.
+     */
+    suspend fun uploadPhoto(checkInId: java.util.UUID, photoId: java.util.UUID, jpeg: ByteArray, accessToken: String): PhotoResult =
+        withContext(Dispatchers.IO) {
+            val request = Request.Builder().url("$base/v1/checkins/$checkInId/photos/$photoId")
+                .header("Authorization", "Bearer $accessToken")
+                .put(jpeg.toRequestBody("image/jpeg".toMediaType())).build()
+            try {
+                client.newCall(request).execute().use { response ->
+                    val text = response.body.string()
+                    val code = runCatching { json.parseToJsonElement(text).jsonObject["code"]?.jsonPrimitive?.content }.getOrNull()
+                    when {
+                        response.code == 200 -> PhotoResult(true, null)
+                        response.code == 401 -> throw ApiException.Unauthorized
+                        response.code == 404 && code == "unknown_checkin" -> throw ApiException.Retry
+                        response.code >= 500 || response.code == 429 || response.code == 408 -> throw ApiException.Retry
+                        response.code in listOf(409, 413, 415) -> PhotoResult(false, code ?: response.code.toString())
+                        else -> throw ApiException.Unexpected(response.code)
+                    }
+                }
+            } catch (e: IOException) {
+                throw ApiException.Retry
+            }
+        }
+
+    /** Deletes one of your own check-ins, with its photos, salutes and comments. Does nothing if it is already gone. */
+    suspend fun deleteCheckin(id: java.util.UUID, accessToken: String) = withContext(Dispatchers.IO) {
+        val request = Request.Builder().url("${rest ?: throw ApiException.Unexpected(0)}/rpc/delete_checkin")
+            .header("Authorization", "Bearer $accessToken").header("apikey", apiKey.orEmpty())
+            .post("""{"target":"$id"}""".toRequestBody("application/json".toMediaType())).build()
+        try {
+            client.newCall(request).execute().use { response ->
+                when {
+                    response.isSuccessful -> Unit
+                    response.code == 401 -> throw ApiException.Unauthorized
+                    response.code >= 500 || response.code == 429 || response.code == 408 -> throw ApiException.Retry
+                    else -> throw ApiException.Unexpected(response.code)
+                }
+            }
+        } catch (e: IOException) {
+            throw ApiException.Retry
+        }
+    }
+
     /** `CheckinItem` in the contract. The visibility is left out, so the server's default (private) applies. */
     private fun item(c: LocalCheckIn): JsonObject = buildJsonObject {
         put("id", c.id.toString())
@@ -68,6 +124,12 @@ class ApiClient(functionsUrl: String, private val client: OkHttpClient = OkHttpC
         c.registration?.let { put("registration", it) }
         c.typeIcao?.let { put("type_icao", it) }
         c.airportId?.let { put("airport_id", it) }
+        c.originId?.let { put("origin_id", it) }
+        c.destinationId?.let { put("destination_id", it) }
+        c.flightNumber?.let { put("flight_number", it) }
+        c.cabin?.let { put("cabin", it) }
+        c.seat?.let { put("seat", it) }
+        c.visitContext?.let { put("context", it) }
         if (c.latitude != null && c.longitude != null) {
             put("latitude", c.latitude)
             put("longitude", c.longitude)
@@ -97,6 +159,70 @@ class Outbox(
     private val accessToken: suspend (forceRefresh: Boolean) -> String?,
 ) {
     suspend fun sync(): SyncOutcome {
+        val checkIns = syncCheckIns()
+        if (checkIns !is SyncOutcome.Done) return checkIns
+        return when (val photos = syncPhotos()) {
+            is SyncOutcome.Done -> SyncOutcome.Done(checkIns.stored + photos.stored, checkIns.rejected + photos.rejected)
+            else -> photos
+        }
+    }
+
+    /** Sends the photos whose check-in the server has. A photo is sent once and not again. */
+    private suspend fun syncPhotos(): SyncOutcome {
+        var stored = 0
+        var rejected = 0
+        for (photo in store.photosReadyToSend()) {
+            val token = try {
+                accessToken(false)
+            } catch (e: ApiException.Retry) {
+                return SyncOutcome.RetryLater
+            } ?: return SyncOutcome.SignedOut
+            val result = try {
+                try {
+                    api.uploadPhoto(photo.checkInId, photo.id, photo.jpeg, token)
+                } catch (e: ApiException.Unauthorized) {
+                    api.uploadPhoto(photo.checkInId, photo.id, photo.jpeg, accessToken(true) ?: return SyncOutcome.SignedOut)
+                }
+            } catch (e: ApiException.Retry) {
+                return SyncOutcome.RetryLater
+            } catch (e: ApiException.Unauthorized) {
+                return SyncOutcome.SignedOut
+            } catch (e: ApiException.Unexpected) {
+                return SyncOutcome.RetryLater
+            }
+            if (result.stored) {
+                store.markPhoto(photo.id, SyncState.SYNCED)
+                stored++
+            } else {
+                store.markPhoto(photo.id, SyncState.REJECTED, result.code)
+                rejected++
+            }
+        }
+        return SyncOutcome.Done(stored, rejected)
+    }
+
+    /**
+     * Deletes a check-in everywhere. One that never reached the server only goes from the phone; any other needs the
+     * server first. Returns false when the server could not be reached, in which case nothing is removed.
+     */
+    suspend fun delete(id: java.util.UUID): Boolean {
+        if (store.mayBeOnServer(id)) {
+            try {
+                val token = accessToken(false) ?: return false
+                try {
+                    api.deleteCheckin(id, token)
+                } catch (e: ApiException.Unauthorized) {
+                    api.deleteCheckin(id, accessToken(true) ?: return false)
+                }
+            } catch (e: ApiException) {
+                return false
+            }
+        }
+        store.delete(id)
+        return true
+    }
+
+    private suspend fun syncCheckIns(): SyncOutcome {
         var stored = 0
         var rejected = 0
         while (true) {

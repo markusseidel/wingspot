@@ -16,7 +16,11 @@ class WingspotApp : Application() {
     val auth by lazy { SupabaseAuth(BuildConfig.SUPABASE_URL, BuildConfig.PUBLISHABLE_KEY) }
     val checkIns by lazy { CheckInStore.open(File(filesDir, "checkins.sqlite").path) }
     val referenceInstaller by lazy { ReferenceDataInstaller(File(filesDir, "refdata"), BuildConfig.SUPABASE_URL + "/functions") }
-    val outbox by lazy { Outbox(checkIns, ApiClient(BuildConfig.SUPABASE_URL + "/functions"), ::accessToken) }
+    val outbox by lazy { Outbox(
+        checkIns,
+        ApiClient(BuildConfig.SUPABASE_URL + "/functions", restUrl = BuildConfig.SUPABASE_URL + "/rest/v1", apiKey = BuildConfig.PUBLISHABLE_KEY),
+        ::accessToken,
+    ) }
 
     /** A valid access token, refreshed when it is about to expire or after the server refused it. Null if signed out. */
     private suspend fun accessToken(forceRefresh: Boolean): String? {
