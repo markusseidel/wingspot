@@ -89,7 +89,7 @@ Counts only the types in the database, 22 on hosted at first.
 | night_owl | Night Owl | Nachteule | Check-ins between 22:00 and 04:00 local time | 1, 10, 25 |
 | anniversary | Anniversary | Jahrestag | Years in which you checked in on the day you joined, in a later year | 1, 2, 3, 5, 10 |
 
-## Hidden (3)
+## Hidden (6)
 
 These show as "???" until earned. Drop any you don't like.
 
@@ -98,6 +98,9 @@ These show as "???" until earned. Drop any you don't like.
 | deja_vu | Déjà Vu | Déjà-vu | The same registration at the same airport on 3 different days |
 | mirror_image | Mirror Image | Spiegelbild | A registration that reads the same backwards, such as D-ADAD with the dash ignored |
 | new_year | New Year's Spot | Neujahrs-Spot | A check-in on 1 January |
+| earth_radius | Down to the Core | Bis zum Erdkern | Flights add up to more than the radius of the Earth (6,371 km) |
+| earth_circumference | Around the World | Einmal um die Welt | Flights add up to more than the circumference of the Earth (40,075 km) |
+| to_the_moon | To the Moon | Zum Mond | Flights add up to more than the distance to the Moon (384,400 km) |
 
 ## Later, when the data exists
 
