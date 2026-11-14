@@ -143,6 +143,7 @@ private let ben = PersonRecord(id: UUID(), username: "ben_b", displayName: nil, 
     #expect(try await store.sharing() == .private)
     #expect(try await store.setSharing(.friends, applyToExisting: true) == 3)
     #expect(try await store.sharing() == .friends)
+    #expect(SharingChoice(rawValue: "followers") != nil)
     #expect(await backend.applied.count == 1)
 }
 

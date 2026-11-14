@@ -1666,12 +1666,12 @@
         }
       }
     },
-    "Friends are people you follow who follow you back. Your exact position is never shown to others." : {
+    "Friends are people you follow who follow you back. Followers are people who follow you. Your exact position is never shown to others." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Freunde sind Leute, denen du folgst und die dir zurück folgen. Deine genaue Position wird anderen nie gezeigt."
+            "value" : "Freunde sind Leute, denen du folgst und die dir zurück folgen. Follower sind Leute, die dir folgen. Deine genaue Position wird anderen nie gezeigt."
           }
         }
       }

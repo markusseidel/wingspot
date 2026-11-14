@@ -118,6 +118,7 @@ class SocialApiTests {
     fun sharingIsReadAndSet() = withApi { server, api, _ ->
         server.enqueue(ok("""[{"id":"$ME","default_visibility":"friends"}]"""))
         assertEquals(SharingChoice.FRIENDS, api.sharing(ME))
+        assertEquals("followers", SharingChoice.FOLLOWERS.wire)
         server.enqueue(ok("3"))
         assertEquals(3, api.setSharing(SharingChoice.EVERYONE, true))
     }

@@ -138,9 +138,10 @@
     <string name="username_taken">This username is taken.</string>
     <string name="display_name_label">Name (optional)</string>
     <string name="sharing_title">Who sees your check-ins</string>
-    <string name="sharing_hint">New check-ins use this choice. Friends are people you follow who follow you back.</string>
+    <string name="sharing_hint">New check-ins use this choice. Friends are people you follow who follow you back. Followers are people who follow you.</string>
     <string name="share_only_me">Only me</string>
     <string name="share_friends">Friends</string>
+    <string name="share_followers">Followers</string>
     <string name="share_everyone">Everyone</string>
     <string name="apply_to_existing">Also change my existing check-ins</string>
     <string name="sharing_saved">Saved.</string>

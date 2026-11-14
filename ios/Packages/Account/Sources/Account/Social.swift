@@ -5,6 +5,7 @@ import Observation
 public enum SharingChoice: String, CaseIterable, Sendable {
     case `private`
     case friends
+    case followers
     case `public`
 }
 

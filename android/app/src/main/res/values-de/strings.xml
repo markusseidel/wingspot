@@ -138,9 +138,10 @@
     <string name="username_taken">Dieser Benutzername ist vergeben.</string>
     <string name="display_name_label">Name (optional)</string>
     <string name="sharing_title">Wer deine Check-ins sieht</string>
-    <string name="sharing_hint">Neue Check-ins verwenden diese Auswahl. Freunde sind Leute, denen du folgst und die dir folgen.</string>
+    <string name="sharing_hint">Neue Check-ins verwenden diese Auswahl. Freunde sind Leute, denen du folgst und die dir folgen. Follower sind Leute, die dir folgen.</string>
     <string name="share_only_me">Nur ich</string>
     <string name="share_friends">Freunde</string>
+    <string name="share_followers">Follower</string>
     <string name="share_everyone">Alle</string>
     <string name="apply_to_existing">Auch meine bisherigen Check-ins ändern</string>
     <string name="sharing_saved">Gespeichert.</string>
