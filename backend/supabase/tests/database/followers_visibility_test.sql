@@ -51,7 +51,9 @@ select is((select count(*)::int from public.checkins where id = '89000000-0000-0
 -- The level can be chosen as the default, and is accepted when syncing
 select pg_temp.as_user(1);
 select lives_ok($$ select public.set_sharing('followers', false) $$, 'followers is a valid sharing choice');
+select pg_temp.reset_role();
 select is((select default_visibility from public.profiles where id = pg_temp.u(1)), 'followers', 'and is stored');
+select pg_temp.as_user(1);
 select is((public.sync_checkins(jsonb_build_array(jsonb_build_object(
   'id', gen_random_uuid(), 'kind', 'spotted', 'occurred_at', now(), 'type_icao', 'A321', 'visibility', 'followers')))
   -> 0 ->> 'status'), 'stored', 'a followers check-in is accepted by the sync');
