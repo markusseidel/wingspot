@@ -27,28 +27,26 @@ values ('89000000-0000-0000-0000-000000000002', pg_temp.u(2), 'ios', 'follower-t
 insert into public.notification_rules (watcher, target, spotted) values (pg_temp.u(2), pg_temp.u(1), true);
 update public.profiles set is_private = false where id = pg_temp.u(1);
 
-create temp table c as
-  select id from (select gen_random_uuid() as id) x;
 insert into public.checkins (id, user_id, kind, occurred_at, visibility, aircraft_id)
-select id, pg_temp.u(1), 'spotted', now(), 'followers', 891 from c;
+values ('89000000-0000-0000-0000-0000000000c1', pg_temp.u(1), 'spotted', now(), 'followers', 891);
 
 select is((select count(*)::int from public.notifications where recipient = pg_temp.u(2) and kind = 'checkin'), 1,
           'a follower with an alert is told about a followers check-in, without following back');
 
 select pg_temp.as_user(2);
-select is((select count(*)::int from public.checkins where id = (select id from c)), 1, 'a follower sees it');
+select is((select count(*)::int from public.checkins where id = '89000000-0000-0000-0000-0000000000c1'), 1, 'a follower sees it');
 select pg_temp.as_user(3);
-select is((select count(*)::int from public.checkins where id = (select id from c)), 0, 'a stranger does not');
+select is((select count(*)::int from public.checkins where id = '89000000-0000-0000-0000-0000000000c1'), 0, 'a stranger does not');
 select pg_temp.as_user(4);
-select is((select count(*)::int from public.checkins where id = (select id from c)), 1, 'a friend does');
+select is((select count(*)::int from public.checkins where id = '89000000-0000-0000-0000-0000000000c1'), 1, 'a friend does');
 
 -- A private profile still shows check-ins only to friends.
 select pg_temp.reset_role();
 update public.profiles set is_private = true where id = pg_temp.u(1);
 select pg_temp.as_user(2);
-select is((select count(*)::int from public.checkins where id = (select id from c)), 0, 'a private profile hides it from a plain follower');
+select is((select count(*)::int from public.checkins where id = '89000000-0000-0000-0000-0000000000c1'), 0, 'a private profile hides it from a plain follower');
 select pg_temp.as_user(4);
-select is((select count(*)::int from public.checkins where id = (select id from c)), 1, 'but not from a friend');
+select is((select count(*)::int from public.checkins where id = '89000000-0000-0000-0000-0000000000c1'), 1, 'but not from a friend');
 
 -- The level can be chosen as the default, and is accepted when syncing
 select pg_temp.as_user(1);
