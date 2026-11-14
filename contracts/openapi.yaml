@@ -50,8 +50,8 @@ paths:
         item never blocks the others. The HTTP status is 200 whenever the request itself
         was valid, and each item's `status` says what happened.
 
-        `spotted`, `airport` and `flown` check-ins are accepted. A check-in is `private` unless the app
-        sends another visibility. Apps retry network errors and 5xx answers, and never retry
+        `spotted`, `airport` and `flown` check-ins are accepted. A check-in gets the visibility the app sends, or, when the app sends none, the account's
+        sharing choice (`private` for a new account). Apps retry network errors and 5xx answers, and never retry
         a `rejected` item.
       requestBody:
         required: true
