@@ -325,6 +325,20 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
 
     suspend fun markSynced(ids: Collection<UUID>) = setState(ids, "synced", null, syncedAt = System.currentTimeMillis())
 
+    /**
+     * Puts rejected flights back in the queue when the server refused a detail the outbox now leaves out when sending
+     * (see [Outbox]), so flights an earlier version gave up on are sent again.
+     */
+    suspend fun reopenFixable() {
+        val fixable = select("WHERE sync_state = 'rejected' AND kind = 'flown'").filter { Outbox.droppable(it.rejectCode, it) != null }
+        db {
+            for (c in fixable) connection.prepare("UPDATE checkins SET sync_state = 'pending', reject_code = NULL WHERE id = ?").use {
+                it.bindText(1, c.id.toString())
+                it.step()
+            }
+        }
+    }
+
     suspend fun markRejected(id: UUID, code: String?) = setState(listOf(id), "rejected", code)
 
     private suspend fun setState(ids: Collection<UUID>, state: String, code: String?, syncedAt: Long? = null) = db {

@@ -51,6 +51,20 @@ private actor FakeServer: CheckInUploader {
     }
 }
 
+/// Rejects any check-in that names a type, like a server that doesn't know it.
+private actor TypeStrictServer: CheckInUploader {
+    private(set) var sent: [CheckInUploadItem] = []
+
+    func upload(_ items: [CheckInUploadItem]) async throws -> [CheckInUploadResult] {
+        sent.append(contentsOf: items)
+        return items.map {
+            $0.typeICAO == nil
+                ? CheckInUploadResult(id: $0.id, status: "stored")
+                : CheckInUploadResult(id: $0.id, status: "rejected", code: "unknown_type")
+        }
+    }
+}
+
 private let alice = UUID()
 private let bob = UUID()
 
@@ -206,6 +220,45 @@ private func state(_ context: ModelContext, _ id: UUID) throws -> LocalCheckIn {
         #expect(try state(context, bad).syncState == "rejected")
         #expect(try state(context, bad).syncError == "unknown_type")
         #expect(try state(context, good).syncState == "synced")
+    }
+
+    @Test func aFlightWithATypeTheServerDoesNotKnowIsStoredWithoutIt() async throws {
+        let context = try makeContext()
+        let id = try CheckInStore(context: context).saveFlown(
+            FlownDraft(
+                origin: .init(airportID: 3, code: "LIS"), destination: .init(airportID: 7, code: "MXP"),
+                flightNumber: "TP832", type: .init(icaoCode: "A21N", name: "A321neo"), seat: "12A"
+            ), ownerID: alice
+        ).id
+        let server = TypeStrictServer()
+
+        let outcome = await CheckInOutbox(context: context, uploader: server).sync(userID: alice)
+
+        #expect(outcome == .finished(stored: 3, rejected: 0))
+        let flight = try state(context, id)
+        #expect(flight.syncState == "synced")
+        #expect(flight.typeICAO == "A21N", "the type stays on the device")
+        let sent = await server.sent.filter { $0.id == id }
+        #expect(sent.count == 2)
+        #expect(sent.last?.typeICAO == nil)
+        #expect(sent.last?.flightNumber == "TP832")
+    }
+
+    @Test func aFlightRejectedByAnEarlierVersionIsSentAgain() async throws {
+        let context = try makeContext()
+        let id = try CheckInStore(context: context).saveFlown(
+            FlownDraft(
+                origin: .init(airportID: 3, code: "LIS"), destination: .init(airportID: 7, code: "MXP"),
+                type: .init(icaoCode: "A21N", name: "A321neo")
+            ), ownerID: alice
+        ).id
+        let flight = try state(context, id)
+        flight.syncState = "rejected"
+        flight.syncError = "unknown_type"
+
+        _ = await CheckInOutbox(context: context, uploader: TypeStrictServer()).sync(userID: alice)
+
+        #expect(try state(context, id).syncState == "synced")
     }
 
     @Test func aRejectedItemStaysOnTheDeviceAndIsNotSentAgain() async throws {
