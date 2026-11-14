@@ -59,14 +59,15 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
     public let flightNumber: String?
     public let cabin: String?
     public let seat: String?
-    /// Sent explicitly, so what the app means doesn't depend on the server's default.
-    public let visibility: String
+    /// Left out unless the app means a specific one: the server then applies the account's sharing choice
+    /// (Settings > Share my check-ins). Sending "private" here would override that choice.
+    public let visibility: String?
 
     public init(
         id: UUID, kind: String, occurredAt: Date, registration: String?, typeICAO: String?, airportID: Int?,
         latitude: Double?, longitude: Double?, context: String? = nil,
         originID: Int? = nil, destinationID: Int? = nil, flightNumber: String? = nil, cabin: String? = nil,
-        seat: String? = nil, visibility: String = "private"
+        seat: String? = nil, visibility: String? = nil
     ) {
         self.id = id
         self.kind = kind

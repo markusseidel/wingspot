@@ -82,7 +82,8 @@ private let sampleItem = CheckInUploadItem(
         #expect(item["occurred_at"] as? String == "2027-01-15T08:00:00.500Z")
         #expect(item["registration"] as? String == "D-AIMA")
         #expect(item["airport_id"] as? Int == 7)
-        #expect(item["visibility"] as? String == "private")
+        // No visibility is sent, so the server applies the account's sharing choice.
+        #expect(item["visibility"] == nil)
         #expect(item["type_icao"] == nil)
         let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
         return (Data(#"{"results":[{"id":"0198aaaa-0000-7000-8000-000000000001","status":"stored"}]}"#.utf8), response)
