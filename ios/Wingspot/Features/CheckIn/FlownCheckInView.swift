@@ -258,19 +258,11 @@ struct FlownCheckInView: View {
             photo: tripPhoto
         )
         do {
-            result = try CheckInStore(context: modelContext).saveFlown(draft, ownerID: account.userID, at: Self.moment(of: date))
+            result = try CheckInStore(context: modelContext).saveFlown(draft, ownerID: account.userID, at: FlightDay.moment(of: date))
             sync?.requestSync()
         } catch {
             saveFailed = true
         }
-    }
-
-    /// A flight has a day but no time here. Today keeps the real time. Any other day uses midday, which stays
-    /// on that day in every time zone near the user.
-    private static func moment(of day: Date) -> Date {
-        let calendar = Calendar.current
-        if calendar.isDateInToday(day) { return Date() }
-        return calendar.date(bySettingHour: 12, minute: 0, second: 0, of: day) ?? day
     }
 
     /// Starts the next flight and keeps the date.

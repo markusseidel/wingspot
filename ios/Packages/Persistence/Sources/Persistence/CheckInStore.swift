@@ -161,6 +161,15 @@ public enum CheckInError: Error, Equatable {
     case missingAircraft
 }
 
+/// The moment a flight is saved at when only its day is known.
+public enum FlightDay {
+    /// Today keeps the real time. Any other day uses midday, which stays on that day in any time zone.
+    public static func moment(of day: Date, now: Date = Date(), calendar: Calendar = .current) -> Date {
+        if calendar.isDate(day, inSameDayAs: now) { return now }
+        return calendar.date(bySettingHour: 12, minute: 0, second: 0, of: day) ?? day
+    }
+}
+
 @MainActor
 public struct CheckInStore {
     private let context: ModelContext
@@ -259,12 +268,13 @@ public struct CheckInStore {
         )
     }
 
-    /// Corrects the details of a saved flight and sends them again. The route, the day and the photos stay as they were.
+    /// Corrects the details of a saved flight and sends them again. The route and the photos stay as they were.
+    /// A new `occurredAt` moves the flight, and the two airport visits it created, to that time.
     /// Returns `false` when this device has no such flight, for example one made on another device.
     @discardableResult
     public func updateFlown(
         id: UUID, registration: Registration?, type: SpottedDraft.AircraftTypeChoice?, flightNumber: String?,
-        cabin: CabinClass?, seat: String?
+        cabin: CabinClass?, seat: String?, occurredAt: Date? = nil
     ) throws -> Bool {
         let matches = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id && $0.kind == "flown" }))
         guard let flight = matches.first else { return false }
@@ -277,6 +287,20 @@ public struct CheckInStore {
         flight.cabin = cabin?.rawValue
         flight.seat = (seat?.isEmpty ?? true) ? nil : seat
         // The server takes the corrected details when the flight is sent again.
+        if let occurredAt, occurredAt != flight.occurredAt {
+            // The airport visits a flight creates share its time. The server moves its copies the same way.
+            let old = flight.occurredAt
+            let owner = flight.ownerID
+            let airports = [flight.originID, flight.destinationID].compactMap { $0 }
+            let visits = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate {
+                $0.kind == "airport" && $0.occurredAt == old
+            }))
+            for visit in visits where visit.ownerID == owner && airports.contains(visit.airportID ?? -1)
+                && (visit.visitContext == "departing" || visit.visitContext == "arriving") {
+                visit.occurredAt = occurredAt
+            }
+            flight.occurredAt = occurredAt
+        }
         flight.syncState = SyncState.pending.rawValue
         flight.syncError = nil
         try context.save()

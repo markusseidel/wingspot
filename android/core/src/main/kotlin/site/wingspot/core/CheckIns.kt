@@ -205,6 +205,7 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
      */
     suspend fun updateFlown(
         id: UUID, registration: Registration?, typeIcao: String?, flightNumber: String?, cabin: CabinClass?, seat: String?,
+        occurredAt: Instant? = null,
     ): Boolean = db {
         val number = flightNumber?.filterNot { it.isWhitespace() }?.uppercase()?.ifEmpty { null }
         val seatText = seat?.trim()?.uppercase()?.ifEmpty { null }
@@ -213,6 +214,21 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
             it.bindText(1, id.toString()); found = it.step()
         }
         if (!found) return@db false
+        if (occurredAt != null) {
+            // The airport visits a flight creates share its time and move with it. The server moves its copies the same way.
+            connection.prepare(
+                """UPDATE checkins SET occurred_at = ? WHERE kind = 'airport' AND visit_context IN ('departing', 'arriving')
+                       AND occurred_at = (SELECT occurred_at FROM checkins WHERE id = ?)
+                       AND airport_id IN (SELECT origin_id FROM checkins WHERE id = ? UNION SELECT destination_id FROM checkins WHERE id = ?)""",
+            ).use {
+                it.bindLong(1, occurredAt.toEpochMilli())
+                for (i in 2..4) it.bindText(i, id.toString())
+                it.step()
+            }
+            connection.prepare("UPDATE checkins SET occurred_at = ? WHERE id = ?").use {
+                it.bindLong(1, occurredAt.toEpochMilli()); it.bindText(2, id.toString()); it.step()
+            }
+        }
         connection.prepare(
             """UPDATE checkins SET registration = ?, type_icao = ?, flight_number = ?, cabin = ?, seat = ?,
                    sync_state = 'pending', reject_code = NULL WHERE id = ?""",

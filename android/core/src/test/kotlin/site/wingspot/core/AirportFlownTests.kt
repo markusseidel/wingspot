@@ -37,6 +37,22 @@ class AirportAndFlownStoreTests {
     }
 
     @Test
+    fun changingTheDayOfAFlightMovesItsAirportVisitsToo() = runBlocking {
+        val s = store()
+        val day = Instant.parse("2026-03-01T10:00:00Z")
+        val spotting = s.saveAirport(AirportDraft(JFK, VisitContext.SPOTTING), day)
+        val flight = s.saveFlown(FlownDraft(FRA, JFK), day)
+        val newDay = Instant.parse("2026-02-20T12:00:00Z")
+        assertTrue(s.updateFlown(flight.id, null, null, null, null, null, newDay))
+        val all = s.all()
+        assertEquals(newDay, all.first { it.id == flight.id }.occurredAt)
+        val visits = all.filter { it.kind == "airport" && it.visitContext in listOf("departing", "arriving") }
+        assertEquals(2, visits.size)
+        assertTrue(visits.all { it.occurredAt == newDay })
+        assertEquals(day, all.first { it.id == spotting.id }.occurredAt, "a spotting visit keeps its time")
+    }
+
+    @Test
     fun aFlightIsSavedWithItsRouteAndAnAirportVisitForEachEnd() = runBlocking {
         val s = store()
         val first = s.saveFlown(FlownDraft(FRA, JFK, flightNumber = " lh 400 ", seat = " 12a ", cabin = CabinClass.BUSINESS))

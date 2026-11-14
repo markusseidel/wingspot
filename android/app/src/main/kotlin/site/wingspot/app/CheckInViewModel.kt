@@ -126,10 +126,10 @@ class CheckInViewModel(
         mutable.value = mutable.value.copy(editing = null)
     }
 
-    fun saveEdit(id: UUID, registration: Registration?, type: AircraftType?, typeIcao: String?, flightNumber: String, cabin: CabinClass?, seat: String) {
+    fun saveEdit(id: UUID, registration: Registration?, type: AircraftType?, typeIcao: String?, flightNumber: String, cabin: CabinClass?, seat: String, at: Instant? = null) {
         viewModelScope.launch {
             try {
-                store.updateFlown(id, registration, type?.icaoCode ?: typeIcao, flightNumber, cabin, seat)
+                store.updateFlown(id, registration, type?.icaoCode ?: typeIcao, flightNumber, cabin, seat, at)
                 mutable.value = mutable.value.copy(editing = null, saveFailed = false)
                 requestUpload()
                 reload()

@@ -172,3 +172,30 @@ private let dus = SpottedDraft.Place(airportID: 7, code: "DUS")
     let left = try context.fetch(FetchDescriptor<LocalCheckIn>())
     #expect(left.map(\.id) == [kept.id])
 }
+
+@MainActor @Test func changingTheDayOfAFlightMovesItsAirportVisitsToo() throws {
+    let context = try makeContext()
+    let store = CheckInStore(context: context)
+    let day = Date(timeIntervalSince1970: 1_000_000)
+    let spotting = try store.saveAirport(AirportDraft(airportID: 7, code: "DUS", context: .spotting), at: day)
+    let flight = try store.saveFlown(FlownDraft(origin: fra, destination: dus), at: day)
+    let newDay = Date(timeIntervalSince1970: 500_000)
+
+    #expect(try store.updateFlown(
+        id: flight.id, registration: nil, type: nil, flightNumber: nil, cabin: nil, seat: nil, occurredAt: newDay
+    ))
+
+    let all = try context.fetch(FetchDescriptor<LocalCheckIn>())
+    #expect(all.first { $0.id == flight.id }?.occurredAt == newDay)
+    let visits = all.filter { $0.kind == "airport" && ($0.visitContext == "departing" || $0.visitContext == "arriving") }
+    #expect(visits.count == 2)
+    #expect(visits.allSatisfy { $0.occurredAt == newDay })
+    #expect(all.first { $0.id == spotting.id }?.occurredAt == day, "a spotting visit keeps its time")
+}
+
+@Test func aFlightKeepsTheRealTimeOnlyForToday() {
+    let now = Date(timeIntervalSince1970: 1_800_000_000)
+    #expect(FlightDay.moment(of: now.addingTimeInterval(-60), now: now) == now)
+    let other = FlightDay.moment(of: now.addingTimeInterval(-3 * 86_400), now: now)
+    #expect(Calendar.current.component(.hour, from: other) == 12)
+}
