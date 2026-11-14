@@ -56,7 +56,7 @@ select is((select default_visibility from public.profiles where id = pg_temp.u(1
 select pg_temp.as_user(1);
 select is((public.sync_checkins(jsonb_build_array(jsonb_build_object(
   'id', gen_random_uuid(), 'kind', 'spotted', 'occurred_at', now(), 'type_icao', 'A321', 'visibility', 'followers')))
-  -> 0 ->> 'status'), 'stored', 'a followers check-in is accepted by the sync');
+  -> 'results' -> 0 ->> 'status'), 'stored', 'a followers check-in is accepted by the sync');
 select pg_temp.reset_role();
 
 select * from finish();
