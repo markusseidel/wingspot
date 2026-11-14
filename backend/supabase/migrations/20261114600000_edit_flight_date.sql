@@ -13,7 +13,7 @@ begin
   end if;
   execute replace(def, marker,
     'set occurred_at = case when checkins.kind = ''flown'' then excluded.occurred_at else checkins.occurred_at end, '
-    || marker);
+    || substr(marker, 5));
 end;
 $$;
 
