@@ -6,7 +6,7 @@ select * from no_plan();
 
 -- 1 is the author. 2 only follows 1. 3 follows nobody. 4 is a friend of 1.
 insert into auth.users (id, aud, role, email)
-select ('00000000-0000-0000-0000-0000000009' || lpad(n::text, 2, '0'))::uuid, 'authenticated', 'followers' || n || '@example.test'
+select ('00000000-0000-0000-0000-0000000009' || lpad(n::text, 2, '0'))::uuid, 'authenticated', 'authenticated', 'followers' || n || '@example.test'
 from generate_series(1, 4) n;
 create function pg_temp.u(n integer) returns uuid language sql as $$
   select ('00000000-0000-0000-0000-0000000009' || lpad(n::text, 2, '0'))::uuid;
