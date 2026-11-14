@@ -201,25 +201,7 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
         onCancel = model::close,
     )
 
-    if (pickDate) {
-        val startMillis = day.atStartOfDay(java.time.ZoneOffset.UTC).toInstant().toEpochMilli()
-        val pickerState = androidx.compose.material3.rememberDatePickerState(
-            initialSelectedDateMillis = startMillis,
-            selectableDates = object : androidx.compose.material3.SelectableDates {
-                override fun isSelectableDate(utcTimeMillis: Long) = utcTimeMillis <= LocalDate.now().plusDays(1).atStartOfDay(java.time.ZoneOffset.UTC).toInstant().toEpochMilli()
-            },
-        )
-        androidx.compose.material3.DatePickerDialog(
-            onDismissRequest = { pickDate = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    pickerState.selectedDateMillis?.let { date = minOf(java.time.Instant.ofEpochMilli(it).atZone(java.time.ZoneOffset.UTC).toLocalDate(), LocalDate.now()).toString() }
-                    pickDate = false
-                }) { Text(stringResource(R.string.done)) }
-            },
-            dismissButton = { TextButton(onClick = { pickDate = false }) { Text(stringResource(R.string.cancel)) } },
-        ) { androidx.compose.material3.DatePicker(state = pickerState) }
-    }
+    if (pickDate) FlightDatePicker(day, onPick = { date = it.toString(); pickDate = false }, onDismiss = { pickDate = false })
     if (choices.isNotEmpty()) {
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { choices = emptyList() },
@@ -245,7 +227,28 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
     }
 }
 
-/** Fills in or corrects the details of a saved flight. The route, the day and the photos stay as they were. */
+/** The day of a flight, chosen on a calendar. Days after today can't be chosen. */
+@Composable
+internal fun FlightDatePicker(day: LocalDate, onPick: (LocalDate) -> Unit, onDismiss: () -> Unit) {
+    val startMillis = day.atStartOfDay(java.time.ZoneOffset.UTC).toInstant().toEpochMilli()
+    val pickerState = androidx.compose.material3.rememberDatePickerState(
+        initialSelectedDateMillis = startMillis,
+        selectableDates = object : androidx.compose.material3.SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long) = utcTimeMillis <= LocalDate.now().plusDays(1).atStartOfDay(java.time.ZoneOffset.UTC).toInstant().toEpochMilli()
+        },
+    )
+    androidx.compose.material3.DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = {
+                pickerState.selectedDateMillis?.let { onPick(minOf(java.time.Instant.ofEpochMilli(it).atZone(java.time.ZoneOffset.UTC).toLocalDate(), LocalDate.now())) } ?: onDismiss()
+            }) { Text(stringResource(R.string.done)) }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    ) { androidx.compose.material3.DatePicker(state = pickerState) }
+}
+
+/** Fills in or corrects the details of a saved flight. The route and the photos stay as they were. */
 @Composable
 fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: ReferenceState, model: CheckInViewModel) {
     var flightNumber by rememberSaveable { mutableStateOf(flight.flightNumber.orEmpty()) }
@@ -253,6 +256,10 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
     var type by remember { mutableStateOf<AircraftType?>(null) }
     var cabin by rememberSaveable { mutableStateOf(CabinClass.fromWire(flight.cabin)) }
     var seat by rememberSaveable { mutableStateOf(flight.seat.orEmpty()) }
+    val originalDay = remember { flight.occurredAt.atZone(ZoneId.systemDefault()).toLocalDate() }
+    var day by rememberSaveable { mutableStateOf(originalDay.toString()) }
+    var pickDate by remember { mutableStateOf(false) }
+    val chosenDay = LocalDate.parse(day)
     val registration = Registration.parse(input)
     // The type this flight already has stays until another is chosen.
     val keptType = flight.typeIcao.takeIf { type == null }
@@ -260,13 +267,25 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(stringResource(R.string.edit_flight), style = MaterialTheme.typography.headlineMedium)
         Text(flight.title, style = MaterialTheme.typography.titleLarge, fontFamily = FontFamily.Monospace)
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+            Text(stringResource(R.string.date_label))
+            TextButton(onClick = { pickDate = true }, modifier = Modifier.testTag("flight-date")) { Text(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(chosenDay)) }
+        }
+        if (pickDate) FlightDatePicker(chosenDay, onPick = { day = it.toString(); pickDate = false }, onDismiss = { pickDate = false })
         FlightDetails(
             flightNumber, { flightNumber = it }, input, { input = it }, registration, reference, type, { type = it }, cabin, { cabin = it }, seat, { seat = it },
             keptType = keptType,
         )
         SaveBar(
             state, enabled = input.isBlank() || registration != null,
-            onSave = { model.saveEdit(flight.id, registration, type, keptType, flightNumber, cabin, seat) }, onCancel = model::cancelEdit,
+            onSave = {
+                // The time stays as it was unless another day is chosen. Today keeps the real time, any other day uses midday.
+                val at = if (chosenDay == originalDay) null
+                else if (chosenDay == LocalDate.now()) java.time.Instant.now()
+                else chosenDay.atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant()
+                model.saveEdit(flight.id, registration, type, keptType, flightNumber, cabin, seat, at)
+            },
+            onCancel = model::cancelEdit,
         )
     }
 }

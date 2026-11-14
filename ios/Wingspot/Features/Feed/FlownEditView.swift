@@ -34,6 +34,8 @@ struct FlownEditView: View {
     @State private var typeName: String?
     @State private var cabin: CabinClass?
     @State private var seat = ""
+    @State private var date = Date()
+    @State private var originalDate = Date()
     @State private var loaded = false
     @State private var failed = false
 
@@ -51,6 +53,7 @@ struct FlownEditView: View {
             Form {
                 Section {
                     LabeledContent("Flight", value: route)
+                    DatePicker("Date", selection: $date, in: ...Date(), displayedComponents: .date)
                 }
                 Section {
                     TextField("Flight number, e.g. LH400", text: $flightNumber)
@@ -129,6 +132,8 @@ struct FlownEditView: View {
         typeName = flight.typeName
         cabin = flight.cabin.flatMap(CabinClass.init(rawValue:))
         seat = flight.seat ?? ""
+        date = min(flight.occurredAt, Date())
+        originalDate = date
         loaded = true
     }
 
@@ -136,7 +141,9 @@ struct FlownEditView: View {
         do {
             try CheckInStore(context: modelContext).updateFlown(
                 id: flightID, registration: registration, type: typeCode.map { .init(icaoCode: $0, name: typeName ?? $0) },
-                flightNumber: flightNumber, cabin: cabin, seat: seat
+                flightNumber: flightNumber, cabin: cabin, seat: seat,
+                // The time stays as it was unless another day is chosen.
+                occurredAt: Calendar.current.isDate(date, inSameDayAs: originalDate) ? nil : FlightDay.moment(of: date)
             )
             sync?.requestSync()
             onSaved()
