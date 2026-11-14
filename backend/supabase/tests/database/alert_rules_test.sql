@@ -77,16 +77,17 @@ select is(pg_temp.alerts(2), 3, 'the airport visits a flight creates are not ann
 
 -- What stays quiet
 select pg_temp.checkin('spotted', 'public', now() - interval '3 days');
-select is(pg_temp.alerts(2), 3, 'a check-in from days ago, added later, tells nobody');
+select is(pg_temp.alerts(2), 4, 'a check-in from days ago, added later, tells too');
+select is(pg_temp.alerts(3), 2, 'also a follower');
 select pg_temp.checkin('spotted', 'private');
-select is(pg_temp.alerts(2), 3, 'a private check-in tells nobody');
+select is(pg_temp.alerts(2), 4, 'a private check-in tells nobody');
 select pg_temp.checkin('spotted', 'friends');
-select is(pg_temp.alerts(2), 4, 'a friends-only check-in tells a friend');
-select is(pg_temp.alerts(3), 1, 'but not a follower who is no friend');
+select is(pg_temp.alerts(2), 5, 'a friends-only check-in tells a friend');
+select is(pg_temp.alerts(3), 2, 'but not a follower who is no friend');
 update public.profiles set post_delay_minutes = 60 where id = pg_temp.u(1);
 select pg_temp.checkin('spotted');
-select is(pg_temp.alerts(3), 1, 'a delayed public check-in is not visible to a follower yet, so it tells nobody');
-select is(pg_temp.alerts(2), 5, 'a friend sees it at once');
+select is(pg_temp.alerts(3), 2, 'a delayed public check-in is not visible to a follower yet, so it tells nobody');
+select is(pg_temp.alerts(2), 6, 'a friend sees it at once');
 update public.profiles set post_delay_minutes = 0 where id = pg_temp.u(1);
 
 -- Sensitive aircraft: others never get the registration
@@ -98,7 +99,7 @@ select is((select subject from public.claim_notifications(100) c, sensitive_chec
 -- Switching off, and unfollowing
 update public.notification_prefs set followed_checkins = false where user_id = pg_temp.u(2);
 select pg_temp.checkin('spotted');
-select is(pg_temp.alerts(2), 6, 'the master switch stops all of them, the count stays');
+select is(pg_temp.alerts(2), 7, 'the master switch stops all of them, the count stays');
 select pg_temp.as_user(3);
 delete from public.follows where follower = pg_temp.u(3);
 select pg_temp.reset_role();

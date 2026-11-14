@@ -36,6 +36,12 @@ describe("push texts", () => {
     assert.equal(render(alert("spotted", "D-AIMA"), "en").body, "spotted D-AIMA.");
     assert.equal(render(alert("spotted", "D-AIMA"), "de").body, "hat D-AIMA gespottet.");
     assert.equal(render(alert("airport", "FRA"), "en").body, "checked in at FRA.");
+    const visit = (context, name) => ({ ...alert("airport", "LHA"), visit_context: context, airport_name: name });
+    assert.equal(render(visit("spotting", "Lahr Airport"), "en").body, "is spotting at LHA (Lahr Airport).");
+    assert.equal(render(visit("spotting", "Lahr Airport"), "de").body, "spottet am Flughafen LHA (Lahr Airport).");
+    assert.equal(render(visit("arriving", null), "de").body, "ist in LHA gelandet.");
+    assert.equal(render(visit("departing", null), "en").body, "is departing from LHA.");
+    assert.equal(render(visit("museum", null), "en").body, "is visiting the museum at LHA.");
     assert.equal(render(alert("airport", "FRA"), "de").body, "hat in FRA eingecheckt.");
     assert.equal(render(alert("spotted", null), "en").body, "checked in.");
     assert.equal(render(alert(null, null), "de").body, "hat eingecheckt.");
