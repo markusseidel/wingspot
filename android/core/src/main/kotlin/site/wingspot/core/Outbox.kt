@@ -244,7 +244,35 @@ class Outbox(
         return true
     }
 
+    /**
+     * A detail the server doesn't accept (an aircraft type it doesn't know, an odd flight number) must not cost the
+     * whole flight: it is sent again without that detail, which stays on the phone.
+     */
+    private suspend fun uploadKeepingTheCore(batch: List<LocalCheckIn>, token: String): List<UploadResult> {
+        val last = mutableMapOf<String, UploadResult>()
+        val sending = batch.associateBy { it.id.toString() }.toMutableMap()
+        var remaining = batch
+        repeat(5) {
+            val results = api.uploadCheckins(remaining.map { sending.getValue(it.id.toString()) }, token)
+            val again = mutableListOf<LocalCheckIn>()
+            for (c in remaining) {
+                val r = results.firstOrNull { it.id.equals(c.id.toString(), ignoreCase = true) } ?: continue
+                last[c.id.toString()] = r
+                val current = sending.getValue(c.id.toString())
+                val detail = if (r.status == "rejected") droppable(r.code, current) else null
+                if (detail != null) {
+                    sending[c.id.toString()] = current.without(detail)
+                    again += c
+                }
+            }
+            if (again.isEmpty()) return last.values.toList()
+            remaining = again
+        }
+        return last.values.toList()
+    }
+
     private suspend fun syncCheckIns(): SyncOutcome {
+        store.reopenFixable()
         var stored = 0
         var rejected = 0
         while (true) {
@@ -257,10 +285,10 @@ class Outbox(
             } ?: return SyncOutcome.SignedOut
             val results = try {
                 try {
-                    api.uploadCheckins(batch, token)
+                    uploadKeepingTheCore(batch, token)
                 } catch (e: ApiException.Unauthorized) {
                     token = accessToken(true) ?: return SyncOutcome.SignedOut // throws Retry when offline
-                    api.uploadCheckins(batch, token)
+                    uploadKeepingTheCore(batch, token)
                 }
             } catch (e: ApiException.Retry) {
                 return SyncOutcome.RetryLater
@@ -284,6 +312,31 @@ class Outbox(
             }
             // An answer that settles nothing (an unknown status) would loop forever.
             if (stored + rejected == before) return SyncOutcome.RetryLater
+        }
+    }
+
+    internal enum class Detail { TYPE, FLIGHT_NUMBER, CABIN, SEAT, REGISTRATION }
+
+    internal companion object {
+        /** The detail the server refused, if a flight can do without it and the check-in has it. */
+        fun droppable(code: String?, c: LocalCheckIn): Detail? {
+            if (c.kind != "flown") return null
+            return when (code) {
+                "unknown_type" -> Detail.TYPE.takeIf { c.typeIcao != null }
+                "invalid_flight_number" -> Detail.FLIGHT_NUMBER.takeIf { c.flightNumber != null }
+                "invalid_cabin" -> Detail.CABIN.takeIf { c.cabin != null }
+                "invalid_seat" -> Detail.SEAT.takeIf { c.seat != null }
+                "invalid_registration" -> Detail.REGISTRATION.takeIf { c.registration != null }
+                else -> null
+            }
+        }
+
+        fun LocalCheckIn.without(detail: Detail): LocalCheckIn = when (detail) {
+            Detail.TYPE -> copy(typeIcao = null)
+            Detail.FLIGHT_NUMBER -> copy(flightNumber = null)
+            Detail.CABIN -> copy(cabin = null)
+            Detail.SEAT -> copy(seat = null)
+            Detail.REGISTRATION -> copy(registration = null)
         }
     }
 }

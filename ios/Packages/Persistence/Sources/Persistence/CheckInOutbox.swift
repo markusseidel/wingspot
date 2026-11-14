@@ -45,6 +45,7 @@ public final class CheckInOutbox {
         isSyncing = true
         defer { isSyncing = false }
 
+        reopenFixable(for: userID)
         var stored = 0
         var rejected = 0
         var sawWork = false
@@ -59,7 +60,7 @@ public final class CheckInOutbox {
 
             let answers: [CheckInUploadResult]
             do {
-                answers = try await uploader.upload(batch.map(Self.item))
+                answers = try await uploadKeepingTheCore(batch)
             } catch {
                 // Only the server's answer for an item can reject it. A failed request, whatever the reason
                 // (no network, a server error, a missing endpoint before a deploy, an expired token), leaves
@@ -94,6 +95,61 @@ public final class CheckInOutbox {
         return sawWork ? .finished(stored: stored, rejected: rejected) : .idle
     }
 
+    /// A detail the server doesn't accept (an aircraft type it doesn't know, an odd flight number) must not cost
+    /// the whole check-in: the item is sent again without that detail, which stays on the device.
+    private func uploadKeepingTheCore(_ batch: [LocalCheckIn]) async throws -> [CheckInUploadResult] {
+        var dropped: [UUID: Set<Detail>] = [:]
+        var last: [UUID: CheckInUploadResult] = [:]
+        var remaining = batch
+        for _ in 0..<5 {
+            let answers = try await uploader.upload(remaining.map { Self.item($0, without: dropped[$0.id] ?? []) })
+            let byID = Dictionary(answers.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+            var again: [LocalCheckIn] = []
+            for checkIn in remaining {
+                guard let answer = byID[checkIn.id] else { continue }
+                last[checkIn.id] = answer
+                if answer.isRejected, let detail = Self.droppableDetail(for: answer.code, in: checkIn),
+                   dropped[checkIn.id]?.contains(detail) != true {
+                    dropped[checkIn.id, default: []].insert(detail)
+                    again.append(checkIn)
+                }
+            }
+            if again.isEmpty { break }
+            remaining = again
+        }
+        return Array(last.values)
+    }
+
+    /// Items an earlier version of the app left rejected for a detail that is now dropped when sending.
+    private func reopenFixable(for userID: UUID) {
+        let rejected = SyncState.rejected.rawValue
+        let items = (try? context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.syncState == rejected }))) ?? []
+        var changed = false
+        for checkIn in items where checkIn.ownerID == nil || checkIn.ownerID == userID {
+            if Self.droppableDetail(for: checkIn.syncError, in: checkIn) != nil {
+                checkIn.syncState = SyncState.pending.rawValue
+                checkIn.syncError = nil
+                changed = true
+            }
+        }
+        if changed { try? context.save() }
+    }
+
+    private enum Detail { case type, flightNumber, cabin, seat, registration }
+
+    /// The detail the server refused, if it is one a flight can do without and the check-in has it.
+    private static func droppableDetail(for code: String?, in checkIn: LocalCheckIn) -> Detail? {
+        guard checkIn.kind == "flown" else { return nil }
+        switch code {
+        case "unknown_type": return checkIn.typeICAO == nil ? nil : .type
+        case "invalid_flight_number": return checkIn.flightNumber == nil ? nil : .flightNumber
+        case "invalid_cabin": return checkIn.cabin == nil ? nil : .cabin
+        case "invalid_seat": return checkIn.seat == nil ? nil : .seat
+        case "invalid_registration": return checkIn.registration == nil ? nil : .registration
+        default: return nil
+        }
+    }
+
     private func pending(for userID: UUID) throws -> [LocalCheckIn] {
         let pending = SyncState.pending.rawValue
         var descriptor = FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.syncState == pending })
@@ -106,13 +162,15 @@ public final class CheckInOutbox {
         checkIn.syncError = code
     }
 
-    private static func item(_ checkIn: LocalCheckIn) -> CheckInUploadItem {
+    private static func item(_ checkIn: LocalCheckIn, without dropped: Set<Detail> = []) -> CheckInUploadItem {
         CheckInUploadItem(
-            id: checkIn.id, kind: checkIn.kind, occurredAt: checkIn.occurredAt, registration: checkIn.registration,
-            typeICAO: checkIn.typeICAO, airportID: checkIn.airportID, latitude: checkIn.latitude,
-            longitude: checkIn.longitude, context: checkIn.visitContext,
-            originID: checkIn.originID, destinationID: checkIn.destinationID, flightNumber: checkIn.flightNumber,
-            cabin: checkIn.cabin, seat: checkIn.seat
+            id: checkIn.id, kind: checkIn.kind, occurredAt: checkIn.occurredAt,
+            registration: dropped.contains(.registration) ? nil : checkIn.registration,
+            typeICAO: dropped.contains(.type) ? nil : checkIn.typeICAO, airportID: checkIn.airportID,
+            latitude: checkIn.latitude, longitude: checkIn.longitude, context: checkIn.visitContext,
+            originID: checkIn.originID, destinationID: checkIn.destinationID,
+            flightNumber: dropped.contains(.flightNumber) ? nil : checkIn.flightNumber,
+            cabin: dropped.contains(.cabin) ? nil : checkIn.cabin, seat: dropped.contains(.seat) ? nil : checkIn.seat
         )
     }
 }

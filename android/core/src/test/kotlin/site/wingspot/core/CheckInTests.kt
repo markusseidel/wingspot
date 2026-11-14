@@ -117,6 +117,20 @@ class OutboxTests {
     }
 
     @Test
+    fun aFlightWithATypeTheServerDoesNotKnowIsStoredWithoutIt() = withOutbox { server, store, outbox, _ ->
+        val flight = store.saveFlown(FlownDraft(Place(3, "LIS"), Place(9, "MXP"), flightNumber = "TP832", typeIcao = "A21N"))
+        val sent = store.pending().filter { it.kind == "flown" }.single().id
+        server.enqueue(answer(*store.pending().map { it.id to (if (it.id == sent) "rejected" else "stored") }.toTypedArray(), codes = mapOf(sent to "unknown_type")))
+        server.enqueue(answer(sent to "stored"))
+        assertEquals(SyncOutcome.Done(3, 0), outbox.sync())
+        server.takeRequest()
+        val retry = Json.parseToJsonElement(server.takeRequest().body!!.utf8()).jsonObject["checkins"]!!.jsonArray.single().jsonObject
+        assertTrue("type_icao" !in retry)
+        assertEquals("TP832", retry["flight_number"]!!.jsonPrimitive.content)
+        assertEquals("A21N", store.all().first { it.id == sent }.typeIcao, "the type stays on the phone")
+    }
+
+    @Test
     fun aRejectedItemIsFinalAndTheOthersAreNotBlocked() = withOutbox { server, store, outbox, _ ->
         val a = store.saveSpotted(SpottedDraft(registration = reg("D-AIMA")))
         val b = store.saveSpotted(SpottedDraft(typeIcao = "ZZZZ"))
