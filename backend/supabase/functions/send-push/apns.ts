@@ -22,6 +22,10 @@ export interface PushRow {
   snippet: string | null;
   /** For an alert about a new check-in: `spotted`, `flown` or `airport`. */
   checkin_kind?: string | null;
+  /** For an airport alert: `spotting`, `departing`, `arriving`, `transit`, `working` or `museum`. */
+  visit_context?: string | null;
+  /** For an airport alert: the airport's name. */
+  airport_name?: string | null;
   devices: PushDevice[];
 }
 
@@ -57,7 +61,8 @@ export function render(row: PushRow, locale: string | null): Rendered {
       if (row.checkin_kind === "flown" && what) return { title: name, body: german ? `ist ${what} geflogen.` : `flew ${what}.` };
       if (row.checkin_kind === "spotted" && what) return { title: name, body: german ? `hat ${what} gespottet.` : `spotted ${what}.` };
       if (row.checkin_kind === "airport" && what) {
-        return { title: name, body: german ? `hat in ${what} eingecheckt.` : `checked in at ${what}.` };
+        const place = row.airport_name?.trim() ? `${what} (${row.airport_name.trim()})` : what;
+        return { title: name, body: visitText(row.visit_context, place, german) };
       }
       return { title: name, body: german ? "hat eingecheckt." : "checked in." };
     }
@@ -65,6 +70,19 @@ export function render(row: PushRow, locale: string | null): Rendered {
       const text = (row.snippet ?? "").replace(/\s+/g, " ").trim();
       return { title: name, body: german ? `hat kommentiert: „${text}“` : `commented: “${text}”` };
     }
+  }
+}
+
+/** Why someone is at an airport, in a sentence. Without a known reason it just says they checked in. */
+function visitText(context: string | null | undefined, place: string, german: boolean): string {
+  switch (context) {
+    case "spotting": return german ? `spottet am Flughafen ${place}.` : `is spotting at ${place}.`;
+    case "departing": return german ? `fliegt ab von ${place}.` : `is departing from ${place}.`;
+    case "arriving": return german ? `ist in ${place} gelandet.` : `arrived at ${place}.`;
+    case "transit": return german ? `ist in ${place} im Transit.` : `is in transit at ${place}.`;
+    case "working": return german ? `arbeitet am Flughafen ${place}.` : `is working at ${place}.`;
+    case "museum": return german ? `besucht das Museum am Flughafen ${place}.` : `is visiting the museum at ${place}.`;
+    default: return german ? `hat in ${place} eingecheckt.` : `checked in at ${place}.`;
   }
 }
 
