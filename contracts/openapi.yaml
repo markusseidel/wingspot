@@ -346,7 +346,7 @@ components:
   schemas:
     Visibility:
       type: string
-      description: Open string set.
+      description: Open string set. Values today are `private`, `friends` (people who follow each other), `followers` (people who follow the author) and `public`.
       examples: [private]
     CheckinItem:
       type: object

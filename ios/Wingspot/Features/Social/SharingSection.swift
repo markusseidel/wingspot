@@ -6,6 +6,7 @@ extension SharingChoice {
         switch self {
         case .private: "Only me"
         case .friends: "Friends"
+        case .followers: "Followers"
         case .public: "Everyone"
         }
     }
@@ -39,7 +40,7 @@ struct SharingSection: View {
             if loadFailed {
                 Text("Sharing settings need an internet connection.")
             } else {
-                Text("Friends are people you follow who follow you back. Your exact position is never shown to others.")
+                Text("Friends are people you follow who follow you back. Followers are people who follow you. Your exact position is never shown to others.")
             }
         }
         .task { await load() }

@@ -87,7 +87,7 @@ fun SocialSettings(app: WingspotApp, me: String) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(stringResource(R.string.sharing_title), style = MaterialTheme.typography.titleMedium)
         Text(stringResource(R.string.sharing_hint), style = MaterialTheme.typography.bodySmall)
-        for ((option, label) in listOf(SharingChoice.ONLY_ME to R.string.share_only_me, SharingChoice.FRIENDS to R.string.share_friends, SharingChoice.EVERYONE to R.string.share_everyone)) {
+        for ((option, label) in listOf(SharingChoice.ONLY_ME to R.string.share_only_me, SharingChoice.FRIENDS to R.string.share_friends, SharingChoice.FOLLOWERS to R.string.share_followers, SharingChoice.EVERYONE to R.string.share_everyone)) {
             Row(Modifier.fillMaxWidth().clickable { choice = option }, verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(selected = choice == option, onClick = { choice = option }, modifier = Modifier.testTag("share-$option"))
                 Text(stringResource(label))

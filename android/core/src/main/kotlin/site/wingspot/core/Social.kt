@@ -117,7 +117,7 @@ data class ActiveAirport(
 )
 
 /** Who may see your check-ins. The names are what the server stores. */
-enum class SharingChoice(val wire: String) { ONLY_ME("private"), FRIENDS("friends"), EVERYONE("public") }
+enum class SharingChoice(val wire: String) { ONLY_ME("private"), FRIENDS("friends"), FOLLOWERS("followers"), EVERYONE("public") }
 
 enum class ReportKind(val wire: String) { USER("user"), CHECKIN("checkin"), COMMENT("comment"), PHOTO("photo") }
 
