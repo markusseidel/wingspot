@@ -33,6 +33,9 @@ class WingspotApp : Application() {
     }
     val outbox by lazy { Outbox(checkIns, api, ::accessToken) }
 
+    /** Emits when check-ins or photos went up, so the Feed and the lists can refresh by themselves. */
+    val uploads = kotlinx.coroutines.flow.MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+
     /** Deletes the account on the server for good. A refused token is refreshed once. Throws [ApiException] when it fails. */
     suspend fun deleteAccount() {
         val token = accessToken(false) ?: throw ApiException.Unauthorized

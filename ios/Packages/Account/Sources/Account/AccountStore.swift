@@ -239,7 +239,7 @@ public struct UnconfiguredAccountBackend: AccountBackend, SocialBackend, FeedBac
     public func setSharing(_ choice: SharingChoice, applyToExisting: Bool) async throws -> Int { throw AccountError.notConfigured }
     public func privacy(of me: UUID) async throws -> PrivacySettings { throw AccountError.notConfigured }
     public func setPrivacy(_ settings: PrivacySettings, as me: UUID) async throws { throw AccountError.notConfigured }
-    public func feed(after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem] { throw AccountError.notConfigured }
+    public func feed(after cursor: FeedCursor?, pageSize: Int, sort: FeedSort) async throws -> [FeedItem] { throw AccountError.notConfigured }
     public func alertRules(of me: UUID) async throws -> [AlertRule] { throw AccountError.notConfigured }
     public func saveAlertRule(_ rule: AlertRule, as me: UUID) async throws { throw AccountError.notConfigured }
     public func checkIn(_ id: UUID) async throws -> FeedItem? { throw AccountError.notConfigured }

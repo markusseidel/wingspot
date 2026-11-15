@@ -60,6 +60,7 @@ import site.wingspot.core.CabinClass
 import site.wingspot.core.CheckInComment
 import site.wingspot.core.Downloads
 import site.wingspot.core.FeedItem
+import site.wingspot.core.FeedSort
 import site.wingspot.core.FeedPhoto
 import site.wingspot.core.Flightradar24
 import site.wingspot.core.ReportKind
@@ -88,7 +89,21 @@ fun FeedTab(model: SocialViewModel, me: String) {
     val state by model.state.collectAsState()
     LaunchedEffect(me) { if (!state.hasLoaded) model.refresh() }
     LazyColumn(Modifier.fillMaxWidth().testTag("feed"), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        item { Text(stringResource(R.string.tab_feed), style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top = 16.dp)) }
+        item {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.tab_feed), style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top = 16.dp).weight(1f))
+                var menu by remember { mutableStateOf(false) }
+                Box {
+                    TextButton(onClick = { menu = true }, modifier = Modifier.testTag("feed-sort")) {
+                        Text(stringResource(if (model.sort == FeedSort.CREATED) R.string.sort_checked_in else R.string.sort_flight_date) + " ▾")
+                    }
+                    DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
+                        DropdownMenuItem(text = { Text(stringResource(R.string.sort_checked_in)) }, onClick = { menu = false; model.chooseSort(FeedSort.CREATED) })
+                        DropdownMenuItem(text = { Text(stringResource(R.string.sort_flight_date)) }, onClick = { menu = false; model.chooseSort(FeedSort.OCCURRED) })
+                    }
+                }
+            }
+        }
         if (state.failed) item { Text(stringResource(R.string.feed_failed), color = MaterialTheme.colorScheme.error) }
         if (state.hasLoaded && state.items.isEmpty() && !state.failed) item { Text(stringResource(R.string.feed_empty)) }
         items(state.items, key = { it.id }) { item ->

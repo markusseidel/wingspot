@@ -421,6 +421,25 @@ private func state(_ context: ModelContext, _ id: UUID) throws -> LocalCheckIn {
         #expect(!sync.isWaitingToRetry)
     }
 
+    @Test func theAfterUploadHookRunsOnlyWhenSomethingWentUp() async throws {
+        let context = try makeContext()
+        let server = FakeServer()
+        let counter = RunCounter()
+        let sync = CheckInSyncCoordinator(
+            outbox: CheckInOutbox(context: context, uploader: server), userID: { alice },
+            backoff: [], sleep: { _ in }, afterUpload: { counter.count += 1 }
+        )
+
+        sync.requestSync()
+        await sync.waitUntilIdle()
+        #expect(counter.count == 0, "nothing was waiting, so the feed has nothing new")
+
+        _ = try save(context, "DAIMA", owner: alice)
+        sync.requestSync()
+        await sync.waitUntilIdle()
+        #expect(counter.count == 1, "a check-in went up, so the feed refreshes")
+    }
+
     @Test func theAfterRunHookRunsAfterASuccessfulRunButNotAfterAFailedOne() async throws {
         let context = try makeContext()
         _ = try save(context, "DAIMA", owner: alice)

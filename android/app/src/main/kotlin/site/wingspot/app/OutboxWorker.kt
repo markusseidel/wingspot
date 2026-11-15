@@ -14,13 +14,18 @@ import site.wingspot.core.SyncOutcome
 
 /** Uploads the check-ins that are waiting. Android runs it when there is a network and retries with a growing delay. */
 class OutboxWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
-    override suspend fun doWork(): Result =
-        when ((applicationContext as WingspotApp).outbox.sync()) {
-            is SyncOutcome.Done -> Result.success()
+    override suspend fun doWork(): Result {
+        val app = applicationContext as WingspotApp
+        return when (val outcome = app.outbox.sync()) {
+            is SyncOutcome.Done -> {
+                if (outcome.stored > 0) app.uploads.tryEmit(Unit)
+                Result.success()
+            }
             // Nobody is signed in: the sign-in schedules this again.
             SyncOutcome.SignedOut -> Result.success()
             SyncOutcome.RetryLater -> Result.retry()
         }
+    }
 
     companion object {
         private const val NAME = "outbox"
