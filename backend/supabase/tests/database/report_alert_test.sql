@@ -25,15 +25,17 @@ values ('d0000000-0000-7000-8000-000000000001', '00000000-0000-0000-0000-0000000
 insert into public.comments (id, checkin_id, user_id, body)
 values ('d0000000-0000-7000-8000-000000000002', 'd0000000-0000-7000-8000-000000000001', '00000000-0000-0000-0000-000000000d01', 'a rude comment');
 
-select like(private.report_alert_text(row(gen_random_uuid(), '00000000-0000-0000-0000-000000000d02', 'checkin',
-  'd0000000-0000-7000-8000-000000000001', 'spam', 'open')::public.reports),
+insert into public.reports (id, reporter, target_type, target_id, reason) values
+  ('e0000000-0000-4000-8000-000000000001', '00000000-0000-0000-0000-000000000d02', 'checkin', 'd0000000-0000-7000-8000-000000000001', 'spam'),
+  ('e0000000-0000-4000-8000-000000000002', null, 'comment', 'd0000000-0000-7000-8000-000000000002', null),
+  ('e0000000-0000-4000-8000-000000000003', null, 'checkin', 'not-an-id', 'spam');
+select like((select private.report_alert_text(r) from public.reports r where r.id = 'e0000000-0000-4000-8000-000000000001'),
   '%about a checkin by @author_user (spotted A321)%Reason: spam%Reported by @reporter_user%dashboard%',
   'a check-in report names the author, what it shows, the reason, the reporter and links to the table');
-select like(private.report_alert_text(row(gen_random_uuid(), null, 'comment',
-  'd0000000-0000-7000-8000-000000000002', null, 'open')::public.reports),
+select like((select private.report_alert_text(r) from public.reports r where r.id = 'e0000000-0000-4000-8000-000000000002'),
   '%about a comment by @author_user ("a rude comment")%Reason: none given%',
   'a comment report quotes the comment, and says when no reason was given');
-select like(private.report_alert_text(row(gen_random_uuid(), null, 'checkin', 'not-an-id', 'spam', 'open')::public.reports),
+select like((select private.report_alert_text(r) from public.reports r where r.id = 'e0000000-0000-4000-8000-000000000003'),
   '%already deleted or not found%', 'a report about something that is gone still gets a message');
 select ok(not has_function_privilege('authenticated', 'private.report_alert_text(public.reports)', 'execute'), 'clients cannot call the text function');
 
