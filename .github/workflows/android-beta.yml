@@ -4,8 +4,17 @@ name: Android beta
 # - Always: an installable debug APK as a build artifact, to send to friends who can install files from outside Google Play.
 # - With the signing secrets set: a signed release bundle (.aab) for Google Play's internal testing track.
 # See docs/ANDROID-BETA.md for the one-time setup.
+# - With the Firebase secrets set: the debug APK is also sent to the testers of Firebase App Distribution
+#   (the Android counterpart of TestFlight).
 on:
   workflow_dispatch:
+    inputs:
+      group:
+        description: Firebase App Distribution group that gets the build
+        default: freunde
+      notes:
+        description: Release notes for the testers (optional)
+        default: ""
 
 permissions:
   contents: read
@@ -22,6 +31,7 @@ jobs:
       WINGSPOT_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
       WINGSPOT_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
       WINGSPOT_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -47,6 +57,16 @@ jobs:
         with:
           name: wingspot-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+      # Sends the debug APK to the testers' group. Skipped without the Firebase secrets.
+      - name: Firebase App Distribution
+        if: env.FIREBASE_APP_ID != ''
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          groups: ${{ inputs.group }}
+          file: android/app/build/outputs/apk/debug/app-debug.apk
+          releaseNotes: ${{ inputs.notes }}
       - name: Signed release bundle
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
