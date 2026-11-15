@@ -108,9 +108,8 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
                         RecentCheckIns(checkInState.recent, onEdit = checkIn::edit, onDelete = checkIn::delete)
                     }
                     Tab.BADGES -> BadgesTab(badges, me != null) { social.tab = Tab.PROFILE }
-                    Tab.PROFILE -> Scrolling {
-                        ProfileTab(app, state, model, badges, social, refState, reference::search, reference::refresh, checkInState.all, checkIn::reload)
-                    }
+                    // ProfileTab scrolls by itself; a second scroll around it crashes ("infinite height").
+                    Tab.PROFILE -> ProfileTab(app, state, model, badges, social, refState, reference::search, reference::refresh, checkInState.all, checkIn::reload)
                 }
             }
         }
