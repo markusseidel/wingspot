@@ -87,7 +87,7 @@
     <string name="delete_message">Er wird endgültig gelöscht, mit Fotos, Salutes und Kommentaren.</string>
     <string name="delete_failed">Der Check-in konnte nicht gelöscht werden. Bitte prüfe deine Verbindung und versuche es erneut.</string>
     <string name="tab_feed">Feed</string>
-    <string name="tab_check_in">Einchecken</string>
+    <string name="tab_check_in">Check-in</string>
     <string name="tab_people">Leute</string>
     <string name="tab_account">Konto</string>
     <string name="feed_failed">Der Feed konnte nicht geladen werden. Bitte prüfe deine Verbindung.</string>
@@ -149,7 +149,7 @@
     <string name="blocked_title">Blockierte Personen</string>
     <string name="unblock">Entblocken</string>
     <string name="sign_in_for_social">Melde dich an, um den Feed zu sehen und Leute zu finden.</string>
-    <string name="tab_badges">Abzeichen</string>
+    <string name="tab_badges">Badges</string>
     <string name="tab_profile">Profil</string>
     <string name="badges_sign_in">Melde dich im Tab „Profil“ an, dann sammeln deine Check-ins Abzeichen.</string>
     <string name="badges_failed">Deine Abzeichen konnten nicht geladen werden. Prüfe deine Verbindung und versuche es erneut.</string>
@@ -313,4 +313,7 @@
     <string name="salute_action">Salute</string>
     <string name="sort_checked_in">Check-in-Datum</string>
     <string name="sort_flight_date">Flugdatum</string>
+    <string name="empty_feed_title">Dein Feed</string>
+    <string name="empty_badges_title">Sammle Badges</string>
+    <string name="empty_profile_title">Dein Profil</string>
 </resources>

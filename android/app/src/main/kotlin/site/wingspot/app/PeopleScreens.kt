@@ -17,8 +17,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -97,7 +95,7 @@ fun PersonPage(app: WingspotApp, model: SocialViewModel, id: String, me: String)
         person?.let { p ->
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text(p.who, style = MaterialTheme.typography.headlineMedium)
+                    Text(p.who, style = MaterialTheme.typography.headlineSmall)
                     Text("@" + p.username, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     if (p.isPrivate) Text(stringResource(R.string.private_profile), style = MaterialTheme.typography.bodySmall)
                     if (followsYou) Text(stringResource(R.string.follows_you), style = MaterialTheme.typography.bodySmall)

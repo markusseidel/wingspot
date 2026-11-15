@@ -313,4 +313,7 @@
     <string name="salute_action">Salute</string>
     <string name="sort_checked_in">Check-in date</string>
     <string name="sort_flight_date">Flight date</string>
+    <string name="empty_feed_title">Your feed</string>
+    <string name="empty_badges_title">Collect badges</string>
+    <string name="empty_profile_title">Your profile</string>
 </resources>

@@ -1,5 +1,8 @@
 package site.wingspot.app
 
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.res.painterResource
 import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -20,8 +23,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -101,7 +102,7 @@ fun ProfileTab(
             when {
                 state.sentTo != null -> CheckEmail(state.sentTo, model::useOtherEmail)
                 else -> {
-                    Text(stringResource(R.string.profile_signed_out))
+                    EmptyState(R.drawable.ic_tab_profile, stringResource(R.string.empty_profile_title), stringResource(R.string.profile_signed_out), Modifier.padding(bottom = 16.dp))
                     val context = LocalContext.current
                     SignInForm(state.isWorking, model::sendLink, model::signInWithPassword,
                         if (GoogleSignIn.isAvailable) ({ scope.launch { GoogleSignIn.idToken(context)?.let { (token, nonce) -> model.signInWithGoogle(token, nonce) } ?: model.googleFailed() } }) else null)

@@ -9,8 +9,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -36,7 +34,7 @@ import site.wingspot.core.Username
 @Composable
 fun TermsScreen(onAccept: () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.padding(top = 24.dp)) {
-        Text(stringResource(R.string.rules_title), style = MaterialTheme.typography.headlineMedium)
+        Text(stringResource(R.string.rules_title), style = MaterialTheme.typography.titleLarge)
         Text(stringResource(R.string.rules_intro))
         for (rule in listOf(R.string.rule_respect, R.string.rule_share, R.string.rule_spam, R.string.rule_responsible)) Text("✓ " + stringResource(rule))
         Text(stringResource(R.string.rules_report), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -53,7 +51,7 @@ fun ProfileSetup(app: WingspotApp, me: String, onDone: () -> Unit) {
     var error by remember { mutableStateOf<Int?>(null) }
     val name = Username.normalized(username)
     Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.padding(top = 24.dp)) {
-        Text(stringResource(R.string.setup_title), style = MaterialTheme.typography.headlineMedium)
+        Text(stringResource(R.string.setup_title), style = MaterialTheme.typography.titleLarge)
         Text(stringResource(R.string.setup_hint))
         OutlinedTextField(username, { username = it }, singleLine = true, label = { Text(stringResource(R.string.username_label)) }, modifier = Modifier.fillMaxWidth().testTag("username"))
         if (username.isNotBlank() && !Username.isValid(name)) Text(stringResource(R.string.username_rule), style = MaterialTheme.typography.bodySmall)

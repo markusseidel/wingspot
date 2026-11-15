@@ -1,5 +1,6 @@
 package site.wingspot.app
 
+import androidx.compose.material3.IconButton
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ColumnScope
@@ -21,8 +22,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -70,7 +69,7 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            if (!formOpen && page == null) NavigationBar {
+            if (!formOpen && page == null) NavigationBar(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest) {
                 // Same order and symbols as the iPhone app: Feed, Explore, Check in, Badges, Profile.
                 for ((tab, label, icon) in listOf(
                     Triple(Tab.FEED, R.string.tab_feed, R.drawable.ic_tab_feed), Triple(Tab.EXPLORE, R.string.tab_explore, R.drawable.ic_tab_explore),
@@ -78,7 +77,7 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
                     Triple(Tab.PROFILE, R.string.tab_profile, R.drawable.ic_tab_profile),
                 )) NavigationBarItem(
                     selected = social.tab == tab, onClick = { social.tab = tab },
-                    icon = { Icon(painterResource(icon), contentDescription = null) }, label = { Text(stringResource(label)) }, modifier = Modifier.testTag("tab-$tab"),
+                    icon = { Icon(painterResource(icon), contentDescription = null) }, label = { Text(stringResource(label)) }, colors = tabColors(), modifier = Modifier.testTag("tab-$tab"),
                 )
             }
         },
@@ -133,9 +132,10 @@ private fun Scrolling(content: @Composable ColumnScope.() -> Unit) {
 private fun SocialGate(app: WingspotApp, me: String?, onSignIn: () -> Unit, content: @Composable (String) -> Unit) {
     if (me == null) {
         Scrolling {
-            Spacer(Modifier.height(24.dp))
-            Text(stringResource(R.string.sign_in_for_social), style = MaterialTheme.typography.titleMedium)
-            Button(onClick = onSignIn) { Text(stringResource(R.string.sign_in_title)) }
+            Text(stringResource(R.string.tab_feed), style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top = 16.dp))
+            EmptyState(R.drawable.ic_tab_feed, stringResource(R.string.empty_feed_title), stringResource(R.string.sign_in_for_social)) {
+                Button(onClick = onSignIn) { Text(stringResource(R.string.sign_in_title)) }
+            }
         }
         return
     }
@@ -157,7 +157,7 @@ internal fun SignInForm(isWorking: Boolean, onSend: (String) -> Unit, onPassword
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var withPassword by rememberSaveable { mutableStateOf(false) }
-    Text(stringResource(R.string.sign_in_title), style = MaterialTheme.typography.headlineMedium)
+    Text(stringResource(R.string.sign_in_title), style = MaterialTheme.typography.titleLarge)
     if (onGoogle != null) {
         OutlinedButton(onClick = onGoogle, enabled = !isWorking, modifier = Modifier.fillMaxWidth().testTag("google")) { Text(stringResource(R.string.sign_in_google)) }
         Text(stringResource(R.string.or_with_email), style = MaterialTheme.typography.bodySmall)
@@ -191,7 +191,7 @@ internal fun SignInForm(isWorking: Boolean, onSend: (String) -> Unit, onPassword
 
 @Composable
 internal fun CheckEmail(address: String, onOther: () -> Unit) {
-    Text(stringResource(R.string.check_email_title), style = MaterialTheme.typography.headlineMedium)
+    Text(stringResource(R.string.check_email_title), style = MaterialTheme.typography.titleLarge)
     Text(stringResource(R.string.check_email_body, address))
     TextButton(onClick = onOther) { Text(stringResource(R.string.use_other_email)) }
 }
@@ -204,7 +204,7 @@ internal fun SearchSection(state: ReferenceState, onSearch: (String) -> Unit, on
         delay(250)
         onSearch(text)
     }
-    Text(stringResource(R.string.search_title), style = MaterialTheme.typography.titleMedium)
+    SectionHeader(stringResource(R.string.search_title))
     when {
         state.database == null && state.isDownloading -> {
             CircularProgressIndicator(Modifier.height(24.dp))
@@ -217,7 +217,8 @@ internal fun SearchSection(state: ReferenceState, onSearch: (String) -> Unit, on
         else -> {
             OutlinedTextField(
                 value = text, onValueChange = { text = it }, singleLine = true,
-                label = { Text(stringResource(R.string.search_label)) }, modifier = Modifier.fillMaxWidth().testTag("search"),
+                placeholder = { Text(stringResource(R.string.search_label), maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis) }, modifier = Modifier.fillMaxWidth().testTag("search"),
+                leadingIcon = { Icon(painterResource(R.drawable.ic_search), contentDescription = null) },
             )
             if (text.isNotBlank() && state.airports.isEmpty() && state.types.isEmpty()) {
                 Text(stringResource(R.string.nothing_found), color = MaterialTheme.colorScheme.onSurfaceVariant)
