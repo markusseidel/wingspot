@@ -61,6 +61,11 @@ describe("push texts", () => {
     assert.equal(body.aps["thread-id"], "salute-c1");
     assert.equal(payload(row({ kind: "follow", checkin_id: null }), "en").aps["thread-id"], "follow");
   });
+
+  test("the alert about a new check-in has its own category, which the app gives a Salute action", () => {
+    assert.equal(payload(row({ kind: "checkin", checkin_kind: "spotted", subject: "D-AIMA" }), "en").aps.category, "WINGSPOT_CHECKIN");
+    assert.equal(payload(row({ kind: "comment" }), "en").aps.category, "WINGSPOT_ACTIVITY");
+  });
 });
 
 describe("the provider token", () => {

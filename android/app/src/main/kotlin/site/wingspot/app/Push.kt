@@ -90,15 +90,57 @@ class PushService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        val notification = message.notification ?: return
+        // The server sends only data, so the notification is built here and can have actions.
+        val title = message.data["title"] ?: message.notification?.title ?: return
+        val body = message.data["body"] ?: message.notification?.body
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            for ((k, v) in message.data) putExtra(k, v)
+            for ((k, v) in message.data) if (k != "title" && k != "body") putExtra(k, v)
         }
-        val pending = PendingIntent.getActivity(this, message.messageId.hashCode(), intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-        val built = NotificationCompat.Builder(this, Push.CHANNEL)
-            .setSmallIcon(R.drawable.ic_stat_wingspot).setContentTitle(notification.title).setContentText(notification.body)
-            .setAutoCancel(true).setContentIntent(pending).build()
-        if (Push.isAllowed(this)) (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).notify(message.messageId.hashCode(), built)
+        val id = (message.data["type"] + message.data["checkin"] + message.data["actor"]).hashCode()
+        val pending = PendingIntent.getActivity(this, id, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        val builder = NotificationCompat.Builder(this, Push.CHANNEL)
+            .setSmallIcon(R.drawable.ic_stat_wingspot).setContentTitle(title).setContentText(body)
+            .setAutoCancel(true).setContentIntent(pending)
+        // A long press (or the button) on the alert about someone's new check-in can salute it, without opening the app.
+        val checkin = message.data["checkin"]?.takeIf { it.isNotBlank() }
+        if (message.data["type"] == "checkin" && checkin != null) {
+            val salute = Intent(this, SaluteReceiver::class.java).apply {
+                putExtra(SaluteReceiver.CHECKIN, checkin)
+                putExtra(SaluteReceiver.NOTIFICATION_ID, id)
+            }
+            val action = PendingIntent.getBroadcast(this, id, salute, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+            builder.addAction(0, getString(R.string.salute_action), action)
+        }
+        if (Push.isAllowed(this)) (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).notify(id, builder.build())
+    }
+}
+
+/** The Salute button on the alert about someone's new check-in. Sends the salute and removes the alert. */
+class SaluteReceiver : android.content.BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        val checkin = intent.getStringExtra(CHECKIN) ?: return
+        val notificationId = intent.getIntExtra(NOTIFICATION_ID, 0)
+        val app = context.applicationContext as WingspotApp
+        val pending = goAsync()
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            try {
+                val me = app.sessions.load()?.user?.id
+                if (me != null) {
+                    app.social.setSalute(true, checkin, me)
+                    manager.cancel(notificationId)
+                }
+            } catch (e: Exception) {
+                // Offline or refused: the alert stays, and a tap opens the check-in as usual.
+            } finally {
+                pending.finish()
+            }
+        }
+    }
+
+    companion object {
+        const val CHECKIN = "checkin"
+        const val NOTIFICATION_ID = "notification_id"
     }
 }

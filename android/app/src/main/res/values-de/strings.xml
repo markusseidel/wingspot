@@ -310,4 +310,5 @@
     <string name="lookup_aircraft">Flugzeug auf Flightradar24 nachschlagen</string>
     <string name="lookup_footer">Öffnet Flightradar24 im Browser. Wingspot sendet dorthin nichts.</string>
     <string name="close">Schließen</string>
+    <string name="salute_action">Salute</string>
 </resources>

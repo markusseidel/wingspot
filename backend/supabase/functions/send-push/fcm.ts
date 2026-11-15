@@ -64,13 +64,13 @@ export function fcmMessage(row: PushRow, device: PushDevice): Record<string, unk
   return {
     message: {
       token: device.token,
-      notification: { title, body },
-      data: { type: row.kind, checkin: row.checkin_id ?? "", actor: row.actor_id },
+      // Only data, no notification block: the app builds the notification itself, which lets it add a "Salute" action
+      // to the alert about someone's new check-in. The text is already in the phone's language.
+      data: { type: row.kind, checkin: row.checkin_id ?? "", actor: row.actor_id, title, body },
       android: {
         priority: "high",
         // Several salutes on one check-in replace each other on the phone instead of piling up.
         collapse_key: row.kind === "salute" && row.checkin_id ? `salute-${row.checkin_id}` : undefined,
-        notification: { channel_id: ANDROID_CHANNEL, tag: row.checkin_id ? `${row.kind}-${row.checkin_id}` : row.kind },
       },
     },
   };
