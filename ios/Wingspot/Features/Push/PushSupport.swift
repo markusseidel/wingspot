@@ -33,6 +33,11 @@ final class PushRouter {
 final class PushAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     /// Set once by the app at start. The token arrives well after that.
     @MainActor static var store: PushStore?
+    /// Sends a salute from the notification's Salute action, which can run while the app isn't open.
+    @MainActor static var saluter: (@Sendable (UUID) async -> Void)?
+
+    /// The identifier of the Salute action on the alert about someone's new check-in.
+    nonisolated static let saluteAction = "WINGSPOT_SALUTE"
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         UNUserNotificationCenter.current().delegate = self
@@ -42,7 +47,16 @@ final class PushAppDelegate: NSObject, UIApplicationDelegate, UNUserNotification
             identifier: "WINGSPOT_ACTIVITY", actions: [], intentIdentifiers: [],
             hiddenPreviewsBodyPlaceholder: String(localized: "New activity on Wingspot"), options: []
         )
-        UNUserNotificationCenter.current().setNotificationCategories([activity])
+        // The alert about someone's new check-in can be saluted with a long press, without opening the app.
+        let salute = UNNotificationAction(
+            identifier: Self.saluteAction, title: String(localized: "Salute"), options: [],
+            icon: UNNotificationActionIcon(systemImageName: "hands.clap")
+        )
+        let checkIn = UNNotificationCategory(
+            identifier: "WINGSPOT_CHECKIN", actions: [salute], intentIdentifiers: [],
+            hiddenPreviewsBodyPlaceholder: String(localized: "New activity on Wingspot"), options: []
+        )
+        UNUserNotificationCenter.current().setNotificationCategories([activity, checkIn])
         return true
     }
 
@@ -67,7 +81,20 @@ final class PushAppDelegate: NSObject, UIApplicationDelegate, UNUserNotification
         let type = info["type"] as? String
         let checkIn = info["checkin"] as? String
         let actor = info["actor"] as? String
+        if response.actionIdentifier == Self.saluteAction {
+            // Only the alert about a new check-in has this action. The app stays closed.
+            if let checkIn, let id = UUID(uuidString: checkIn) { await Self.salute(id) }
+            return
+        }
         await MainActor.run { PushRouter.shared.open(type: type, checkIn: checkIn, actor: actor) }
+    }
+}
+
+extension PushAppDelegate {
+    /// Salutes a check-in as the signed-in person. Does nothing when signed out or offline.
+    nonisolated static func salute(_ checkIn: UUID) async {
+        guard let saluter = await MainActor.run(body: { saluter }) else { return }
+        await saluter(checkIn)
     }
 }
 

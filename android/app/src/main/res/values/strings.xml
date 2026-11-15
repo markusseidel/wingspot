@@ -310,4 +310,5 @@
     <string name="lookup_aircraft">Look up the aircraft on Flightradar24</string>
     <string name="lookup_footer">Opens Flightradar24 in your browser. Nothing from Wingspot is sent there.</string>
     <string name="close">Close</string>
+    <string name="salute_action">Salute</string>
 </resources>

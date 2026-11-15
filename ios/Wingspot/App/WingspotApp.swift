@@ -46,6 +46,11 @@ struct WingspotApp: App {
         _social = State(initialValue: socialStore)
         _push = State(initialValue: pushStore)
         PushAppDelegate.store = pushStore
+        PushAppDelegate.saluter = { id in
+            // Signed out, or no network: the salute is simply not sent.
+            guard let me = await accountBackend.currentUserID() else { return }
+            try? await accountBackend.setSalute(true, checkIn: id, as: me)
+        }
         _feed = State(initialValue: feedStore)
         _reporter = State(initialValue: Reporter(backend: accountBackend))
         _terms = State(initialValue: TermsStore(userID: { account.userID }))

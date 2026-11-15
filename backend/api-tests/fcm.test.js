@@ -57,9 +57,9 @@ describe("FCM", () => {
   test("the message has the text in the phone's language and what is needed to open the right screen", () => {
     const { message } = fcmMessage(row(), row().devices[0]);
     assert.equal(message.token, "ftok1");
-    assert.equal(message.notification.body, "hat deinen Check-in salutiert (D-AIPC).");
-    assert.deepEqual(message.data, { type: "salute", checkin: "c1", actor: "a1" });
-    assert.equal(message.android.notification.channel_id, "wingspot_activity");
+    assert.equal(message.notification, undefined, "data only: the app builds the notification, so it can add actions");
+    assert.equal(message.data.body, "hat deinen Check-in salutiert (D-AIPC).");
+    assert.deepEqual({ ...message.data, title: undefined, body: undefined }, { type: "salute", checkin: "c1", actor: "a1", title: undefined, body: undefined });
     assert.equal(message.android.collapse_key, "salute-c1");
   });
 

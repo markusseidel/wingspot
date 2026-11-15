@@ -89,6 +89,8 @@ function visitText(context: string | null | undefined, place: string, german: bo
 /** The app registers a notification category with this name. It holds the text the phone shows instead of the real
  * one while previews are hidden (iPhone Settings > Notifications > Wingspot > Show Previews). */
 export const CATEGORY = "WINGSPOT_ACTIVITY";
+/** For the alert about someone's new check-in: the app adds a "Salute" action to it, so a long press can salute it. */
+export const CHECKIN_CATEGORY = "WINGSPOT_CHECKIN";
 
 /** What the phone gets: the text and just enough to open the right screen. */
 export function payload(row: PushRow, locale: string | null): Record<string, unknown> {
@@ -97,7 +99,7 @@ export function payload(row: PushRow, locale: string | null): Record<string, unk
     aps: {
       alert: { title, body },
       sound: "default",
-      category: CATEGORY,
+      category: row.kind === "checkin" ? CHECKIN_CATEGORY : CATEGORY,
       "thread-id": row.checkin_id ? `${row.kind}-${row.checkin_id}` : row.kind,
     },
     type: row.kind,
