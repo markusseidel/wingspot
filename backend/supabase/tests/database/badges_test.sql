@@ -42,6 +42,12 @@ select is(private.register_country('9V-SKA')::text, 'SG', 'registration 9V-SKA i
 select is(private.register_country('A7-BAA')::text, 'QA', 'registration A7-BAA is from QA');
 select is(private.register_country('VT-ANP')::text, 'IN', 'registration VT-ANP is from IN');
 select is(private.register_country('ZK-NZE')::text, 'NZ', 'registration ZK-NZE is from NZ');
+select is(private.register_country('9XR-WG')::text, 'RW', 'registration 9XR-WG (RwandAir) is from RW');
+select is(private.register_country('A4O-ABC')::text, 'OM', 'a three-character prefix: A4O is Oman');
+select is(private.register_country('VP-BGB')::text, 'BM', 'VP-B is Bermuda');
+select is(private.register_country('VQ-HAA')::text, 'SH', 'VQ-H is Saint Helena');
+select is(private.register_country('VP-XYZ')::text, 'GB', 'another VP mark is GB');
+select is(private.register_country('Z-WPA')::text, 'ZW', 'registration Z-WPA is from ZW');
 select is(private.register_country('XX-ABC')::text, null, 'an unknown prefix has no country');
 
 select is(private.xp_level(0), 1, 'level 1 at 0 XP');

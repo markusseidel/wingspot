@@ -26,8 +26,8 @@ public struct Registration: Hashable, Sendable, Codable, CustomStringConvertible
         let mark: String
         switch parts.count {
         case 1:
-            // No separator: prefer the longer prefix (`HBJNA` → `HB`), then single letters (`DAIMA` → `D`).
-            guard let match = [2, 1].lazy
+            // No separator: prefer the longer prefix (`9XRWG` → `9XR`, `HBJNA` → `HB`), then single letters (`DAIMA` → `D`).
+            guard let match = [4, 3, 2, 1].lazy
                 .map({ String(text.prefix($0)) })
                 .first(where: { $0.count < text.count && NationalityPrefix.all[$0] != nil })
             else { return nil }

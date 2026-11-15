@@ -22,8 +22,8 @@ class Registration private constructor(val value: String, val prefix: String, va
             val mark: String
             when (parts.size) {
                 1 -> {
-                    // No separator: prefer the longer prefix (`HBJNA` is `HB`), then single letters (`DAIMA` is `D`).
-                    val match = listOf(2, 1).map { text.take(it) }
+                    // No separator: prefer the longer prefix (`9XRWG` is `9XR`, `HBJNA` is `HB`), then single letters (`DAIMA` is `D`).
+                    val match = listOf(4, 3, 2, 1).map { text.take(it) }
                         .firstOrNull { it.length < text.length && NationalityPrefix.all[it] != null } ?: return null
                     prefix = match
                     mark = text.drop(match.length)
