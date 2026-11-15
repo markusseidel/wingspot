@@ -29,14 +29,9 @@ insert into public.reports (id, reporter, target_type, target_id, reason) values
   ('e0000000-0000-4000-8000-000000000001', '00000000-0000-0000-0000-000000000d02', 'checkin', 'd0000000-0000-7000-8000-000000000001', 'spam'),
   ('e0000000-0000-4000-8000-000000000002', null, 'comment', 'd0000000-0000-7000-8000-000000000002', null),
   ('e0000000-0000-4000-8000-000000000003', null, 'checkin', 'not-an-id', 'spam');
-select like((select private.report_alert_text(r) from public.reports r where r.id = 'e0000000-0000-4000-8000-000000000001'),
-  '%about a checkin by @author_user (spotted A321)%Reason: spam%Reported by @reporter_user%dashboard%',
-  'a check-in report names the author, what it shows, the reason, the reporter and links to the table');
-select like((select private.report_alert_text(r) from public.reports r where r.id = 'e0000000-0000-4000-8000-000000000002'),
-  '%about a comment by @author_user ("a rude comment")%Reason: none given%',
-  'a comment report quotes the comment, and says when no reason was given');
-select like((select private.report_alert_text(r) from public.reports r where r.id = 'e0000000-0000-4000-8000-000000000003'),
-  '%already deleted or not found%', 'a report about something that is gone still gets a message');
+select ok(((select private.report_alert_text(r) from public.reports r where r.id = 'e0000000-0000-4000-8000-000000000001') like '%about a checkin by @author_user (spotted A321)%Reason: spam%Reported by @reporter_user%dashboard%'), 'a check-in report names the author, what it shows, the reason, the reporter and links to the table');
+select ok(((select private.report_alert_text(r) from public.reports r where r.id = 'e0000000-0000-4000-8000-000000000002') like '%about a comment by @author_user ("a rude comment")%Reason: none given%'), 'a comment report quotes the comment, and says when no reason was given');
+select ok(((select private.report_alert_text(r) from public.reports r where r.id = 'e0000000-0000-4000-8000-000000000003') like '%already deleted or not found%'), 'a report about something that is gone still gets a message');
 select ok(not has_function_privilege('authenticated', 'private.report_alert_text(public.reports)', 'execute'), 'clients cannot call the text function');
 
 select * from finish();
