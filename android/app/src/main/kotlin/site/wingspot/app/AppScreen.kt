@@ -19,6 +19,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -35,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
@@ -69,12 +71,14 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             if (!formOpen && page == null) NavigationBar {
-                for ((tab, label, glyph) in listOf(
-                    Triple(Tab.FEED, R.string.tab_feed, "📰"), Triple(Tab.CHECK_IN, R.string.tab_check_in, "✈️"),
-                    Triple(Tab.EXPLORE, R.string.tab_explore, "🧭"), Triple(Tab.BADGES, R.string.tab_badges, "🎖"), Triple(Tab.PROFILE, R.string.tab_profile, "👤"),
+                // Same order and symbols as the iPhone app: Feed, Explore, Check in, Badges, Profile.
+                for ((tab, label, icon) in listOf(
+                    Triple(Tab.FEED, R.string.tab_feed, R.drawable.ic_tab_feed), Triple(Tab.EXPLORE, R.string.tab_explore, R.drawable.ic_tab_explore),
+                    Triple(Tab.CHECK_IN, R.string.tab_check_in, R.drawable.ic_tab_check_in), Triple(Tab.BADGES, R.string.tab_badges, R.drawable.ic_tab_badges),
+                    Triple(Tab.PROFILE, R.string.tab_profile, R.drawable.ic_tab_profile),
                 )) NavigationBarItem(
                     selected = social.tab == tab, onClick = { social.tab = tab },
-                    icon = { Text(glyph) }, label = { Text(stringResource(label)) }, modifier = Modifier.testTag("tab-$tab"),
+                    icon = { Icon(painterResource(icon), contentDescription = null) }, label = { Text(stringResource(label)) }, modifier = Modifier.testTag("tab-$tab"),
                 )
             }
         },
