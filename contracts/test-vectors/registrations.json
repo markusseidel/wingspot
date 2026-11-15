@@ -182,6 +182,81 @@
       "country": "IN"
     },
     {
+      "input": "9XR-WG",
+      "expected": "9XR-WG",
+      "country": "RW"
+    },
+    {
+      "input": "9xrwg",
+      "expected": "9XR-WG",
+      "country": "RW"
+    },
+    {
+      "input": "9XR WG",
+      "expected": "9XR-WG",
+      "country": "RW"
+    },
+    {
+      "input": "A4O-ABC",
+      "expected": "A4O-ABC",
+      "country": "OM"
+    },
+    {
+      "input": "A9CBA",
+      "expected": "A9C-BA",
+      "country": "BH"
+    },
+    {
+      "input": "T8A-ABC",
+      "expected": "T8A-ABC",
+      "country": "PW"
+    },
+    {
+      "input": "RDPL-34123",
+      "expected": "RDPL-34123",
+      "country": "LA"
+    },
+    {
+      "input": "9U-BAA",
+      "expected": "9U-BAA",
+      "country": "BI"
+    },
+    {
+      "input": "Z-WPA",
+      "expected": "Z-WPA",
+      "country": "ZW"
+    },
+    {
+      "input": "VP-BGB",
+      "expected": "VP-BGB",
+      "country": "BM"
+    },
+    {
+      "input": "VQ-HAA",
+      "expected": "VQ-HAA",
+      "country": "SH"
+    },
+    {
+      "input": "VPCAB",
+      "expected": "VP-CAB",
+      "country": "KY"
+    },
+    {
+      "input": "5Y-KZA",
+      "expected": "5Y-KZA",
+      "country": "KE"
+    },
+    {
+      "input": "A8-ABC",
+      "expected": "A8-ABC",
+      "country": "LR"
+    },
+    {
+      "input": "5W-FAB",
+      "expected": "5W-FAB",
+      "country": "WS"
+    },
+    {
       "input": "ZKNZE",
       "expected": "ZK-NZE",
       "country": "NZ"
