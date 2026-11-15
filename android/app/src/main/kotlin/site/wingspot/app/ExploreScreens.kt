@@ -1,5 +1,8 @@
 package site.wingspot.app
 
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.res.painterResource
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
@@ -16,8 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -81,11 +82,14 @@ fun ExploreTab(app: WingspotApp, model: SocialViewModel, me: String?, reference:
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(Modifier.fillMaxWidth().padding(top = 16.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
             Text(stringResource(R.string.tab_explore), style = MaterialTheme.typography.headlineMedium, modifier = Modifier.weight(1f))
-            OutlinedButton(onClick = { model.open(Route.ExploreMap) }, modifier = Modifier.testTag("explore-map")) { Text(stringResource(R.string.map)) }
+            IconButton(onClick = { model.open(Route.ExploreMap) }, modifier = Modifier.testTag("explore-map")) {
+                Icon(painterResource(R.drawable.ic_tab_explore), contentDescription = stringResource(R.string.map), tint = MaterialTheme.colorScheme.primary)
+            }
         }
         OutlinedTextField(
             value = query, onValueChange = { query = it }, singleLine = true, modifier = Modifier.fillMaxWidth().testTag("explore-search"),
-            label = { Text(stringResource(R.string.search_everything)) },
+            placeholder = { Text(stringResource(R.string.search_everything), maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis) },
+            leadingIcon = { Icon(painterResource(R.drawable.ic_search), contentDescription = null) },
             trailingIcon = { if (query.isNotEmpty()) TextButton(onClick = { query = "" }) { Text(stringResource(R.string.clear)) } },
         )
         if (searching) {
@@ -132,7 +136,7 @@ fun ExploreTab(app: WingspotApp, model: SocialViewModel, me: String?, reference:
 
 @Composable
 private fun SectionTitle(res: Int) {
-    Text(stringResource(res), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 8.dp))
+    SectionHeader(stringResource(res), Modifier.padding(top = 8.dp))
 }
 
 @Composable
@@ -177,7 +181,7 @@ private fun NearbyAirports(app: WingspotApp, model: SocialViewModel, reference: 
     when {
         reference.database == null -> Text(stringResource(R.string.no_airport_data))
         !app.prefs.usesLocation -> {
-            Button(onClick = { launcher.launch(Manifest.permission.ACCESS_COARSE_LOCATION) }) { Text(stringResource(R.string.show_airports_near_me)) }
+            OutlinedButton(onClick = { launcher.launch(Manifest.permission.ACCESS_COARSE_LOCATION) }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.show_airports_near_me)) }
             Text(stringResource(R.string.location_note), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         unavailable -> Text(stringResource(R.string.location_unavailable))

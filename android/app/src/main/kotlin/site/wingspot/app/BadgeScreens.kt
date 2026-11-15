@@ -1,5 +1,8 @@
 package site.wingspot.app
 
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +21,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -59,8 +61,9 @@ fun BadgesTab(model: BadgesViewModel, signedIn: Boolean, onSignIn: () -> Unit) {
         Text(stringResource(R.string.tab_badges), style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top = 16.dp))
         when {
             !signedIn -> {
-                Text(stringResource(R.string.badges_sign_in))
-                Button(onClick = onSignIn) { Text(stringResource(R.string.sign_in_title)) }
+                EmptyState(R.drawable.ic_tab_badges, stringResource(R.string.empty_badges_title), stringResource(R.string.badges_sign_in)) {
+                    Button(onClick = onSignIn) { Text(stringResource(R.string.sign_in_title)) }
+                }
             }
             progress != null -> BadgeList(progress, filter, { filter = it }, model::refresh)
             state.refreshFailed -> {

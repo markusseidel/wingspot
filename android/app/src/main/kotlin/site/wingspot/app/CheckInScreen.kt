@@ -19,8 +19,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -84,7 +82,7 @@ private fun SpottedForm(state: CheckInState, reference: ReferenceState, model: C
     val registration = Registration.parse(input)
     val canSave = if (input.isNotBlank()) registration != null else type != null
 
-    Text(stringResource(R.string.spotted_title), style = MaterialTheme.typography.headlineMedium)
+    Text(stringResource(R.string.spotted_title), style = MaterialTheme.typography.titleLarge)
     OutlinedTextField(
         value = input, onValueChange = { input = it }, singleLine = true,
         label = { Text(stringResource(R.string.registration_label)) }, modifier = Modifier.fillMaxWidth().testTag("registration"),
@@ -101,7 +99,7 @@ private fun AirportForm(state: CheckInState, reference: ReferenceState, model: C
     var airport by remember { mutableStateOf<Airport?>(null) }
     var context by rememberSaveable { mutableStateOf(VisitContext.SPOTTING) }
     var photo by remember { mutableStateOf<PreparedPhoto?>(null) }
-    Text(stringResource(R.string.airport_title), style = MaterialTheme.typography.headlineMedium)
+    Text(stringResource(R.string.airport_title), style = MaterialTheme.typography.titleLarge)
     AirportPicker(stringResource(R.string.airport_label), reference, airport) { airport = it }
     Text(stringResource(R.string.why_there), style = MaterialTheme.typography.labelLarge)
     Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -173,7 +171,7 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
         }
     }
 
-    Text(stringResource(R.string.flown_title), style = MaterialTheme.typography.headlineMedium)
+    Text(stringResource(R.string.flown_title), style = MaterialTheme.typography.titleLarge)
     OutlinedButton(onClick = { scanning = true }, modifier = Modifier.fillMaxWidth().testTag("scan-pass")) { Text(stringResource(R.string.scan_boarding_pass)) }
     OutlinedButton(
         onClick = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }, enabled = !reading,
@@ -265,7 +263,7 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
     val keptType = flight.typeIcao.takeIf { type == null }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(stringResource(R.string.edit_flight), style = MaterialTheme.typography.headlineMedium)
+        Text(stringResource(R.string.edit_flight), style = MaterialTheme.typography.titleLarge)
         Text(flight.title, style = MaterialTheme.typography.titleLarge, fontFamily = FontFamily.Monospace)
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
             Text(stringResource(R.string.date_label))
