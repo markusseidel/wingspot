@@ -76,17 +76,28 @@ final class PushAppDelegate: NSObject, UIApplicationDelegate, UNUserNotification
         [.banner, .sound]
     }
 
-    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
+    /// The completion handler must be called on the main thread: when the app is in the background, the system then
+    /// updates its snapshot and asserts that it is on the main thread. So the handler is called from the main actor,
+    /// after the salute is sent.
+    nonisolated func userNotificationCenter(
+        _ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
         let info = response.notification.request.content.userInfo
         let type = info["type"] as? String
         let checkIn = info["checkin"] as? String
         let actor = info["actor"] as? String
-        if response.actionIdentifier == Self.saluteAction {
-            // Only the alert about a new check-in has this action. The app stays closed.
-            if let checkIn, let id = UUID(uuidString: checkIn) { await Self.salute(id) }
-            return
+        let isSalute = response.actionIdentifier == Self.saluteAction
+        nonisolated(unsafe) let finish = completionHandler
+        Task { @MainActor in
+            if isSalute {
+                // Only the alert about a new check-in has this action. The app stays closed.
+                if let checkIn, let id = UUID(uuidString: checkIn) { await Self.salute(id) }
+            } else {
+                PushRouter.shared.open(type: type, checkIn: checkIn, actor: actor)
+            }
+            finish()
         }
-        await MainActor.run { PushRouter.shared.open(type: type, checkIn: checkIn, actor: actor) }
     }
 }
 
