@@ -92,6 +92,7 @@ public struct FeedItem: Hashable, Sendable, Identifiable, Decodable {
         case originID = "origin_id"
         case destinationID = "destination_id"
         case cabin, seat
+        case cursorTime = "cursor_time"
     }
 
     public init(from decoder: Decoder) throws {
@@ -106,7 +107,8 @@ public struct FeedItem: Hashable, Sendable, Identifiable, Decodable {
             throw DecodingError.dataCorruptedError(forKey: .occurredAt, in: c, debugDescription: "Not a date: \(time)")
         }
         occurredAt = date
-        cursorTime = time
+        // The time the list is sorted by, for asking for the next page. Without it the day of the event is used.
+        cursorTime = try c.decodeIfPresent(String.self, forKey: .cursorTime) ?? time
         registration = try c.decodeIfPresent(String.self, forKey: .registration)
         typeICAO = try c.decodeIfPresent(String.self, forKey: .typeICAO)
         typeName = try c.decodeIfPresent(String.self, forKey: .typeName)
@@ -143,6 +145,14 @@ public struct FeedCursor: Equatable, Sendable {
         self.time = time
         self.id = id
     }
+}
+
+/// What the Feed tab is sorted by. The raw values are what the server expects.
+public enum FeedSort: String, CaseIterable, Sendable {
+    /// The day of the event: the flight, the sighting or the visit.
+    case occurred
+    /// When it was checked in, so a flight added later shows at the top.
+    case created
 }
 
 /// A photo on a check-in, with a link that works for a limited time.
@@ -266,7 +276,7 @@ public struct ActiveAirport: Equatable, Sendable, Identifiable, Decodable {
 }
 
 public protocol FeedBackend: Sendable {
-    func feed(after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem]
+    func feed(after cursor: FeedCursor?, pageSize: Int, sort: FeedSort) async throws -> [FeedItem]
     /// One check-in by id, or `nil` when it doesn't exist or the caller may not see it.
     func checkIn(_ id: UUID) async throws -> FeedItem?
     /// Deletes one of your own check-ins, with its photos, salutes and comments. Does nothing if it is already gone.
@@ -302,6 +312,10 @@ public final class FeedStore {
     public private(set) var hasLoaded = false
     /// The photos of the check-ins in `items`. A card shows its photos once they arrive.
     public private(set) var photos: [UUID: [FeedPhoto]] = [:]
+
+    /// How the Feed tab is sorted. The lists of a person, an airport or an aircraft are always by the day of the event.
+    /// Changing it needs a refresh.
+    public var sort: FeedSort = .created
 
     /// Told after the person saluted or commented, so the app can offer notifications at a good moment.
     @ObservationIgnored public var onSocialAction: (@MainActor () -> Void)?
@@ -484,7 +498,7 @@ public final class FeedStore {
         if let airport {
             return try await backend.airportCheckIns(at: airport, after: cursor, pageSize: Self.pageSize)
         }
-        return try await backend.feed(after: cursor, pageSize: Self.pageSize)
+        return try await backend.feed(after: cursor, pageSize: Self.pageSize, sort: sort)
     }
 
     /// Photos are a bonus: if they can't be loaded, the cards stay as they are.

@@ -5,6 +5,7 @@ import Testing
 private actor FakeFeed: FeedBackend, ReactionBackend {
     var items: [FeedItem]
     private(set) var cursors: [FeedCursor?] = []
+    private(set) var sorts: [FeedSort] = []
     var error: AccountError?
 
     init(items: [FeedItem]) { self.items = items }
@@ -110,8 +111,9 @@ private actor FakeFeed: FeedBackend, ReactionBackend {
     func replace(_ items: [FeedItem]) { self.items = items }
     func setBusy(_ rows: [ActiveAirport]) { busy = rows }
 
-    func feed(after cursor: FeedCursor?, pageSize: Int) throws -> [FeedItem] {
+    func feed(after cursor: FeedCursor?, pageSize: Int, sort: FeedSort) throws -> [FeedItem] {
         cursors.append(cursor)
+        sorts.append(sort)
         if let error { throw error }
         var rest = items
         if let cursor, let index = items.firstIndex(where: { $0.id == cursor.id }) {
@@ -158,6 +160,17 @@ private func item(_ n: Int) -> FeedItem {
     #expect(await backend.cursors.count == 3, "nothing is asked for once the end is reached")
     #expect(await backend.cursors[1]?.id == item(30).id)
     #expect(Set(store.items.map(\.id)).count == 70)
+}
+
+@MainActor @Test func theFeedIsAskedForInTheChosenOrder() async {
+    let backend = FakeFeed(items: (1...40).map(item))
+    let store = makeStore(backend)
+    #expect(store.sort == .created, "new check-ins show first by default")
+    await store.refresh()
+    store.sort = .occurred
+    await store.refresh()
+    await store.loadMore()
+    #expect(await backend.sorts == [.created, .occurred, .occurred])
 }
 
 @MainActor @Test func loadMoreDoesNothingBeforeTheFirstPage() async {

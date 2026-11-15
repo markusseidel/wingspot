@@ -72,7 +72,9 @@ struct WingspotApp: App {
             photos: PhotoOutbox(context: container.mainContext, uploader: photoUploader),
             userID: { account.userID },
             // After a run, with or without uploads, the server may have unlocked something.
-            afterRun: { Task { await badgeStore.refresh() } }
+            afterRun: { Task { await badgeStore.refresh() } },
+            // After a check-in, a flight or an edit went up, the Feed shows it without a pull to refresh.
+            afterUpload: { Task { await feedStore.refresh() } }
         ))
     }
 

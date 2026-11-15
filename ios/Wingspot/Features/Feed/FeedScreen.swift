@@ -9,6 +9,7 @@ struct FeedScreen: View {
     @Environment(AccountStore.self) private var account
     @Environment(FeedStore.self) private var feed
     @State private var commentsFor: FeedItem?
+    @AppStorage("feedSort") private var sortChoice = FeedSort.created.rawValue
     @State private var report: ReportTarget?
     @Environment(TermsStore.self) private var terms
     @Environment(PushRouter.self) private var router
@@ -30,6 +31,20 @@ struct FeedScreen: View {
             content
             .tabHeader("Feed") {
                 if account.userID != nil, terms.hasAccepted {
+                    Menu {
+                        Picker("Sort by", selection: Binding(
+                            get: { FeedSort(rawValue: sortChoice) ?? .created },
+                            set: { new in
+                                sortChoice = new.rawValue
+                                feed.sort = new
+                                Task { await feed.refresh() }
+                            }
+                        )) {
+                            Text("Check-in date").tag(FeedSort.created)
+                            Text("Flight date").tag(FeedSort.occurred)
+                        }
+                    } label: { Image(systemName: "arrow.up.arrow.down") }
+                        .accessibilityLabel("Sort")
                     NavigationLink { PeopleView() } label: { Image(systemName: "person.badge.plus") }
                         .accessibilityLabel("Find people")
                 }
@@ -64,6 +79,7 @@ struct FeedScreen: View {
             if account.userID == nil {
                 feed.clear()
             } else {
+                feed.sort = FeedSort(rawValue: sortChoice) ?? .created
                 await feed.refresh()
             }
             await openPushDestination()

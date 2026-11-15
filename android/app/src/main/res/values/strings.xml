@@ -311,4 +311,6 @@
     <string name="lookup_footer">Opens Flightradar24 in your browser. Nothing from Wingspot is sent there.</string>
     <string name="close">Close</string>
     <string name="salute_action">Salute</string>
+    <string name="sort_checked_in">Check-in date</string>
+    <string name="sort_flight_date">Flight date</string>
 </resources>

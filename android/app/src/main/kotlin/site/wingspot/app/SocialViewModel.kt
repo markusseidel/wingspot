@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import site.wingspot.core.ApiException
 import site.wingspot.core.FeedCursor
 import site.wingspot.core.FeedItem
+import site.wingspot.core.FeedSort
 import site.wingspot.core.FeedPhoto
 import site.wingspot.core.SocialApi
 
@@ -45,9 +46,23 @@ data class FeedState(
 )
 
 /** The Feed tab's data and the pages opened from it: your check-ins and those of people you follow, newest first, in pages. */
-class SocialViewModel(private val api: SocialApi, private val me: () -> String?) : ViewModel() {
+class SocialViewModel(
+    private val api: SocialApi, private val me: () -> String?, initialSort: FeedSort = FeedSort.CREATED,
+    private val saveSort: (FeedSort) -> Unit = {},
+) : ViewModel() {
     private val mutable = MutableStateFlow(FeedState())
     val state: StateFlow<FeedState> = mutable.asStateFlow()
+
+    /** How the Feed tab is sorted. New check-ins show first by default. */
+    var sort: FeedSort by mutableStateOf(initialSort)
+        private set
+
+    fun chooseSort(value: FeedSort) {
+        if (value == sort) return
+        sort = value
+        saveSort(value)
+        refresh()
+    }
 
     var tab: Tab by mutableStateOf(Tab.CHECK_IN)
     val stack = mutableStateListOf<Route>()
@@ -80,7 +95,7 @@ class SocialViewModel(private val api: SocialApi, private val me: () -> String?)
         mutable.value = mutable.value.copy(isLoading = true, failed = false)
         viewModelScope.launch {
             try {
-                val page = api.feed(null, PAGE)
+                val page = api.feed(null, PAGE, sort)
                 if (mine != generation) return@launch
                 mutable.value = FeedState(page, loadPhotos(page), false, page.size < PAGE, true, false)
             } catch (e: ApiException) {
@@ -97,7 +112,7 @@ class SocialViewModel(private val api: SocialApi, private val me: () -> String?)
         mutable.value = now.copy(isLoading = true)
         viewModelScope.launch {
             try {
-                val page = api.feed(FeedCursor(last.occurredAt, last.id), PAGE)
+                val page = api.feed(FeedCursor(last.cursorTime ?: last.occurredAt, last.id), PAGE, sort)
                 if (mine != generation) return@launch
                 val known = mutable.value.items.map { it.id }.toSet()
                 val fresh = page.filter { it.id !in known }
@@ -157,7 +172,7 @@ class SocialViewModel(private val api: SocialApi, private val me: () -> String?)
         private const val PAGE = 30
 
         fun factory(app: WingspotApp): ViewModelProvider.Factory = viewModelFactory {
-            initializer { SocialViewModel(app.social) { app.sessions.load()?.user?.id } }
+            initializer { SocialViewModel(app.social, { app.sessions.load()?.user?.id }, app.prefs.feedSort, app.prefs::chooseFeedSort) }
         }
     }
 }

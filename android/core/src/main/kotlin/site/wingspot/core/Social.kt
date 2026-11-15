@@ -24,6 +24,8 @@ data class FeedItem(
     val kind: String,
     /** The time exactly as the server sent it. Paging sends it back unchanged, because rounding it would skip or repeat rows. */
     @SerialName("occurred_at") val occurredAt: String,
+    /** The time the list is sorted by, to ask for the next page. Missing from older servers: the event time is used then. */
+    @SerialName("cursor_time") val cursorTime: String? = null,
     val registration: String? = null,
     @SerialName("type_icao") val typeIcao: String? = null,
     @SerialName("type_name") val typeName: String? = null,
@@ -56,6 +58,14 @@ data class FeedItem(
 
 /** Where the next page starts: the time and id of the last check-in so far. */
 data class FeedCursor(val time: String, val id: String)
+
+/** What the Feed tab is sorted by. [wire] is what the server expects. */
+enum class FeedSort(val wire: String) {
+    /** The day of the event: the flight, the sighting or the visit. */
+    OCCURRED("occurred"),
+    /** When it was checked in, so a flight added later shows at the top. */
+    CREATED("created"),
+}
 
 @Serializable
 data class Person(
@@ -136,8 +146,8 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
 
     private fun items(text: String): List<FeedItem> = json.decodeFromString(ListSerializer(FeedItem.serializer()), text)
 
-    suspend fun feed(after: FeedCursor?, pageSize: Int = 30): List<FeedItem> =
-        items(rest.call("POST", "/rest/v1/rpc/get_feed", feedParams(after, pageSize)))
+    suspend fun feed(after: FeedCursor?, pageSize: Int = 30, sort: FeedSort = FeedSort.OCCURRED): List<FeedItem> =
+        items(rest.call("POST", "/rest/v1/rpc/get_feed", feedParams(after, pageSize).withKey("sort_by", sort.wire)))
 
     suspend fun personCheckIns(person: String, after: FeedCursor?, pageSize: Int = 30): List<FeedItem> =
         items(rest.call("POST", "/rest/v1/rpc/get_person_checkins", feedParams(after, pageSize, person)))

@@ -48,6 +48,16 @@ class SocialApiTests {
         val body = Rest(server.url("/").toString(), "k", { "t" }).json.parseToJsonElement(request.body!!.utf8()).jsonObject
         assertEquals("2026-11-02T10:00:00.654321+00:00", body["before_time"]!!.jsonPrimitive.content)
         assertEquals(30, body["page_size"]!!.jsonPrimitive.content.toInt())
+        assertEquals("occurred", body["sort_by"]!!.jsonPrimitive.content, "an app that sends no sort gets the event order")
+    }
+
+    @Test
+    fun theFeedCanBeSortedByCheckInTimeAndPagesByThatTime() = withApi { server, api, _ ->
+        server.enqueue(ok("[" + feedRow().replace("\"something_new\":1", "\"cursor_time\":\"2026-11-03T09:00:00+00:00\"") + "]"))
+        val item = api.feed(null, 30, FeedSort.CREATED).single()
+        assertEquals("2026-11-03T09:00:00+00:00", item.cursorTime)
+        val body = Rest(server.url("/").toString(), "k", { "t" }).json.parseToJsonElement(server.takeRequest().body!!.utf8()).jsonObject
+        assertEquals("created", body["sort_by"]!!.jsonPrimitive.content)
     }
 
     @Test

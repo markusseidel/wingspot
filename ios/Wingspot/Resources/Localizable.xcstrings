@@ -725,6 +725,16 @@
         }
       }
     },
+    "Check-in date" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check-in-Datum"
+          }
+        }
+      }
+    },
     "Check-in history" : {
       "localizations" : {
         "de" : {
@@ -1562,6 +1572,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Flug"
+          }
+        }
+      }
+    },
+    "Flight date" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flugdatum"
           }
         }
       }
@@ -3146,6 +3166,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Etwas ist schiefgelaufen. Bitte versuche es noch einmal."
+          }
+        }
+      }
+    },
+    "Sort" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortieren"
+          }
+        }
+      }
+    },
+    "Sort by" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortieren nach"
           }
         }
       }

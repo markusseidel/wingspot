@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import site.wingspot.core.DistanceUnit
+import site.wingspot.core.FeedSort
 
 /** Small settings and what the phone remembers about badges, per account. */
 class Prefs(context: Context) {
@@ -17,6 +18,15 @@ class Prefs(context: Context) {
     fun chooseUnit(value: DistanceUnit) {
         unit = value
         prefs.edit().putString("unit", value.name).apply()
+    }
+
+    /** How the Feed tab is sorted. */
+    var feedSort: FeedSort = FeedSort.entries.firstOrNull { it.name == prefs.getString("feedSort", null) } ?: FeedSort.CREATED
+        private set
+
+    fun chooseFeedSort(value: FeedSort) {
+        feedSort = value
+        prefs.edit().putString("feedSort", value.name).apply()
     }
 
     /** True once the person chose to show airports near them. */

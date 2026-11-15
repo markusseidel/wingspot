@@ -16,6 +16,7 @@ public final class CheckInSyncCoordinator {
     private let sleep: @Sendable (Duration) async -> Void
     private let backoff: [Duration]
     private let afterRun: @MainActor () -> Void
+    private let afterUpload: @MainActor () -> Void
     private var task: Task<Void, Never>?
     private var requestedAgain = false
 
@@ -28,13 +29,15 @@ public final class CheckInSyncCoordinator {
         userID: @escaping @MainActor () -> UUID?,
         backoff: [Duration] = CheckInSyncCoordinator.defaultBackoff,
         sleep: @escaping @Sendable (Duration) async -> Void = { try? await Task.sleep(for: $0) },
-        afterRun: @escaping @MainActor () -> Void = {}
+        afterRun: @escaping @MainActor () -> Void = {},
+        afterUpload: @escaping @MainActor () -> Void = {}
     ) {
         self.outbox = outbox
         self.photos = photos
         self.userID = userID
         self.backoff = backoff
         self.afterRun = afterRun
+        self.afterUpload = afterUpload
         self.sleep = sleep
     }
 
@@ -59,6 +62,13 @@ public final class CheckInSyncCoordinator {
         return checkIns
     }
 
+    private static func stored(_ outcome: OutboxOutcome) -> Int {
+        switch outcome {
+        case .idle: 0
+        case .finished(let stored, _), .retryLater(let stored, _): stored
+        }
+    }
+
     private func run() async {
         defer {
             task = nil
@@ -71,6 +81,8 @@ public final class CheckInSyncCoordinator {
             // Check-ins first, because a photo goes up only after its check-in is stored.
             let checkIns = await outbox.sync(userID: id)
             let pictures = await photos?.sync(userID: id)
+            // Something new is on the server, so a list of check-ins is out of date.
+            if Self.stored(checkIns) + (pictures.map(Self.stored) ?? 0) > 0 { afterUpload() }
             switch Self.combined(checkIns, pictures) {
             case .idle, .finished:
                 failures = 0
