@@ -13,5 +13,29 @@ insert into public.reports (target_type, target_id, reason) values ('checkin', '
 select is((select count(*)::int from public.reports where target_id = 'x2'), 1, 'and with one, even a long reason');
 select ok(not has_function_privilege('authenticated', 'private.alert_report()', 'execute'), 'clients cannot call the alert function');
 
+-- What the message says
+insert into auth.users (id, aud, role, email) values
+  ('00000000-0000-0000-0000-000000000d01', 'authenticated', 'authenticated', 'author@example.test'),
+  ('00000000-0000-0000-0000-000000000d02', 'authenticated', 'authenticated', 'reporter@example.test');
+update public.profiles set username = 'author_user' where id = '00000000-0000-0000-0000-000000000d01';
+update public.profiles set username = 'reporter_user' where id = '00000000-0000-0000-0000-000000000d02';
+insert into public.aircraft_types (icao_code, manufacturer, model) values ('A321', 'Airbus', 'A321');
+insert into public.checkins (id, user_id, kind, occurred_at, visibility, type_icao)
+values ('d0000000-0000-7000-8000-000000000001', '00000000-0000-0000-0000-000000000d01', 'spotted', now(), 'public', 'A321');
+insert into public.comments (id, checkin_id, user_id, body)
+values ('d0000000-0000-7000-8000-000000000002', 'd0000000-0000-7000-8000-000000000001', '00000000-0000-0000-0000-000000000d01', 'a rude comment');
+
+select like(private.report_alert_text(row(gen_random_uuid(), '00000000-0000-0000-0000-000000000d02', 'checkin',
+  'd0000000-0000-7000-8000-000000000001', 'spam', 'open')::public.reports),
+  '%about a checkin by @author_user (spotted A321)%Reason: spam%Reported by @reporter_user%dashboard%',
+  'a check-in report names the author, what it shows, the reason, the reporter and links to the table');
+select like(private.report_alert_text(row(gen_random_uuid(), null, 'comment',
+  'd0000000-0000-7000-8000-000000000002', null, 'open')::public.reports),
+  '%about a comment by @author_user ("a rude comment")%Reason: none given%',
+  'a comment report quotes the comment, and says when no reason was given');
+select like(private.report_alert_text(row(gen_random_uuid(), null, 'checkin', 'not-an-id', 'spam', 'open')::public.reports),
+  '%already deleted or not found%', 'a report about something that is gone still gets a message');
+select ok(not has_function_privilege('authenticated', 'private.report_alert_text(public.reports)', 'execute'), 'clients cannot call the text function');
+
 select * from finish();
 rollback;
