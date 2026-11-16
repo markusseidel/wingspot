@@ -26,6 +26,16 @@ python3 faa_aircraft_types.py --order-text order.txt --spreadsheet aircraft_data
 
 Check `report.json` before committing. It lists rows it couldn't read, ambiguous values and conflicts between the two sources. Fix a wrong name in `aircraft_type_overrides.csv`, not in the generated file.
 
+## Publish a few more types
+
+While the full type list is held back (licensing), `seed/aircraft_types_published.csv` is the list that is live. To add types to it, add the rows there, add the same rows in a migration, and make the new snapshot from the published one, so no airport changes:
+
+```bash
+python3 add_types_to_snapshot.py --snapshot published.sqlite --types seed/aircraft_types_published.csv --out /tmp/refdata --data-version 2026-11-16
+```
+
+Then publish it as below.
+
 ## Load into Postgres
 
 Check-ins reference airports and aircraft types by the IDs in the snapshot, so load each snapshot into Postgres **before** publishing it. Otherwise an app could send an ID the server doesn't have. Run these from `backend/`, linked to the hosted project:
