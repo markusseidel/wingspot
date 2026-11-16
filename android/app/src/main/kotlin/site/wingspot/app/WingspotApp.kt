@@ -31,7 +31,7 @@ class WingspotApp : Application() {
     val api by lazy {
         ApiClient(BuildConfig.SUPABASE_URL + "/functions", restUrl = BuildConfig.SUPABASE_URL + "/rest/v1", apiKey = BuildConfig.PUBLISHABLE_KEY)
     }
-    val outbox by lazy { Outbox(checkIns, api, ::accessToken) }
+    val outbox by lazy { Outbox(checkIns, api, ::accessToken).also { it.userId = { sessions.load()?.user?.id } } }
 
     /** Emits when check-ins or photos went up, so the Feed and the lists can refresh by themselves. */
     val uploads = kotlinx.coroutines.flow.MutableSharedFlow<Unit>(extraBufferCapacity = 1)

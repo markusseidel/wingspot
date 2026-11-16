@@ -323,6 +323,45 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
             if (count == 0) null else count to Instant.ofEpochMilli(it.getLong(1))
         }
 
+    /**
+     * Adds check-ins the server has and this phone doesn't, as [SyncState.SYNCED]. One this phone already has is left
+     * as it is. Returns how many were added.
+     */
+    suspend fun restore(items: List<LocalCheckIn>): Int = db {
+        var added = 0
+        for (c in items) {
+            connection.prepare(
+                """INSERT OR IGNORE INTO checkins (id, kind, occurred_at, registration, type_icao, airport_id, latitude, longitude,
+                       sync_state, airport_code, origin_id, destination_id, origin_code, destination_code, flight_number, cabin, seat,
+                       visit_context, synced_at)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            ).use {
+                it.bindText(1, c.id.toString()); it.bindText(2, c.kind); it.bindLong(3, c.occurredAt.toEpochMilli())
+                fun text(i: Int, v: String?) = if (v == null) it.bindNull(i) else it.bindText(i, v)
+                fun long(i: Int, v: Long?) = if (v == null) it.bindNull(i) else it.bindLong(i, v)
+                fun double(i: Int, v: Double?) = if (v == null) it.bindNull(i) else it.bindDouble(i, v)
+                text(4, c.registration); text(5, c.typeIcao); long(6, c.airportId); double(7, c.latitude); double(8, c.longitude)
+                text(9, c.airportCode); long(10, c.originId); long(11, c.destinationId); text(12, c.originCode); text(13, c.destinationCode)
+                text(14, c.flightNumber); text(15, c.cabin); text(16, c.seat); text(17, c.visitContext)
+                it.bindLong(18, System.currentTimeMillis())
+                it.step()
+            }
+            connection.prepare("SELECT changes()").use { it.step(); added += it.getLong(0).toInt() }
+        }
+        added
+    }
+
+    /** True once this person's check-ins were fetched from the server onto this phone. */
+    suspend fun wasRestoredFor(user: String): Boolean = db {
+        var found = false
+        connection.prepare("SELECT 1 FROM restored WHERE user_id = ?").use { it.bindText(1, user); found = it.step() }
+        found
+    }
+
+    suspend fun markRestored(user: String) = db {
+        connection.prepare("INSERT OR IGNORE INTO restored (user_id) VALUES (?)").use { it.bindText(1, user); it.step() }
+    }
+
     /** Every check-in on this phone, newest first. For the profile numbers and collections. */
     suspend fun all(): List<LocalCheckIn> = select("ORDER BY occurred_at DESC, id DESC")
 
@@ -330,6 +369,7 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
     suspend fun deleteEverything() = db {
         connection.execSQL("DELETE FROM photos")
         connection.execSQL("DELETE FROM checkins")
+        connection.execSQL("DELETE FROM restored")
     }
 
     /** Newest first. */
@@ -441,6 +481,7 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
                      reject_code TEXT
                    )""",
             )
+            connection.execSQL("CREATE TABLE IF NOT EXISTS restored (user_id TEXT PRIMARY KEY)")
             return CheckInStore(connection)
         }
     }

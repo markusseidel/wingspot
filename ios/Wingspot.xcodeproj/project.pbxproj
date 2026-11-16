@@ -29,6 +29,7 @@
 		4427FE8EDAE09F2B68624303 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CCCA89A7943B8447EE7898 /* ShareSheet.swift */; };
 		44D09702BD9AEBE667B05854 /* PersonCheckInsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769842784C2049C177DB02CD /* PersonCheckInsSection.swift */; };
 		4644DCAB019919C64F9372FD /* AirportsMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C8DE707D5FBC441F2A0A4 /* AirportsMapView.swift */; };
+		5B37D64341B84157BCB31647 /* AccountCheckInSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534BE6354EF9EC7D6EA1DA13 /* AccountCheckInSource.swift */; };
 		5BF02F7F79B326015B808389 /* AirportPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1072182D625807362ADE4FB1 /* AirportPageView.swift */; };
 		5EFAD640812D73C675B33326 /* FlownCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED53FE5B4A009D5575119BB4 /* FlownCheckInView.swift */; };
 		6011B00CBD96A7EE9270C0C9 /* DistanceUnitSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D41472169C437C8D788A92 /* DistanceUnitSetting.swift */; };
@@ -86,6 +87,7 @@
 		45BFC3E5CAEEFABF9A34E20E /* Wingspot.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Wingspot.xcconfig; sourceTree = "<group>"; };
 		48B545FD209FC2942BD45E71 /* CheckInResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInResultView.swift; sourceTree = "<group>"; };
 		4ACF37D630CFB0FFE9E1E133 /* Wingspot.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Wingspot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		534BE6354EF9EC7D6EA1DA13 /* AccountCheckInSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCheckInSource.swift; sourceTree = "<group>"; };
 		578259FF97F6C378ABA27E94 /* PushSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSupport.swift; sourceTree = "<group>"; };
 		5CABAD3AAA0CB6C6317A73DE /* PersonDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonDetailView.swift; sourceTree = "<group>"; };
 		5D8FB2291C9A4A75529A9461 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -266,6 +268,7 @@
 		78EF8102C6206FC55B54ED0A /* App */ = {
 			isa = PBXGroup;
 			children = (
+				534BE6354EF9EC7D6EA1DA13 /* AccountCheckInSource.swift */,
 				828B639D7292CFD9B11324B0 /* APICheckInUploader.swift */,
 				AFA4C2033974EBB05B5FCF5E /* APIPhotoUploader.swift */,
 				A96EA4033E2C1D21ED547E17 /* APIProgressSource.swift */,
@@ -433,6 +436,7 @@
 				C11130AF4BC7A3C72A86C5A3 /* APICheckInUploader.swift in Sources */,
 				B3051CE8DCAD5C1F29BB0B38 /* APIPhotoUploader.swift in Sources */,
 				6DAA715E6FB8E824FA168D2C /* APIProgressSource.swift in Sources */,
+				5B37D64341B84157BCB31647 /* AccountCheckInSource.swift in Sources */,
 				1427422ED2866AC007958D1A /* AccountMessages.swift in Sources */,
 				E743B21C623831BB31024A48 /* AirportCheckInView.swift in Sources */,
 				5BF02F7F79B326015B808389 /* AirportPageView.swift in Sources */,

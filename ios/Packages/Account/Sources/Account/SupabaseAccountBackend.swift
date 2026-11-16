@@ -619,6 +619,32 @@ private struct AirportParams: Encodable {
     }
 }
 
+extension SupabaseAccountBackend: MyCheckInsBackend {
+    public func myCheckIns(after cursor: FeedCursor?, pageSize: Int) async throws -> [MyCheckIn] {
+        try await socialErrors {
+            try await client.rpc("get_my_checkins", params: MyCheckInsParams(cursor: cursor, pageSize: pageSize)).execute().value
+        }
+    }
+}
+
+private struct MyCheckInsParams: Encodable {
+    let cursor: FeedCursor?
+    let pageSize: Int
+
+    private enum CodingKeys: String, CodingKey {
+        case afterTime = "after_time"
+        case afterID = "after_id"
+        case pageSize = "page_size"
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(cursor?.time, forKey: .afterTime)
+        try container.encode(cursor?.id, forKey: .afterID)
+        try container.encode(pageSize, forKey: .pageSize)
+    }
+}
+
 private struct FeedParams: Encodable {
     let cursor: FeedCursor?
     let pageSize: Int

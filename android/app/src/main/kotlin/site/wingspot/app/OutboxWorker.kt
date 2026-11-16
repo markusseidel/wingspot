@@ -18,7 +18,7 @@ class OutboxWorker(context: Context, params: WorkerParameters) : CoroutineWorker
         val app = applicationContext as WingspotApp
         return when (val outcome = app.outbox.sync()) {
             is SyncOutcome.Done -> {
-                if (outcome.stored > 0) app.uploads.tryEmit(Unit)
+                if (outcome.stored + outcome.restored > 0) app.uploads.tryEmit(Unit)
                 Result.success()
             }
             // Nobody is signed in: the sign-in schedules this again.
