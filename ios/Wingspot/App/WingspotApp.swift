@@ -70,6 +70,8 @@ struct WingspotApp: App {
         _sync = State(initialValue: CheckInSyncCoordinator(
             outbox: CheckInOutbox(context: container.mainContext, uploader: uploader),
             photos: PhotoOutbox(context: container.mainContext, uploader: photoUploader),
+            // A new phone or a reinstall gets the person's earlier check-ins back, so the profile numbers are right.
+            restorer: CheckInRestorer(context: container.mainContext, source: AccountCheckInSource(backend: accountBackend)),
             userID: { account.userID },
             // After a run, with or without uploads, the server may have unlocked something.
             afterRun: { Task { await badgeStore.refresh() } },
@@ -144,7 +146,7 @@ struct WingspotApp: App {
         }
     }
 
-    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend & ReactionBackend & PushBackend {
+    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend & MyCheckInsBackend & ReactionBackend & PushBackend {
         var url = Bundle.main.object(forInfoDictionaryKey: "WingspotSupabaseURL") as? String
         var key = Bundle.main.object(forInfoDictionaryKey: "WingspotPublishableKey") as? String
         #if DEBUG

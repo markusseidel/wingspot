@@ -547,3 +547,72 @@ private struct FlightEnd: Hashable {
     let time: Date
     let code: String
 }
+
+/// One of your own check-ins as `get_my_checkins` returns it: everything the app keeps on the device, nothing hidden.
+public struct MyCheckIn: Hashable, Sendable, Decodable {
+    public let id: UUID
+    public let kind: String
+    public let occurredAt: Date
+    /// The time exactly as the server sent it, for asking for the next page.
+    public let cursorTime: String
+    public let registration: String?
+    public let typeICAO: String?
+    public let airportID: Int?
+    public let airportCode: String?
+    public let originID: Int?
+    public let destinationID: Int?
+    public let originCode: String?
+    public let destinationCode: String?
+    public let flightNumber: String?
+    public let cabin: String?
+    public let seat: String?
+    public let visitContext: String?
+    public let latitude: Double?
+    public let longitude: Double?
+
+    private enum CodingKeys: String, CodingKey {
+        case id, kind, registration, cabin, seat, latitude, longitude
+        case occurredAt = "occurred_at"
+        case typeICAO = "type_icao"
+        case airportID = "airport_id"
+        case airportCode = "airport_code"
+        case originID = "origin_id"
+        case destinationID = "destination_id"
+        case originCode = "origin_code"
+        case destinationCode = "destination_code"
+        case flightNumber = "flight_number"
+        case visitContext = "visit_context"
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(UUID.self, forKey: .id)
+        kind = try c.decode(String.self, forKey: .kind)
+        let time = try c.decode(String.self, forKey: .occurredAt)
+        guard let date = FeedItem.parse(time) else {
+            throw DecodingError.dataCorruptedError(forKey: .occurredAt, in: c, debugDescription: "Not a date: \(time)")
+        }
+        occurredAt = date
+        cursorTime = time
+        registration = try c.decodeIfPresent(String.self, forKey: .registration)
+        typeICAO = try c.decodeIfPresent(String.self, forKey: .typeICAO)
+        airportID = try c.decodeIfPresent(Int.self, forKey: .airportID)
+        airportCode = try c.decodeIfPresent(String.self, forKey: .airportCode)
+        originID = try c.decodeIfPresent(Int.self, forKey: .originID)
+        destinationID = try c.decodeIfPresent(Int.self, forKey: .destinationID)
+        originCode = try c.decodeIfPresent(String.self, forKey: .originCode)
+        destinationCode = try c.decodeIfPresent(String.self, forKey: .destinationCode)
+        flightNumber = try c.decodeIfPresent(String.self, forKey: .flightNumber)
+        cabin = try c.decodeIfPresent(String.self, forKey: .cabin)
+        seat = try c.decodeIfPresent(String.self, forKey: .seat)
+        visitContext = try c.decodeIfPresent(String.self, forKey: .visitContext)
+        latitude = try c.decodeIfPresent(Double.self, forKey: .latitude)
+        longitude = try c.decodeIfPresent(Double.self, forKey: .longitude)
+    }
+}
+
+/// The signed-in person's own check-ins, for putting them back on a device that has none of them.
+public protocol MyCheckInsBackend: Sendable {
+    /// One page, oldest first, after the check-in with this time and id.
+    func myCheckIns(after cursor: FeedCursor?, pageSize: Int) async throws -> [MyCheckIn]
+}

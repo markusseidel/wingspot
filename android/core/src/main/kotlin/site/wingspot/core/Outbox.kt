@@ -138,6 +138,46 @@ class ApiClient(
         }
     }
 
+    /**
+     * `get_my_checkins`: one page of the person's own check-ins, oldest first, after [after] (time and id of the last one
+     * seen). They come back as [SyncState.SYNCED] check-ins, because the server has them.
+     */
+    suspend fun myCheckIns(after: Pair<Instant, java.util.UUID>?, pageSize: Int, accessToken: String): List<LocalCheckIn> = withContext(Dispatchers.IO) {
+        val body = buildJsonObject {
+            put("page_size", pageSize)
+            if (after != null) { put("after_time", after.first.toString()); put("after_id", after.second.toString()) }
+        }
+        val request = Request.Builder().url("${rest ?: throw ApiException.Unexpected(0)}/rpc/get_my_checkins")
+            .header("Authorization", "Bearer $accessToken").header("apikey", apiKey.orEmpty())
+            .post(body.toString().toRequestBody("application/json".toMediaType())).build()
+        try {
+            client.newCall(request).execute().use { response ->
+                val text = response.body.string()
+                when {
+                    response.code == 401 -> throw ApiException.Unauthorized
+                    response.code >= 500 || response.code == 429 || response.code == 408 -> throw ApiException.Retry
+                    !response.isSuccessful -> throw ApiException.Unexpected(response.code)
+                }
+                json.parseToJsonElement(text).jsonArray.map { row ->
+                    val o = row.jsonObject
+                    fun str(k: String) = o[k]?.takeIf { it !is kotlinx.serialization.json.JsonNull }?.jsonPrimitive?.content
+                    LocalCheckIn(
+                        id = java.util.UUID.fromString(str("id")), kind = str("kind")!!,
+                        occurredAt = java.time.OffsetDateTime.parse(str("occurred_at")).toInstant(),
+                        registration = str("registration"), typeIcao = str("type_icao"), airportId = str("airport_id")?.toLong(),
+                        latitude = str("latitude")?.toDouble(), longitude = str("longitude")?.toDouble(),
+                        syncState = SyncState.SYNCED, rejectCode = null, airportCode = str("airport_code"),
+                        originId = str("origin_id")?.toLong(), destinationId = str("destination_id")?.toLong(),
+                        originCode = str("origin_code"), destinationCode = str("destination_code"),
+                        flightNumber = str("flight_number"), cabin = str("cabin"), seat = str("seat"), visitContext = str("visit_context"),
+                    )
+                }
+            }
+        } catch (e: IOException) {
+            throw ApiException.Retry
+        }
+    }
+
     /** `CheckinItem` in the contract. The visibility is left out, so the server's default (private) applies. */
     private fun item(c: LocalCheckIn): JsonObject = buildJsonObject {
         put("id", c.id.toString())
@@ -162,7 +202,7 @@ class ApiClient(
 /** What one run of the outbox did. */
 sealed class SyncOutcome {
     /** Nothing was waiting, or everything waiting was answered. */
-    data class Done(val stored: Int, val rejected: Int) : SyncOutcome()
+    data class Done(val stored: Int, val rejected: Int, val restored: Int = 0) : SyncOutcome()
     /** The network or the server isn't ready: run again later with a delay. */
     object RetryLater : SyncOutcome()
     /** There is no signed-in session, so nothing can be sent yet. */
@@ -180,13 +220,55 @@ class Outbox(
     private val api: ApiClient,
     private val accessToken: suspend (forceRefresh: Boolean) -> String?,
 ) {
+    /** Who is signed in (null if nobody, or in tests), so the person's check-ins can be restored once. */
+    var userId: suspend () -> String? = { null }
+
     suspend fun sync(): SyncOutcome {
         val checkIns = syncCheckIns()
         if (checkIns !is SyncOutcome.Done) return checkIns
-        return when (val photos = syncPhotos()) {
-            is SyncOutcome.Done -> SyncOutcome.Done(checkIns.stored + photos.stored, checkIns.rejected + photos.rejected)
-            else -> photos
+        val photos = syncPhotos()
+        if (photos !is SyncOutcome.Done) return photos
+        // After the uploads, so what this phone made is already on the server and in the store.
+        val restored = when (val r = restore()) {
+            is Restored -> r.count
+            else -> return SyncOutcome.RetryLater
         }
+        return SyncOutcome.Done(checkIns.stored + photos.stored, checkIns.rejected + photos.rejected, restored)
+    }
+
+    private class Restored(val count: Int)
+
+    /**
+     * Puts the signed-in person's check-ins that this phone doesn't have (a new phone, a reinstall) back in the store,
+     * once per person and phone. Returns [Restored], or null when the network wasn't there: it is tried again later.
+     */
+    private suspend fun restore(): Restored? {
+        val user = userId() ?: return Restored(0)
+        if (store.wasRestoredFor(user)) return Restored(0)
+        var after: Pair<Instant, java.util.UUID>? = null
+        var added = 0
+        while (true) {
+            val page = try {
+                val token = accessToken(false) ?: return Restored(0)
+                try {
+                    api.myCheckIns(after, RESTORE_PAGE, token)
+                } catch (e: ApiException.Unauthorized) {
+                    api.myCheckIns(after, RESTORE_PAGE, accessToken(true) ?: return Restored(0))
+                }
+            } catch (e: ApiException.Retry) {
+                return null
+            } catch (e: ApiException.Unauthorized) {
+                return Restored(0)
+            } catch (e: ApiException.Unexpected) {
+                // A server that doesn't have the function yet: nothing to restore, and nothing to keep retrying.
+                return Restored(added)
+            }
+            added += store.restore(page)
+            if (page.size < RESTORE_PAGE) break
+            after = page.last().let { it.occurredAt to it.id }
+        }
+        store.markRestored(user)
+        return Restored(added)
     }
 
     /** Sends the photos whose check-in the server has. A photo is sent once and not again. */
@@ -318,6 +400,8 @@ class Outbox(
     internal enum class Detail { TYPE, FLIGHT_NUMBER, CABIN, SEAT, REGISTRATION }
 
     internal companion object {
+        private const val RESTORE_PAGE = 200
+
         /** The detail the server refused, if a flight can do without it and the check-in has it. */
         fun droppable(code: String?, c: LocalCheckIn): Detail? {
             if (c.kind != "flown") return null

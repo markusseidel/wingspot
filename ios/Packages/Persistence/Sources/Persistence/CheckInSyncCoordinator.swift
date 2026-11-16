@@ -12,6 +12,7 @@ public final class CheckInSyncCoordinator {
 
     private let outbox: CheckInOutbox
     private let photos: PhotoOutbox?
+    private let restorer: CheckInRestorer?
     private let userID: @MainActor () -> UUID?
     private let sleep: @Sendable (Duration) async -> Void
     private let backoff: [Duration]
@@ -26,6 +27,7 @@ public final class CheckInSyncCoordinator {
     public init(
         outbox: CheckInOutbox,
         photos: PhotoOutbox? = nil,
+        restorer: CheckInRestorer? = nil,
         userID: @escaping @MainActor () -> UUID?,
         backoff: [Duration] = CheckInSyncCoordinator.defaultBackoff,
         sleep: @escaping @Sendable (Duration) async -> Void = { try? await Task.sleep(for: $0) },
@@ -34,6 +36,7 @@ public final class CheckInSyncCoordinator {
     ) {
         self.outbox = outbox
         self.photos = photos
+        self.restorer = restorer
         self.userID = userID
         self.backoff = backoff
         self.afterRun = afterRun
@@ -81,9 +84,11 @@ public final class CheckInSyncCoordinator {
             // Check-ins first, because a photo goes up only after its check-in is stored.
             let checkIns = await outbox.sync(userID: id)
             let pictures = await photos?.sync(userID: id)
+            // Then the person's earlier check-ins from the server, once, so the ones just sent are already there.
+            let restored = await restorer?.restore(userID: id)
             // Something new is on the server, so a list of check-ins is out of date.
             if Self.stored(checkIns) + (pictures.map(Self.stored) ?? 0) > 0 { afterUpload() }
-            switch Self.combined(checkIns, pictures) {
+            switch Self.combined(Self.combined(checkIns, pictures), restored) {
             case .idle, .finished:
                 failures = 0
                 isWaitingToRetry = false

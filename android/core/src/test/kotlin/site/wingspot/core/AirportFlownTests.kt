@@ -225,3 +225,77 @@ class PhotoAndDeleteSyncTests {
         assertEquals(1, server.requestCount)
     }
 }
+
+class RestoreTests {
+    private fun withOutbox(block: suspend (MockWebServer, CheckInStore, Outbox) -> Unit) {
+        MockWebServer().use { server ->
+            server.start()
+            val store = CheckInStore.open(":memory:")
+            val api = ApiClient(server.url("/functions").toString(), restUrl = server.url("/rest/v1").toString(), apiKey = "pub-key")
+            val outbox = Outbox(store, api) { "token" }.also { it.userId = { "user-1" } }
+            runBlocking { block(server, store, outbox) }
+        }
+    }
+
+    private fun json(body: String, code: Int = 200) = MockResponse.Builder().code(code).body(body).build()
+
+    private val flight = """{"id":"11111111-1111-7111-8111-111111111111","kind":"flown","occurred_at":"2026-03-01T10:00:00+00:00","registration":null,
+        "type_icao":null,"airport_id":null,"airport_code":null,"origin_id":3,"destination_id":9,"origin_code":"FRA","destination_code":"JFK",
+        "flight_number":"LH400","cabin":"economy","seat":"12A","visit_context":null,"latitude":null,"longitude":null}"""
+    private val visit = """{"id":"22222222-2222-7222-8222-222222222222","kind":"airport","occurred_at":"2026-03-01T10:00:00+00:00","registration":null,
+        "type_icao":null,"airport_id":3,"airport_code":"FRA","origin_id":null,"destination_id":null,"origin_code":null,"destination_code":null,
+        "flight_number":null,"cabin":null,"seat":null,"visit_context":"departing","latitude":50.0,"longitude":8.5}"""
+
+    @Test
+    fun aPhoneWithoutCheckInsGetsTheOnesFromTheServerOnce() = withOutbox { server, store, outbox ->
+        server.enqueue(json("[$flight,$visit]"))
+        assertEquals(SyncOutcome.Done(0, 0, 2), outbox.sync())
+        val request = server.takeRequest()
+        assertEquals("/rest/v1/rpc/get_my_checkins", request.url.encodedPath)
+        val all = store.all()
+        assertEquals(2, all.size)
+        assertTrue(all.all { it.syncState == SyncState.SYNCED })
+        val stats = CheckInStats.of(all)
+        assertEquals(1, stats.flights)
+        assertEquals(1, stats.airportVisits)
+        assertEquals("FRA → JFK", all.first { it.kind == "flown" }.title)
+        assertEquals("departing", all.first { it.kind == "airport" }.visitContext)
+        assertEquals(50.0, all.first { it.kind == "airport" }.latitude)
+        // The second run doesn't ask again.
+        assertEquals(SyncOutcome.Done(0, 0, 0), outbox.sync())
+        assertEquals(1, server.requestCount)
+    }
+
+    @Test
+    fun aCheckInThePhoneAlreadyHasIsLeftAlone() = withOutbox { server, store, outbox ->
+        val mine = store.saveSpotted(SpottedDraft(typeIcao = "A320"), id = UUID.fromString("11111111-1111-7111-8111-111111111111"))
+        store.markRejected(mine.id, "unknown_type")
+        server.enqueue(json("[$flight]"))
+        assertEquals(0, (outbox.sync() as SyncOutcome.Done).restored)
+        assertEquals(SyncState.REJECTED, store.find(mine.id)!!.syncState)
+        assertEquals("spotted", store.find(mine.id)!!.kind)
+    }
+
+    @Test
+    fun morePagesAreFetchedUntilOneIsShort() = withOutbox { server, store, outbox ->
+        val rows = (1..200).joinToString(",") { n ->
+            visit.replace("22222222-2222-7222-8222-222222222222", "00000000-0000-7000-8000-%012d".format(n))
+        }
+        server.enqueue(json("[$rows]"))
+        server.enqueue(json("[$flight]"))
+        assertEquals(201, (outbox.sync() as SyncOutcome.Done).restored)
+        server.takeRequest()
+        val second = Json.parseToJsonElement(server.takeRequest().body!!.utf8()).jsonObject
+        assertEquals("00000000-0000-7000-8000-000000000200", second["after_id"]!!.jsonPrimitive.content)
+        assertEquals(201, store.all().size)
+    }
+
+    @Test
+    fun withoutNetworkItIsTriedAgainLater() = withOutbox { server, store, outbox ->
+        server.enqueue(json("", 503))
+        assertEquals(SyncOutcome.RetryLater, outbox.sync())
+        assertEquals(0, store.all().size)
+        server.enqueue(json("[$flight]"))
+        assertEquals(1, (outbox.sync() as SyncOutcome.Done).restored)
+    }
+}
