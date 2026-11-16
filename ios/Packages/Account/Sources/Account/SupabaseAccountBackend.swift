@@ -619,6 +619,14 @@ private struct AirportParams: Encodable {
     }
 }
 
+extension SupabaseAccountBackend: AnnouncementBackend {
+    public func announcements() async throws -> [Announcement] {
+        try await socialErrors {
+            try await client.rpc("get_announcements").execute().value
+        }
+    }
+}
+
 extension SupabaseAccountBackend: MyCheckInsBackend {
     public func myCheckIns(after cursor: FeedCursor?, pageSize: Int) async throws -> [MyCheckIn] {
         try await socialErrors {

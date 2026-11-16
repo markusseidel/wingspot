@@ -33,12 +33,16 @@ class Rest(
         return finish(retry)
     }
 
+    /** Like [call], for functions that signed-out people may call too: it sends no access token, only the app's key. */
+    suspend fun callPublic(method: String, path: String, body: String? = null): String = finish(send(method, path, body, null, null))
+
     private class Answer(val code: Int, val text: String)
 
-    private suspend fun send(method: String, path: String, body: String?, prefer: String?, token: String): Answer =
+    private suspend fun send(method: String, path: String, body: String?, prefer: String?, token: String?): Answer =
         withContext(Dispatchers.IO) {
             val builder = Request.Builder().url(root + path)
-                .header("Authorization", "Bearer $token").header("apikey", apiKey).header("Accept", "application/json")
+                .header("apikey", apiKey).header("Accept", "application/json")
+            token?.let { builder.header("Authorization", "Bearer $it") }
             prefer?.let { builder.header("Prefer", it) }
             val requestBody = body?.toRequestBody("application/json".toMediaType())
             builder.method(method, requestBody ?: if (method == "GET" || method == "DELETE") null else "".toRequestBody())

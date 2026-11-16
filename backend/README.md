@@ -28,6 +28,18 @@ Stop the stack when you're done:
 supabase stop --workdir backend
 ```
 
+## Announcements
+
+A short message at the top of the Feed for every user, signed in or not (for example "the aircraft type list stays small for now"). The apps read it with `get_announcements()` and let people dismiss it; nobody can write to the table through the API. Post with the script, which needs only a logged-in Supabase CLI:
+
+```bash
+backend/scripts/post_announcement.sh --local post "Title" "Body" ["German title" "German body"] [--expires 2026-12-31]
+backend/scripts/post_announcement.sh --local list
+backend/scripts/post_announcement.sh --local off <id>
+```
+
+`--remote` runs it against production. Without German text, German users see the English one. A changed text needs a new announcement, because people who dismissed the old one by id won't see an edit.
+
 ## Access rules
 
 [`20261104100100_access.sql`](supabase/migrations/20261104100100_access.sql) denies everything by default, then grants specific columns and rows. New tables get no client access, and every new function in `public` must revoke `PUBLIC` execute, or the database tests fail.

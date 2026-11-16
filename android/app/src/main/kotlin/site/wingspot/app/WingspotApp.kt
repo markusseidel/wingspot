@@ -9,6 +9,7 @@ import site.wingspot.core.CheckInStore
 import site.wingspot.core.Outbox
 import site.wingspot.core.ReferenceDataInstaller
 import site.wingspot.core.Rest
+import site.wingspot.core.AnnouncementsApi
 import site.wingspot.core.SocialApi
 import site.wingspot.core.SupabaseAuth
 
@@ -27,6 +28,7 @@ class WingspotApp : Application() {
     val prefs by lazy { Prefs(this) }
     val terms by lazy { TermsStore(this) }
     val rest by lazy { Rest(BuildConfig.SUPABASE_URL, BuildConfig.PUBLISHABLE_KEY, ::accessToken) }
+    val announcements by lazy { AnnouncementsApi(rest) }
     val social by lazy { SocialApi(rest, BuildConfig.SUPABASE_URL + "/storage/v1") }
     val api by lazy {
         ApiClient(BuildConfig.SUPABASE_URL + "/functions", restUrl = BuildConfig.SUPABASE_URL + "/rest/v1", apiKey = BuildConfig.PUBLISHABLE_KEY)

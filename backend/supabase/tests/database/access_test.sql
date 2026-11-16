@@ -90,16 +90,16 @@ select is(
    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and has_function_privilege('anon', p.oid, 'execute')
      and not exists (select 1 from pg_depend d where d.objid = p.oid and d.deptype = 'e')),
-  'get_profile',
-  'get_profile is the only function in public that anon can execute'
+  'get_announcements,get_profile',
+  'only get_announcements and get_profile are functions in public that anon can execute'
 );
 select is(
   (select string_agg(p.proname::text, ',' order by p.proname::text)
    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and has_function_privilege('authenticated', p.oid, 'execute')
      and not exists (select 1 from pg_depend d where d.objid = p.oid and d.deptype = 'e')),
-  'delete_checkin,export_my_data,get_active_airports,get_airport_activity,get_airport_checkins,get_blocks,get_checkin,get_feed,get_my_checkins,get_my_progress,get_person_checkins,get_profile,get_registration_checkins,get_type_activity,get_type_checkins,register_device,register_photo,report,set_sharing,sync_checkins',
-  'only delete_checkin, export_my_data, get_active_airports, get_airport_activity, get_airport_checkins, get_blocks, get_checkin, get_feed, get_my_checkins, get_my_progress, get_person_checkins, get_profile, get_registration_checkins, get_type_activity, get_type_checkins, register_device, register_photo, report, set_sharing and sync_checkins are callable by signed-in users'
+  'delete_checkin,export_my_data,get_active_airports,get_airport_activity,get_airport_checkins,get_announcements,get_blocks,get_checkin,get_feed,get_my_checkins,get_my_progress,get_person_checkins,get_profile,get_registration_checkins,get_type_activity,get_type_checkins,register_device,register_photo,report,set_sharing,sync_checkins',
+  'only delete_checkin, export_my_data, get_active_airports, get_airport_activity, get_airport_checkins, get_announcements, get_blocks, get_checkin, get_feed, get_my_checkins, get_my_progress, get_person_checkins, get_profile, get_registration_checkins, get_type_activity, get_type_checkins, register_device, register_photo, report, set_sharing and sync_checkins are callable by signed-in users'
 );
 
 -- Anonymous visitor -----------------------------------------------------------------------

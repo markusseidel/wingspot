@@ -8,6 +8,7 @@ import WingspotCore
 struct FeedScreen: View {
     @Environment(AccountStore.self) private var account
     @Environment(FeedStore.self) private var feed
+    @Environment(AnnouncementStore.self) private var announcements
     @State private var commentsFor: FeedItem?
     @AppStorage("feedSort") private var sortChoice = FeedSort.created.rawValue
     @State private var report: ReportTarget?
@@ -76,6 +77,8 @@ struct FeedScreen: View {
             }
         }
         .task(id: account.userID) {
+            // Signed in or not: everyone sees the announcements.
+            await announcements.refresh()
             if account.userID == nil {
                 feed.clear()
             } else {
@@ -88,6 +91,22 @@ struct FeedScreen: View {
     }
 
     @ViewBuilder private var content: some View {
+        if shownAsList {
+            stateContent
+        } else {
+            VStack(spacing: 0) {
+                AnnouncementCards(store: announcements).padding(.horizontal).padding(.bottom, 8)
+                stateContent
+            }
+        }
+    }
+
+    /// The list carries the announcements as its first rows. The other states (signed out, loading, empty) put them above.
+    private var shownAsList: Bool {
+        account.userID != nil && terms.hasAccepted && feed.hasLoaded && !feed.items.isEmpty
+    }
+
+    @ViewBuilder private var stateContent: some View {
         Group {
             if account.userID == nil {
                 ContentUnavailableView {
@@ -145,6 +164,7 @@ struct FeedScreen: View {
         let visible = feed.items.withoutAirportsOfListedFlights()
         let editable = Set(localFlights.map(\.id))
         return List {
+            AnnouncementCards(store: announcements)
             if let failure = feed.failure {
                 Label(failure.message, systemImage: "exclamationmark.triangle")
                     .font(.footnote)
@@ -171,7 +191,10 @@ struct FeedScreen: View {
                 ProgressView().frame(maxWidth: .infinity)
             }
         }
-        .refreshable { await feed.refresh() }
+        .refreshable {
+            await announcements.refresh()
+            await feed.refresh()
+        }
     }
 }
 
@@ -368,6 +391,37 @@ struct PersonLoaderView: View {
         }
         .task {
             if let loaded = try? await social.person(id) { person = loaded } else { failed = true }
+        }
+    }
+}
+
+/// The cards for the announcements that weren't dismissed, in the person's language (German, else English).
+struct AnnouncementCards: View {
+    let store: AnnouncementStore
+
+    var body: some View {
+        let language = Bundle.main.preferredLocalizations.first ?? "en"
+        ForEach(store.visible) { item in
+            let text = item.text(language: language)
+            HStack(alignment: .top, spacing: 8) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(verbatim: text.title).font(.subheadline.bold())
+                    Text(verbatim: text.body).font(.subheadline)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                Button { store.dismiss(item.id) } label: {
+                    Image(systemName: "xmark")
+                        .font(.footnote.bold())
+                        .frame(width: 32, height: 32)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.borderless)
+                .accessibilityLabel("Dismiss")
+            }
+            .padding(12)
+            .background(Color.accentColor.opacity(0.12), in: RoundedRectangle(cornerRadius: 12))
+            .listRowSeparator(.hidden)
+            .accessibilityIdentifier("announcement")
         }
     }
 }
