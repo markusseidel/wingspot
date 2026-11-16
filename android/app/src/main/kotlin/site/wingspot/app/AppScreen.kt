@@ -46,7 +46,7 @@ import site.wingspot.core.Registration
 import site.wingspot.core.Username
 
 @Composable
-fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewModel, checkIn: CheckInViewModel, social: SocialViewModel, badges: BadgesViewModel) {
+fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewModel, checkIn: CheckInViewModel, social: SocialViewModel, badges: BadgesViewModel, announcements: AnnouncementsViewModel) {
     val state by model.state.collectAsState()
     val refState by reference.state.collectAsState()
     val checkInState by checkIn.state.collectAsState()
@@ -100,7 +100,7 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
                 page is Route.Settings -> SettingsPage(app, me, social)
                 page is Route.EditProfile && me != null -> EditProfilePage(app, me, refState, social)
                 else -> when (social.tab) {
-                    Tab.FEED -> SocialGate(app, me, onSignIn = { social.tab = Tab.PROFILE }) { FeedTab(social, it) }
+                    Tab.FEED -> SocialGate(app, me, announcements, onSignIn = { social.tab = Tab.PROFILE }) { FeedTab(social, it, announcements) }
                     Tab.EXPLORE -> Scrolling { ExploreTab(app, social, me, refState, checkInState.all) }
                     Tab.CHECK_IN -> Scrolling {
                         Spacer(Modifier.height(16.dp))
@@ -129,10 +129,12 @@ private fun Scrolling(content: @Composable ColumnScope.() -> Unit) {
  * Shows what is missing instead, and the content once everything is in place.
  */
 @Composable
-private fun SocialGate(app: WingspotApp, me: String?, onSignIn: () -> Unit, content: @Composable (String) -> Unit) {
+private fun SocialGate(app: WingspotApp, me: String?, announcements: AnnouncementsViewModel, onSignIn: () -> Unit, content: @Composable (String) -> Unit) {
     if (me == null) {
+        LaunchedEffect(Unit) { announcements.refresh() }
         Scrolling {
             Text(stringResource(R.string.tab_feed), style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top = 16.dp))
+            AnnouncementCards(announcements)
             EmptyState(R.drawable.ic_tab_feed, stringResource(R.string.empty_feed_title), stringResource(R.string.sign_in_for_social)) {
                 Button(onClick = onSignIn) { Text(stringResource(R.string.sign_in_title)) }
             }

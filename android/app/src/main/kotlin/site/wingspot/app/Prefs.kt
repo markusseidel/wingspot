@@ -65,6 +65,16 @@ class Prefs(context: Context) {
 
     fun cacheProgress(user: String, json: String) = prefs.edit().putString("progress.$user", json).apply()
 
+    /** The announcements the server sent last time, as JSON, so the card shows offline. */
+    var announcementsCache: String?
+        get() = prefs.getString("announcements", null)
+        set(value) = prefs.edit().putString("announcements", value).apply()
+
+    /** The ids of the announcements this person dismissed on this phone. */
+    var dismissedAnnouncements: Set<String>
+        get() = prefs.getStringSet("announcementsDismissed", emptySet()).orEmpty().toSet()
+        set(value) = prefs.edit().putStringSet("announcementsDismissed", value).apply()
+
     /** Forgets what this phone knows about the account, for example after it was deleted. */
     fun forget(user: String) {
         val edit = prefs.edit()

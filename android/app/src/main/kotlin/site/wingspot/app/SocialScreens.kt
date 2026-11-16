@@ -83,9 +83,9 @@ fun RemoteImage(photo: FeedPhoto, modifier: Modifier = Modifier) {
 
 /** The Feed tab. */
 @Composable
-fun FeedTab(model: SocialViewModel, me: String) {
+fun FeedTab(model: SocialViewModel, me: String, announcements: AnnouncementsViewModel) {
     val state by model.state.collectAsState()
-    LaunchedEffect(me) { if (!state.hasLoaded) model.refresh() }
+    LaunchedEffect(me) { announcements.refresh(); if (!state.hasLoaded) model.refresh() }
     LazyColumn(Modifier.fillMaxWidth().testTag("feed"), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         item {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -102,6 +102,7 @@ fun FeedTab(model: SocialViewModel, me: String) {
                 }
             }
         }
+        item { AnnouncementCards(announcements) }
         if (state.failed) item { Text(stringResource(R.string.feed_failed), color = MaterialTheme.colorScheme.error) }
         if (state.hasLoaded && state.items.isEmpty() && !state.failed) item { Text(stringResource(R.string.feed_empty)) }
         items(state.items, key = { it.id }) { item ->
@@ -110,7 +111,7 @@ fun FeedTab(model: SocialViewModel, me: String) {
         }
         item {
             if (state.isLoading) CircularProgressIndicator(Modifier.padding(16.dp))
-            else TextButton(onClick = model::refresh) { Text(stringResource(R.string.refresh)) }
+            else TextButton(onClick = { announcements.refresh(); model.refresh() }) { Text(stringResource(R.string.refresh)) }
         }
     }
 }

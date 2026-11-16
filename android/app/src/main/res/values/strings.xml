@@ -93,6 +93,7 @@
     <string name="feed_failed">Couldn\'t load the feed. Please check your connection.</string>
     <string name="feed_empty">Nothing here yet. Follow people to see what they check in.</string>
     <string name="refresh">Refresh</string>
+    <string name="dismiss">Dismiss</string>
     <string name="you">You</string>
     <string name="comments_count">Comments %1$d</string>
     <string name="salute_count">Salute %1$d</string>
