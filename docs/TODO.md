@@ -16,7 +16,10 @@ Only you can do these, because they need your accounts, money or judgement.
 
 - [ ] Get ICAO's written answer on commercial use of the aircraft type data
 - [ ] If ICAO hasn't answered two weeks after the email, send a short reminder
-- [ ] Optional: get a short opinion from a German IT or copyright lawyer, including the EU database right
+- [ ] Optional: get a short opinion from a German IT or copyright lawyer, including the EU database right. Questions: is the FAA order (a US government work, no US copyright) enough for the aircraft type list in the EU, and do bare IATA and ICAO codes (aircraft types and airports) need a licence
+- [ ] Download the current FAA Order JO 7360.1 (K, with the latest change notice; J was cancelled in June 2025) and check its front matter for a reuse or copyright statement. Add the finding to the ICAO email
+- [ ] Add an OurAirports credit to the legal or about screen in both apps (public domain, credit requested, not required)
+- [ ] While the full type list is held back, grow the live list only on request, with a source note per type (`seed/aircraft_types_published.csv`, migration, `add_types_to_snapshot.py`). The 757 (B752, B753) came from the FAA-derived list, not an independent source
 - [ ] Before adding a national registry, check that registry's terms
 
 ### Accounts and services
