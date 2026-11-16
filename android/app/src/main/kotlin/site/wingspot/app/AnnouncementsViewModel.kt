@@ -83,15 +83,15 @@ fun AnnouncementCards(model: AnnouncementsViewModel) {
     Column(Modifier.fillMaxWidth().testTag("announcements"), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         for (item in items) {
             val (title, body) = item.text(language)
-            Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
+            Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))) {
                 Row(Modifier.padding(start = 16.dp, top = 8.dp, bottom = 12.dp, end = 4.dp), verticalAlignment = Alignment.Top) {
                     Column(Modifier.weight(1f).padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(title, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSecondaryContainer)
-                        Text(body, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSecondaryContainer)
+                        Text(title, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                        Text(body, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
                     }
                     val dismiss = stringResource(R.string.dismiss)
                     IconButton(onClick = { model.dismiss(item.id) }, modifier = Modifier.size(40.dp).testTag("announcement-dismiss").semantics { contentDescription = dismiss }) {
-                        Text("✕", color = MaterialTheme.colorScheme.onSecondaryContainer)
+                        Text("✕", color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
             }
