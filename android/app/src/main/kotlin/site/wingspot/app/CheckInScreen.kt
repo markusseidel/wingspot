@@ -274,6 +274,7 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
             flightNumber, { flightNumber = it }, input, { input = it }, registration, reference, type, { type = it }, cabin, { cabin = it }, seat, { seat = it },
             keptType = keptType,
         )
+        VisibilityRow(androidx.compose.ui.platform.LocalContext.current.applicationContext as WingspotApp, flight.id.toString())
         SaveBar(
             state, enabled = input.isBlank() || registration != null,
             onSave = {

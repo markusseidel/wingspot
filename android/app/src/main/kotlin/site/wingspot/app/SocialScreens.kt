@@ -183,6 +183,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
     var problem by remember { mutableStateOf<Int?>(null) }
     var menu by remember { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
+    var pickVisibility by remember { mutableStateOf(false) }
     var reporting by remember { mutableStateOf<Pair<ReportKind, String>?>(null) }
     var localFlight by remember { mutableStateOf(false) }
     var viewing by remember { mutableStateOf<FeedPhoto?>(null) }
@@ -204,6 +205,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
         localFlight = runCatching { app.checkIns.find(UUID.fromString(id))?.kind == "flown" }.getOrDefault(false)
     }
 
+    if (pickVisibility) VisibilityDialog(app, id, onClose = { pickVisibility = false })
     LazyColumn(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -216,6 +218,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                             if (shown.kind == "flown" && localFlight) {
                                 DropdownMenuItem(text = { Text(stringResource(R.string.edit_details)) }, onClick = { menu = false; checkIn.edit(UUID.fromString(id)) })
                             }
+                            DropdownMenuItem(text = { Text(stringResource(R.string.who_can_see)) }, onClick = { menu = false; pickVisibility = true })
                             DropdownMenuItem(text = { Text(stringResource(R.string.delete)) }, onClick = { menu = false; confirmDelete = true })
                         } else {
                             DropdownMenuItem(text = { Text(stringResource(R.string.report)) }, onClick = { menu = false; reporting = ReportKind.CHECKIN to id })

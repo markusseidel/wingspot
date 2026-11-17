@@ -83,6 +83,7 @@ struct FlownEditView: View {
                         Text("Not a valid registration yet")
                     }
                 }
+                Section { CheckInVisibilityPicker(checkInID: flightID) }
                 lookup
             }
             .navigationTitle("Edit flight")

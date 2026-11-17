@@ -47,6 +47,7 @@
 		A08C4CA8904388F960BBA71F /* ProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD2433D565B1E9974F334CA /* ProfileScreen.swift */; };
 		A165396CBFC567234392EE1F /* EmailSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA65F3D7DF5E25F2228C346 /* EmailSignInView.swift */; };
 		A28B1AFC7227F94265B0AF01 /* BadgesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEADFFA0580043E3265322F0 /* BadgesScreen.swift */; };
+		AD9ED8864D6272B289F7489F /* CheckInVisibilityPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E575C7D649385E50E82F597F /* CheckInVisibilityPicker.swift */; };
 		AFF3D1B625E8CD51404538CD /* ExploreScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB25F31CD8716D700082888A /* ExploreScreen.swift */; };
 		B3051CE8DCAD5C1F29BB0B38 /* APIPhotoUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA4C2033974EBB05B5FCF5E /* APIPhotoUploader.swift */; };
 		B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B545FD209FC2942BD45E71 /* CheckInResultView.swift */; };
@@ -131,6 +132,7 @@
 		DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInSheet.swift; sourceTree = "<group>"; };
 		E3A6E9C03029947E148B9EBB /* PeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleView.swift; sourceTree = "<group>"; };
 		E539BCC329B1D95E5DE61344 /* AirportCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirportCheckInView.swift; sourceTree = "<group>"; };
+		E575C7D649385E50E82F597F /* CheckInVisibilityPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInVisibilityPicker.swift; sourceTree = "<group>"; };
 		E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		ED0A9822D906C56C092225ED /* PasswordSignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordSignInView.swift; sourceTree = "<group>"; };
 		ED53FE5B4A009D5575119BB4 /* FlownCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlownCheckInView.swift; sourceTree = "<group>"; };
@@ -316,6 +318,7 @@
 			isa = PBXGroup;
 			children = (
 				1072182D625807362ADE4FB1 /* AirportPageView.swift */,
+				E575C7D649385E50E82F597F /* CheckInVisibilityPicker.swift */,
 				E3A6E9C03029947E148B9EBB /* PeopleView.swift */,
 				769842784C2049C177DB02CD /* PersonCheckInsSection.swift */,
 				5CABAD3AAA0CB6C6317A73DE /* PersonDetailView.swift */,
@@ -452,6 +455,7 @@
 				186231C28F6E7DD1B25988E6 /* CheckInHistoryView.swift in Sources */,
 				B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */,
 				666833BB5AA51A95401FAE68 /* CheckInSheet.swift in Sources */,
+				AD9ED8864D6272B289F7489F /* CheckInVisibilityPicker.swift in Sources */,
 				0938348D4F0B21A4B41F7D9E /* CollectionsView.swift in Sources */,
 				6011B00CBD96A7EE9270C0C9 /* DistanceUnitSetting.swift in Sources */,
 				A165396CBFC567234392EE1F /* EmailSignInView.swift in Sources */,

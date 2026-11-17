@@ -240,6 +240,7 @@ struct CheckInDetailView: View {
                 }
                 Button("Delete", systemImage: "trash", role: .destructive) { confirmDelete = true }
             }
+            Section { CheckInVisibilityPicker(checkInID: item.id) }
         } else {
             Section {
                 Button("Report", systemImage: "flag") {
