@@ -13,6 +13,7 @@ struct ExploreScreen: View {
     @Environment(ReferenceDataStore.self) private var referenceData
     @Query private var all: [LocalCheckIn]
     @State private var query = ""
+    @FocusState private var searchFocused: Bool
     @State private var airports: [Airport] = []
     @State private var types: [AircraftType] = []
     @State private var people: [Person] = []
@@ -33,11 +34,14 @@ struct ExploreScreen: View {
                         if canSearchPeople { BusyAirportsSection() }
                     }
                 }
+                // Dragging the list or leaving the tab puts the keyboard away, so it never covers the tab bar.
+                .scrollDismissesKeyboard(.immediately)
             }
             .tabHeader("Explore") {
                 NavigationLink { ExploreMapView() } label: { Image(systemName: "map") }
                     .accessibilityLabel("Map")
             }
+            .onDisappear { searchFocused = false }
             .task(id: SearchKey(text: trimmed, dataVersion: referenceData.database?.dataVersion, people: canSearchPeople)) {
                 await search()
             }
@@ -51,6 +55,8 @@ struct ExploreScreen: View {
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .submitLabel(.search)
+                .focused($searchFocused)
+                .onSubmit { searchFocused = false }
             if !query.isEmpty {
                 Button { query = "" } label: { Image(systemName: "xmark.circle.fill") }
                     .foregroundStyle(.secondary)
