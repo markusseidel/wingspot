@@ -462,11 +462,22 @@
       }
     },
     "All check-ins" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Alle Check-ins"
+          }
+        }
+      }
+    },
+    "All check-ins except ones you set yourself" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Check-ins außer selbst gesetzten"
           }
         }
       }
@@ -1295,6 +1306,16 @@
         }
       }
     },
+    "Dismiss" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schließen"
+          }
+        }
+      }
+    },
     "Distance" : {
       "localizations" : {
         "de" : {
@@ -1672,6 +1693,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Folgt dir"
+          }
+        }
+      }
+    },
+    "Follows your sharing setting: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folgt deiner Freigabe: %@"
           }
         }
       }
@@ -2825,6 +2856,16 @@
         }
       }
     },
+    "Same as my sharing setting" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wie in meiner Freigabe"
+          }
+        }
+      }
+    },
     "Save" : {
       "localizations" : {
         "de" : {
@@ -3166,56 +3207,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Etwas ist schiefgelaufen. Bitte versuche es noch einmal."
-          }
-        }
-      }
-    },
-    "Dismiss" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Schließen"
-          }
-        }
-      }
-    },
-    "All check-ins except ones you set yourself" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alle Check-ins außer selbst gesetzten"
-          }
-        }
-      }
-    },
-    "Follows your sharing setting: %@" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Folgt deiner Freigabe: %@"
-          }
-        }
-      }
-    },
-    "Same as my sharing setting" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wie in meiner Freigabe"
-          }
-        }
-      }
-    },
-    "Who can see this" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wer das sieht"
           }
         }
       }
@@ -3678,6 +3669,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Welcher Flug?"
+          }
+        }
+      }
+    },
+    "Who can see this" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wer das sieht"
           }
         }
       }
