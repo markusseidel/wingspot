@@ -58,7 +58,7 @@ struct SharingSection: View {
             titleVisibility: .visible
         ) {
             Button("Only new check-ins") { apply(applyToExisting: false) }
-            Button("All check-ins") { apply(applyToExisting: true) }
+            Button("All check-ins except ones you set yourself") { apply(applyToExisting: true) }
             Button("Cancel", role: .cancel) { pending = nil }
         }
         .alert("Couldn't complete this", isPresented: Binding(get: { failure != nil }, set: { if !$0 { failure = nil } })) {

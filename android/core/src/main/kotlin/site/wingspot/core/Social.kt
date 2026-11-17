@@ -309,6 +309,20 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
         return rest.call("POST", "/rest/v1/rpc/set_sharing", payload).trim().toIntOrNull() ?: 0
     }
 
+    /** Who can see one of your own check-ins, and whether you set that for this check-in (true) or it follows your sharing choice. Null if it isn't on the server or isn't yours. */
+    suspend fun checkInVisibility(id: String): Pair<SharingChoice, Boolean>? {
+        val row = json.parseToJsonElement(rest.call("POST", "/rest/v1/rpc/get_checkin_visibility", """{"target":"$id"}""")).jsonArray.firstOrNull()?.jsonObject ?: return null
+        val choice = SharingChoice.entries.firstOrNull { it.wire == row["visibility"]?.jsonPrimitive?.content } ?: return null
+        return choice to (row["is_custom"]?.jsonPrimitive?.content == "true")
+    }
+
+    /** Sets who can see one of your own check-ins. A null [choice] goes back to your sharing choice. Returns the level now, or null if there is no such check-in of yours. */
+    suspend fun setCheckInVisibility(id: String, choice: SharingChoice?): SharingChoice? {
+        val payload = buildJsonObject { put("target", id); put("new_visibility", choice?.wire?.let(::JsonPrimitive) ?: kotlinx.serialization.json.JsonNull) }.toString()
+        val value = json.parseToJsonElement(rest.call("POST", "/rest/v1/rpc/set_checkin_visibility", payload)).let { (it as? JsonPrimitive)?.takeIf { p -> p.isString }?.content }
+        return SharingChoice.entries.firstOrNull { it.wire == value }
+    }
+
     /** XP, level and badges. Also catches up on badges for check-ins uploaded before they existed. Returns the answer as sent, to keep for offline use. */
     suspend fun progressJson(): String = rest.call("POST", "/rest/v1/rpc/get_my_progress", "{}")
 

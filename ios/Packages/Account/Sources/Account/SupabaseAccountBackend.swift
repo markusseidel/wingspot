@@ -423,6 +423,50 @@ private struct SetSharing: Encodable {
 }
 
 
+private struct VisibilityRow: Decodable {
+    let visibility: String
+    let isCustom: Bool
+
+    private enum CodingKeys: String, CodingKey {
+        case visibility
+        case isCustom = "is_custom"
+    }
+}
+
+private struct SetCheckInVisibility: Encodable {
+    let target: UUID
+    let newVisibility: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case target
+        case newVisibility = "new_visibility"
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(target, forKey: .target)
+        // An explicit null goes back to the account's sharing choice.
+        try container.encode(newVisibility, forKey: .newVisibility)
+    }
+}
+
+extension SupabaseAccountBackend: CheckInVisibilityBackend {
+    public func checkInVisibility(_ id: UUID) async throws -> CheckInVisibility? {
+        let rows: [VisibilityRow] = try await socialErrors {
+            try await client.rpc("get_checkin_visibility", params: CheckInParams(target: id)).execute().value
+        }
+        guard let row = rows.first, let level = SharingChoice(rawValue: row.visibility) else { return nil }
+        return CheckInVisibility(level: level, isCustom: row.isCustom)
+    }
+
+    public func setCheckInVisibility(_ id: UUID, to choice: SharingChoice?) async throws -> SharingChoice? {
+        let value: String? = try await socialErrors {
+            try await client.rpc("set_checkin_visibility", params: SetCheckInVisibility(target: id, newVisibility: choice?.rawValue)).execute().value
+        }
+        return value.flatMap(SharingChoice.init(rawValue:))
+    }
+}
+
 // MARK: - Feed
 
 extension SupabaseAccountBackend: FeedBackend {

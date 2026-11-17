@@ -274,6 +274,7 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
             flightNumber, { flightNumber = it }, input, { input = it }, registration, reference, type, { type = it }, cabin, { cabin = it }, seat, { seat = it },
             keptType = keptType,
         )
+        VisibilityRow(androidx.compose.ui.platform.LocalContext.current.applicationContext as WingspotApp, flight.id.toString())
         SaveBar(
             state, enabled = input.isBlank() || registration != null,
             onSave = {
@@ -283,6 +284,44 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
                 else chosenDay.atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant()
                 model.saveEdit(flight.id, registration, type, keptType, flightNumber, cabin, seat, at)
             },
+            onCancel = model::cancelEdit,
+        )
+    }
+}
+
+/** Corrects a sighting (the aircraft) or an airport visit (the reason), and says who can see it. Flights have [FlownEditScreen]. */
+@Composable
+fun SimpleEditScreen(app: WingspotApp, checkIn: LocalCheckIn, state: CheckInState, reference: ReferenceState, model: CheckInViewModel) {
+    val isVisit = checkIn.kind == "airport"
+    var input by rememberSaveable { mutableStateOf(checkIn.registration.orEmpty()) }
+    var type by remember { mutableStateOf<AircraftType?>(null) }
+    var reason by rememberSaveable { mutableStateOf(VisitContext.entries.firstOrNull { it.wire == checkIn.visitContext } ?: VisitContext.SPOTTING) }
+    val registration = Registration.parse(input)
+    // The type this sighting already has stays until another is chosen.
+    val keptType = checkIn.typeIcao.takeIf { type == null }
+    val hasAircraft = (registration != null && input.isNotBlank()) || type != null || keptType != null
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(stringResource(if (isVisit) R.string.edit_visit else R.string.edit_sighting), style = MaterialTheme.typography.titleLarge)
+        Text(checkIn.title, style = MaterialTheme.typography.titleLarge, fontFamily = FontFamily.Monospace)
+        if (isVisit) {
+            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                for (option in VisitContext.entries) {
+                    FilterChip(selected = reason == option, onClick = { reason = option }, label = { Text(stringResource(visitTitle(option))) })
+                }
+            }
+        } else {
+            OutlinedTextField(
+                value = input, onValueChange = { input = it }, singleLine = true,
+                label = { Text(stringResource(R.string.registration_label)) }, modifier = Modifier.fillMaxWidth(),
+            )
+            RegistrationHint(input, registration, orType = false)
+            if (keptType != null) Text(stringResource(R.string.type_kept, keptType), style = MaterialTheme.typography.bodySmall)
+            TypePicker(reference, type, { type = it })
+        }
+        VisibilityRow(app, checkIn.id.toString())
+        SaveBar(
+            state, enabled = isVisit || (hasAircraft && (input.isBlank() || registration != null)),
+            onSave = { model.saveSimpleEdit(checkIn.id, registration, type?.icaoCode ?: keptType, if (isVisit) reason else null) },
             onCancel = model::cancelEdit,
         )
     }

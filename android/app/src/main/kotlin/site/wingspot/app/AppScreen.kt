@@ -87,7 +87,7 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             when {
-                editing != null -> Scrolling { FlownEditScreen(editing, checkInState, refState, checkIn) }
+                editing != null -> Scrolling { if (editing.kind == "flown") FlownEditScreen(editing, checkInState, refState, checkIn) else SimpleEditScreen(app, editing, checkInState, refState, checkIn) }
                 checkInState.isOpen -> Scrolling { CheckInScreen(checkInState, refState, checkIn) }
                 page is Route.CheckInPage && me != null -> CheckInPage(app, social, checkIn, page.id, me)
                 page is Route.PersonPage && me != null -> PersonPage(app, social, page.id, me)

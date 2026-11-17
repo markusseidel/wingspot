@@ -199,3 +199,32 @@ private let dus = SpottedDraft.Place(airportID: 7, code: "DUS")
     let other = FlightDay.moment(of: now.addingTimeInterval(-3 * 86_400), now: now)
     #expect(Calendar.current.component(.hour, from: other) == 12)
 }
+
+@MainActor @Test func aSightingsAircraftIsCorrectedAndSentAgain() throws {
+    let context = try makeContext()
+    let store = CheckInStore(context: context)
+    let result = try store.saveSpotted(SpottedDraft(registration: Registration("DAIMA")))
+    #expect(try store.updateSpotted(id: result.id, registration: Registration("DAIMB"), type: a388))
+    let saved = try #require(try context.fetch(FetchDescriptor<LocalCheckIn>()).first { $0.id == result.id })
+    #expect(saved.registration == "D-AIMB")
+    #expect(saved.typeICAO == "A388")
+    #expect(saved.syncState == SyncState.pending.rawValue)
+}
+
+@MainActor @Test func aSightingNeedsARegistrationOrATypeAndMustExist() throws {
+    let store = CheckInStore(context: try makeContext())
+    let result = try store.saveSpotted(SpottedDraft(registration: Registration("DAIMA")))
+    #expect(try store.updateSpotted(id: result.id, registration: nil, type: nil) == false)
+    #expect(try store.updateSpotted(id: UUID(), registration: Registration("DAIMB"), type: nil) == false)
+}
+
+@MainActor @Test func theReasonForAVisitIsCorrectedAndSentAgain() throws {
+    let context = try makeContext()
+    let store = CheckInStore(context: context)
+    let result = try store.saveAirport(AirportDraft(airportID: 3, code: "FRA", context: .spotting))
+    #expect(try store.updateVisit(id: result.id, reason: .museum))
+    let saved = try #require(try context.fetch(FetchDescriptor<LocalCheckIn>()).first { $0.id == result.id })
+    #expect(saved.visitContext == "museum")
+    #expect(saved.syncState == SyncState.pending.rawValue)
+    #expect(try store.updateVisit(id: UUID(), reason: .working) == false)
+}

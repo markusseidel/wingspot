@@ -81,6 +81,8 @@
     <string name="route_first">First time on this route!</string>
     <string name="route_again">Flown %1$d times on this route</string>
     <string name="edit_flight">Edit flight</string>
+    <string name="edit_visit">Edit visit</string>
+    <string name="edit_sighting">Edit sighting</string>
     <string name="edit_details">Edit details</string>
     <string name="delete">Delete</string>
     <string name="delete_title">Delete this check-in?</string>
@@ -144,7 +146,12 @@
     <string name="share_friends">Friends</string>
     <string name="share_followers">Followers</string>
     <string name="share_everyone">Everyone</string>
-    <string name="apply_to_existing">Also change my existing check-ins</string>
+    <string name="visibility_load_failed">Couldn\'t load</string>
+    <string name="visibility_after_upload">Available once the check-in is uploaded</string>
+    <string name="who_can_see">Who can see this</string>
+    <string name="same_as_settings">Same as my sharing setting</string>
+    <string name="now_shown_to">Follows your sharing setting: %1$s.</string>
+    <string name="apply_to_existing">Also change my existing check-ins (except ones I set myself)</string>
     <string name="sharing_saved">Saved.</string>
     <string name="sharing_saved_n">Saved. %1$d existing check-ins changed.</string>
     <string name="blocked_title">Blocked people</string>

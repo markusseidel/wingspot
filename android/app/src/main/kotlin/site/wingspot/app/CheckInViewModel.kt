@@ -139,6 +139,20 @@ class CheckInViewModel(
         }
     }
 
+    /** Saves the corrected aircraft of a sighting, or the corrected reason of an airport visit. */
+    fun saveSimpleEdit(id: UUID, registration: Registration?, typeIcao: String?, reason: VisitContext?) {
+        viewModelScope.launch {
+            try {
+                if (reason != null) store.updateVisit(id, reason) else store.updateSpotted(id, registration, typeIcao)
+                mutable.value = mutable.value.copy(editing = null, saveFailed = false)
+                requestUpload()
+                reload()
+            } catch (e: Exception) {
+                mutable.value = mutable.value.copy(saveFailed = true)
+            }
+        }
+    }
+
     /** Deletes a check-in on the server and on the phone. If the server can't be reached it stays, and the page says so. */
     fun delete(id: UUID) {
         viewModelScope.launch {

@@ -17,6 +17,7 @@ struct WingspotApp: App {
     @State private var social: SocialStore
     @State private var feed: FeedStore
     @State private var announcements: AnnouncementStore
+    @State private var visibility: CheckInVisibilityStore
     @State private var reporter: Reporter
     @State private var terms: TermsStore
     @State private var sync: CheckInSyncCoordinator
@@ -54,6 +55,7 @@ struct WingspotApp: App {
         }
         _feed = State(initialValue: feedStore)
         _announcements = State(initialValue: AnnouncementStore(backend: accountBackend))
+        _visibility = State(initialValue: CheckInVisibilityStore(backend: accountBackend))
         _reporter = State(initialValue: Reporter(backend: accountBackend))
         _terms = State(initialValue: TermsStore(userID: { account.userID }))
         let uploader = APICheckInUploader(
@@ -90,6 +92,7 @@ struct WingspotApp: App {
                 .environment(social)
                 .environment(feed)
                 .environment(announcements)
+                .environment(visibility)
                 .environment(reporter)
                 .environment(terms)
                 .environment(sync)
@@ -149,7 +152,7 @@ struct WingspotApp: App {
         }
     }
 
-    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend & MyCheckInsBackend & ReactionBackend & PushBackend & AnnouncementBackend {
+    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend & MyCheckInsBackend & ReactionBackend & PushBackend & AnnouncementBackend & CheckInVisibilityBackend {
         var url = Bundle.main.object(forInfoDictionaryKey: "WingspotSupabaseURL") as? String
         var key = Bundle.main.object(forInfoDictionaryKey: "WingspotPublishableKey") as? String
         #if DEBUG

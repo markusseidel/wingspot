@@ -81,6 +81,8 @@
     <string name="route_first">Zum ersten Mal auf dieser Strecke!</string>
     <string name="route_again">%1$d-mal auf dieser Strecke geflogen</string>
     <string name="edit_flight">Flug bearbeiten</string>
+    <string name="edit_visit">Besuch bearbeiten</string>
+    <string name="edit_sighting">Sichtung bearbeiten</string>
     <string name="edit_details">Details bearbeiten</string>
     <string name="delete">Löschen</string>
     <string name="delete_title">Diesen Check-in löschen?</string>
@@ -144,7 +146,12 @@
     <string name="share_friends">Freunde</string>
     <string name="share_followers">Follower</string>
     <string name="share_everyone">Alle</string>
-    <string name="apply_to_existing">Auch meine bisherigen Check-ins ändern</string>
+    <string name="visibility_load_failed">Konnte nicht geladen werden</string>
+    <string name="visibility_after_upload">Verfügbar, sobald der Check-in hochgeladen ist</string>
+    <string name="who_can_see">Wer das sieht</string>
+    <string name="same_as_settings">Wie in meiner Freigabe</string>
+    <string name="now_shown_to">Folgt deiner Freigabe: %1$s.</string>
+    <string name="apply_to_existing">Auch meine bisherigen Check-ins ändern (außer selbst gesetzte)</string>
     <string name="sharing_saved">Gespeichert.</string>
     <string name="sharing_saved_n">Gespeichert. %1$d bisherige Check-ins geändert.</string>
     <string name="blocked_title">Blockierte Personen</string>

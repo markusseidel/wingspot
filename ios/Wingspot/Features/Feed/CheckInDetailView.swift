@@ -15,8 +15,8 @@ struct CheckInDetailView: View {
     @Environment(AccountStore.self) private var account
     @Environment(FeedStore.self) private var feed
     @Environment(CheckInSyncCoordinator.self) private var sync: CheckInSyncCoordinator?
-    /// Your flights saved on this device. Only these can be edited, because the details are sent from here.
-    @Query(filter: #Predicate<LocalCheckIn> { $0.kind == "flown" }) private var localFlights: [LocalCheckIn]
+    /// Your check-ins saved on this device. Only these can be edited, because the details are sent from here.
+    @Query private var localCheckIns: [LocalCheckIn]
     @State private var viewing: FeedPhoto?
     @State private var editing = false
     @State private var confirmDelete = false
@@ -56,7 +56,7 @@ struct CheckInDetailView: View {
     }
     private var photos: [FeedPhoto] { list.photos[item.id] ?? [] }
     private var isOwn: Bool { item.userID == account.userID }
-    private var canEdit: Bool { isOwn && item.kind == "flown" && localFlights.contains { $0.id == item.id } }
+    private var canEdit: Bool { isOwn && localCheckIns.contains { $0.id == item.id } }
 
     private func content(_ store: CheckInCommentStore) -> some View {
         List {
@@ -116,11 +116,16 @@ struct CheckInDetailView: View {
             Text("It is removed for good, with its photos, salutes and comments.")
         }
         .sheet(isPresented: $editing) {
-            FlownEditView(flightID: item.id) {
+            let saved: () -> Void = {
                 Task {
                     await sync?.waitUntilIdle()
                     await list.refresh()
                 }
+            }
+            if item.kind == "flown" {
+                FlownEditView(flightID: item.id, onSaved: saved)
+            } else {
+                CheckInEditView(checkInID: item.id, onSaved: saved)
             }
         }
         .safeAreaInset(edge: .bottom) { composer(store) }
@@ -240,6 +245,7 @@ struct CheckInDetailView: View {
                 }
                 Button("Delete", systemImage: "trash", role: .destructive) { confirmDelete = true }
             }
+            Section { CheckInVisibilityPicker(checkInID: item.id) }
         } else {
             Section {
                 Button("Report", systemImage: "flag") {
