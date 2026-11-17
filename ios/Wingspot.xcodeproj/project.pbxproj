@@ -11,6 +11,7 @@
 		03BF1BA5490802BB7BBE7871 /* PasswordSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0A9822D906C56C092225ED /* PasswordSignInView.swift */; };
 		0937BA0BF1EBF4732DA23138 /* ProfileEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E6559EBEC52E59BEEFE94D /* ProfileEditorView.swift */; };
 		0938348D4F0B21A4B41F7D9E /* CollectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA1AD56080AB71FB2708191 /* CollectionsView.swift */; };
+		0E3B3F51A2B856156A353725 /* CheckInEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8588DD19FFB9233DAE73D0FD /* CheckInEditView.swift */; };
 		10748D50CE99239391EE4B98 /* WingspotCore in Frameworks */ = {isa = PBXBuildFile; productRef = FA9C4D07C08E909754DE9B4F /* WingspotCore */; };
 		13A3F8B8C6248C62D540A996 /* PersonDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CABAD3AAA0CB6C6317A73DE /* PersonDetailView.swift */; };
 		1427422ED2866AC007958D1A /* AccountMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4D48FF8AE3EC90CE9EB299 /* AccountMessages.swift */; };
@@ -105,6 +106,7 @@
 		7A9D215092A1385FA8E52D3A /* CelebrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrationView.swift; sourceTree = "<group>"; };
 		82163058748258D0AE08F801 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		828B639D7292CFD9B11324B0 /* APICheckInUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICheckInUploader.swift; sourceTree = "<group>"; };
+		8588DD19FFB9233DAE73D0FD /* CheckInEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInEditView.swift; sourceTree = "<group>"; };
 		887512D89A6F5865C984DC89 /* BadgeStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeStyle.swift; sourceTree = "<group>"; };
 		8AB0A4D42441D44A92BC24E5 /* RegistrationPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationPageView.swift; sourceTree = "<group>"; };
 		995610FFAC434B480B981139 /* SharingSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingSection.swift; sourceTree = "<group>"; };
@@ -242,6 +244,7 @@
 			children = (
 				A459FFDFC00F28185B70D33B /* CheckInDeletion.swift */,
 				CAF19EBCDF218D5810AAEA61 /* CheckInDetailView.swift */,
+				8588DD19FFB9233DAE73D0FD /* CheckInEditView.swift */,
 				ACC6390EE07C2061FC444960 /* FeedScreen.swift */,
 				346D15D5FD800AAFC82408CF /* FlownEditView.swift */,
 				79CF16D48D79F1F5F3E7EBA1 /* PhotoViewer.swift */,
@@ -452,6 +455,7 @@
 				E2E45560E0A3701D1C226A90 /* CelebrationView.swift in Sources */,
 				DF77734F90690A4AEB359E70 /* CheckInDeletion.swift in Sources */,
 				9370EEC0F52860F9BEB227EB /* CheckInDetailView.swift in Sources */,
+				0E3B3F51A2B856156A353725 /* CheckInEditView.swift in Sources */,
 				186231C28F6E7DD1B25988E6 /* CheckInHistoryView.swift in Sources */,
 				B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */,
 				666833BB5AA51A95401FAE68 /* CheckInSheet.swift in Sources */,

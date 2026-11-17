@@ -307,6 +307,34 @@ public struct CheckInStore {
         return true
     }
 
+    /// Corrects the aircraft of a saved sighting and sends it again. Needs a registration or a type, like a new sighting.
+    /// Returns `false` when this device has no such sighting.
+    @discardableResult
+    public func updateSpotted(id: UUID, registration: Registration?, type: SpottedDraft.AircraftTypeChoice?) throws -> Bool {
+        let matches = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id && $0.kind == "spotted" }))
+        guard let sighting = matches.first, registration != nil || type != nil else { return false }
+        sighting.registration = registration?.value
+        sighting.typeICAO = type?.icaoCode
+        sighting.typeName = type?.name
+        sighting.syncState = SyncState.pending.rawValue
+        sighting.syncError = nil
+        try context.save()
+        return true
+    }
+
+    /// Corrects the reason for a saved airport visit and sends it again.
+    /// Returns `false` when this device has no such visit.
+    @discardableResult
+    public func updateVisit(id: UUID, reason: VisitContext) throws -> Bool {
+        let matches = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id && $0.kind == "airport" }))
+        guard let visit = matches.first else { return false }
+        visit.visitContext = reason.rawValue
+        visit.syncState = SyncState.pending.rawValue
+        visit.syncError = nil
+        try context.save()
+        return true
+    }
+
     /// Removes a check-in from this device, with its photos. Does nothing if there is none.
     public func deleteLocal(id: UUID) throws {
         for checkIn in try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id })) {

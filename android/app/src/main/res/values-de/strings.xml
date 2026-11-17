@@ -81,6 +81,8 @@
     <string name="route_first">Zum ersten Mal auf dieser Strecke!</string>
     <string name="route_again">%1$d-mal auf dieser Strecke geflogen</string>
     <string name="edit_flight">Flug bearbeiten</string>
+    <string name="edit_visit">Besuch bearbeiten</string>
+    <string name="edit_sighting">Sichtung bearbeiten</string>
     <string name="edit_details">Details bearbeiten</string>
     <string name="delete">Löschen</string>
     <string name="delete_title">Diesen Check-in löschen?</string>

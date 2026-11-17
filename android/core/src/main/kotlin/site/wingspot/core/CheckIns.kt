@@ -244,6 +244,35 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
         true
     }
 
+    /**
+     * Corrects the aircraft of a saved sighting and sends it again. Needs a registration or a type, like a new sighting.
+     * Returns false when this phone has no such sighting.
+     */
+    suspend fun updateSpotted(id: UUID, registration: Registration?, typeIcao: String?): Boolean = db {
+        if (registration == null && typeIcao == null) return@db false
+        var found = false
+        connection.prepare("SELECT 1 FROM checkins WHERE id = ? AND kind = 'spotted'").use { it.bindText(1, id.toString()); found = it.step() }
+        if (!found) return@db false
+        connection.prepare("UPDATE checkins SET registration = ?, type_icao = ?, sync_state = 'pending', reject_code = NULL WHERE id = ?").use {
+            registration?.let { r -> it.bindText(1, r.value) } ?: it.bindNull(1)
+            typeIcao?.let { t -> it.bindText(2, t.uppercase()) } ?: it.bindNull(2)
+            it.bindText(3, id.toString())
+            it.step()
+        }
+        true
+    }
+
+    /** Corrects the reason for a saved airport visit and sends it again. Returns false when this phone has no such visit. */
+    suspend fun updateVisit(id: UUID, reason: VisitContext): Boolean = db {
+        var found = false
+        connection.prepare("SELECT 1 FROM checkins WHERE id = ? AND kind = 'airport'").use { it.bindText(1, id.toString()); found = it.step() }
+        if (!found) return@db false
+        connection.prepare("UPDATE checkins SET visit_context = ?, sync_state = 'pending', reject_code = NULL WHERE id = ?").use {
+            it.bindText(1, reason.wire); it.bindText(2, id.toString()); it.step()
+        }
+        true
+    }
+
     /** Removes a check-in and its photos from this phone. Does nothing if there is none. */
     suspend fun delete(id: UUID) = db {
         for (sql in listOf("DELETE FROM photos WHERE checkin_id = ?", "DELETE FROM checkins WHERE id = ?")) {

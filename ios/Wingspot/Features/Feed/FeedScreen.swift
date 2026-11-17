@@ -16,14 +16,14 @@ struct FeedScreen: View {
     @Environment(PushRouter.self) private var router
     @State private var personToOpen: OpenPerson?
     @Environment(CheckInSyncCoordinator.self) private var sync: CheckInSyncCoordinator?
-    /// The flights saved on this device. Only these can be edited, because the details are sent from here.
-    @Query(filter: #Predicate<LocalCheckIn> { $0.kind == "flown" }) private var localFlights: [LocalCheckIn]
-    @State private var editing: EditedFlight?
+    /// The check-ins saved on this device. Only these can be edited, because the details are sent from here.
+    @Query private var localCheckIns: [LocalCheckIn]
+    @State private var editing: EditedCheckIn?
     @State private var deleting: FeedItem?
     @State private var deleteFailed = false
     @Environment(\.modelContext) private var modelContext
 
-    private struct EditedFlight: Identifiable { let id: UUID }
+    private struct EditedCheckIn: Identifiable { let id: UUID; let kind: String }
 
     private struct OpenPerson: Identifiable, Hashable { let id: UUID }
 
@@ -67,12 +67,17 @@ struct FeedScreen: View {
             } message: {
                 Text("Please check your connection and try again.")
             }
-            .sheet(item: $editing) { flight in
-                FlownEditView(flightID: flight.id) {
+            .sheet(item: $editing) { edited in
+                let saved: () -> Void = {
                     Task {
                         await sync?.waitUntilIdle()
                         await feed.refresh()
                     }
+                }
+                if edited.kind == "flown" {
+                    FlownEditView(flightID: edited.id, onSaved: saved)
+                } else {
+                    CheckInEditView(checkInID: edited.id, onSaved: saved)
                 }
             }
         }
@@ -162,7 +167,7 @@ struct FeedScreen: View {
 
     private var list: some View {
         let visible = feed.items.withoutAirportsOfListedFlights()
-        let editable = Set(localFlights.map(\.id))
+        let editable = Set(localCheckIns.map(\.id))
         return List {
             AnnouncementCards(store: announcements)
             if let failure = feed.failure {
@@ -177,7 +182,7 @@ struct FeedScreen: View {
                     onOpen: { commentsFor = item },
                     onReport: { report = ReportTarget(kind: .checkin, id: item.id, subject: "this check-in") },
                     onReportPhoto: { report = ReportTarget(kind: .photo, id: $0.id, subject: "this photo") },
-                    onEdit: item.userID == account.userID && editable.contains(item.id) ? { editing = EditedFlight(id: item.id) } : nil,
+                    onEdit: item.userID == account.userID && editable.contains(item.id) ? { editing = EditedCheckIn(id: item.id, kind: item.kind) } : nil,
                     onDelete: item.userID == account.userID ? { deleting = item } : nil
                 )
                     .task {

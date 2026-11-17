@@ -81,6 +81,8 @@
     <string name="route_first">First time on this route!</string>
     <string name="route_again">Flown %1$d times on this route</string>
     <string name="edit_flight">Edit flight</string>
+    <string name="edit_visit">Edit visit</string>
+    <string name="edit_sighting">Edit sighting</string>
     <string name="edit_details">Edit details</string>
     <string name="delete">Delete</string>
     <string name="delete_title">Delete this check-in?</string>

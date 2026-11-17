@@ -202,7 +202,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
         } catch (e: ApiException) {
             commentsFailed = true
         }
-        localFlight = runCatching { app.checkIns.find(UUID.fromString(id))?.kind == "flown" }.getOrDefault(false)
+        localFlight = runCatching { app.checkIns.find(UUID.fromString(id)) != null }.getOrDefault(false)
     }
 
     if (pickVisibility) VisibilityDialog(app, id, onClose = { pickVisibility = false })
@@ -215,7 +215,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                     IconButton(onClick = { menu = true }, modifier = Modifier.size(48.dp).testTag("page-more")) { Text("⋮", style = MaterialTheme.typography.titleLarge) }
                     DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
                         if (shown.userId == me) {
-                            if (shown.kind == "flown" && localFlight) {
+                            if (localFlight) {
                                 DropdownMenuItem(text = { Text(stringResource(R.string.edit_details)) }, onClick = { menu = false; checkIn.edit(UUID.fromString(id)) })
                             }
                             DropdownMenuItem(text = { Text(stringResource(R.string.who_can_see)) }, onClick = { menu = false; pickVisibility = true })

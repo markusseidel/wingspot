@@ -1,0 +1,131 @@
+import Persistence
+import ReferenceData
+import SwiftData
+import SwiftUI
+import WingspotCore
+
+/// Corrects a sighting (the aircraft) or an airport visit (the reason), and says who can see it. Flights have their
+/// own, longer screen.
+struct CheckInEditView: View {
+    let checkInID: UUID
+    let onSaved: () -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+    @Environment(CheckInSyncCoordinator.self) private var sync: CheckInSyncCoordinator?
+
+    @State private var kind = ""
+    @State private var title = ""
+    @State private var registrationInput = ""
+    @State private var typeCode: String?
+    @State private var typeName: String?
+    @State private var reason = VisitContext.spotting
+    @State private var loaded = false
+    @State private var failed = false
+
+    private var registration: Registration? { Registration(registrationInput) }
+    private var hasRegistrationInput: Bool { !registrationInput.trimmingCharacters(in: .whitespaces).isEmpty }
+    private var typeBinding: Binding<AircraftType?> {
+        Binding(
+            get: { typeCode.map { AircraftType(icaoCode: $0, manufacturer: typeName ?? $0, model: "") } },
+            set: { typeCode = $0?.icaoCode; typeName = $0?.name }
+        )
+    }
+    /// A sighting needs a registration or a type, like a new one.
+    private var canSave: Bool {
+        guard loaded else { return false }
+        if kind == "spotted" { return (registration != nil && hasRegistrationInput) || typeCode != nil }
+        return true
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    LabeledContent(kind == "airport" ? "Airport" : "Aircraft", value: title)
+                }
+                if kind == "spotted" {
+                    Section {
+                        TextField("Registration, e.g. DAIMA", text: $registrationInput)
+                            .font(.system(.body, design: .monospaced))
+                            .keyboardType(.asciiCapable)
+                            .textInputAutocapitalization(.characters)
+                            .autocorrectionDisabled()
+                        NavigationLink {
+                            TypeSearchView(selection: typeBinding)
+                        } label: {
+                            LabeledContent("Aircraft type", value: typeName ?? String(localized: "Optional"))
+                        }
+                    } header: {
+                        Text("Details")
+                    } footer: {
+                        if hasRegistrationInput, registration == nil {
+                            Text("Not a valid registration yet")
+                        }
+                    }
+                } else if kind == "airport" {
+                    Section {
+                        Picker("Reason", selection: $reason) {
+                            ForEach(VisitContext.allCases, id: \.self) { Text($0.title).tag($0) }
+                        }
+                    }
+                }
+                Section { CheckInVisibilityPicker(checkInID: checkInID) }
+            }
+            .navigationTitle(kind == "airport" ? "Edit visit" : "Edit sighting")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save", action: save).disabled(!canSave)
+                }
+            }
+            .alert("Couldn't save this check-in", isPresented: $failed) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("Please try again.")
+            }
+            .task { load() }
+        }
+    }
+
+    private func load() {
+        guard !loaded else { return }
+        let id = checkInID
+        let matches = (try? modelContext.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id }))) ?? []
+        guard let checkIn = matches.first else { return }
+        kind = checkIn.kind
+        switch checkIn.kind {
+        case "spotted":
+            title = checkIn.registration ?? checkIn.typeICAO ?? "?"
+            registrationInput = checkIn.registration ?? ""
+            typeCode = checkIn.typeICAO
+            typeName = checkIn.typeName
+        case "airport":
+            title = checkIn.airportCode ?? "?"
+            reason = checkIn.visitContext.flatMap(VisitContext.init(rawValue:)) ?? .spotting
+        default:
+            break
+        }
+        loaded = true
+    }
+
+    private func save() {
+        do {
+            let store = CheckInStore(context: modelContext)
+            if kind == "spotted" {
+                try store.updateSpotted(
+                    id: checkInID, registration: registration,
+                    type: typeCode.map { .init(icaoCode: $0, name: typeName ?? $0) }
+                )
+            } else if kind == "airport" {
+                try store.updateVisit(id: checkInID, reason: reason)
+            }
+            sync?.requestSync()
+            onSaved()
+            dismiss()
+        } catch {
+            failed = true
+        }
+    }
+}
