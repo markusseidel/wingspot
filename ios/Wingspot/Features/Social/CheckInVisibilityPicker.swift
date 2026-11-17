@@ -9,6 +9,9 @@ struct CheckInVisibilityPicker: View {
     @Environment(CheckInVisibilityStore.self) private var store
     @State private var current: CheckInVisibility?
     @State private var failure: AccountError?
+    @State private var loading = true
+    /// Why the level couldn't be read, so a problem isn't hidden.
+    @State private var loadFailure: String?
 
     /// What the picker shows: nil is "same as my sharing setting".
     private var selection: Binding<SharingChoice?> {
@@ -20,6 +23,21 @@ struct CheckInVisibilityPicker: View {
 
     var body: some View {
         Group {
+            if current == nil {
+                Button { Task { await load() } } label: {
+                    LabeledContent("Who can see this") {
+                        if loading {
+                            ProgressView()
+                        } else if let loadFailure {
+                            Text(verbatim: loadFailure).foregroundStyle(.secondary).multilineTextAlignment(.trailing)
+                        } else {
+                            Text("Available once the check-in is uploaded").foregroundStyle(.secondary).multilineTextAlignment(.trailing)
+                        }
+                    }
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("visibility-unavailable")
+            }
             if let current {
                 Picker("Who can see this", selection: selection) {
                     Text("Same as my sharing setting").tag(SharingChoice?.none)
@@ -33,12 +51,25 @@ struct CheckInVisibilityPicker: View {
                 }
             }
         }
-        .task(id: checkInID) { current = try? await store.visibility(of: checkInID) }
+        .task(id: checkInID) { await load() }
         .alert("Couldn't complete this", isPresented: Binding(get: { failure != nil }, set: { if !$0 { failure = nil } })) {
             Button("OK", role: .cancel) {}
         } message: {
             if let failure { Text(failure.message) }
         }
+    }
+
+    private func load() async {
+        loading = true
+        loadFailure = nil
+        do {
+            current = try await store.visibility(of: checkInID)
+        } catch let error as AccountError {
+            loadFailure = String(localized: error.message)
+        } catch {
+            loadFailure = String(localized: "Couldn't load")
+        }
+        loading = false
     }
 
     private func set(_ choice: SharingChoice?) async {

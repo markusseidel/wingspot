@@ -53,8 +53,15 @@ private fun rememberVisibility(app: WingspotApp, id: String, reload: Int): Pair<
 fun VisibilityRow(app: WingspotApp, id: String) {
     var reload by remember { mutableStateOf(0) }
     var open by remember { mutableStateOf(false) }
-    val (current, _) = rememberVisibility(app, id, reload)
-    if (current == null) return
+    val (current, failed) = rememberVisibility(app, id, reload)
+    if (current == null) {
+        // Not hidden, so a problem is seen: still loading, not on the server yet, or the request failed.
+        Row(Modifier.fillMaxWidth().testTag("visibility-unavailable"), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.who_can_see))
+            Text(stringResource(if (failed) R.string.visibility_load_failed else R.string.visibility_after_upload), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(vertical = 12.dp))
+        }
+        return
+    }
     Row(Modifier.fillMaxWidth().clickable { open = true }.testTag("visibility-row"), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
         Text(stringResource(R.string.who_can_see))
         Text(stringResource(current.level.label()) + " ›", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(vertical = 12.dp))

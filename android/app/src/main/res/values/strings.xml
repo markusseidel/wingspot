@@ -144,6 +144,8 @@
     <string name="share_friends">Friends</string>
     <string name="share_followers">Followers</string>
     <string name="share_everyone">Everyone</string>
+    <string name="visibility_load_failed">Couldn\'t load</string>
+    <string name="visibility_after_upload">Available once the check-in is uploaded</string>
     <string name="who_can_see">Who can see this</string>
     <string name="same_as_settings">Same as my sharing setting</string>
     <string name="now_shown_to">Follows your sharing setting: %1$s.</string>

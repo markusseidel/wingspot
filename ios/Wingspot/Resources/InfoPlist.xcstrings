@@ -1,42 +1,66 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "NSCameraUsageDescription": {
-      "comment": "Camera permission prompt for scanning boarding passes",
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wingspot scannt deine Bordkarte, um einen Flug auszufüllen. Dein Name und dein Buchungscode werden nie gespeichert."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wingspot scans your boarding pass to fill in a flight. Your name and booking code are never saved."
+  "sourceLanguage" : "en",
+  "strings" : {
+    "CFBundleDisplayName" : {
+      "comment" : "Bundle display name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Wingspot"
           }
         }
       }
     },
-    "NSLocationWhenInUseUsageDescription": {
-      "comment": "Location permission prompt",
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wingspot schlägt dir beim Check-in den Flughafen vor, an dem du gerade bist."
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Wingspot"
+          }
+        }
+      }
+    },
+    "NSCameraUsageDescription" : {
+      "comment" : "Camera permission prompt for scanning boarding passes",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wingspot scannt deine Bordkarte, um einen Flug auszufüllen. Dein Name und dein Buchungscode werden nie gespeichert."
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wingspot suggests the airport you're at when you check in."
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wingspot scans your boarding pass to fill in a flight. Your name and booking code are never saved."
+          }
+        }
+      }
+    },
+    "NSLocationWhenInUseUsageDescription" : {
+      "comment" : "Location permission prompt",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wingspot schlägt dir beim Check-in den Flughafen vor, an dem du gerade bist."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wingspot suggests the airport you're at when you check in."
           }
         }
       }
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }

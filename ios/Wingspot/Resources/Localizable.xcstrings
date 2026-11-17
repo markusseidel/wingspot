@@ -532,6 +532,16 @@
         }
       }
     },
+    "Available once the check-in is uploaded" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verfügbar, sobald der Check-in hochgeladen ist"
+          }
+        }
+      }
+    },
     "Badges" : {
       "localizations" : {
         "de" : {
@@ -1035,6 +1045,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Daten konnten nicht exportiert werden"
+          }
+        }
+      }
+    },
+    "Couldn't load" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konnte nicht geladen werden"
           }
         }
       }

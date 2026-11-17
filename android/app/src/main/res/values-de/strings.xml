@@ -144,6 +144,8 @@
     <string name="share_friends">Freunde</string>
     <string name="share_followers">Follower</string>
     <string name="share_everyone">Alle</string>
+    <string name="visibility_load_failed">Konnte nicht geladen werden</string>
+    <string name="visibility_after_upload">Verfügbar, sobald der Check-in hochgeladen ist</string>
     <string name="who_can_see">Wer das sieht</string>
     <string name="same_as_settings">Wie in meiner Freigabe</string>
     <string name="now_shown_to">Folgt deiner Freigabe: %1$s.</string>
