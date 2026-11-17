@@ -79,6 +79,9 @@ fun ExploreTab(app: WingspotApp, model: SocialViewModel, me: String?, reference:
         people = if (canSearchPeople) try { app.social.searchPeople(trimmed, me!!, 8) } catch (e: ApiException) { emptyList() } else emptyList()
     }
 
+    // The keyboard goes away with the search key and when the tab is left, so it never covers the tab bar.
+    val focus = androidx.compose.ui.platform.LocalFocusManager.current
+    androidx.compose.runtime.DisposableEffect(Unit) { onDispose { focus.clearFocus() } }
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(Modifier.fillMaxWidth().padding(top = 16.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
             Text(stringResource(R.string.tab_explore), style = MaterialTheme.typography.headlineMedium, modifier = Modifier.weight(1f))
@@ -87,7 +90,9 @@ fun ExploreTab(app: WingspotApp, model: SocialViewModel, me: String?, reference:
             }
         }
         OutlinedTextField(
-            value = query, onValueChange = { query = it }, singleLine = true, modifier = Modifier.fillMaxWidth().testTag("explore-search"),
+            value = query, onValueChange = { query = it }, singleLine = true,
+            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(imeAction = androidx.compose.ui.text.input.ImeAction.Search),
+            keyboardActions = androidx.compose.foundation.text.KeyboardActions(onSearch = { focus.clearFocus() }), modifier = Modifier.fillMaxWidth().testTag("explore-search"),
             placeholder = { Text(stringResource(R.string.search_everything), maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis) },
             leadingIcon = { Icon(painterResource(R.drawable.ic_search), contentDescription = null) },
             trailingIcon = { if (query.isNotEmpty()) TextButton(onClick = { query = "" }) { Text(stringResource(R.string.clear)) } },
