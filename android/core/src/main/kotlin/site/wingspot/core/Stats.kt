@@ -17,7 +17,19 @@ data class CheckInStats(
     val types: Int = 0,
     /** The airports checked in at, including the two airports a flight checks in. */
     val airports: Int = 0,
+    /** How many flights were flown between each pair of airports (origin id, destination id). */
+    val routes: Map<Pair<Long, Long>, Int> = emptyMap(),
 ) {
+    /**
+     * The kilometres flown: the great-circle distance of each flight, rounded as the server does.
+     * Flights whose airports are not known are left out.
+     */
+    fun kilometres(coordinate: (Long) -> GeoCoordinate?): Int = routes.entries.sumOf { (route, count) ->
+        val from = coordinate(route.first)
+        val to = coordinate(route.second)
+        if (from == null || to == null) 0 else Math.round(GreatCircle.distanceKm(from, to)).toInt() * count
+    }
+
     companion object {
         fun counted(all: List<LocalCheckIn>) = all.filter { it.syncState != SyncState.REJECTED }
 
@@ -28,17 +40,23 @@ data class CheckInStats(
             var sightings = 0
             var visits = 0
             var flights = 0
+            val routes = mutableMapOf<Pair<Long, Long>, Int>()
             val counted = counted(all)
             for (c in counted) {
                 when (c.kind) {
                     "spotted" -> { sightings++; c.airportId?.let(airports::add) }
                     "airport" -> { visits++; c.airportId?.let(airports::add) }
-                    "flown" -> flights++
+                    "flown" -> {
+                        flights++
+                        val origin = c.originId
+                        val destination = c.destinationId
+                        if (origin != null && destination != null) routes.merge(origin to destination, 1, Int::plus)
+                    }
                 }
                 c.registration?.let(registrations::add)
                 c.typeIcao?.let(types::add)
             }
-            return CheckInStats(counted.size, sightings, visits, flights, registrations.size, types.size, airports.size)
+            return CheckInStats(counted.size, sightings, visits, flights, registrations.size, types.size, airports.size, routes)
         }
     }
 }

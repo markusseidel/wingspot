@@ -90,3 +90,16 @@ private func all(_ context: ModelContext) throws -> [LocalCheckIn] {
     _ = try store.saveSpotted(SpottedDraft(registration: Registration("DAIMB")), ownerID: UUID())
     #expect(CheckInCollections(try all(context), userID: me).aircraft.map(\.title) == ["D-AIMA"])
 }
+
+@MainActor @Test func kilometresFlownAddsUpEachFlightFromItsAirports() throws {
+    let context = try makeContext()
+    let store = CheckInStore(context: context)
+    _ = try store.saveFlown(FlownDraft(origin: fra, destination: jfk, type: b744))
+    _ = try store.saveFlown(FlownDraft(origin: fra, destination: jfk, type: b744))
+    _ = try store.saveFlown(FlownDraft(origin: fra, destination: dus, type: b744))
+    let stats = CheckInStats(try all(context), userID: nil)
+    // About 100 km from the equator to a degree of latitude: FRA 0,0 and JFK 1,0 are 111 km apart, DUS is not known.
+    let places: [Int: GeoCoordinate] = [3: .init(latitude: 0, longitude: 0), 9: .init(latitude: 1, longitude: 0)]
+    #expect(stats.kilometres { places[$0] } == 222)
+    #expect(stats.kilometres { _ in nil } == 0)
+}

@@ -203,6 +203,7 @@
     <string name="stat_aircraft">Aircraft</string>
     <string name="stat_types">Types</string>
     <string name="stat_airports">Airports</string>
+    <string name="stat_distance_flown">Distance flown</string>
     <string name="export_data">Export my data</string>
     <string name="export_hint">A file with your profile, check-ins and everything else we store about you. Photos are listed, not included.</string>
     <string name="export_failed">Couldn\'t export your data. Please try again.</string>

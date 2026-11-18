@@ -3,6 +3,7 @@ import Persistence
 import ReferenceData
 import SwiftData
 import SwiftUI
+import WingspotCore
 
 /// The Profile tab. Collections and the map join the stats in Milestone 6.
 struct ProfileScreen: View {
@@ -273,11 +274,34 @@ private struct ProfileDetailsView: View {
 private struct ProfileStatsRows: View {
     let stats: CheckInStats
 
+    @AppStorage(DistanceUnit.storageKey) private var unit = DistanceUnit.kilometres
+    @Environment(ReferenceDataStore.self) private var referenceData
+    @State private var kilometres: Int?
+
+    private struct Key: Hashable {
+        let routes: [CheckInStats.Route: Int]
+        let dataVersion: String?
+    }
+
     var body: some View {
         LabeledContent("Check-ins") { Text(stats.checkIns, format: .number) }
         LabeledContent("Aircraft seen") { Text(stats.aircraft, format: .number) }
         LabeledContent("Aircraft types") { Text(stats.types, format: .number) }
         LabeledContent("Airports") { Text(stats.airports, format: .number) }
         LabeledContent("Flights") { Text(stats.flights, format: .number) }
+            .task(id: Key(routes: stats.routes, dataVersion: referenceData.database?.dataVersion)) { await loadKilometres() }
+        if let kilometres, kilometres > 0 {
+            LabeledContent("Distance flown") { Text(verbatim: unit.format(km: kilometres)) }
+        }
+    }
+
+    /// The airports of the flights come from the reference data on this iPhone, so it works offline.
+    private func loadKilometres() async {
+        guard let database = referenceData.database else { return }
+        var places = [Int: GeoCoordinate]()
+        for id in Set(stats.routes.keys.flatMap { [$0.origin, $0.destination] }) {
+            if let airport = try? await database.airport(id: id) { places[id] = airport.coordinate }
+        }
+        kilometres = stats.kilometres { places[$0] }
     }
 }
