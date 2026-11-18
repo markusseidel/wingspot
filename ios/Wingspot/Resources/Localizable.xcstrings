@@ -1346,6 +1346,16 @@
         }
       }
     },
+    "Distance flown" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geflogene Strecke"
+          }
+        }
+      }
+    },
     "Distances" : {
       "localizations" : {
         "de" : {

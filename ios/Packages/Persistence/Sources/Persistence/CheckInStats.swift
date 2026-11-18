@@ -1,4 +1,5 @@
 import Foundation
+import WingspotCore
 
 /// The numbers on the profile, worked out from the check-ins on this device so they work offline.
 /// Check-ins the server refused are left out, because the server doesn't count them either.
@@ -14,6 +15,14 @@ public struct CheckInStats: Equatable, Sendable {
     /// The airports checked in at, by spotting or visiting, including the two airports a flight checks in.
     public var airportIDs = Set<Int>()
     public var airports: Int { airportIDs.count }
+
+    /// A flight's two airports. Its distance is worked out from where the airports are.
+    public struct Route: Hashable, Sendable {
+        public let origin: Int
+        public let destination: Int
+    }
+    /// How many flights were flown on each route.
+    public var routes = [Route: Int]()
 
     public init() {}
 
@@ -41,6 +50,9 @@ public struct CheckInStats: Equatable, Sendable {
                 if let airport = checkIn.airportID { airportIDs.insert(airport) }
             case "flown":
                 flights += 1
+                if let origin = checkIn.originID, let destination = checkIn.destinationID {
+                    routes[Route(origin: origin, destination: destination), default: 0] += 1
+                }
             default:
                 break
             }
@@ -49,5 +61,14 @@ public struct CheckInStats: Equatable, Sendable {
         }
         aircraft = registrations.count
         types = typeCodes.count
+    }
+
+    /// The kilometres flown: the great-circle distance of each flight, rounded as the server does.
+    /// Flights whose airports are not known are left out.
+    public func kilometres(coordinate: (Int) -> GeoCoordinate?) -> Int {
+        routes.reduce(0) { total, entry in
+            guard let from = coordinate(entry.key.origin), let to = coordinate(entry.key.destination) else { return total }
+            return total + Int(GreatCircle.distanceKm(from: from, to: to).rounded()) * entry.value
+        }
     }
 }

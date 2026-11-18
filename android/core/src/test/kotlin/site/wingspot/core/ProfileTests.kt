@@ -32,6 +32,17 @@ class StatsTests {
     }
 
     @Test
+    fun kilometresFlownAddsUpEachFlightFromItsAirports() {
+        fun flight(origin: Long, destination: Long) =
+            checkIn("flown", "2026-11-05T10:00:00Z").copy(originId = origin, destinationId = destination)
+        val stats = CheckInStats.of(listOf(flight(3, 9), flight(3, 9), flight(3, 7)))
+        // 3 is at 0,0 and 9 one degree of latitude north, about 111 km. Airport 7 is not known, so its flight is left out.
+        val places = mapOf(3L to GeoCoordinate(0.0, 0.0), 9L to GeoCoordinate(1.0, 0.0))
+        assertEquals(222, stats.kilometres { places[it] })
+        assertEquals(0, stats.kilometres { null })
+    }
+
+    @Test
     fun collectionsAreSortedByCountThenByRecency() {
         val lists = Collections.of(all)
         assertEquals(listOf("D-AIMA", "D-AIXB"), lists.aircraft.map { it.title })

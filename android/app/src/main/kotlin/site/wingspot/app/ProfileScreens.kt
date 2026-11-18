@@ -32,6 +32,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -56,6 +57,8 @@ import site.wingspot.core.CheckInStats
 import site.wingspot.core.CollectionEntry
 import site.wingspot.core.Collections
 import site.wingspot.core.DistanceUnit
+import site.wingspot.core.GeoCoordinate
+import site.wingspot.core.ReferenceDatabase
 import site.wingspot.core.LocalCheckIn
 import site.wingspot.core.SocialApi
 import site.wingspot.core.Username
@@ -109,11 +112,11 @@ fun ProfileTab(
                 }
             }
             state.error?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error, modifier = Modifier.testTag("error")) }
-            if (stats.checkIns > 0) StatsCard(stats)
+            if (stats.checkIns > 0) StatsCard(stats, reference.database)
             OutlinedButton(onClick = { social.open(Route.Collections) }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.collections)) }
         } else {
             progress.progress?.let { LevelHeader(it) }
-            StatsCard(stats)
+            StatsCard(stats, reference.database)
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Detail(stringResource(R.string.username_label), mine?.username?.let { "@$it" } ?: "…")
@@ -191,12 +194,23 @@ private fun Detail(label: String, value: String) {
 }
 
 @Composable
-private fun StatsCard(stats: CheckInStats) {
+private fun StatsCard(stats: CheckInStats, database: ReferenceDatabase?) {
+    val unit = (LocalContext.current.applicationContext as WingspotApp).prefs.unit
+    // The airports of the flights come from the reference data on this phone, so it works offline.
+    val kilometres by produceState(0, stats.routes, database) {
+        val db = database ?: return@produceState
+        val places = mutableMapOf<Long, GeoCoordinate>()
+        for (id in stats.routes.keys.flatMap { listOf(it.first, it.second) }.toSet()) {
+            db.airport(id)?.let { places[id] = GeoCoordinate(it.latitude, it.longitude) }
+        }
+        value = stats.kilometres { places[it] }
+    }
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Detail(stringResource(R.string.stat_check_ins), stats.checkIns.toString())
             Detail(stringResource(R.string.stat_sightings), stats.sightings.toString())
             Detail(stringResource(R.string.stat_flights), stats.flights.toString())
+            if (kilometres > 0) Detail(stringResource(R.string.stat_distance_flown), unit.format(kilometres))
             Detail(stringResource(R.string.stat_airport_visits), stats.airportVisits.toString())
             Detail(stringResource(R.string.stat_aircraft), stats.aircraft.toString())
             Detail(stringResource(R.string.stat_types), stats.types.toString())
