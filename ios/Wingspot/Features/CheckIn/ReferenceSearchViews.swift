@@ -24,9 +24,51 @@ private struct ReferenceSearchView<Item: Identifiable & Hashable & Sendable, Row
     @Environment(\.dismiss) private var dismiss
     @State private var query = ""
     @State private var results: [Item] = []
-    @State private var isSearchPresented = true
+    @FocusState private var isFocused: Bool
 
     var body: some View {
+        VStack(spacing: 0) {
+            searchField
+            list
+        }
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+        .autocorrectionDisabled()
+        .task(id: query) { await runSearch() }
+        .task {
+            // The keyboard opens by itself, as the search field used to.
+            try? await Task.sleep(for: .milliseconds(150))
+            isFocused = true
+        }
+    }
+
+    /// The field is part of the page, not the navigation bar. The bar's own search field folds back into the title
+    /// when it is cancelled, and the list jumps while the keyboard closes.
+    private var searchField: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
+            TextField(prompt, text: $query)
+                .focused($isFocused)
+                .submitLabel(.search)
+            if isFocused || !query.isEmpty {
+                Button {
+                    query = ""
+                    isFocused = false
+                } label: {
+                    Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Clear search")
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(.fill.tertiary, in: Capsule())
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+    }
+
+    private var list: some View {
         List {
             if selection != nil, query.isEmpty {
                 Button(clearTitle, role: .destructive) { choose(nil) }
@@ -48,12 +90,7 @@ private struct ReferenceSearchView<Item: Identifiable & Hashable & Sendable, Row
             }
         }
         .overlay { placeholder }
-        .navigationTitle(title)
-        .navigationBarTitleDisplayMode(.inline)
-        .searchable(text: $query, isPresented: $isSearchPresented,
-                    placement: .navigationBarDrawer(displayMode: .always), prompt: prompt)
-        .autocorrectionDisabled()
-        .task(id: query) { await runSearch() }
+        .scrollDismissesKeyboard(.interactively)
     }
 
     @ViewBuilder private var placeholder: some View {
