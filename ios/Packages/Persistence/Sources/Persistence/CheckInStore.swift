@@ -366,6 +366,34 @@ public struct CheckInStore {
         return types
     }
 
+    /// The aircraft types you checked in most recently, newest first, each once, from sightings and flights.
+    public func recentTypes(userID: UUID?, limit: Int = 5) throws -> [SpottedDraft.AircraftTypeChoice] {
+        let withType = try history(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.typeICAO != nil }))
+        var seen = Set<String>()
+        var types = [SpottedDraft.AircraftTypeChoice]()
+        for checkIn in CheckInStats.counted(withType, userID: userID) {
+            guard let code = checkIn.typeICAO, seen.insert(code).inserted else { continue }
+            types.append(.init(icaoCode: code, name: checkIn.typeName ?? code))
+            if types.count == limit { break }
+        }
+        return types
+    }
+
+    /// The airports you checked in at most recently, newest first, each once: where you spotted or visited, and
+    /// where your flights started and ended.
+    public func recentAirportIDs(userID: UUID?, limit: Int = 5) throws -> [Int] {
+        var seen = Set<Int>()
+        var ids = [Int]()
+        for checkIn in CheckInStats.counted(try history(FetchDescriptor<LocalCheckIn>()), userID: userID) {
+            let airports = checkIn.kind == "flown" ? [checkIn.destinationID, checkIn.originID] : [checkIn.airportID]
+            for case let id? in airports where seen.insert(id).inserted {
+                ids.append(id)
+                if ids.count == limit { return ids }
+            }
+        }
+        return ids
+    }
+
     /// The most photos one check-in can have. The server refuses more.
     public static let maxPhotos = 4
 

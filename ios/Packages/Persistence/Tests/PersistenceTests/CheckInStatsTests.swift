@@ -121,3 +121,17 @@ private func all(_ context: ModelContext) throws -> [LocalCheckIn] {
     let newest = try #require(try all(context).filter { $0.flightNumber == "LH400" }.max { $0.occurredAt < $1.occurredAt })
     #expect(try store.recentTypes(forFlight: "LH400", userID: nil, excluding: newest.id).map(\.icaoCode) == ["A388", "B744"])
 }
+
+@MainActor @Test func recentTypesAndAirportsComeNewestFirstEachOnce() throws {
+    let context = try makeContext()
+    let store = CheckInStore(context: context)
+    let now = Date()
+    _ = try store.saveSpotted(SpottedDraft(type: b744, place: dus), at: now - 300)
+    _ = try store.saveSpotted(SpottedDraft(type: a388, place: fra), at: now - 200)
+    _ = try store.saveFlown(FlownDraft(origin: fra, destination: jfk, type: b744), at: now - 100)
+    #expect(try store.recentTypes(userID: nil).map(\.icaoCode) == ["B744", "A388"])
+    #expect(try store.recentTypes(userID: nil, limit: 1).map(\.icaoCode) == ["B744"])
+    // The flight's airports come first (JFK, FRA), then the earlier sighting's DUS.
+    #expect(try store.recentAirportIDs(userID: nil) == [9, 3, 7])
+    #expect(try store.recentAirportIDs(userID: nil, limit: 2) == [9, 3])
+}

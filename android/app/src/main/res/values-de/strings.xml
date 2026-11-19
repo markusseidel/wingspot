@@ -204,6 +204,8 @@
     <string name="stat_types">Typen</string>
     <string name="stat_airports">Flughäfen</string>
     <string name="recent_types">Zuletzt auf dieser Flugnummer</string>
+    <string name="recent_types_overall">Zuletzt verwendete Flugzeugtypen</string>
+    <string name="recent_airports">Zuletzt besuchte Flughäfen</string>
     <string name="stat_distance_flown">Geflogene Strecke</string>
     <string name="export_data">Meine Daten exportieren</string>
     <string name="export_hint">Eine Datei mit deinem Profil, deinen Check-ins und allem, was wir sonst über dich speichern. Fotos sind aufgelistet, aber nicht enthalten.</string>

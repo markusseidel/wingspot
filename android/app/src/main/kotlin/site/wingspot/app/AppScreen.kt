@@ -86,33 +86,35 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
             Modifier.fillMaxSize().padding(padding).safeDrawingPadding().padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            when {
-                editing != null -> Scrolling { if (editing.kind == "flown") FlownEditScreen(editing, checkInState, refState, checkIn) else SimpleEditScreen(app, editing, checkInState, refState, checkIn) }
-                checkInState.isOpen -> Scrolling { CheckInScreen(checkInState, refState, checkIn) }
-                page is Route.CheckInPage && me != null -> CheckInPage(app, social, checkIn, page.id, me)
-                page is Route.PersonPage && me != null -> PersonPage(app, social, page.id, me)
-                page is Route.AirportPage -> Scrolling { AirportPage(app, social, page.id, me, refState, checkInState.all) }
-                page is Route.TypePage -> Scrolling { TypePage(app, social, page.code, me, checkInState.all) }
-                page is Route.RegistrationPage -> Scrolling { RegistrationPage(app, social, page.registration, me, checkInState.all) }
-                page is Route.ExploreMap -> ExploreMapPage(app, me, checkInState.all, refState, social)
-                page is Route.AirportsMap -> AirportsMapPage(checkInState.all, refState, social)
-                page is Route.Collections -> CollectionsPage(checkInState.all, social)
-                page is Route.Settings -> SettingsPage(app, me, social)
-                page is Route.EditProfile && me != null -> EditProfilePage(app, me, refState, social)
-                else -> when (social.tab) {
-                    Tab.FEED -> SocialGate(app, me, announcements, onSignIn = { social.tab = Tab.PROFILE }) { FeedTab(social, it, announcements) }
-                    Tab.EXPLORE -> Scrolling { ExploreTab(app, social, me, refState, checkInState.all) }
-                    Tab.CHECK_IN -> Scrolling {
-                        Spacer(Modifier.height(16.dp))
-                        Button(onClick = checkIn::open, modifier = Modifier.fillMaxWidth().testTag("open-check-in")) { Text(stringResource(R.string.check_in)) }
-                        if (checkInState.deleteFailed) {
-                            Text(stringResource(R.string.delete_failed), color = MaterialTheme.colorScheme.error, modifier = Modifier.testTag("delete-failed"))
+            androidx.compose.runtime.CompositionLocalProvider(LocalCheckIns provides checkInState.all) {
+                when {
+                    editing != null -> Scrolling { if (editing.kind == "flown") FlownEditScreen(editing, checkInState, refState, checkIn) else SimpleEditScreen(app, editing, checkInState, refState, checkIn) }
+                    checkInState.isOpen -> Scrolling { CheckInScreen(checkInState, refState, checkIn) }
+                    page is Route.CheckInPage && me != null -> CheckInPage(app, social, checkIn, page.id, me)
+                    page is Route.PersonPage && me != null -> PersonPage(app, social, page.id, me)
+                    page is Route.AirportPage -> Scrolling { AirportPage(app, social, page.id, me, refState, checkInState.all) }
+                    page is Route.TypePage -> Scrolling { TypePage(app, social, page.code, me, checkInState.all) }
+                    page is Route.RegistrationPage -> Scrolling { RegistrationPage(app, social, page.registration, me, checkInState.all) }
+                    page is Route.ExploreMap -> ExploreMapPage(app, me, checkInState.all, refState, social)
+                    page is Route.AirportsMap -> AirportsMapPage(checkInState.all, refState, social)
+                    page is Route.Collections -> CollectionsPage(checkInState.all, social)
+                    page is Route.Settings -> SettingsPage(app, me, social)
+                    page is Route.EditProfile && me != null -> EditProfilePage(app, me, refState, social)
+                    else -> when (social.tab) {
+                        Tab.FEED -> SocialGate(app, me, announcements, onSignIn = { social.tab = Tab.PROFILE }) { FeedTab(social, it, announcements) }
+                        Tab.EXPLORE -> Scrolling { ExploreTab(app, social, me, refState, checkInState.all) }
+                        Tab.CHECK_IN -> Scrolling {
+                            Spacer(Modifier.height(16.dp))
+                            Button(onClick = checkIn::open, modifier = Modifier.fillMaxWidth().testTag("open-check-in")) { Text(stringResource(R.string.check_in)) }
+                            if (checkInState.deleteFailed) {
+                                Text(stringResource(R.string.delete_failed), color = MaterialTheme.colorScheme.error, modifier = Modifier.testTag("delete-failed"))
+                            }
+                            RecentCheckIns(checkInState.recent, onEdit = checkIn::edit, onDelete = checkIn::delete)
                         }
-                        RecentCheckIns(checkInState.recent, onEdit = checkIn::edit, onDelete = checkIn::delete)
+                        Tab.BADGES -> BadgesTab(badges, me != null) { social.tab = Tab.PROFILE }
+                        // ProfileTab scrolls by itself; a second scroll around it crashes ("infinite height").
+                        Tab.PROFILE -> ProfileTab(app, state, model, badges, social, refState, reference::search, reference::refresh, checkInState.all, checkIn::reload)
                     }
-                    Tab.BADGES -> BadgesTab(badges, me != null) { social.tab = Tab.PROFILE }
-                    // ProfileTab scrolls by itself; a second scroll around it crashes ("infinite height").
-                    Tab.PROFILE -> ProfileTab(app, state, model, badges, social, refState, reference::search, reference::refresh, checkInState.all, checkIn::reload)
                 }
             }
         }
