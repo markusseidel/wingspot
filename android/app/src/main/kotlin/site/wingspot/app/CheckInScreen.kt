@@ -379,15 +379,21 @@ private fun RegistrationHint(input: String, registration: Registration?, orType:
 @Composable
 private fun TypePicker(reference: ReferenceState, type: AircraftType?, recent: List<String> = emptyList(), onPick: (AircraftType?) -> Unit) {
     // The types of earlier flights with this flight number, named from the reference data on the phone.
-    val suggestions by produceState(emptyList<AircraftType>(), recent, reference.database) {
-        value = recent.mapNotNull { reference.database?.aircraftType(it) }
+    val all = LocalCheckIns.current
+    val latest = remember(all) { RecentTypes.types(all) }
+    val suggestions by produceState(emptyList<AircraftType>() to emptyList<AircraftType>(), recent, latest, reference.database) {
+        val db = reference.database
+        value = recent.mapNotNull { db?.aircraftType(it) } to latest.filter { it !in recent }.mapNotNull { db?.aircraftType(it) }
     }
     Picker(
         label = stringResource(R.string.type_label), chosen = type?.let { "${it.icaoCode}  ${it.name}" },
         onClear = { onPick(null) },
         search = { text -> reference.database?.searchTypes(text, 5).orEmpty() },
         rowTitle = { it.icaoCode }, rowDetail = { it.name }, onPick = { onPick(it) },
-        suggestions = suggestions, suggestionsLabel = stringResource(R.string.recent_types),
+        suggestions = listOf(
+            stringResource(R.string.recent_types) to suggestions.first,
+            stringResource(R.string.recent_types_overall) to suggestions.second,
+        ),
     )
 }
 
@@ -398,12 +404,21 @@ fun AirportPickerPublic(reference: ReferenceState, airport: Airport?, onPick: (A
 
 @Composable
 private fun AirportPicker(label: String, reference: ReferenceState, airport: Airport?, onPick: (Airport?) -> Unit) {
+    // The airports of your latest check-ins, named from the reference data on the phone.
+    val all = LocalCheckIns.current
+    val recent by produceState(emptyList<Airport>(), all, reference.database) {
+        value = RecentTypes.airportIds(all).mapNotNull { reference.database?.airport(it) }
+    }
     Picker(
         label = label, chosen = airport?.let { "${it.code}  ${it.name}" }, onClear = { onPick(null) },
         search = { text -> reference.database?.searchAirports(text, 5).orEmpty() },
         rowTitle = { it.code }, rowDetail = { it.name }, onPick = { onPick(it) },
+        suggestions = listOf(stringResource(R.string.recent_airports) to recent),
     )
 }
+
+/** Every check-in on this phone, for the suggestions the pickers offer before anything is typed. */
+val LocalCheckIns = androidx.compose.runtime.compositionLocalOf<List<LocalCheckIn>> { emptyList() }
 
 /** The system photo picker: it needs no permission, and the app sees only the picture that was chosen. */
 @Composable
@@ -445,7 +460,7 @@ private fun SaveBar(state: CheckInState, enabled: Boolean, onSave: () -> Unit, o
 private fun <T> Picker(
     label: String, chosen: String?, onClear: () -> Unit, search: suspend (String) -> List<T>,
     rowTitle: (T) -> String, rowDetail: (T) -> String, onPick: (T) -> Unit,
-    suggestions: List<T> = emptyList(), suggestionsLabel: String = "",
+    suggestions: List<Pair<String, List<T>>> = emptyList(),
 ) {
     if (chosen != null) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -464,17 +479,23 @@ private fun <T> Picker(
         value = text, onValueChange = { text = it }, singleLine = true,
         label = { Text(label) }, modifier = Modifier.fillMaxWidth(),
     )
-    val shown = if (text.isBlank() && suggestions.isNotEmpty()) {
-        Text(suggestionsLabel, style = MaterialTheme.typography.labelLarge)
-        suggestions
-    } else matches
-    shown.forEach { match ->
+    @Composable
+    fun Row(match: T) {
         TextButton(onClick = { onPick(match); text = "" }, modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.fillMaxWidth()) {
                 Text(rowTitle(match), style = MaterialTheme.typography.titleSmall)
                 Text(rowDetail(match), style = MaterialTheme.typography.bodySmall)
             }
         }
+    }
+    if (text.isBlank()) {
+        for ((title, items) in suggestions) {
+            if (items.isEmpty()) continue
+            Text(title, style = MaterialTheme.typography.labelLarge)
+            items.forEach { Row(it) }
+        }
+    } else {
+        matches.forEach { Row(it) }
     }
 }
 

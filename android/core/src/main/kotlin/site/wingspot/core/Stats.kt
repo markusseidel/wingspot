@@ -64,6 +64,17 @@ data class CheckInStats(
 
 /** The aircraft types of earlier flights with a flight number, to offer when the same flight is checked in again. */
 object RecentTypes {
+    /** The aircraft types you checked in most recently, newest first, each once, from sightings and flights. */
+    fun types(all: List<LocalCheckIn>, limit: Int = 5): List<String> =
+        CheckInStats.counted(all).filter { it.typeIcao != null }.sortedByDescending { it.occurredAt }
+            .mapNotNull { it.typeIcao }.distinct().take(limit)
+
+    /** The airports you checked in at most recently, newest first, each once, including where your flights started and ended. */
+    fun airportIds(all: List<LocalCheckIn>, limit: Int = 5): List<Long> =
+        CheckInStats.counted(all).sortedByDescending { it.occurredAt }
+            .flatMap { if (it.kind == "flown") listOf(it.destinationId, it.originId) else listOf(it.airportId) }
+            .filterNotNull().distinct().take(limit)
+
     /** ICAO codes, the most recent flight first, each once. The flight being edited, if any, is left out. */
     fun forFlight(all: List<LocalCheckIn>, flightNumber: String, excluding: UUID? = null, limit: Int = 5): List<String> {
         val number = flightNumber.filterNot { it.isWhitespace() }.uppercase()

@@ -162,3 +162,25 @@ class AccountCallsTests {
         assertEquals(emptyList(), store.all())
     }
 }
+
+class RecentSuggestionsTests {
+    private fun saved(kind: String, at: String, type: String? = null, airport: Long? = null, origin: Long? = null, destination: Long? = null) =
+        LocalCheckIn(
+            UUID.randomUUID(), kind, Instant.parse(at), null, type, airport, null, null, SyncState.SYNCED, null,
+            originId = origin, destinationId = destination,
+        )
+
+    @Test
+    fun recentTypesAndAirportsComeNewestFirstEachOnce() {
+        val all = listOf(
+            saved("spotted", "2026-11-01T10:00:00Z", "B744", airport = 7),
+            saved("spotted", "2026-11-02T10:00:00Z", "A388", airport = 3),
+            saved("flown", "2026-11-03T10:00:00Z", "B744", origin = 3, destination = 9),
+        )
+        assertEquals(listOf("B744", "A388"), RecentTypes.types(all))
+        assertEquals(listOf("B744"), RecentTypes.types(all, limit = 1))
+        // The flight's airports first (destination, origin), then the earlier sighting's.
+        assertEquals(listOf(9L, 3L, 7L), RecentTypes.airportIds(all))
+        assertEquals(listOf(9L, 3L), RecentTypes.airportIds(all, limit = 2))
+    }
+}
