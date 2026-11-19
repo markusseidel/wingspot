@@ -1,3 +1,4 @@
+import Account
 import Persistence
 import ReferenceData
 import SwiftData
@@ -26,6 +27,7 @@ struct FlownEditView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Environment(CheckInSyncCoordinator.self) private var sync: CheckInSyncCoordinator?
+    @Environment(AccountStore.self) private var account
 
     @State private var route = ""
     @State private var flightNumber = ""
@@ -51,6 +53,14 @@ struct FlownEditView: View {
         )
     }
 
+    /// The types of your earlier flights with this flight number, not counting this one.
+    private var recentTypes: [AircraftType] {
+        let found = (try? CheckInStore(context: modelContext).recentTypes(
+            forFlight: flightNumber, userID: account.userID, excluding: flightID
+        )) ?? []
+        return found.map { AircraftType(icaoCode: $0.icaoCode, manufacturer: $0.name, model: "") }
+    }
+
     var body: some View {
         NavigationStack {
             Form {
@@ -68,7 +78,7 @@ struct FlownEditView: View {
                         .textInputAutocapitalization(.characters)
                         .autocorrectionDisabled()
                     NavigationLink {
-                        TypeSearchView(selection: typeBinding)
+                        TypeSearchView(selection: typeBinding, recent: recentTypes)
                     } label: {
                         LabeledContent("Aircraft type", value: typeName ?? String(localized: "Optional"))
                     }

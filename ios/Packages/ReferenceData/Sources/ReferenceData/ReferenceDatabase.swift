@@ -8,7 +8,7 @@ public struct AircraftType: Hashable, Identifiable, Sendable {
     public let model: String
 
     public var id: String { icaoCode }
-    public var name: String { "\(manufacturer) \(model)" }
+    public var name: String { "\(manufacturer) \(model)".trimmingCharacters(in: .whitespaces) }
 
     public init(icaoCode: String, manufacturer: String, model: String) {
         self.icaoCode = icaoCode

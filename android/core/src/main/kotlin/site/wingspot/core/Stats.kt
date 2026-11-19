@@ -1,6 +1,7 @@
 package site.wingspot.core
 
 import java.time.Instant
+import java.util.UUID
 
 /**
  * The numbers on the profile, worked out from the check-ins on this phone so they work offline.
@@ -58,6 +59,21 @@ data class CheckInStats(
             }
             return CheckInStats(counted.size, sightings, visits, flights, registrations.size, types.size, airports.size, routes)
         }
+    }
+}
+
+/** The aircraft types of earlier flights with a flight number, to offer when the same flight is checked in again. */
+object RecentTypes {
+    /** ICAO codes, the most recent flight first, each once. The flight being edited, if any, is left out. */
+    fun forFlight(all: List<LocalCheckIn>, flightNumber: String, excluding: UUID? = null, limit: Int = 5): List<String> {
+        val number = flightNumber.filterNot { it.isWhitespace() }.uppercase()
+        if (number.isEmpty()) return emptyList()
+        return CheckInStats.counted(all)
+            .filter { it.kind == "flown" && it.flightNumber == number && it.typeIcao != null && it.id != excluding }
+            .sortedByDescending { it.occurredAt }
+            .mapNotNull { it.typeIcao }
+            .distinct()
+            .take(limit)
     }
 }
 

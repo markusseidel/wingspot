@@ -43,6 +43,19 @@ class StatsTests {
     }
 
     @Test
+    fun recentTypesOfAFlightNumberComeNewestFirstEachOnce() {
+        fun flight(number: String, type: String, at: String) = checkIn("flown", at, type = type).copy(flightNumber = number)
+        val flights = listOf(
+            flight("LH400", "B744", "2026-11-01T10:00:00Z"), flight("LH400", "A388", "2026-11-02T10:00:00Z"),
+            flight("LH400", "B744", "2026-11-03T10:00:00Z"), flight("LH401", "A321", "2026-11-03T10:00:00Z"),
+        )
+        assertEquals(listOf("B744", "A388"), RecentTypes.forFlight(flights, " lh400 "))
+        assertEquals(emptyList(), RecentTypes.forFlight(flights, ""))
+        assertEquals(emptyList(), RecentTypes.forFlight(flights, "LH999"))
+        assertEquals(listOf("A388", "B744"), RecentTypes.forFlight(flights, "LH400", excluding = flights[2].id))
+    }
+
+    @Test
     fun collectionsAreSortedByCountThenByRecency() {
         val lists = Collections.of(all)
         assertEquals(listOf("D-AIMA", "D-AIXB"), lists.aircraft.map { it.title })

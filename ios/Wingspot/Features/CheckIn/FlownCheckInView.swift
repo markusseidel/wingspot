@@ -24,6 +24,12 @@ struct FlownCheckInView: View {
 
     @Environment(ReferenceDataStore.self) private var referenceData
     @Environment(\.modelContext) private var modelContext
+
+    /// The types of your earlier flights with this flight number.
+    private var recentTypes: [AircraftType] {
+        let found = (try? CheckInStore(context: modelContext).recentTypes(forFlight: flightNumber, userID: account.userID)) ?? []
+        return found.map { AircraftType(icaoCode: $0.icaoCode, manufacturer: $0.name, model: "") }
+    }
     @Environment(AccountStore.self) private var account
     @Environment(CheckInSyncCoordinator.self) private var sync: CheckInSyncCoordinator?
 
@@ -156,7 +162,7 @@ struct FlownCheckInView: View {
                     .textInputAutocapitalization(.characters)
                     .autocorrectionDisabled()
                 NavigationLink {
-                    TypeSearchView(selection: $type)
+                    TypeSearchView(selection: $type, recent: recentTypes)
                 } label: {
                     LabeledContent("Aircraft type", value: type?.name ?? String(localized: "Optional"))
                 }
