@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -47,6 +48,7 @@ import site.wingspot.core.BoardingPass
 import site.wingspot.core.Airport
 import site.wingspot.core.CabinClass
 import site.wingspot.core.LocalCheckIn
+import site.wingspot.core.RecentTypes
 import site.wingspot.core.Registration
 import site.wingspot.core.SyncState
 import site.wingspot.core.VisitContext
@@ -187,6 +189,7 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
     }
     FlightDetails(
         flightNumber, { flightNumber = it }, input, { input = it }, registration, reference, type, { type = it }, cabin, { cabin = it }, seat, { seat = it },
+        recentTypes = RecentTypes.forFlight(state.all, flightNumber),
     )
     PhotoField(photo) { photo = it }
     SaveBar(
@@ -273,7 +276,7 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
         if (pickDate) FlightDatePicker(chosenDay, onPick = { day = it.toString(); pickDate = false }, onDismiss = { pickDate = false })
         FlightDetails(
             flightNumber, { flightNumber = it }, input, { input = it }, registration, reference, type, { type = it }, cabin, { cabin = it }, seat, { seat = it },
-            keptType = keptType,
+            keptType = keptType, recentTypes = RecentTypes.forFlight(state.all, flightNumber, flight.id),
         )
         if (state.roomForPhoto) PhotoField(photo) { photo = it }
         VisibilityRow(androidx.compose.ui.platform.LocalContext.current.applicationContext as WingspotApp, flight.id.toString())
@@ -319,7 +322,7 @@ fun SimpleEditScreen(app: WingspotApp, checkIn: LocalCheckIn, state: CheckInStat
             )
             RegistrationHint(input, registration, orType = false)
             if (keptType != null) Text(stringResource(R.string.type_kept, keptType), style = MaterialTheme.typography.bodySmall)
-            TypePicker(reference, type, { type = it })
+            TypePicker(reference, type) { type = it }
         }
         if (state.roomForPhoto) PhotoField(photo) { photo = it }
         VisibilityRow(app, checkIn.id.toString())
@@ -336,6 +339,7 @@ private fun FlightDetails(
     flightNumber: String, onFlightNumber: (String) -> Unit, input: String, onInput: (String) -> Unit, registration: Registration?,
     reference: ReferenceState, type: AircraftType?, onType: (AircraftType?) -> Unit,
     cabin: CabinClass?, onCabin: (CabinClass?) -> Unit, seat: String, onSeat: (String) -> Unit, keptType: String? = null,
+    recentTypes: List<String> = emptyList(),
 ) {
     OutlinedTextField(
         value = flightNumber, onValueChange = onFlightNumber, singleLine = true,
@@ -347,7 +351,7 @@ private fun FlightDetails(
     )
     RegistrationHint(input, registration, orType = false)
     if (keptType != null) Text(stringResource(R.string.type_kept, keptType), style = MaterialTheme.typography.bodySmall)
-    TypePicker(reference, type, onType)
+    TypePicker(reference, type, recentTypes, onType)
     Text(stringResource(R.string.cabin_label), style = MaterialTheme.typography.labelLarge)
     Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         for (option in CabinClass.entries) {
@@ -373,12 +377,17 @@ private fun RegistrationHint(input: String, registration: Registration?, orType:
 }
 
 @Composable
-private fun TypePicker(reference: ReferenceState, type: AircraftType?, onPick: (AircraftType?) -> Unit) {
+private fun TypePicker(reference: ReferenceState, type: AircraftType?, recent: List<String> = emptyList(), onPick: (AircraftType?) -> Unit) {
+    // The types of earlier flights with this flight number, named from the reference data on the phone.
+    val suggestions by produceState(emptyList<AircraftType>(), recent, reference.database) {
+        value = recent.mapNotNull { reference.database?.aircraftType(it) }
+    }
     Picker(
         label = stringResource(R.string.type_label), chosen = type?.let { "${it.icaoCode}  ${it.name}" },
         onClear = { onPick(null) },
         search = { text -> reference.database?.searchTypes(text, 5).orEmpty() },
         rowTitle = { it.icaoCode }, rowDetail = { it.name }, onPick = { onPick(it) },
+        suggestions = suggestions, suggestionsLabel = stringResource(R.string.recent_types),
     )
 }
 
@@ -436,6 +445,7 @@ private fun SaveBar(state: CheckInState, enabled: Boolean, onSave: () -> Unit, o
 private fun <T> Picker(
     label: String, chosen: String?, onClear: () -> Unit, search: suspend (String) -> List<T>,
     rowTitle: (T) -> String, rowDetail: (T) -> String, onPick: (T) -> Unit,
+    suggestions: List<T> = emptyList(), suggestionsLabel: String = "",
 ) {
     if (chosen != null) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -454,7 +464,11 @@ private fun <T> Picker(
         value = text, onValueChange = { text = it }, singleLine = true,
         label = { Text(label) }, modifier = Modifier.fillMaxWidth(),
     )
-    matches.forEach { match ->
+    val shown = if (text.isBlank() && suggestions.isNotEmpty()) {
+        Text(suggestionsLabel, style = MaterialTheme.typography.labelLarge)
+        suggestions
+    } else matches
+    shown.forEach { match ->
         TextButton(onClick = { onPick(match); text = "" }, modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.fillMaxWidth()) {
                 Text(rowTitle(match), style = MaterialTheme.typography.titleSmall)

@@ -103,3 +103,21 @@ private func all(_ context: ModelContext) throws -> [LocalCheckIn] {
     #expect(stats.kilometres { places[$0] } == 222)
     #expect(stats.kilometres { _ in nil } == 0)
 }
+
+@MainActor @Test func recentTypesOfAFlightNumberComeNewestFirstEachOnce() throws {
+    let context = try makeContext()
+    let store = CheckInStore(context: context)
+    let a321 = SpottedDraft.AircraftTypeChoice(icaoCode: "A321", name: "Airbus A321")
+    let day = 86_400.0
+    let now = Date()
+    for (number, type, ago) in [("LH400", b744, 3.0), ("LH400", a388, 2.0), ("LH400", b744, 1.0), ("LH401", a321, 1.0)] {
+        _ = try store.saveFlown(FlownDraft(origin: fra, destination: jfk, flightNumber: number, type: type), at: now - ago * day)
+    }
+    let types = try store.recentTypes(forFlight: " lh400 ", userID: nil)
+    #expect(types.map(\.icaoCode) == ["B744", "A388"])
+    #expect(try store.recentTypes(forFlight: "", userID: nil).isEmpty)
+    #expect(try store.recentTypes(forFlight: "LH999", userID: nil).isEmpty)
+    // The flight being edited is not offered back.
+    let newest = try #require(try all(context).filter { $0.flightNumber == "LH400" }.max { $0.occurredAt < $1.occurredAt })
+    #expect(try store.recentTypes(forFlight: "LH400", userID: nil, excluding: newest.id).map(\.icaoCode) == ["A388", "B744"])
+}

@@ -8,6 +8,9 @@ private struct ReferenceSearchView<Item: Identifiable & Hashable & Sendable, Row
     let clearTitle: LocalizedStringKey
     @Binding var selection: Item?
     let search: @Sendable (ReferenceDatabase, String) async throws -> [Item]
+    /// Offered before anything is typed.
+    var suggestions: [Item] = []
+    var suggestionsTitle: LocalizedStringKey?
     @ViewBuilder let row: (Item) -> Row
 
     @Environment(ReferenceDataStore.self) private var referenceData
@@ -20,6 +23,16 @@ private struct ReferenceSearchView<Item: Identifiable & Hashable & Sendable, Row
         List {
             if selection != nil, query.isEmpty {
                 Button(clearTitle, role: .destructive) { choose(nil) }
+            }
+            if query.isEmpty, !suggestions.isEmpty {
+                Section {
+                    ForEach(suggestions) { item in
+                        Button { choose(item) } label: { row(item) }
+                            .foregroundStyle(.primary)
+                    }
+                } header: {
+                    if let suggestionsTitle { Text(suggestionsTitle) }
+                }
             }
             ForEach(results) { item in
                 Button { choose(item) } label: { row(item) }
@@ -61,11 +74,14 @@ private struct ReferenceSearchView<Item: Identifiable & Hashable & Sendable, Row
 
 struct TypeSearchView: View {
     @Binding var selection: AircraftType?
+    /// The types of earlier flights with the same flight number, offered before anything is typed.
+    var recent: [AircraftType] = []
 
     var body: some View {
         ReferenceSearchView(
             title: "Aircraft type", prompt: "A388, Boeing 737, CRJ900", clearTitle: "Remove type",
-            selection: $selection, search: { try await $0.searchTypes($1) }
+            selection: $selection, search: { try await $0.searchTypes($1) },
+            suggestions: recent, suggestionsTitle: "Recent on this flight number"
         ) { type in
             HStack {
                 Text(type.name)
