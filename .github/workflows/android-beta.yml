@@ -18,6 +18,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   build:
@@ -49,10 +50,26 @@ jobs:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: |
           if [ -n "$GOOGLE_SERVICES_JSON" ]; then printf '%s' "$GOOGLE_SERVICES_JSON" > app/google-services.json; fi
+      # The version code is the date and the number of this run today, like 202611191 then 202611192, the same as the
+      # iOS build number. It always goes up, which Google Play needs. A tenth run in one day is refused, because
+      # it would be higher than every run of the days after it.
+      - name: Version code
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          day=$(TZ=Europe/Berlin date +%Y%m%d)
+          since=$(TZ=Europe/Berlin date -d "$day 00:00" -u +%Y-%m-%dT%H:%M:%SZ)
+          runs=$(gh api "repos/${{ github.repository }}/actions/workflows/android-beta.yml/runs?created=%3E%3D$since&per_page=1" --jq .total_count)
+          if [ -z "$runs" ] || [ "$runs" -lt 1 ] || [ "$runs" -gt 9 ]; then
+            echo "Can't make a version code: $runs runs of this workflow today (1 to 9 are possible)." >&2
+            exit 1
+          fi
+          echo "WINGSPOT_VERSION_CODE=$day$runs" >> "$GITHUB_ENV"
+          echo "Version code $day$runs"
       - name: Shared logic tests
         run: ./gradlew :core:test --no-daemon
       - name: Debug APK
-        run: ./gradlew :app:assembleDebug -PwingspotVersionCode=${{ github.run_number }} --no-daemon
+        run: ./gradlew :app:assembleDebug -PwingspotVersionCode=$WINGSPOT_VERSION_CODE --no-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: wingspot-debug-apk
@@ -73,7 +90,7 @@ jobs:
         run: |
           if [ -z "$KEYSTORE_BASE64" ]; then echo "No signing key set: skipping the release bundle."; exit 0; fi
           echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
-          WINGSPOT_KEYSTORE_PATH="$RUNNER_TEMP/upload.jks" ./gradlew :app:bundleRelease -PwingspotVersionCode=${{ github.run_number }} --no-daemon
+          WINGSPOT_KEYSTORE_PATH="$RUNNER_TEMP/upload.jks" ./gradlew :app:bundleRelease -PwingspotVersionCode=$WINGSPOT_VERSION_CODE --no-daemon
       - uses: actions/upload-artifact@v4
         if: hashFiles('android/app/build/outputs/bundle/release/app-release.aab') != ''
         with:
