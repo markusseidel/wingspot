@@ -144,6 +144,19 @@ private actor FakePhotoServer: PhotoUploader {
         #expect(saved.photo.width == 800)
     }
 
+    @Test func aPhotoCanBeAddedLaterUpToTheLimit() throws {
+        let context = try makeContext()
+        let store = CheckInStore(context: context)
+        _ = try store.saveSpotted(SpottedDraft(registration: Registration("DAIMA")))
+        let id = try #require(try context.fetch(FetchDescriptor<LocalCheckIn>()).first).id
+        for _ in 0..<CheckInStore.maxPhotos { #expect(try store.addPhoto(photo, to: id)) }
+        // One more is refused, and so is a check-in this device doesn't have.
+        #expect(try !store.addPhoto(photo, to: id))
+        #expect(try !store.addPhoto(photo, to: UUID()))
+        #expect(try store.photoCount(for: id) == CheckInStore.maxPhotos)
+        #expect(try context.fetch(FetchDescriptor<LocalPhoto>()).allSatisfy { $0.syncState == "pending" && $0.checkInID == id })
+    }
+
     @Test func aCheckInWithoutAPhotoSavesNone() throws {
         let context = try makeContext()
         _ = try CheckInStore(context: context).saveSpotted(SpottedDraft(registration: Registration("DAIMA")))

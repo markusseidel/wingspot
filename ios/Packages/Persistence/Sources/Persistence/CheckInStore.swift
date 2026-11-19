@@ -346,6 +346,28 @@ public struct CheckInStore {
         try context.save()
     }
 
+    /// The most photos one check-in can have. The server refuses more.
+    public static let maxPhotos = 4
+
+    /// How many photos of this check-in are waiting on, or were sent from, this device. Refused ones don't count.
+    public func photoCount(for checkInID: UUID) throws -> Int {
+        let refused = SyncState.rejected.rawValue
+        return try context.fetchCount(FetchDescriptor<LocalPhoto>(predicate: #Predicate {
+            $0.checkInID == checkInID && $0.syncState != refused
+        }))
+    }
+
+    /// Adds a photo to a check-in that was saved earlier. It goes up with the next sync.
+    /// Returns `false` when this device has no such check-in or it already has the most photos.
+    @discardableResult
+    public func addPhoto(_ photo: PreparedPhoto, to checkInID: UUID, at date: Date = Date()) throws -> Bool {
+        let matches = try context.fetchCount(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == checkInID }))
+        guard matches > 0, try photoCount(for: checkInID) < Self.maxPhotos else { return false }
+        insertPhoto(photo, for: checkInID, at: date)
+        try context.save()
+        return true
+    }
+
     /// Saved together with the check-in, so a photo never exists without it.
     private func insertPhoto(_ photo: PreparedPhoto?, for checkInID: UUID, at date: Date) {
         guard let photo else { return }

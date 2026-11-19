@@ -38,6 +38,9 @@ struct FlownEditView: View {
     @State private var originalDate = Date()
     @State private var loaded = false
     @State private var failed = false
+    @State private var photo: PreparedPhoto?
+    @State private var isPreparingPhoto = false
+    @State private var hasRoomForPhoto = false
 
     private var registration: Registration? { Registration(registrationInput) }
     private var hasRegistrationInput: Bool { !registrationInput.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -83,6 +86,7 @@ struct FlownEditView: View {
                         Text("Not a valid registration yet")
                     }
                 }
+                if hasRoomForPhoto { PhotoSection(photo: $photo, isPreparing: $isPreparingPhoto) }
                 Section { CheckInVisibilityPicker(checkInID: flightID) }
                 lookup
             }
@@ -91,7 +95,7 @@ struct FlownEditView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", action: save).disabled(!loaded || (hasRegistrationInput && registration == nil))
+                    Button("Save", action: save).disabled(!loaded || isPreparingPhoto || (hasRegistrationInput && registration == nil))
                 }
             }
             .alert("Couldn't save this check-in", isPresented: $failed) {
@@ -135,17 +139,20 @@ struct FlownEditView: View {
         seat = flight.seat ?? ""
         date = min(flight.occurredAt, Date())
         originalDate = date
+        hasRoomForPhoto = ((try? CheckInStore(context: modelContext).photoCount(for: id)) ?? 0) < CheckInStore.maxPhotos
         loaded = true
     }
 
     private func save() {
         do {
-            try CheckInStore(context: modelContext).updateFlown(
+            let store = CheckInStore(context: modelContext)
+            try store.updateFlown(
                 id: flightID, registration: registration, type: typeCode.map { .init(icaoCode: $0, name: typeName ?? $0) },
                 flightNumber: flightNumber, cabin: cabin, seat: seat,
                 // The time stays as it was unless another day is chosen.
                 occurredAt: Calendar.current.isDate(date, inSameDayAs: originalDate) ? nil : FlightDay.moment(of: date)
             )
+            if let photo { try store.addPhoto(photo, to: flightID) }
             sync?.requestSync()
             onSaved()
             dismiss()
