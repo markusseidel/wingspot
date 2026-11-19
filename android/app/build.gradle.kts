@@ -11,7 +11,7 @@ android {
         applicationId = "site.wingspot.android"
         minSdk = 26
         targetSdk = 35
-        // The beta workflow passes the run number as -PwingspotVersionCode, so every upload to Google Play is higher than the last.
+        // The beta workflow passes the date and the day's run number (like 202611191) as -PwingspotVersionCode, so every upload to Google Play is higher than the last.
         versionCode = providers.gradleProperty("wingspotVersionCode").map { it.toInt() }.getOrElse(1)
         versionName = "0.2.0"
 
