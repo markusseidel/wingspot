@@ -904,6 +904,16 @@
         }
       }
     },
+    "Clear search" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suche löschen"
+          }
+        }
+      }
+    },
     "Close" : {
       "extractionState" : "manual",
       "localizations" : {
