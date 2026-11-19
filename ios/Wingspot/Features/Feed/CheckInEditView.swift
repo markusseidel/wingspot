@@ -4,7 +4,7 @@ import SwiftData
 import SwiftUI
 import WingspotCore
 
-/// Corrects a sighting (the aircraft) or an airport visit (the reason), and says who can see it. Flights have their
+/// Corrects a sighting (the aircraft) or an airport visit (the reason), adds a photo, and says who can see it. Flights have their
 /// own, longer screen.
 struct CheckInEditView: View {
     let checkInID: UUID
@@ -22,6 +22,9 @@ struct CheckInEditView: View {
     @State private var reason = VisitContext.spotting
     @State private var loaded = false
     @State private var failed = false
+    @State private var photo: PreparedPhoto?
+    @State private var isPreparingPhoto = false
+    @State private var hasRoomForPhoto = false
 
     private var registration: Registration? { Registration(registrationInput) }
     private var hasRegistrationInput: Bool { !registrationInput.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -33,7 +36,7 @@ struct CheckInEditView: View {
     }
     /// A sighting needs a registration or a type, like a new one.
     private var canSave: Bool {
-        guard loaded else { return false }
+        guard loaded, !isPreparingPhoto else { return false }
         if kind == "spotted" { return (registration != nil && hasRegistrationInput) || typeCode != nil }
         return true
     }
@@ -70,6 +73,7 @@ struct CheckInEditView: View {
                         }
                     }
                 }
+                if hasRoomForPhoto { PhotoSection(photo: $photo, isPreparing: $isPreparingPhoto) }
                 Section { CheckInVisibilityPicker(checkInID: checkInID) }
             }
             .navigationTitle(kind == "airport" ? "Edit visit" : "Edit sighting")
@@ -107,6 +111,7 @@ struct CheckInEditView: View {
         default:
             break
         }
+        hasRoomForPhoto = ((try? CheckInStore(context: modelContext).photoCount(for: id)) ?? 0) < CheckInStore.maxPhotos
         loaded = true
     }
 
@@ -121,6 +126,7 @@ struct CheckInEditView: View {
             } else if kind == "airport" {
                 try store.updateVisit(id: checkInID, reason: reason)
             }
+            if let photo { try store.addPhoto(photo, to: checkInID) }
             sync?.requestSync()
             onSaved()
             dismiss()

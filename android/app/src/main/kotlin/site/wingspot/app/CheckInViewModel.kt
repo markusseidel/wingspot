@@ -40,6 +40,8 @@ data class CheckInState(
     val saveFailed: Boolean = false,
     /** The flight being edited. */
     val editing: LocalCheckIn? = null,
+    /** Whether the check-in being edited can still take a photo. */
+    val roomForPhoto: Boolean = false,
     val deleteFailed: Boolean = false,
 )
 
@@ -119,17 +121,21 @@ class CheckInViewModel(
     }
 
     fun edit(id: UUID) {
-        viewModelScope.launch { mutable.value = mutable.value.copy(editing = store.find(id), saveFailed = false) }
+        viewModelScope.launch {
+            val room = store.photoCount(id) < CheckInStore.MAX_PHOTOS
+            mutable.value = mutable.value.copy(editing = store.find(id), roomForPhoto = room, saveFailed = false)
+        }
     }
 
     fun cancelEdit() {
         mutable.value = mutable.value.copy(editing = null)
     }
 
-    fun saveEdit(id: UUID, registration: Registration?, type: AircraftType?, typeIcao: String?, flightNumber: String, cabin: CabinClass?, seat: String, at: Instant? = null) {
+    fun saveEdit(id: UUID, registration: Registration?, type: AircraftType?, typeIcao: String?, flightNumber: String, cabin: CabinClass?, seat: String, at: Instant? = null, photo: PreparedPhoto? = null) {
         viewModelScope.launch {
             try {
                 store.updateFlown(id, registration, type?.icaoCode ?: typeIcao, flightNumber, cabin, seat, at)
+                if (photo != null) store.addPhoto(id, photo.jpeg, photo.width, photo.height)
                 mutable.value = mutable.value.copy(editing = null, saveFailed = false)
                 requestUpload()
                 reload()
@@ -140,10 +146,11 @@ class CheckInViewModel(
     }
 
     /** Saves the corrected aircraft of a sighting, or the corrected reason of an airport visit. */
-    fun saveSimpleEdit(id: UUID, registration: Registration?, typeIcao: String?, reason: VisitContext?) {
+    fun saveSimpleEdit(id: UUID, registration: Registration?, typeIcao: String?, reason: VisitContext?, photo: PreparedPhoto? = null) {
         viewModelScope.launch {
             try {
                 if (reason != null) store.updateVisit(id, reason) else store.updateSpotted(id, registration, typeIcao)
+                if (photo != null) store.addPhoto(id, photo.jpeg, photo.width, photo.height)
                 mutable.value = mutable.value.copy(editing = null, saveFailed = false)
                 requestUpload()
                 reload()

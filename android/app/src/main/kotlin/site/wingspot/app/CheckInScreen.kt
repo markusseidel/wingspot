@@ -261,6 +261,7 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
     val registration = Registration.parse(input)
     // The type this flight already has stays until another is chosen.
     val keptType = flight.typeIcao.takeIf { type == null }
+    var photo by remember { mutableStateOf<PreparedPhoto?>(null) }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(stringResource(R.string.edit_flight), style = MaterialTheme.typography.titleLarge)
@@ -274,6 +275,7 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
             flightNumber, { flightNumber = it }, input, { input = it }, registration, reference, type, { type = it }, cabin, { cabin = it }, seat, { seat = it },
             keptType = keptType,
         )
+        if (state.roomForPhoto) PhotoField(photo) { photo = it }
         VisibilityRow(androidx.compose.ui.platform.LocalContext.current.applicationContext as WingspotApp, flight.id.toString())
         SaveBar(
             state, enabled = input.isBlank() || registration != null,
@@ -282,14 +284,14 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
                 val at = if (chosenDay == originalDay) null
                 else if (chosenDay == LocalDate.now()) java.time.Instant.now()
                 else chosenDay.atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant()
-                model.saveEdit(flight.id, registration, type, keptType, flightNumber, cabin, seat, at)
+                model.saveEdit(flight.id, registration, type, keptType, flightNumber, cabin, seat, at, photo)
             },
             onCancel = model::cancelEdit,
         )
     }
 }
 
-/** Corrects a sighting (the aircraft) or an airport visit (the reason), and says who can see it. Flights have [FlownEditScreen]. */
+/** Corrects a sighting (the aircraft) or an airport visit (the reason), adds a photo, and says who can see it. Flights have [FlownEditScreen]. */
 @Composable
 fun SimpleEditScreen(app: WingspotApp, checkIn: LocalCheckIn, state: CheckInState, reference: ReferenceState, model: CheckInViewModel) {
     val isVisit = checkIn.kind == "airport"
@@ -300,6 +302,7 @@ fun SimpleEditScreen(app: WingspotApp, checkIn: LocalCheckIn, state: CheckInStat
     // The type this sighting already has stays until another is chosen.
     val keptType = checkIn.typeIcao.takeIf { type == null }
     val hasAircraft = (registration != null && input.isNotBlank()) || type != null || keptType != null
+    var photo by remember { mutableStateOf<PreparedPhoto?>(null) }
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(stringResource(if (isVisit) R.string.edit_visit else R.string.edit_sighting), style = MaterialTheme.typography.titleLarge)
         Text(checkIn.title, style = MaterialTheme.typography.titleLarge, fontFamily = FontFamily.Monospace)
@@ -318,10 +321,11 @@ fun SimpleEditScreen(app: WingspotApp, checkIn: LocalCheckIn, state: CheckInStat
             if (keptType != null) Text(stringResource(R.string.type_kept, keptType), style = MaterialTheme.typography.bodySmall)
             TypePicker(reference, type, { type = it })
         }
+        if (state.roomForPhoto) PhotoField(photo) { photo = it }
         VisibilityRow(app, checkIn.id.toString())
         SaveBar(
             state, enabled = isVisit || (hasAircraft && (input.isBlank() || registration != null)),
-            onSave = { model.saveSimpleEdit(checkIn.id, registration, type?.icaoCode ?: keptType, if (isVisit) reason else null) },
+            onSave = { model.saveSimpleEdit(checkIn.id, registration, type?.icaoCode ?: keptType, if (isVisit) reason else null, photo) },
             onCancel = model::cancelEdit,
         )
     }

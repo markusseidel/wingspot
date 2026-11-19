@@ -37,4 +37,14 @@ class SimpleEditTests {
         assertEquals(SyncState.PENDING, visit.syncState)
         assertFalse(s.updateVisit(UUID.randomUUID(), VisitContext.WORKING), "no such visit on this phone")
     }
+
+    @Test
+    fun aPhotoAddedLaterGoesUpOnceTheCheckInIsOnTheServer() = runBlocking {
+        val s = store()
+        val id = s.saveAirport(AirportDraft(frankfurt, VisitContext.SPOTTING)).id
+        s.markSynced(listOf(id))
+        val photo = assertNotNull(s.addPhoto(id, byteArrayOf(1), 10, 10))
+        assertEquals(1, s.photoCount(id))
+        assertEquals(listOf(photo), s.photosReadyToSend().map { it.id })
+    }
 }
