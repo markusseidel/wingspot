@@ -13,9 +13,12 @@ enum CheckInDeletion {
         let neverSent = local.map { $0.syncedAt == nil && $0.syncState == SyncState.pending.rawValue } ?? false
         let removed = await feed.deleteCheckIn(id)
         guard removed || neverSent else { return false }
-        try? CheckInStore(context: context).deleteLocal(id: id)
-        feed.remove(id)
-        for list in others { list.remove(id) }
+        // A flight takes its two airport visits with it.
+        let gone = (try? CheckInStore(context: context).deleteLocal(id: id)) ?? [id]
+        for removedID in Set(gone + [id]) {
+            feed.remove(removedID)
+            for list in others { list.remove(removedID) }
+        }
         return true
     }
 }

@@ -173,6 +173,34 @@ private let dus = SpottedDraft.Place(airportID: 7, code: "DUS")
     #expect(left.map(\.id) == [kept.id])
 }
 
+@MainActor @Test func deletingAFlightRemovesItsTwoAirportVisitsAndNothingElse() throws {
+    let context = try makeContext()
+    let store = CheckInStore(context: context)
+    let day = Date(timeIntervalSince1970: 1_000_000)
+    let spotting = try store.saveAirport(AirportDraft(airportID: 7, code: "DUS", context: .spotting), at: day)
+    let otherDay = try store.saveAirport(AirportDraft(airportID: 3, code: "FRA", context: .departing), at: Date(timeIntervalSince1970: 2_000_000))
+    let flight = try store.saveFlown(FlownDraft(origin: fra, destination: dus), at: day)
+
+    let removed = try store.deleteLocal(id: flight.id)
+
+    let left = try context.fetch(FetchDescriptor<LocalCheckIn>()).map(\.id)
+    #expect(Set(left) == Set([spotting.id, otherDay.id]))
+    #expect(removed.count == 3 && removed.contains(flight.id))
+}
+
+@MainActor @Test func aVisitStaysWhileAnotherFlightAtTheSameTimeUsesItsAirport() throws {
+    let context = try makeContext()
+    let store = CheckInStore(context: context)
+    let day = Date(timeIntervalSince1970: 1_000_000)
+    let first = try store.saveFlown(FlownDraft(origin: fra, destination: dus), at: day)
+    let second = try store.saveFlown(FlownDraft(origin: fra, destination: dus), at: day)
+
+    try store.deleteLocal(id: first.id)
+    #expect(try context.fetch(FetchDescriptor<LocalCheckIn>()).count == 5)
+    try store.deleteLocal(id: second.id)
+    #expect(try context.fetch(FetchDescriptor<LocalCheckIn>()).isEmpty)
+}
+
 @MainActor @Test func changingTheDayOfAFlightMovesItsAirportVisitsToo() throws {
     let context = try makeContext()
     let store = CheckInStore(context: context)
