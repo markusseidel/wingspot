@@ -188,7 +188,7 @@ private let dus = SpottedDraft.Place(airportID: 7, code: "DUS")
     #expect(removed.count == 3 && removed.contains(flight.id))
 }
 
-@MainActor @Test func aVisitStaysWhileAnotherFlightAtTheSameTimeUsesItsAirport() throws {
+@MainActor @Test func twoFlightsAtTheSameTimeEachTakeOnlyTheirOwnLinkedVisits() throws {
     let context = try makeContext()
     let store = CheckInStore(context: context)
     let day = Date(timeIntervalSince1970: 1_000_000)
@@ -196,9 +196,39 @@ private let dus = SpottedDraft.Place(airportID: 7, code: "DUS")
     let second = try store.saveFlown(FlownDraft(origin: fra, destination: dus), at: day)
 
     try store.deleteLocal(id: first.id)
+    let left = try context.fetch(FetchDescriptor<LocalCheckIn>())
+    #expect(left.count == 3 && left.filter { $0.flightID == second.id }.count == 2)
+    try store.deleteLocal(id: second.id)
+    #expect(try context.fetch(FetchDescriptor<LocalCheckIn>()).isEmpty)
+}
+
+@MainActor @Test func visitsWithoutALinkAreFoundByTimeAndAirportsUnlessAnotherFlightUsesThem() throws {
+    let context = try makeContext()
+    let store = CheckInStore(context: context)
+    let day = Date(timeIntervalSince1970: 1_000_000)
+    let first = try store.saveFlown(FlownDraft(origin: fra, destination: dus), at: day)
+    let second = try store.saveFlown(FlownDraft(origin: fra, destination: dus), at: day)
+    // As saved by an older version, which didn't link them.
+    for checkIn in try context.fetch(FetchDescriptor<LocalCheckIn>()) { checkIn.flightID = nil }
+
+    try store.deleteLocal(id: first.id)
     #expect(try context.fetch(FetchDescriptor<LocalCheckIn>()).count == 5)
     try store.deleteLocal(id: second.id)
     #expect(try context.fetch(FetchDescriptor<LocalCheckIn>()).isEmpty)
+}
+
+@MainActor @Test func aLinkedVisitMovesWithItsFlightWhateverItsTimeIs() throws {
+    let context = try makeContext()
+    let store = CheckInStore(context: context)
+    let day = Date(timeIntervalSince1970: 1_000_000)
+    let flight = try store.saveFlown(FlownDraft(origin: fra, destination: dus), at: day)
+    let visit = try #require(try context.fetch(FetchDescriptor<LocalCheckIn>()).first { $0.kind == "airport" })
+    visit.occurredAt = day.addingTimeInterval(60)
+    let newDay = Date(timeIntervalSince1970: 500_000)
+
+    #expect(try store.updateFlown(id: flight.id, registration: nil, type: nil, flightNumber: nil, cabin: nil, seat: nil, occurredAt: newDay))
+    let visits = try context.fetch(FetchDescriptor<LocalCheckIn>()).filter { $0.kind == "airport" }
+    #expect(visits.count == 2 && visits.allSatisfy { $0.occurredAt == newDay })
 }
 
 @MainActor @Test func changingTheDayOfAFlightMovesItsAirportVisitsToo() throws {

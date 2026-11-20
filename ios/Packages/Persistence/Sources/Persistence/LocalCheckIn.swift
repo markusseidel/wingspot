@@ -40,13 +40,16 @@ public final class LocalCheckIn {
     public var flightNumber: String?
     public var cabin: String?
     public var seat: String?
+    /// Airport visits a flight created only: the flight. Older visits and visits made by hand have none.
+    /// Like `ownerID`, it opens an existing store without a migration step.
+    public var flightID: UUID?
 
     init(
         id: UUID, kind: String, registration: String?, typeICAO: String?, typeName: String?, airportID: Int?,
         airportCode: String?, latitude: Double?, longitude: Double?, occurredAt: Date, syncState: SyncState,
         ownerID: UUID? = nil, visitContext: String? = nil,
         originID: Int? = nil, destinationID: Int? = nil, originCode: String? = nil, destinationCode: String? = nil,
-        flightNumber: String? = nil, cabin: String? = nil, seat: String? = nil
+        flightNumber: String? = nil, cabin: String? = nil, seat: String? = nil, flightID: UUID? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -68,5 +71,6 @@ public final class LocalCheckIn {
         self.flightNumber = flightNumber
         self.cabin = cabin
         self.seat = seat
+        self.flightID = flightID
     }
 }

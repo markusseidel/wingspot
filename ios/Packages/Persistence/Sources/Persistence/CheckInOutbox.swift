@@ -170,7 +170,8 @@ public final class CheckInOutbox {
             latitude: checkIn.latitude, longitude: checkIn.longitude, context: checkIn.visitContext,
             originID: checkIn.originID, destinationID: checkIn.destinationID,
             flightNumber: dropped.contains(.flightNumber) ? nil : checkIn.flightNumber,
-            cabin: dropped.contains(.cabin) ? nil : checkIn.cabin, seat: dropped.contains(.seat) ? nil : checkIn.seat
+            cabin: dropped.contains(.cabin) ? nil : checkIn.cabin, seat: dropped.contains(.seat) ? nil : checkIn.seat,
+            flightID: checkIn.flightID
         )
     }
 }

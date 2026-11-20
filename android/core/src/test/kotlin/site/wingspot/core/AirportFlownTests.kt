@@ -64,15 +64,44 @@ class AirportAndFlownStoreTests {
     }
 
     @Test
-    fun aVisitStaysWhileAnotherFlightAtTheSameTimeUsesItsAirport() = runBlocking {
+    fun twoFlightsAtTheSameTimeEachTakeOnlyTheirOwnLinkedVisits() = runBlocking {
         val s = store()
         val day = Instant.parse("2026-03-01T10:00:00Z")
         val first = s.saveFlown(FlownDraft(FRA, JFK), day)
         val second = s.saveFlown(FlownDraft(FRA, JFK), day)
         s.delete(first.id)
+        val left = s.all()
+        assertEquals(3, left.size)
+        assertEquals(2, left.count { it.flightId == second.id })
+        s.delete(second.id)
+        assertEquals(emptyList(), s.all())
+    }
+
+    @Test
+    fun visitsWithoutALinkAreFoundByTimeAndAirportsUnlessAnotherFlightUsesThem() = runBlocking {
+        val day = Instant.parse("2026-03-01T10:00:00Z")
+        val source = store()
+        val first = source.saveFlown(FlownDraft(FRA, JFK), day)
+        val second = source.saveFlown(FlownDraft(FRA, JFK), day)
+        // Restored from the server by a version that doesn't know the link.
+        val s = store()
+        s.restore(source.all().map { it.copy(flightId = null) })
+        s.delete(first.id)
         assertEquals(5, s.all().size)
         s.delete(second.id)
         assertEquals(emptyList(), s.all())
+    }
+
+    @Test
+    fun aLinkedVisitMovesWithItsFlightWhateverItsTimeIs() = runBlocking {
+        val s = store()
+        val day = Instant.parse("2026-03-01T10:00:00Z")
+        val flight = s.saveFlown(FlownDraft(FRA, JFK), day)
+        val newDay = Instant.parse("2026-02-20T12:00:00Z")
+        assertTrue(s.updateFlown(flight.id, null, null, null, null, null, newDay))
+        val visits = s.all().filter { it.kind == "airport" }
+        assertEquals(2, visits.size)
+        assertTrue(visits.all { it.occurredAt == newDay && it.flightId == flight.id })
     }
 
     @Test
