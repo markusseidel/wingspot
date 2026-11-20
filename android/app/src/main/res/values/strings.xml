@@ -104,6 +104,7 @@
     <string name="report">Report</string>
     <string name="check_in_gone">This check-in isn\'t available anymore.</string>
     <string name="comments_failed">Couldn\'t load the comments.</string>
+    <string name="comments_title">Comments</string>
     <string name="no_comments">No comments yet</string>
     <string name="write_comment">Write a comment</string>
     <string name="send">Send</string>

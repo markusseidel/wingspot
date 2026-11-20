@@ -27,6 +27,7 @@ struct CheckInDetailView: View {
     @State private var full: FeedItem?
     @State private var store: CheckInCommentStore?
     @State private var text = ""
+    @FocusState private var commentFocused: Bool
     @State private var problem: AccountError?
     @State private var report: ReportTarget?
 
@@ -70,42 +71,12 @@ struct CheckInDetailView: View {
     private func content(_ store: CheckInCommentStore) -> some View {
         List {
             summary
+            if !tags.isEmpty { withSection }
             if !photos.isEmpty { photoSection }
             reactions
             actions
             lookup
-            if store.isLoading, !store.hasLoaded {
-                ProgressView().frame(maxWidth: .infinity)
-            } else if let failure = store.failure, !store.hasLoaded {
-                Text(failure.message).foregroundStyle(.secondary)
-            } else if store.comments.isEmpty {
-                Text("No comments yet").foregroundStyle(.secondary)
-            }
-            ForEach(store.comments) { comment in
-                VStack(alignment: .leading, spacing: 2) {
-                    HStack(alignment: .firstTextBaseline) {
-                        Text(verbatim: comment.displayName ?? comment.username).font(.subheadline.bold())
-                        Spacer()
-                        Text(comment.createdAt, format: .relative(presentation: .named))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    Text(verbatim: comment.body)
-                }
-                .accessibilityElement(children: .combine)
-                .swipeActions {
-                    // Your own comments, and any comment under your own check-in.
-                    if comment.userID == account.userID || item.userID == account.userID {
-                        Button("Delete", role: .destructive) { Task { await store.delete(comment) } }
-                    }
-                    if comment.userID != account.userID {
-                        Button("Report") {
-                            report = ReportTarget(kind: .comment, id: comment.id, subject: "this comment")
-                        }
-                        .tint(.orange)
-                    }
-                }
-            }
+            commentsSection(store)
         }
         .refreshable { await store.load() }
         .sheet(item: $report) { ReportSheet(target: $0) }
@@ -153,6 +124,7 @@ struct CheckInDetailView: View {
                 CheckInEditView(checkInID: item.id, tags: tags, onSaved: saved)
             }
         }
+        .scrollDismissesKeyboard(.interactively)
         .safeAreaInset(edge: .bottom) { composer(store) }
         .alert("Couldn't complete this", isPresented: Binding(get: { problem != nil }, set: { if !$0 { problem = nil } })) {
             Button("OK", role: .cancel) {}
@@ -202,18 +174,6 @@ struct CheckInDetailView: View {
                 if let seat = shown.seat { LabeledContent("Seat", value: seat) }
                 if let km = shown.distanceKm { LabeledContent("Distance", value: unit.format(km: km)) }
             }
-            if !tags.isEmpty {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("With").font(.subheadline).foregroundStyle(.secondary)
-                    ForEach(tags) { person in
-                        if person.id == account.userID {
-                            Text("You")
-                        } else {
-                            NavigationLink { PersonLoaderView(id: person.id) } label: { Text(verbatim: person.name) }
-                        }
-                    }
-                }
-            }
             if let registration = shown.registration {
                 NavigationLink { RegistrationPageView(registration: registration) } label: {
                     LabeledContent("Aircraft", value: registration)
@@ -230,6 +190,34 @@ struct CheckInDetailView: View {
                 }
             }
         }
+    }
+
+    /// The friends who were along, one row each, so a tap opens exactly one of them.
+    private var withSection: some View {
+        Section {
+            ForEach(tags) { person in
+                if person.id == account.userID {
+                    friendRow(String(localized: "You"))
+                } else {
+                    NavigationLink { PersonLoaderView(id: person.id) } label: { friendRow(person.name) }
+                }
+            }
+        } header: {
+            Text("With").font(.headline).textCase(nil)
+        }
+    }
+
+    private func friendRow(_ name: String) -> some View {
+        HStack(spacing: 12) {
+            Text(verbatim: String(name.prefix(1)).uppercased())
+                .font(.headline)
+                .foregroundStyle(.tint)
+                .frame(width: 40, height: 40)
+                .background(Color.accentColor.opacity(0.15), in: Circle())
+                .accessibilityHidden(true)
+            Text(verbatim: name).font(.body)
+        }
+        .padding(.vertical, 4)
     }
 
     private var photoSection: some View {
@@ -353,20 +341,92 @@ struct CheckInDetailView: View {
         }
     }
 
+    private func commentsSection(_ store: CheckInCommentStore) -> some View {
+        Section {
+            if store.isLoading, !store.hasLoaded {
+                ProgressView().frame(maxWidth: .infinity).padding(.vertical, 12)
+            } else if let failure = store.failure, !store.hasLoaded {
+                Text(failure.message).foregroundStyle(.secondary)
+            } else if store.comments.isEmpty {
+                VStack(spacing: 8) {
+                    Image(systemName: "bubble.left.and.bubble.right")
+                        .font(.largeTitle)
+                        .foregroundStyle(.tint)
+                    Text("No comments yet").font(.headline).foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 20)
+                .accessibilityElement(children: .combine)
+            }
+            ForEach(store.comments) { comment in
+                let name = comment.displayName ?? comment.username
+                HStack(alignment: .top, spacing: 12) {
+                    Text(verbatim: String(name.prefix(1)).uppercased())
+                        .font(.headline)
+                        .foregroundStyle(.tint)
+                        .frame(width: 40, height: 40)
+                        .background(Color.accentColor.opacity(0.15), in: Circle())
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(alignment: .firstTextBaseline) {
+                            Text(verbatim: name).font(.headline)
+                            Spacer()
+                            Text(comment.createdAt, format: .relative(presentation: .named))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                        Text(verbatim: comment.body).font(.body)
+                    }
+                }
+                .padding(.vertical, 6)
+                .accessibilityElement(children: .combine)
+                .swipeActions {
+                    // Your own comments, and any comment under your own check-in.
+                    if comment.userID == account.userID || item.userID == account.userID {
+                        Button("Delete", role: .destructive) { Task { await store.delete(comment) } }
+                    }
+                    if comment.userID != account.userID {
+                        Button("Report") {
+                            report = ReportTarget(kind: .comment, id: comment.id, subject: "this comment")
+                        }
+                        .tint(.orange)
+                    }
+                }
+            }
+        } header: {
+            HStack {
+                Text("Comments")
+                if !store.comments.isEmpty { Text("\(store.comments.count)").foregroundStyle(.secondary) }
+            }
+            .font(.headline)
+            .textCase(nil)
+        }
+    }
+
     private func composer(_ store: CheckInCommentStore) -> some View {
-        HStack(alignment: .bottom, spacing: 8) {
+        let canSend = CheckInCommentStore.isSendable(text) && !store.isSending
+        return HStack(alignment: .bottom, spacing: 10) {
             TextField("Write a comment…", text: $text, axis: .vertical)
-                .lineLimit(1...4)
-                .textFieldStyle(.roundedBorder)
+                .lineLimit(1...5)
+                .font(.body)
+                .focused($commentFocused)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
             Button {
                 send(store)
             } label: {
-                Image(systemName: "arrow.up.circle.fill").font(.title2)
+                Image(systemName: "arrow.up")
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 44, height: 44)
+                    .background(canSend ? Color.accentColor : Color.gray.opacity(0.35), in: Circle())
             }
             .accessibilityLabel("Send")
-            .disabled(!CheckInCommentStore.isSendable(text) || store.isSending)
+            .disabled(!canSend)
         }
-        .padding()
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
         .background(.bar)
     }
 
@@ -401,6 +461,7 @@ struct CheckInDetailView: View {
             do {
                 try await store.send(draft)
                 text = ""
+                commentFocused = false
             } catch {
                 problem = (error as? AccountError) ?? .unknown
             }

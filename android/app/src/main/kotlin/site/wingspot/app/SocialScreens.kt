@@ -8,12 +8,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
@@ -24,6 +26,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -43,7 +46,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -184,6 +189,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
     var comments by remember { mutableStateOf(emptyList<CheckInComment>()) }
     var commentsFailed by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
+    val focusManager = LocalFocusManager.current
     var problem by remember { mutableStateOf<Int?>(null) }
     var menu by remember { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
@@ -250,7 +256,6 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                     }
                     Text(fullTime(shown.occurredAt), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     val unit = app.prefs.unit
-                    if (tags.isNotEmpty()) InfoRow(stringResource(R.string.with_label), tags.joinToString(", ") { if (it.id == me) "" + app.getString(R.string.you) else it.who })
                     shown.flightNumber?.let { InfoRow(stringResource(R.string.flight_label), it) }
                     shown.registration?.let { r -> InfoRow(stringResource(R.string.aircraft_label), r, if (shown.kind == "spotted") null else ({ model.open(Route.RegistrationPage(r)) })) }
                     shown.typeIcao?.let { t -> InfoRow(stringResource(R.string.type_label), shown.typeName ?: t) { model.open(Route.TypePage(t)) } }
@@ -266,6 +271,29 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                 Box {
                     RemoteImage(photo, Modifier.fillMaxWidth().clip(MaterialTheme.shapes.medium).clickable { viewing = photo })
                     if (shown.userId != me) TextButton(onClick = { reporting = ReportKind.PHOTO to photo.id }, modifier = Modifier.align(Alignment.TopEnd)) { Text(stringResource(R.string.report)) }
+                }
+            }
+            if (tags.isNotEmpty()) item {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(R.string.with_label), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Column {
+                            tags.forEachIndexed { index, person ->
+                                if (index > 0) HorizontalDivider(Modifier.padding(start = 64.dp))
+                                val isMe = person.id == me
+                                Row(
+                                    Modifier.fillMaxWidth().then(if (isMe) Modifier else Modifier.clickable { model.openPerson(person.id) }).padding(horizontal = 12.dp, vertical = 10.dp),
+                                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                ) {
+                                    val name = if (isMe) stringResource(R.string.you) else person.who
+                                    Box(Modifier.size(40.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)), contentAlignment = Alignment.Center) {
+                                        Text(name.take(1).uppercase(), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+                                    }
+                                    Text(name, style = MaterialTheme.typography.bodyLarge)
+                                }
+                            }
+                        }
+                    }
                 }
             }
             item { SaluteButton(shown) { model.toggleSalute(id) } }
@@ -290,58 +318,84 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                     Text(stringResource(R.string.lookup_footer), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
-            item { HorizontalDivider() }
+            item {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 8.dp)) {
+                    Text(stringResource(R.string.comments_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    if (comments.isNotEmpty()) Text(comments.size.toString(), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
             if (commentsFailed) item { Text(stringResource(R.string.comments_failed), color = MaterialTheme.colorScheme.error) }
-            else if (comments.isEmpty()) item { Text(stringResource(R.string.no_comments), color = MaterialTheme.colorScheme.onSurfaceVariant) }
+            else if (comments.isEmpty()) item {
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(Modifier.fillMaxWidth().padding(vertical = 24.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Icon(painterResource(R.drawable.ic_comments), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(48.dp))
+                        Text(stringResource(R.string.no_comments), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+            }
             items(comments, key = { it.id }) { comment ->
                 var open by remember { mutableStateOf(false) }
-                Row(verticalAlignment = Alignment.Top) {
-                    Column(Modifier.weight(1f)) {
-                        Row { Text(comment.who, fontWeight = FontWeight.Bold); Text("  " + relativeTime(comment.createdAt), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
-                        Text(comment.body)
-                    }
-                    Box {
-                        IconButton(onClick = { open = true }, modifier = Modifier.size(48.dp)) { Text("⋮", style = MaterialTheme.typography.titleLarge) }
-                        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-                            if (comment.userId == me || shown.userId == me) {
-                                DropdownMenuItem(text = { Text(stringResource(R.string.delete)) }, onClick = {
-                                    open = false
-                                    scope.launch {
-                                        try { app.social.deleteComment(comment.id); comments = comments.filterNot { it.id == comment.id }; model.setCommentCount(id, comments.size) }
-                                        catch (e: ApiException) { problem = R.string.error_unknown }
-                                    }
-                                })
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Row(Modifier.padding(start = 12.dp, top = 8.dp, bottom = 8.dp), verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Box(
+                            Modifier.padding(top = 4.dp).size(40.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
+                            contentAlignment = Alignment.Center,
+                        ) { Text(comment.who.take(1).uppercase(), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
+                        Column(Modifier.weight(1f).padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Row(horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                                Text(comment.who, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                Text(relativeTime(comment.createdAt), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
-                            if (comment.userId != me) DropdownMenuItem(text = { Text(stringResource(R.string.report)) }, onClick = { open = false; reporting = ReportKind.COMMENT to comment.id })
+                            Text(comment.body, style = MaterialTheme.typography.bodyLarge)
+                        }
+                        Box {
+                            IconButton(onClick = { open = true }, modifier = Modifier.size(48.dp)) { Text("⋮", style = MaterialTheme.typography.titleLarge) }
+                            DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+                                if (comment.userId == me || shown.userId == me) {
+                                    DropdownMenuItem(text = { Text(stringResource(R.string.delete)) }, onClick = {
+                                        open = false
+                                        scope.launch {
+                                            try { app.social.deleteComment(comment.id); comments = comments.filterNot { it.id == comment.id }; model.setCommentCount(id, comments.size) }
+                                            catch (e: ApiException) { problem = R.string.error_unknown }
+                                        }
+                                    })
+                                }
+                                if (comment.userId != me) DropdownMenuItem(text = { Text(stringResource(R.string.report)) }, onClick = { open = false; reporting = ReportKind.COMMENT to comment.id })
+                            }
                         }
                     }
                 }
             }
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(
-                        value = text, onValueChange = { text = it }, modifier = Modifier.fillMaxWidth().testTag("comment"),
-                        label = { Text(stringResource(R.string.write_comment)) },
-                    )
-                    problem?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error) }
-                    Button(
-                        enabled = text.isNotBlank(), modifier = Modifier.testTag("send-comment"),
-                        onClick = {
-                            scope.launch {
-                                try {
-                                    val added = app.social.addComment(text.trim(), id, me)
-                                    comments = comments + added
-                                    text = ""
-                                    problem = null
-                                    model.setCommentCount(id, comments.size)
-                                } catch (e: ApiException.Failed) {
-                                    problem = if (e.code == "23514") R.string.comment_refused else R.string.error_unknown
-                                } catch (e: ApiException) {
-                                    problem = R.string.error_offline
+                    Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        OutlinedTextField(
+                            value = text, onValueChange = { text = it }, modifier = Modifier.weight(1f).testTag("comment"),
+                            placeholder = { Text(stringResource(R.string.write_comment)) },
+                            maxLines = 5,
+                        )
+                        Button(
+                            enabled = text.isNotBlank(), modifier = Modifier.size(52.dp).testTag("send-comment"),
+                            shape = CircleShape, contentPadding = PaddingValues(0.dp),
+                            onClick = {
+                                scope.launch {
+                                    try {
+                                        val added = app.social.addComment(text.trim(), id, me)
+                                        comments = comments + added
+                                        text = ""
+                                        problem = null
+                                        focusManager.clearFocus()
+                                        model.setCommentCount(id, comments.size)
+                                    } catch (e: ApiException.Failed) {
+                                        problem = if (e.code == "23514") R.string.comment_refused else R.string.error_unknown
+                                    } catch (e: ApiException) {
+                                        problem = R.string.error_offline
+                                    }
                                 }
-                            }
-                        },
-                    ) { Text(stringResource(R.string.send)) }
+                            },
+                        ) { Text("↑", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold) }
+                    }
+                    problem?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error) }
                 }
             }
         }
