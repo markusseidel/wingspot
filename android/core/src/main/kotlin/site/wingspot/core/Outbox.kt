@@ -192,6 +192,7 @@ class ApiClient(
         c.cabin?.let { put("cabin", it) }
         c.seat?.let { put("seat", it) }
         c.visitContext?.let { put("context", it) }
+        c.flightId?.let { put("flight_id", it.toString()) }
         if (c.latitude != null && c.longitude != null) {
             put("latitude", c.latitude)
             put("longitude", c.longitude)

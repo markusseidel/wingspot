@@ -53,6 +53,8 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
     public let longitude: Double?
     /// Why the user was at the airport. Only for airport check-ins.
     public let context: String?
+    /// The flight that created this airport visit. Only for `airport` check-ins that a flight made.
+    public let flightID: UUID?
     /// Flown check-ins only.
     public let originID: Int?
     public let destinationID: Int?
@@ -67,7 +69,7 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
         id: UUID, kind: String, occurredAt: Date, registration: String?, typeICAO: String?, airportID: Int?,
         latitude: Double?, longitude: Double?, context: String? = nil,
         originID: Int? = nil, destinationID: Int? = nil, flightNumber: String? = nil, cabin: String? = nil,
-        seat: String? = nil, visibility: String? = nil
+        seat: String? = nil, visibility: String? = nil, flightID: UUID? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -78,6 +80,7 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
         self.latitude = latitude
         self.longitude = longitude
         self.context = context
+        self.flightID = flightID
         self.originID = originID
         self.destinationID = destinationID
         self.flightNumber = flightNumber
@@ -93,6 +96,7 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
         case typeICAO = "type_icao"
         case airportID = "airport_id"
         case latitude, longitude, context
+        case flightID = "flight_id"
         case originID = "origin_id"
         case destinationID = "destination_id"
         case flightNumber = "flight_number"

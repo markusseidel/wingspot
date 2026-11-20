@@ -86,6 +86,8 @@ data class LocalCheckIn(
     val cabin: String? = null,
     val seat: String? = null,
     val visitContext: String? = null,
+    /** Airport visits a flight created only: the flight. Older visits and visits made by hand have none. */
+    val flightId: UUID? = null,
 ) {
     /** What to show as the title: the registration, the route or the airport. */
     val title: String
@@ -153,15 +155,18 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
         }
     }
 
-    private fun insertAirport(id: UUID, place: Place, context: VisitContext, at: Instant, latitude: Double?, longitude: Double?) {
+    private fun insertAirport(
+        id: UUID, place: Place, context: VisitContext, at: Instant, latitude: Double?, longitude: Double?, flightId: UUID? = null,
+    ) {
         connection.prepare(
-            """INSERT INTO checkins (id, kind, occurred_at, airport_id, airport_code, visit_context, latitude, longitude, sync_state)
-               VALUES (?, 'airport', ?, ?, ?, ?, ?, ?, 'pending')""",
+            """INSERT INTO checkins (id, kind, occurred_at, airport_id, airport_code, visit_context, latitude, longitude, sync_state, flight_id)
+               VALUES (?, 'airport', ?, ?, ?, ?, ?, ?, 'pending', ?)""",
         ).use {
             it.bindText(1, id.toString()); it.bindLong(2, at.toEpochMilli())
             it.bindLong(3, place.airportId); it.bindText(4, place.code); it.bindText(5, context.wire)
             latitude?.let { v -> it.bindDouble(6, v) } ?: it.bindNull(6)
             longitude?.let { v -> it.bindDouble(7, v) } ?: it.bindNull(7)
+            flightId?.let { v -> it.bindText(8, v.toString()) } ?: it.bindNull(8)
             it.step()
         }
     }
@@ -193,8 +198,8 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
                 seat?.let { v -> it.bindText(11, v) } ?: it.bindNull(11)
                 it.step()
             }
-            insertAirport(Uuid7.generate(at.toEpochMilli()), draft.origin, VisitContext.DEPARTING, at, null, null)
-            insertAirport(Uuid7.generate(at.toEpochMilli()), draft.destination, VisitContext.ARRIVING, at, null, null)
+            insertAirport(Uuid7.generate(at.toEpochMilli()), draft.origin, VisitContext.DEPARTING, at, null, null, flightId = id)
+            insertAirport(Uuid7.generate(at.toEpochMilli()), draft.destination, VisitContext.ARRIVING, at, null, null, flightId = id)
             FlownResult(id, "${draft.origin.code} → ${draft.destination.code}", earlier + 1)
         }
     }
@@ -218,11 +223,12 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
             // The airport visits a flight creates share its time and move with it. The server moves its copies the same way.
             connection.prepare(
                 """UPDATE checkins SET occurred_at = ? WHERE kind = 'airport' AND visit_context IN ('departing', 'arriving')
-                       AND occurred_at = (SELECT occurred_at FROM checkins WHERE id = ?)
-                       AND airport_id IN (SELECT origin_id FROM checkins WHERE id = ? UNION SELECT destination_id FROM checkins WHERE id = ?)""",
+                       AND (flight_id = ? OR (flight_id IS NULL
+                         AND occurred_at = (SELECT occurred_at FROM checkins WHERE id = ?)
+                         AND airport_id IN (SELECT origin_id FROM checkins WHERE id = ? UNION SELECT destination_id FROM checkins WHERE id = ?)))""",
             ).use {
                 it.bindLong(1, occurredAt.toEpochMilli())
-                for (i in 2..4) it.bindText(i, id.toString())
+                for (i in 2..5) it.bindText(i, id.toString())
                 it.step()
             }
             connection.prepare("UPDATE checkins SET occurred_at = ? WHERE id = ?").use {
@@ -279,11 +285,12 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
      * [updateFlown] finds them, and a visit stays while another flight at the same time still uses its airport.
      */
     suspend fun delete(id: UUID) = db {
+        // The visits linked to the flight, and for visits without a link the ones found by time and airports.
         val visits = """SELECT v.id FROM checkins v, checkins f WHERE f.id = ? AND f.kind = 'flown' AND v.kind = 'airport'
-               AND v.visit_context IN ('departing', 'arriving') AND v.occurred_at = f.occurred_at
+               AND v.visit_context IN ('departing', 'arriving') AND (v.flight_id = f.id OR (v.flight_id IS NULL AND v.occurred_at = f.occurred_at
                AND v.airport_id IN (f.origin_id, f.destination_id)
                AND NOT EXISTS (SELECT 1 FROM checkins o WHERE o.kind = 'flown' AND o.id <> f.id AND o.occurred_at = f.occurred_at
-                               AND v.airport_id IN (o.origin_id, o.destination_id))"""
+                               AND v.airport_id IN (o.origin_id, o.destination_id))))"""
         for (sql in listOf("DELETE FROM photos WHERE checkin_id IN ($visits)", "DELETE FROM checkins WHERE id IN ($visits)")) {
             connection.prepare(sql).use { it.bindText(1, id.toString()); it.step() }
         }
@@ -453,7 +460,7 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
     private suspend fun select(tail: String): List<LocalCheckIn> = db {
         connection.prepare(
             """SELECT id, kind, occurred_at, registration, type_icao, airport_id, latitude, longitude, sync_state, reject_code,
-                      airport_code, origin_id, destination_id, origin_code, destination_code, flight_number, cabin, seat, visit_context
+                      airport_code, origin_id, destination_id, origin_code, destination_code, flight_number, cabin, seat, visit_context, flight_id
                FROM checkins $tail""",
         ).use { s ->
             buildList {
@@ -464,6 +471,7 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
                             s.text(3), s.text(4), s.long(5), s.double(6), s.double(7),
                             SyncState.valueOf(s.getText(8).uppercase()), s.text(9),
                             s.text(10), s.long(11), s.long(12), s.text(13), s.text(14), s.text(15), s.text(16), s.text(17), s.text(18),
+                            s.text(19)?.let(UUID::fromString),
                         ),
                     )
                 }
@@ -507,7 +515,7 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
             for ((name, type) in listOf(
                 "airport_code" to "TEXT", "origin_id" to "INTEGER", "destination_id" to "INTEGER", "origin_code" to "TEXT",
                 "destination_code" to "TEXT", "flight_number" to "TEXT", "cabin" to "TEXT", "seat" to "TEXT",
-                "visit_context" to "TEXT", "synced_at" to "INTEGER",
+                "visit_context" to "TEXT", "synced_at" to "INTEGER", "flight_id" to "TEXT",
             )) if (name !in have) connection.execSQL("ALTER TABLE checkins ADD COLUMN $name $type")
             connection.execSQL("CREATE INDEX IF NOT EXISTS checkins_pending ON checkins (sync_state, occurred_at)")
             connection.execSQL(

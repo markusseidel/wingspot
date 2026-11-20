@@ -98,9 +98,10 @@ private let sampleItem = CheckInUploadItem(
 /// Every field of an item has to appear in what is sent. A field left out of the coding keys would be dropped
 /// without any error, and the server would reject the check-in for what is missing.
 @Test func uploadSendsTheFieldsOfAirportVisitsAndFlights() async throws {
+    let flightID = UUID()
     let visit = CheckInUploadItem(
         id: UUID(), kind: "airport", occurredAt: Date(), registration: nil, typeICAO: nil, airportID: 3,
-        latitude: nil, longitude: nil, context: "transit"
+        latitude: nil, longitude: nil, context: "transit", flightID: flightID
     )
     let flight = CheckInUploadItem(
         id: UUID(), kind: "flown", occurredAt: Date(), registration: "D-AIMA", typeICAO: "A388", airportID: nil,
@@ -112,6 +113,8 @@ private let sampleItem = CheckInUploadItem(
         let items = try #require(json["checkins"])
         #expect(items[0]["context"] as? String == "transit")
         #expect(items[0]["airport_id"] as? Int == 3)
+        #expect(items[0]["flight_id"] as? String == flightID.uuidString)
+        #expect(items[1]["flight_id"] == nil)
         #expect(items[1]["origin_id"] as? Int == 3)
         #expect(items[1]["destination_id"] as? Int == 7)
         #expect(items[1]["flight_number"] as? String == "LH400")

@@ -117,6 +117,18 @@ class OutboxTests {
     }
 
     @Test
+    fun theVisitsOfAFlightAreSentWithTheFlightsId() = withOutbox { server, store, outbox, _ ->
+        val flight = store.saveFlown(FlownDraft(Place(3, "LIS"), Place(9, "MXP")))
+        server.enqueue(answer(*store.pending().map { it.id to "stored" }.toTypedArray()))
+        assertEquals(SyncOutcome.Done(3, 0), outbox.sync())
+        val items = Json.parseToJsonElement(server.takeRequest().body!!.utf8()).jsonObject["checkins"]!!.jsonArray.map { it.jsonObject }
+        val visits = items.filter { it["kind"]!!.jsonPrimitive.content == "airport" }
+        assertEquals(2, visits.size)
+        assertTrue(visits.all { it["flight_id"]!!.jsonPrimitive.content == flight.id.toString() })
+        assertTrue(items.single { it["kind"]!!.jsonPrimitive.content == "flown" }.let { "flight_id" !in it })
+    }
+
+    @Test
     fun aFlightWithATypeTheServerDoesNotKnowIsStoredWithoutIt() = withOutbox { server, store, outbox, _ ->
         val flight = store.saveFlown(FlownDraft(Place(3, "LIS"), Place(9, "MXP"), flightNumber = "TP832", typeIcao = "A21N"))
         val sent = store.pending().filter { it.kind == "flown" }.single().id

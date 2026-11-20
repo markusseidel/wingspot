@@ -385,6 +385,13 @@ components:
           type: string
           description: Why the user was at the airport. Only for `airport` check-ins. One of `spotting`, `departing`, `arriving`, `transit`, `working`, `museum`.
           examples: [spotting]
+        flight_id:
+          type: string
+          format: uuid
+          description: >-
+            Only for `airport` check-ins that a flight created: the id of that flight. Deleting the flight deletes the
+            visit, and changing the flight's day moves it. The flight may arrive in the same or a later request. Visits
+            without it are matched to their flight by time and airports.
         occurred_at:
           type: string
           format: date-time

@@ -258,7 +258,7 @@ public struct CheckInStore {
             context.insert(LocalCheckIn(
                 id: UUID.v7(at: date), kind: "airport", registration: nil, typeICAO: nil, typeName: nil,
                 airportID: airport.airportID, airportCode: airport.code, latitude: nil, longitude: nil,
-                occurredAt: date, syncState: .pending, ownerID: ownerID, visitContext: visit.rawValue
+                occurredAt: date, syncState: .pending, ownerID: ownerID, visitContext: visit.rawValue, flightID: id
             ))
         }
         try context.save()
@@ -291,12 +291,13 @@ public struct CheckInStore {
             // The airport visits a flight creates share its time. The server moves its copies the same way.
             let old = flight.occurredAt
             let owner = flight.ownerID
+            let flightID = flight.id
             let airports = [flight.originID, flight.destinationID].compactMap { $0 }
-            let visits = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate {
-                $0.kind == "airport" && $0.occurredAt == old
-            }))
-            for visit in visits where visit.ownerID == owner && airports.contains(visit.airportID ?? -1)
-                && (visit.visitContext == "departing" || visit.visitContext == "arriving") {
+            let visits = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.kind == "airport" }))
+            for visit in visits where visit.ownerID == owner
+                && (visit.visitContext == "departing" || visit.visitContext == "arriving")
+                && (visit.flightID == flightID
+                    || (visit.flightID == nil && visit.occurredAt == old && airports.contains(visit.airportID ?? -1))) {
                 visit.occurredAt = occurredAt
             }
             flight.occurredAt = occurredAt
@@ -336,8 +337,9 @@ public struct CheckInStore {
     }
 
     /// Removes a check-in from this device, with its photos. Does nothing if there is none.
-    /// Deleting a flight also removes the two airport visits it created, as the server does. They are found the way
-    /// `updateFlown` finds them. A visit stays while another flight at the same time still uses its airport.
+    /// Deleting a flight also removes the two airport visits it created, as the server does: the visits linked to it,
+    /// and for visits without a link the ones `updateFlown` would find by time and airports, unless another flight at
+    /// the same time still uses the airport.
     /// Returns the ids of everything removed, so the lists on screen can drop them too.
     @discardableResult
     public func deleteLocal(id: UUID) throws -> [UUID] {
@@ -351,13 +353,15 @@ public struct CheckInStore {
                 $0.kind == "flown" && $0.occurredAt == time && $0.id != id
             })).filter { $0.ownerID == owner }
             let stillUsed = Set(others.flatMap { [$0.originID, $0.destinationID].compactMap { $0 } })
-            let visits = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate {
-                $0.kind == "airport" && $0.occurredAt == time
-            }))
+            let visits = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.kind == "airport" }))
             for visit in visits where visit.ownerID == owner
-                && (visit.visitContext == "departing" || visit.visitContext == "arriving")
-                && airports.contains(visit.airportID ?? -1) && !stillUsed.contains(visit.airportID ?? -1) {
-                removed.append(visit.id)
+                && (visit.visitContext == "departing" || visit.visitContext == "arriving") {
+                if visit.flightID == id {
+                    removed.append(visit.id)
+                } else if visit.flightID == nil, visit.occurredAt == time, airports.contains(visit.airportID ?? -1),
+                          !stillUsed.contains(visit.airportID ?? -1) {
+                    removed.append(visit.id)
+                }
             }
         }
         removed.append(contentsOf: found.map(\.id))
