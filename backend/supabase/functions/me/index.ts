@@ -24,18 +24,19 @@ async function progress(request: Request): Promise<Response> {
   return json(data);
 }
 
-const PHOTO_BUCKET = "photos";
+// The check-in photos and the profile image both live in a folder named after the person.
+const USER_BUCKETS = ["photos", "avatars"];
 
-/** Every file path under a folder of the photo bucket, however deep. */
-async function filesUnder(db: ReturnType<typeof serviceClient>, folder: string): Promise<string[]> {
+/** Every file path under a folder of a bucket, however deep. */
+async function filesUnder(db: ReturnType<typeof serviceClient>, bucket: string, folder: string): Promise<string[]> {
   const found: string[] = [];
   for (let offset = 0;; offset += 100) {
-    const { data, error } = await db.storage.from(PHOTO_BUCKET).list(folder, { limit: 100, offset });
+    const { data, error } = await db.storage.from(bucket).list(folder, { limit: 100, offset });
     if (error) throw error;
     for (const entry of data) {
       // Folders have no id.
       if (entry.id) found.push(`${folder}/${entry.name}`);
-      else found.push(...await filesUnder(db, `${folder}/${entry.name}`));
+      else found.push(...await filesUnder(db, bucket, `${folder}/${entry.name}`));
     }
     if (data.length < 100) return found;
   }
@@ -90,7 +91,7 @@ async function registerApple(request: Request): Promise<Response> {
 }
 
 /**
- * Deletes the signed-in person's account for good: their photo files first, then the auth user, which the
+ * Deletes the signed-in person's account for good: their photo and profile image files first, then the auth user, which the
  * database follows by removing the profile and everything that belongs to it. Safe to retry if it fails halfway.
  */
 async function deleteAccount(request: Request): Promise<Response> {
@@ -102,10 +103,12 @@ async function deleteAccount(request: Request): Promise<Response> {
     // Apple wants the link to the Apple ID ended. A failure here is logged and doesn't keep the account alive.
     await revokeApple(admin, auth.user.id);
     // Lists the whole folder instead of trusting the database rows, so files that were never registered go too.
-    const files = await filesUnder(admin, auth.user.id);
-    for (let i = 0; i < files.length; i += 100) {
-      const { error } = await admin.storage.from(PHOTO_BUCKET).remove(files.slice(i, i + 100));
-      if (error) throw error;
+    for (const bucket of USER_BUCKETS) {
+      const files = await filesUnder(admin, bucket, auth.user.id);
+      for (let i = 0; i < files.length; i += 100) {
+        const { error } = await admin.storage.from(bucket).remove(files.slice(i, i + 100));
+        if (error) throw error;
+      }
     }
     const { error } = await admin.auth.admin.deleteUser(auth.user.id);
     if (error) throw error;
