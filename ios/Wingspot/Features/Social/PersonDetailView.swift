@@ -1,5 +1,6 @@
 import Account
 import SwiftUI
+import WingspotCore
 
 /// Someone's profile, with follow and block.
 struct PersonDetailView: View {
@@ -11,6 +12,8 @@ struct PersonDetailView: View {
     @State private var confirmBlock = false
     @State private var report: ReportTarget?
     @State private var failure: AccountError?
+    @Environment(PersonProgressStore.self) private var progressStore
+    @State private var progress: UserProgress?
 
     var body: some View {
         List {
@@ -40,6 +43,7 @@ struct PersonDetailView: View {
                 }
             }
             .disabled(isWorking)
+            if let progress { PersonProgressSection(person: person, progress: progress) }
             if person.isFollowing { PersonAlertsSection(person: person) }
             PersonCheckInsSection(person: person)
             Section {
@@ -50,6 +54,7 @@ struct PersonDetailView: View {
                     .disabled(isWorking)
             }
         }
+        .task(id: person.id) { progress = await progressStore.progress(of: person.id) }
         .navigationTitle(Text(verbatim: "@\(person.username)"))
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $report) { ReportSheet(target: $0) }

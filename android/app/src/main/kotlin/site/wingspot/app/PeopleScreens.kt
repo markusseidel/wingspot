@@ -16,6 +16,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -57,6 +59,7 @@ fun PersonPage(app: WingspotApp, model: SocialViewModel, id: String, me: String)
     var menu by remember { mutableStateOf(false) }
     var confirmBlock by remember { mutableStateOf(false) }
     var reporting by remember { mutableStateOf(false) }
+    var progress by remember { mutableStateOf<site.wingspot.core.UserProgress?>(null) }
 
     suspend fun page(after: FeedCursor?) {
         val got = app.social.personCheckIns(id, after)
@@ -65,6 +68,9 @@ fun PersonPage(app: WingspotApp, model: SocialViewModel, id: String, me: String)
         photos = photos + runCatching { app.social.photos(got.map { it.id }).groupBy { it.checkInId } }.getOrDefault(emptyMap())
         tags = tags + runCatching { app.social.tags(got.map { it.id }) }.getOrDefault(emptyMap())
     }
+
+    // Their level and earned badges, where their privacy allows. A failure just leaves the card out.
+    LaunchedEffect(id) { progress = runCatching { app.social.personProgress(id) }.getOrNull() }
 
     LaunchedEffect(id) {
         try {
@@ -113,6 +119,26 @@ fun PersonPage(app: WingspotApp, model: SocialViewModel, id: String, me: String)
                         if (following) PersonAlerts(app, me, id)
                         if (following) OutlinedButton(onClick = toggle, modifier = Modifier.testTag("follow")) { Text(stringResource(R.string.following)) }
                         else Button(onClick = toggle, modifier = Modifier.testTag("follow")) { Text(stringResource(R.string.follow)) }
+                    }
+                }
+            }
+        }
+        progress?.let { pr ->
+            item {
+                var open by remember { mutableStateOf(false) }
+                Card(Modifier.fillMaxWidth()) {
+                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        LevelHeader(pr)
+                        HorizontalDivider()
+                        Row(Modifier.fillMaxWidth().clickable { open = !open }.padding(vertical = 4.dp).testTag("person-badges"), verticalAlignment = Alignment.CenterVertically) {
+                            Text(stringResource(R.string.badges_title))
+                            Box(Modifier.weight(1f))
+                            Text(pr.badges.size.toString() + if (open) "  ⌃" else "  ⌄", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        if (open) {
+                            if (pr.badges.isEmpty()) Text(stringResource(R.string.no_badges_yet), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            pr.badges.forEach { BadgeRow(it) }
+                        }
                     }
                 }
             }

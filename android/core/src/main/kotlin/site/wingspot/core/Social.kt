@@ -258,6 +258,12 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
         rest.call("PATCH", "/rest/v1/profiles?id=eq.$me", """{"avatar_url":null}""", prefer = "return=minimal")
     }
 
+    /** Someone's level and the badges they earned. Null when their profile can't be seen: private, or blocked. */
+    suspend fun personProgress(id: String): UserProgress? {
+        val body = rest.call("POST", "/rest/v1/rpc/get_person_progress", """{"target":"$id"}""").trim()
+        return if (body == "null") null else json.decodeFromString(UserProgress.serializer(), body)
+    }
+
     /** The caller leaves a check-in they are tagged on, for good. */
     suspend fun removeMyTag(checkIn: String) {
         rest.call("POST", "/rest/v1/rpc/remove_my_tag", """{"checkin":"$checkIn"}""")

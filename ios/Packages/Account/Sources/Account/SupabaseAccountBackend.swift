@@ -133,7 +133,7 @@ public struct SupabaseAccountBackend: AccountBackend {
         try await mappingErrors { try await work(client, id) }
     }
 
-    private func mappingErrors<T: Sendable>(_ work: () async throws -> T) async throws -> T {
+    func mappingErrors<T: Sendable>(_ work: () async throws -> T) async throws -> T {
         do {
             return try await work()
         } catch let error as URLError {

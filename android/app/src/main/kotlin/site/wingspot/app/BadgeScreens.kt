@@ -170,7 +170,7 @@ private fun BadgeIcon(badge: BadgeProgress, size: Int = 44) {
 }
 
 @Composable
-private fun BadgeRow(badge: BadgeProgress) {
+fun BadgeRow(badge: BadgeProgress) {
     val langs = languages()
     Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         BadgeIcon(badge)
