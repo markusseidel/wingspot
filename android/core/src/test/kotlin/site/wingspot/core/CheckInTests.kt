@@ -129,6 +129,19 @@ class OutboxTests {
     }
 
     @Test
+    fun theTaggedFriendsGoUpWithTheCheckIn() = withOutbox { server, store, outbox, _ ->
+        val anna = UUID.randomUUID()
+        val tagged = store.saveAirport(AirportDraft(Place(3, "FRA"), tagged = listOf(anna)))
+        val plain = store.saveAirport(AirportDraft(Place(7, "DUS")))
+        server.enqueue(answer(tagged.id to "stored", plain.id to "stored"))
+        outbox.sync()
+        val items = Json.parseToJsonElement(server.takeRequest().body!!.utf8()).jsonObject["checkins"]!!.jsonArray.map { it.jsonObject }
+        val withTags = items.single { it["id"]!!.jsonPrimitive.content == tagged.id.toString() }
+        assertEquals(listOf(anna.toString()), withTags["with"]!!.jsonArray.map { it.jsonPrimitive.content })
+        assertTrue("with" !in items.single { it["id"]!!.jsonPrimitive.content == plain.id.toString() })
+    }
+
+    @Test
     fun aFlightWithATypeTheServerDoesNotKnowIsStoredWithoutIt() = withOutbox { server, store, outbox, _ ->
         val flight = store.saveFlown(FlownDraft(Place(3, "LIS"), Place(9, "MXP"), flightNumber = "TP832", typeIcao = "A21N"))
         val sent = store.pending().filter { it.kind == "flown" }.single().id

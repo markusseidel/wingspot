@@ -65,7 +65,8 @@ struct PersonCheckInRow: View {
             onSalute: { Task { await store.toggleSalute(item.id) } },
             onOpen: { commentsFor = item },
             onReport: { report = ReportTarget(kind: .checkin, id: item.id, subject: "this check-in") },
-            onReportPhoto: { report = ReportTarget(kind: .photo, id: $0.id, subject: "this photo") }
+            onReportPhoto: { report = ReportTarget(kind: .photo, id: $0.id, subject: "this photo") },
+            tags: store.tags[item.id] ?? []
         )
         .navigationDestination(item: $commentsFor) { CheckInDetailView(item: $0, source: store) }
         .sheet(item: $report) { ReportSheet(target: $0) }

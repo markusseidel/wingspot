@@ -164,6 +164,34 @@ class AccountCallsTests {
     }
 
     @Test
+    fun tagsFriendsAndLeavingAreReadAndSent() = withServer { server, api, _ ->
+        server.enqueue(ok("""[{"checkin_id":"c1","user_id":"u1","username":"anna","display_name":"Anna"},{"checkin_id":"c1","user_id":"u2","username":"max","display_name":null}]"""))
+        val tags = api.tags(listOf("c1", "c2"))
+        assertEquals(listOf("Anna", "max"), tags["c1"]!!.map { it.who })
+        assertEquals(null, tags["c2"])
+        val request = server.takeRequest()
+        assertEquals("/rest/v1/rpc/get_checkin_tags", request.url.encodedPath)
+        assertEquals("""{"ids":["c1","c2"]}""", request.body!!.utf8())
+
+        server.enqueue(ok("""[{"id":"u1","username":"anna","display_name":"Anna"}]"""))
+        assertEquals(listOf("u1"), api.taggableFriends().map { it.id })
+        server.takeRequest()
+
+        server.enqueue(ok("", 204))
+        api.removeMyTag("c1")
+        assertEquals("""{"checkin":"c1"}""", server.takeRequest().body!!.utf8())
+
+        server.enqueue(ok("""[{"allow_tags":false}]"""))
+        assertEquals(false, api.allowsTags("me"))
+        server.takeRequest()
+        server.enqueue(ok("", 204))
+        api.setAllowsTags("me", true)
+        val patch = server.takeRequest()
+        assertEquals("PATCH", patch.method)
+        assertEquals("""{"allow_tags":true}""", patch.body!!.utf8())
+    }
+
+    @Test
     fun exportComesBackAsTheServerSentIt() = withServer { server, api, _ ->
         server.enqueue(ok("""{"profile":{}}"""))
         assertEquals("""{"profile":{}}""", api.exportMyData())

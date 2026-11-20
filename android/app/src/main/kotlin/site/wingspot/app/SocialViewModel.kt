@@ -39,6 +39,8 @@ sealed class Route {
 data class FeedState(
     val items: List<FeedItem> = emptyList(),
     val photos: Map<String, List<FeedPhoto>> = emptyMap(),
+    /** The friends tagged on the check-ins in [items]. */
+    val tags: Map<String, List<site.wingspot.core.Person>> = emptyMap(),
     val isLoading: Boolean = false,
     val reachedEnd: Boolean = false,
     val hasLoaded: Boolean = false,
@@ -97,7 +99,7 @@ class SocialViewModel(
             try {
                 val page = api.feed(null, PAGE, sort)
                 if (mine != generation) return@launch
-                mutable.value = FeedState(page, loadPhotos(page), false, page.size < PAGE, true, false)
+                mutable.value = FeedState(page, loadPhotos(page), loadTags(page), false, page.size < PAGE, true, false)
             } catch (e: ApiException) {
                 if (mine == generation) mutable.value = mutable.value.copy(isLoading = false, failed = true, hasLoaded = true)
             }
@@ -117,7 +119,7 @@ class SocialViewModel(
                 val known = mutable.value.items.map { it.id }.toSet()
                 val fresh = page.filter { it.id !in known }
                 mutable.value = mutable.value.copy(
-                    items = mutable.value.items + fresh, photos = mutable.value.photos + loadPhotos(fresh),
+                    items = mutable.value.items + fresh, photos = mutable.value.photos + loadPhotos(fresh), tags = mutable.value.tags + loadTags(fresh),
                     isLoading = false, reachedEnd = page.size < PAGE,
                 )
             } catch (e: ApiException) {
@@ -132,6 +134,20 @@ class SocialViewModel(
         } catch (e: ApiException) {
             emptyMap() // the cards show without their photos
         }
+
+    private suspend fun loadTags(items: List<FeedItem>): Map<String, List<site.wingspot.core.Person>> =
+        try {
+            api.tags(items.map { it.id })
+        } catch (e: ApiException) {
+            emptyMap() // the cards show without their friends
+        }
+
+    /** The tags of one check-in, loaded again, for example after they were changed. */
+    suspend fun reloadTags(id: String): List<site.wingspot.core.Person> {
+        val found = try { api.tags(listOf(id))[id].orEmpty() } catch (e: ApiException) { return mutable.value.tags[id].orEmpty() }
+        mutable.value = mutable.value.copy(tags = mutable.value.tags + (id to found))
+        return found
+    }
 
     /** Salutes or un-salutes. The card changes at once and goes back if the request fails. */
     fun toggleSalute(id: String) {
@@ -158,7 +174,7 @@ class SocialViewModel(
     }
 
     fun remove(id: String) {
-        mutable.value = mutable.value.copy(items = mutable.value.items.filterNot { it.id == id }, photos = mutable.value.photos - id)
+        mutable.value = mutable.value.copy(items = mutable.value.items.filterNot { it.id == id }, photos = mutable.value.photos - id, tags = mutable.value.tags - id)
     }
 
     fun clear() {

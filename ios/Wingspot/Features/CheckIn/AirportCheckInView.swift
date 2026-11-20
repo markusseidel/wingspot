@@ -35,6 +35,7 @@ struct AirportCheckInView: View {
     @State private var saveFailed = false
     @State private var photo: PreparedPhoto?
     @State private var isPreparingPhoto = false
+    @State private var tagged: [PersonTag] = []
 
     var body: some View {
         Group {
@@ -71,6 +72,7 @@ struct AirportCheckInView: View {
                 Picker("Reason", selection: $context) {
                     ForEach(VisitContext.allCases, id: \.self) { Text($0.title).tag($0) }
                 }
+                WithFriendsRow(selection: $tagged)
             } footer: {
                 if referenceData.database == nil {
                     if referenceData.isUpdating {
@@ -94,7 +96,7 @@ struct AirportCheckInView: View {
 
     private func save() {
         guard let airport else { return }
-        let draft = AirportDraft(airportID: airport.id, code: airport.code, context: context, position: position, photo: photo)
+        let draft = AirportDraft(airportID: airport.id, code: airport.code, context: context, position: position, photo: photo, tagged: tagged.map(\.id))
         do {
             result = try CheckInStore(context: modelContext).saveAirport(draft, ownerID: account.userID)
             sync?.requestSync()

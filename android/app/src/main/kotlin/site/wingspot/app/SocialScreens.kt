@@ -106,7 +106,7 @@ fun FeedTab(model: SocialViewModel, me: String, announcements: AnnouncementsView
         if (state.failed) item { Text(stringResource(R.string.feed_failed), color = MaterialTheme.colorScheme.error) }
         if (state.hasLoaded && state.items.isEmpty() && !state.failed) item { Text(stringResource(R.string.feed_empty)) }
         items(state.items, key = { it.id }) { item ->
-            FeedCard(item, me, state.photos[item.id].orEmpty(), onOpen = { model.open(item) }, onSalute = { model.toggleSalute(item.id) }, onPerson = { model.openPerson(item.userId) })
+            FeedCard(item, me, state.photos[item.id].orEmpty(), onOpen = { model.open(item) }, onSalute = { model.toggleSalute(item.id) }, onPerson = { model.openPerson(item.userId) }, tags = state.tags[item.id].orEmpty())
             if (item.id == state.items.lastOrNull()?.id) LaunchedEffect(item.id) { model.loadMore() }
         }
         item {
@@ -118,7 +118,10 @@ fun FeedTab(model: SocialViewModel, me: String, announcements: AnnouncementsView
 
 /** One check-in in a list: who, what, the first photo, and salute and comments. The whole card opens the check-in page. */
 @Composable
-fun FeedCard(item: FeedItem, me: String, photos: List<FeedPhoto>, onOpen: () -> Unit, onSalute: () -> Unit, onPerson: () -> Unit) {
+fun FeedCard(
+    item: FeedItem, me: String, photos: List<FeedPhoto>, onOpen: () -> Unit, onSalute: () -> Unit, onPerson: () -> Unit,
+    tags: List<site.wingspot.core.Person> = emptyList(),
+) {
     Card(Modifier.fillMaxWidth().clickable(onClick = onOpen)) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -131,6 +134,7 @@ fun FeedCard(item: FeedItem, me: String, photos: List<FeedPhoto>, onOpen: () -> 
                 Text(relativeTime(item.occurredAt), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             KindAndTitle(item)
+            if (tags.isNotEmpty()) Text(stringResource(R.string.with_names, tags.joinToString(", ") { it.who }), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             photos.firstOrNull()?.let { RemoteImage(it, Modifier.fillMaxWidth().height(200.dp).clip(MaterialTheme.shapes.medium)) }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 SaluteButton(item, onSalute)
@@ -187,6 +191,8 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
     var reporting by remember { mutableStateOf<Pair<ReportKind, String>?>(null) }
     var localFlight by remember { mutableStateOf(false) }
     var viewing by remember { mutableStateOf<FeedPhoto?>(null) }
+    var tags by remember { mutableStateOf(feed.tags[id].orEmpty()) }
+    var confirmLeave by remember { mutableStateOf(false) }
 
     // The list's copy has the live counts. The copy loaded by id has the airports and your own cabin and seat.
     val fromList = feed.items.firstOrNull { it.id == id } ?: model.opened[id]
@@ -197,6 +203,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
             loaded = app.social.checkIn(id)
             gone = loaded == null && fromList == null
             photos = feed.photos[id] ?: app.social.photos(listOf(id))
+            tags = model.reloadTags(id)
             comments = app.social.comments(id)
             model.setCommentCount(id, comments.size)
         } catch (e: ApiException) {
@@ -221,6 +228,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                             DropdownMenuItem(text = { Text(stringResource(R.string.who_can_see)) }, onClick = { menu = false; pickVisibility = true })
                             DropdownMenuItem(text = { Text(stringResource(R.string.delete)) }, onClick = { menu = false; confirmDelete = true })
                         } else {
+                            if (tags.any { it.id == me }) DropdownMenuItem(text = { Text(stringResource(R.string.remove_me_tag)) }, onClick = { menu = false; confirmLeave = true })
                             DropdownMenuItem(text = { Text(stringResource(R.string.report)) }, onClick = { menu = false; reporting = ReportKind.CHECKIN to id })
                         }
                     }
@@ -241,6 +249,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                     }
                     Text(fullTime(shown.occurredAt), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     val unit = app.prefs.unit
+                    if (tags.isNotEmpty()) InfoRow(stringResource(R.string.with_label), tags.joinToString(", ") { if (it.id == me) "" + app.getString(R.string.you) else it.who })
                     shown.flightNumber?.let { InfoRow(stringResource(R.string.flight_label), it) }
                     shown.registration?.let { r -> InfoRow(stringResource(R.string.aircraft_label), r, if (shown.kind == "spotted") null else ({ model.open(Route.RegistrationPage(r)) })) }
                     shown.typeIcao?.let { t -> InfoRow(stringResource(R.string.type_label), shown.typeName ?: t) { model.open(Route.TypePage(t)) } }
@@ -324,6 +333,28 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                 }
             }
         }
+    }
+
+    if (confirmLeave) {
+        AlertDialog(
+            onDismissRequest = { confirmLeave = false },
+            title = { Text(stringResource(R.string.remove_me_title)) },
+            text = { Text(stringResource(R.string.remove_me_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    confirmLeave = false
+                    scope.launch {
+                        try {
+                            app.social.removeMyTag(id)
+                            tags = model.reloadTags(id)
+                            // A private check-in can no longer be seen, so the page goes.
+                            if (app.social.checkIn(id) == null) { model.remove(id); model.back() }
+                        } catch (e: ApiException) { problem = R.string.error_offline }
+                    }
+                }) { Text(stringResource(R.string.remove_me)) }
+            },
+            dismissButton = { TextButton(onClick = { confirmLeave = false }) { Text(stringResource(R.string.cancel)) } },
+        )
     }
 
     if (confirmDelete) {

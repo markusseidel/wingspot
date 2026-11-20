@@ -21,6 +21,7 @@ struct CheckInDetailView: View {
     @State private var viewing: FeedPhoto?
     @State private var editing = false
     @State private var confirmDelete = false
+    @State private var confirmLeave = false
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @State private var full: FeedItem?
@@ -43,8 +44,10 @@ struct CheckInDetailView: View {
             let created = (source ?? feed).commentStore(for: item.id)
             store = created
             async let loaded: Void = created.load()
+            async let tagged: Void = (source ?? feed).reloadTags(for: item.id)
             full = await (source ?? feed).checkIn(item.id)
             await loaded
+            await tagged
         }
     }
 
@@ -56,6 +59,8 @@ struct CheckInDetailView: View {
         return full.updating(salutes: current.salutes, comments: current.comments, saluted: current.saluted)
     }
     private var photos: [FeedPhoto] { list.photos[item.id] ?? [] }
+    private var tags: [PersonTag] { list.tags[item.id] ?? [] }
+    private var isTagged: Bool { tags.contains { $0.id == account.userID } }
     private var isOwn: Bool { item.userID == account.userID }
     private var canEdit: Bool { isOwn && localCheckIns.contains { $0.id == item.id } }
 
@@ -116,6 +121,22 @@ struct CheckInDetailView: View {
         } message: {
             Text("It is removed for good, with its photos, salutes and comments.")
         }
+        .confirmationDialog("Remove yourself from this check-in?", isPresented: $confirmLeave, titleVisibility: .visible) {
+            Button("Remove me", role: .destructive) {
+                Task {
+                    if await list.removeMyTag(item.id) {
+                        // A private check-in can no longer be seen, so the page goes.
+                        if await list.checkIn(item.id) == nil {
+                            list.remove(item.id)
+                            if source != nil { feed.remove(item.id) }
+                            dismiss()
+                        }
+                    } else {
+                        problem = list.failure ?? .unknown
+                    }
+                }
+            }
+        }
         .sheet(isPresented: $editing) {
             let saved: () -> Void = {
                 Task {
@@ -124,9 +145,9 @@ struct CheckInDetailView: View {
                 }
             }
             if item.kind == "flown" {
-                FlownEditView(flightID: item.id, onSaved: saved)
+                FlownEditView(flightID: item.id, tags: tags, onSaved: saved)
             } else {
-                CheckInEditView(checkInID: item.id, onSaved: saved)
+                CheckInEditView(checkInID: item.id, tags: tags, onSaved: saved)
             }
         }
         .safeAreaInset(edge: .bottom) { composer(store) }
@@ -177,6 +198,18 @@ struct CheckInDetailView: View {
                 if let cabin = shown.cabin.flatMap(CabinClass.init(rawValue:)) { LabeledContent("Cabin", value: String(localized: cabin.title)) }
                 if let seat = shown.seat { LabeledContent("Seat", value: seat) }
                 if let km = shown.distanceKm { LabeledContent("Distance", value: unit.format(km: km)) }
+            }
+            if !tags.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("With").font(.subheadline).foregroundStyle(.secondary)
+                    ForEach(tags) { person in
+                        if person.id == account.userID {
+                            Text("You")
+                        } else {
+                            NavigationLink { PersonLoaderView(id: person.id) } label: { Text(verbatim: person.name) }
+                        }
+                    }
+                }
             }
             if let registration = shown.registration {
                 NavigationLink { RegistrationPageView(registration: registration) } label: {
@@ -248,6 +281,13 @@ struct CheckInDetailView: View {
             }
             Section { CheckInVisibilityPicker(checkInID: item.id) }
         } else {
+            if isTagged {
+                Section {
+                    Button("Remove me from this check-in", systemImage: "person.crop.circle.badge.minus") { confirmLeave = true }
+                } footer: {
+                    Text("You won't be tagged on it again, and you won't see it any more unless it is public.")
+                }
+            }
             Section {
                 Button("Report", systemImage: "flag") {
                     report = ReportTarget(kind: .checkin, id: shown.id, subject: "this check-in")

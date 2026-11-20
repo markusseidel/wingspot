@@ -73,6 +73,15 @@ private actor FakeFeed: FeedBackend, ReactionBackend {
         return photoRows.filter { checkIns.contains($0.checkInID) }
     }
 
+    var tagRows: [UUID: [PersonTag]] = [:]
+    private(set) var leftTags: [UUID] = []
+    func setTags(_ rows: [UUID: [PersonTag]]) { tagRows = rows }
+    func tags(for checkIns: [UUID]) throws -> [UUID: [PersonTag]] { tagRows.filter { checkIns.contains($0.key) } }
+    func removeMyTag(_ checkIn: UUID) throws {
+        if let error { throw error }
+        leftTags.append(checkIn)
+    }
+
     private(set) var personRequests: [UUID] = []
     func personCheckIns(of person: UUID, after cursor: FeedCursor?, pageSize: Int) throws -> [FeedItem] {
         personRequests.append(person)
@@ -371,6 +380,25 @@ private func item(_ n: Int) -> FeedItem {
     #expect(store.photos[item(2).id] == nil)
     store.clear()
     #expect(store.photos.isEmpty)
+}
+
+@Test @MainActor func tagsArriveWithTheirCheckInsAndLeavingRemovesYou() async {
+    let backend = FakeFeed(items: (1...2).map(item))
+    let me = UUID()
+    let anna = PersonTag(id: UUID(), username: "anna", displayName: "Anna")
+    let mine = PersonTag(id: me, username: "me", displayName: nil)
+    let first = item(1).id
+    await backend.setTags([first: [anna, mine]])
+    let store = FeedStore(backend: backend, reactions: backend, userID: { me })
+    await store.refresh()
+    #expect(store.tags[first]?.map(\.name) == ["Anna", "me"], "the username is shown when there is no display name")
+    #expect(store.tags[item(2).id] == nil)
+
+    #expect(await store.removeMyTag(first))
+    #expect(store.tags[first]?.map(\.id) == [anna.id])
+    #expect(await backend.leftTags == [first])
+    store.clear()
+    #expect(store.tags.isEmpty)
 }
 
 @Test @MainActor func aPhotoFailureDoesNotHideTheFeed() async {

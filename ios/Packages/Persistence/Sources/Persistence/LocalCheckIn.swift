@@ -43,13 +43,17 @@ public final class LocalCheckIn {
     /// Airport visits a flight created only: the flight. Older visits and visits made by hand have none.
     /// Like `ownerID`, it opens an existing store without a migration step.
     public var flightID: UUID?
+    /// The friends tagged on a flight or an airport visit. `nil` leaves the tags on the server as they are, an empty
+    /// list clears them. Like `ownerID`, it opens an existing store without a migration step.
+    public var taggedIDs: [UUID]?
 
     init(
         id: UUID, kind: String, registration: String?, typeICAO: String?, typeName: String?, airportID: Int?,
         airportCode: String?, latitude: Double?, longitude: Double?, occurredAt: Date, syncState: SyncState,
         ownerID: UUID? = nil, visitContext: String? = nil,
         originID: Int? = nil, destinationID: Int? = nil, originCode: String? = nil, destinationCode: String? = nil,
-        flightNumber: String? = nil, cabin: String? = nil, seat: String? = nil, flightID: UUID? = nil
+        flightNumber: String? = nil, cabin: String? = nil, seat: String? = nil, flightID: UUID? = nil,
+        taggedIDs: [UUID]? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -72,5 +76,6 @@ public final class LocalCheckIn {
         self.cabin = cabin
         self.seat = seat
         self.flightID = flightID
+        self.taggedIDs = taggedIDs
     }
 }

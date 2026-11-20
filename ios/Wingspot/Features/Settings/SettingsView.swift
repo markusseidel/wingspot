@@ -27,6 +27,7 @@ struct SettingsView: View {
     var body: some View {
         Form {
             SharingSection()
+            if account.userID != nil { TaggingSection() }
             if account.userID != nil { NotificationsSection() }
             Section {
                 Toggle("Private profile", isOn: Binding(

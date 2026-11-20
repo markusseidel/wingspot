@@ -75,11 +75,14 @@ public struct AirportDraft: Sendable {
     public var context: VisitContext
     public var position: GeoCoordinate?
     public var photo: PreparedPhoto?
+    /// Friends who were there too.
+    public var tagged: [UUID]
 
     public init(
         airportID: Int, code: String, context: VisitContext = .spotting, position: GeoCoordinate? = nil,
-        photo: PreparedPhoto? = nil
+        photo: PreparedPhoto? = nil, tagged: [UUID] = []
     ) {
+        self.tagged = tagged
         self.airportID = airportID
         self.code = code
         self.context = context
@@ -123,12 +126,15 @@ public struct FlownDraft: Sendable {
     public var cabin: CabinClass?
     public var seat: String?
     public var photo: PreparedPhoto?
+    /// Friends who flew with you.
+    public var tagged: [UUID]
 
     public init(
         origin: SpottedDraft.Place, destination: SpottedDraft.Place, distanceKm: Int? = nil, flightNumber: String? = nil,
         registration: Registration? = nil, type: SpottedDraft.AircraftTypeChoice? = nil, cabin: CabinClass? = nil,
-        seat: String? = nil, photo: PreparedPhoto? = nil
+        seat: String? = nil, photo: PreparedPhoto? = nil, tagged: [UUID] = []
     ) {
+        self.tagged = tagged
         self.photo = photo
         self.origin = origin
         self.destination = destination
@@ -222,7 +228,8 @@ public struct CheckInStore {
             id: id, kind: "airport", registration: nil, typeICAO: nil, typeName: nil,
             airportID: draft.airportID, airportCode: draft.code,
             latitude: draft.position?.latitude, longitude: draft.position?.longitude,
-            occurredAt: date, syncState: .pending, ownerID: ownerID, visitContext: draft.context.rawValue
+            occurredAt: date, syncState: .pending, ownerID: ownerID, visitContext: draft.context.rawValue,
+            taggedIDs: draft.tagged.isEmpty ? nil : draft.tagged
         ))
         insertPhoto(draft.photo, for: id, at: date)
         try context.save()
@@ -250,7 +257,8 @@ public struct CheckInStore {
             latitude: nil, longitude: nil, occurredAt: date, syncState: .pending, ownerID: ownerID,
             originID: from, destinationID: to, originCode: draft.origin.code, destinationCode: draft.destination.code,
             flightNumber: (flight?.isEmpty ?? true) ? nil : flight, cabin: draft.cabin?.rawValue,
-            seat: draft.seat?.isEmpty ?? true ? nil : draft.seat?.uppercased()
+            seat: draft.seat?.isEmpty ?? true ? nil : draft.seat?.uppercased(),
+            taggedIDs: draft.tagged.isEmpty ? nil : draft.tagged
         ))
         insertPhoto(draft.photo, for: id, at: date)
         // The airports are checked in too, so they count as visited and show on the airport pages.
@@ -274,7 +282,7 @@ public struct CheckInStore {
     @discardableResult
     public func updateFlown(
         id: UUID, registration: Registration?, type: SpottedDraft.AircraftTypeChoice?, flightNumber: String?,
-        cabin: CabinClass?, seat: String?, occurredAt: Date? = nil
+        cabin: CabinClass?, seat: String?, occurredAt: Date? = nil, tagged: [UUID]? = nil
     ) throws -> Bool {
         let matches = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id && $0.kind == "flown" }))
         guard let flight = matches.first else { return false }
@@ -286,6 +294,7 @@ public struct CheckInStore {
         flight.flightNumber = (number?.isEmpty ?? true) ? nil : number
         flight.cabin = cabin?.rawValue
         flight.seat = (seat?.isEmpty ?? true) ? nil : seat
+        if let tagged { flight.taggedIDs = tagged }
         // The server takes the corrected details when the flight is sent again.
         if let occurredAt, occurredAt != flight.occurredAt {
             // The airport visits a flight creates share its time. The server moves its copies the same way.
@@ -326,10 +335,11 @@ public struct CheckInStore {
     /// Corrects the reason for a saved airport visit and sends it again.
     /// Returns `false` when this device has no such visit.
     @discardableResult
-    public func updateVisit(id: UUID, reason: VisitContext) throws -> Bool {
+    public func updateVisit(id: UUID, reason: VisitContext, tagged: [UUID]? = nil) throws -> Bool {
         let matches = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id && $0.kind == "airport" }))
         guard let visit = matches.first else { return false }
         visit.visitContext = reason.rawValue
+        if let tagged { visit.taggedIDs = tagged }
         visit.syncState = SyncState.pending.rawValue
         visit.syncError = nil
         try context.save()

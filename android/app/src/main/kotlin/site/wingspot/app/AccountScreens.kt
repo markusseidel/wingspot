@@ -79,6 +79,8 @@ fun SocialSettings(app: WingspotApp, me: String) {
     var blocked by remember { mutableStateOf(emptyList<Person>()) }
     var failed by remember { mutableStateOf(false) }
     var changed by remember { mutableStateOf<Int?>(null) }
+    var allowTags by remember { mutableStateOf<Boolean?>(null) }
+    LaunchedEffect(me) { allowTags = runCatching { app.social.allowsTags(me) }.getOrNull() }
     LaunchedEffect(me) {
         try { choice = app.social.sharing(me); blocked = app.social.blocked() } catch (e: ApiException) { failed = true }
     }
@@ -99,6 +101,18 @@ fun SocialSettings(app: WingspotApp, me: String) {
             scope.launch { try { changed = app.social.setSharing(choice!!, applyToExisting); failed = false } catch (e: ApiException) { failed = true } }
         }, modifier = Modifier.testTag("save-sharing")) { Text(stringResource(R.string.save)) }
         changed?.let { Text(if (applyToExisting) stringResource(R.string.sharing_saved_n, it) else stringResource(R.string.sharing_saved)) }
+        Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.allow_tags), modifier = Modifier.weight(1f))
+            androidx.compose.material3.Switch(
+                checked = allowTags ?: true, enabled = allowTags != null, modifier = Modifier.testTag("allow-tags"),
+                onCheckedChange = { value ->
+                    val before = allowTags
+                    allowTags = value
+                    scope.launch { try { app.social.setAllowsTags(me, value) } catch (e: ApiException) { allowTags = before; failed = true } }
+                },
+            )
+        }
+        Text(stringResource(R.string.allow_tags_hint), style = MaterialTheme.typography.bodySmall)
         if (failed) Text(stringResource(R.string.error_unknown), color = MaterialTheme.colorScheme.error)
         if (blocked.isNotEmpty()) {
             Text(stringResource(R.string.blocked_title), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 8.dp))

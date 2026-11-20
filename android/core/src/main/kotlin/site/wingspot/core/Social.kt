@@ -217,6 +217,44 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
         }
     }
 
+    // Friends on check-ins ------------------------------------------------------------------------------------------
+
+    @Serializable
+    private data class TagRow(
+        @SerialName("checkin_id") val checkInId: String,
+        @SerialName("user_id") val userId: String,
+        val username: String,
+        @SerialName("display_name") val displayName: String? = null,
+    )
+
+    /** The friends tagged on these check-ins, for the ones the caller may see. The server answers for 200 at a time. */
+    suspend fun tags(checkIns: List<String>): Map<String, List<Person>> {
+        val found = mutableMapOf<String, MutableList<Person>>()
+        for (chunk in checkIns.chunked(200)) {
+            val body = buildJsonObject { put("ids", JsonArray(chunk.map { JsonPrimitive(it) })) }.toString()
+            val rows = json.decodeFromString(ListSerializer(TagRow.serializer()), rest.call("POST", "/rest/v1/rpc/get_checkin_tags", body))
+            for (row in rows) found.getOrPut(row.checkInId) { mutableListOf() }.add(Person(row.userId, row.username, row.displayName))
+        }
+        return found
+    }
+
+    /** The caller's mutual friends who allow being tagged. */
+    suspend fun taggableFriends(): List<Person> =
+        json.decodeFromString(ListSerializer(Person.serializer()), rest.call("POST", "/rest/v1/rpc/get_taggable_friends", "{}"))
+
+    /** The caller leaves a check-in they are tagged on, for good. */
+    suspend fun removeMyTag(checkIn: String) {
+        rest.call("POST", "/rest/v1/rpc/remove_my_tag", """{"checkin":"$checkIn"}""")
+    }
+
+    suspend fun allowsTags(me: String): Boolean =
+        json.parseToJsonElement(rest.call("GET", "/rest/v1/profiles?select=allow_tags&id=eq.$me")).jsonArray.firstOrNull()
+            ?.jsonObject?.get("allow_tags")?.jsonPrimitive?.content != "false"
+
+    suspend fun setAllowsTags(me: String, allowed: Boolean) {
+        rest.call("PATCH", "/rest/v1/profiles?id=eq.$me", """{"allow_tags":$allowed}""", prefer = "return=minimal")
+    }
+
     // People --------------------------------------------------------------------------------------------------------
 
     suspend fun searchPeople(text: String, me: String, limit: Int = 20): List<Person> = json.decodeFromString(

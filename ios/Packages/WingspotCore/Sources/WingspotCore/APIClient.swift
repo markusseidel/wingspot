@@ -64,12 +64,16 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
     /// Left out unless the app means a specific one: the server then applies the account's sharing choice
     /// (Settings > Share my check-ins). Sending "private" here would override that choice.
     public let visibility: String?
+    /// The friends tagged on a flight or an airport visit. Left out when the tags are not meant to change; an empty
+    /// list removes them all.
+    public let with: [UUID]?
 
     public init(
         id: UUID, kind: String, occurredAt: Date, registration: String?, typeICAO: String?, airportID: Int?,
         latitude: Double?, longitude: Double?, context: String? = nil,
         originID: Int? = nil, destinationID: Int? = nil, flightNumber: String? = nil, cabin: String? = nil,
-        seat: String? = nil, visibility: String? = nil, flightID: UUID? = nil
+        seat: String? = nil, visibility: String? = nil, flightID: UUID? = nil,
+        with: [UUID]? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -87,6 +91,7 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
         self.cabin = cabin
         self.seat = seat
         self.visibility = visibility
+        self.with = with
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -100,7 +105,7 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
         case originID = "origin_id"
         case destinationID = "destination_id"
         case flightNumber = "flight_number"
-        case cabin, seat, visibility
+        case cabin, seat, visibility, with
     }
 }
 

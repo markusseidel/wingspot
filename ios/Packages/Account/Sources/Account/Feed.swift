@@ -295,6 +295,42 @@ public protocol FeedBackend: Sendable {
     func activeAirports(days: Int, limit: Int) async throws -> [ActiveAirport]
     /// The photos of these check-ins that the caller may see, in order, with signed links.
     func photos(for checkIns: [UUID]) async throws -> [FeedPhoto]
+    /// The friends tagged on these check-ins, for the ones the caller may see.
+    func tags(for checkIns: [UUID]) async throws -> [UUID: [PersonTag]]
+    /// The caller's mutual friends who allow being tagged.
+    func taggableFriends() async throws -> [PersonTag]
+    /// The caller leaves a check-in they are tagged on, for good.
+    func removeMyTag(_ checkIn: UUID) async throws
+    /// Whether friends may tag the caller, and changing it.
+    func allowsTags(of me: UUID) async throws -> Bool
+    func setAllowsTags(_ allowed: Bool, as me: UUID) async throws
+}
+
+extension FeedBackend {
+    public func tags(for checkIns: [UUID]) async throws -> [UUID: [PersonTag]] { [:] }
+    public func taggableFriends() async throws -> [PersonTag] { [] }
+    public func removeMyTag(_ checkIn: UUID) async throws {}
+    public func allowsTags(of me: UUID) async throws -> Bool { true }
+    public func setAllowsTags(_ allowed: Bool, as me: UUID) async throws {}
+}
+
+/// A friend who is tagged on a check-in, or who can be.
+public struct PersonTag: Identifiable, Hashable, Sendable {
+    public let id: UUID
+    public let username: String
+    public let displayName: String?
+
+    public init(id: UUID, username: String, displayName: String?) {
+        self.id = id
+        self.username = username
+        self.displayName = displayName
+    }
+
+    /// The name to show: the display name if there is one, otherwise the username.
+    public var name: String {
+        if let displayName, !displayName.trimmingCharacters(in: .whitespaces).isEmpty { return displayName }
+        return username
+    }
 }
 
 /// The Feed tab's data: your check-ins and those of people you follow, newest first, in pages.
@@ -312,6 +348,8 @@ public final class FeedStore {
     public private(set) var hasLoaded = false
     /// The photos of the check-ins in `items`. A card shows its photos once they arrive.
     public private(set) var photos: [UUID: [FeedPhoto]] = [:]
+    /// The friends tagged on the check-ins in `items`. A card shows them once they arrive.
+    public private(set) var tags: [UUID: [PersonTag]] = [:]
 
     /// How the Feed tab is sorted. The lists of a person, an airport or an aircraft are always by the day of the event.
     /// Changing it needs a refresh.
@@ -367,6 +405,7 @@ public final class FeedStore {
     public func remove(_ id: UUID) {
         items.removeAll { $0.id == id }
         photos[id] = nil
+        tags[id] = nil
     }
 
     /// Salutes or un-salutes a check-in. The card changes at once, and goes back if the request fails.
@@ -457,7 +496,9 @@ public final class FeedStore {
             failure = nil
             hasLoaded = true
             photos = [:]
+            tags = [:]
             await loadPhotos(for: items.map(\.id), generation: mine)
+            await loadTags(for: items.map(\.id), generation: mine)
         } catch {
             guard mine == generation else { return }
             failure = (error as? AccountError) ?? .unknown
@@ -479,6 +520,7 @@ public final class FeedStore {
             reachedEnd = page.count < Self.pageSize
             failure = nil
             await loadPhotos(for: added.map(\.id), generation: mine)
+            await loadTags(for: added.map(\.id), generation: mine)
         } catch {
             guard mine == generation else { return }
             failure = (error as? AccountError) ?? .unknown
@@ -507,11 +549,58 @@ public final class FeedStore {
         for (id, group) in Dictionary(grouping: found, by: \.checkInID) { photos[id] = group }
     }
 
+    /// Tags are a bonus too: if they can't be loaded, the cards stay as they are.
+    private func loadTags(for ids: [UUID], generation mine: Int) async {
+        guard !ids.isEmpty, let found = try? await backend.tags(for: ids), mine == generation else { return }
+        for (id, group) in found { tags[id] = group }
+    }
+
+    /// The tags of one check-in, loaded again, for example after they were changed.
+    public func reloadTags(for id: UUID) async {
+        guard let found = try? await backend.tags(for: [id]) else { return }
+        tags[id] = found[id] ?? []
+    }
+
+    /// Your mutual friends who allow being tagged. Empty if they can't be loaded.
+    public func taggableFriends() async -> [PersonTag] {
+        (try? await backend.taggableFriends()) ?? []
+    }
+
+    /// Leaves a check-in you are tagged on. Returns `false` if that failed, in which case you stay on it.
+    public func removeMyTag(_ id: UUID) async -> Bool {
+        do {
+            try await backend.removeMyTag(id)
+            if let me = userID() { tags[id]?.removeAll { $0.id == me } }
+            return true
+        } catch {
+            failure = (error as? AccountError) ?? .unknown
+            return false
+        }
+    }
+
+    /// Whether friends may tag you, and changing it.
+    public func allowsTags() async -> Bool {
+        guard let me = userID() else { return true }
+        return (try? await backend.allowsTags(of: me)) ?? true
+    }
+
+    public func setAllowsTags(_ allowed: Bool) async -> Bool {
+        guard let me = userID() else { return false }
+        do {
+            try await backend.setAllowsTags(allowed, as: me)
+            return true
+        } catch {
+            failure = (error as? AccountError) ?? .unknown
+            return false
+        }
+    }
+
     /// Forgets everything, for example after signing out.
     public func clear() {
         generation += 1
         items = []
         photos = [:]
+        tags = [:]
         isLoading = false
         reachedEnd = false
         failure = nil

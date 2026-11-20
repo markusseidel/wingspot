@@ -101,6 +101,7 @@ private fun AirportForm(state: CheckInState, reference: ReferenceState, model: C
     var airport by remember { mutableStateOf<Airport?>(null) }
     var context by rememberSaveable { mutableStateOf(VisitContext.SPOTTING) }
     var photo by remember { mutableStateOf<PreparedPhoto?>(null) }
+    val tags = rememberTagChoice()
     Text(stringResource(R.string.airport_title), style = MaterialTheme.typography.titleLarge)
     AirportPicker(stringResource(R.string.airport_label), reference, airport) { airport = it }
     Text(stringResource(R.string.why_there), style = MaterialTheme.typography.labelLarge)
@@ -109,8 +110,9 @@ private fun AirportForm(state: CheckInState, reference: ReferenceState, model: C
             FilterChip(selected = context == option, onClick = { context = option }, label = { Text(stringResource(visitTitle(option))) })
         }
     }
+    WithFriendsField(tags)
     PhotoField(photo) { photo = it }
-    SaveBar(state, enabled = airport != null, onSave = { model.saveAirport(airport!!, context, photo) }, onCancel = model::close)
+    SaveBar(state, enabled = airport != null, onSave = { model.saveAirport(airport!!, context, photo, tags.all()) }, onCancel = model::close)
 }
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
@@ -126,6 +128,7 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
     var cabin by rememberSaveable { mutableStateOf<CabinClass?>(null) }
     var seat by rememberSaveable { mutableStateOf("") }
     var photo by remember { mutableStateOf<PreparedPhoto?>(null) }
+    val tags = rememberTagChoice()
     var date by rememberSaveable { mutableStateOf(LocalDate.now().toString()) }
     var pickDate by remember { mutableStateOf(false) }
     var scanning by remember { mutableStateOf(false) }
@@ -191,13 +194,14 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
         flightNumber, { flightNumber = it }, input, { input = it }, registration, reference, type, { type = it }, cabin, { cabin = it }, seat, { seat = it },
         recentTypes = RecentTypes.forFlight(state.all, flightNumber),
     )
+    WithFriendsField(tags)
     PhotoField(photo) { photo = it }
     SaveBar(
         state, enabled = canSave,
         onSave = {
             // A flight has a day but no time here. Today keeps the real time; any other day uses midday, which stays on that day.
             val at = if (day == LocalDate.now()) java.time.Instant.now() else day.atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant()
-            model.saveFlight(origin!!, destination!!, flightNumber, registration, type, cabin, seat, photo, at)
+            model.saveFlight(origin!!, destination!!, flightNumber, registration, type, cabin, seat, photo, at, tags.all())
         },
         onCancel = model::close,
     )
@@ -265,6 +269,7 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
     // The type this flight already has stays until another is chosen.
     val keptType = flight.typeIcao.takeIf { type == null }
     var photo by remember { mutableStateOf<PreparedPhoto?>(null) }
+    val tags = rememberTagChoice(flight.id)
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(stringResource(R.string.edit_flight), style = MaterialTheme.typography.titleLarge)
@@ -278,6 +283,7 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
             flightNumber, { flightNumber = it }, input, { input = it }, registration, reference, type, { type = it }, cabin, { cabin = it }, seat, { seat = it },
             keptType = keptType, recentTypes = RecentTypes.forFlight(state.all, flightNumber, flight.id),
         )
+        WithFriendsField(tags)
         if (state.roomForPhoto) PhotoField(photo) { photo = it }
         VisibilityRow(androidx.compose.ui.platform.LocalContext.current.applicationContext as WingspotApp, flight.id.toString())
         SaveBar(
@@ -287,7 +293,7 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
                 val at = if (chosenDay == originalDay) null
                 else if (chosenDay == LocalDate.now()) java.time.Instant.now()
                 else chosenDay.atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant()
-                model.saveEdit(flight.id, registration, type, keptType, flightNumber, cabin, seat, at, photo)
+                model.saveEdit(flight.id, registration, type, keptType, flightNumber, cabin, seat, at, photo, tags.ifChanged())
             },
             onCancel = model::cancelEdit,
         )
@@ -306,6 +312,7 @@ fun SimpleEditScreen(app: WingspotApp, checkIn: LocalCheckIn, state: CheckInStat
     val keptType = checkIn.typeIcao.takeIf { type == null }
     val hasAircraft = (registration != null && input.isNotBlank()) || type != null || keptType != null
     var photo by remember { mutableStateOf<PreparedPhoto?>(null) }
+    val tags = rememberTagChoice(checkIn.id)
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(stringResource(if (isVisit) R.string.edit_visit else R.string.edit_sighting), style = MaterialTheme.typography.titleLarge)
         Text(checkIn.title, style = MaterialTheme.typography.titleLarge, fontFamily = FontFamily.Monospace)
@@ -324,11 +331,12 @@ fun SimpleEditScreen(app: WingspotApp, checkIn: LocalCheckIn, state: CheckInStat
             if (keptType != null) Text(stringResource(R.string.type_kept, keptType), style = MaterialTheme.typography.bodySmall)
             TypePicker(reference, type) { type = it }
         }
+        if (isVisit) WithFriendsField(tags)
         if (state.roomForPhoto) PhotoField(photo) { photo = it }
         VisibilityRow(app, checkIn.id.toString())
         SaveBar(
             state, enabled = isVisit || (hasAircraft && (input.isBlank() || registration != null)),
-            onSave = { model.saveSimpleEdit(checkIn.id, registration, type?.icaoCode ?: keptType, if (isVisit) reason else null, photo) },
+            onSave = { model.saveSimpleEdit(checkIn.id, registration, type?.icaoCode ?: keptType, if (isVisit) reason else null, photo, if (isVisit) tags.ifChanged() else null) },
             onCancel = model::cancelEdit,
         )
     }

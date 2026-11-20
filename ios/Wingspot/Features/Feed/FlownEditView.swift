@@ -22,6 +22,8 @@ enum Flightradar24 {
 /// Fills in what was left out when a flight was checked in: the registration, the aircraft type and the other details.
 struct FlownEditView: View {
     let flightID: UUID
+    /// The friends tagged on the flight now.
+    let tags: [PersonTag]
     let onSaved: () -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -43,6 +45,7 @@ struct FlownEditView: View {
     @State private var photo: PreparedPhoto?
     @State private var isPreparingPhoto = false
     @State private var hasRoomForPhoto = false
+    @State private var tagged: [PersonTag] = []
 
     private var registration: Registration? { Registration(registrationInput) }
     private var hasRegistrationInput: Bool { !registrationInput.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -89,6 +92,7 @@ struct FlownEditView: View {
                     TextField("Seat, e.g. 34K", text: $seat)
                         .textInputAutocapitalization(.characters)
                         .autocorrectionDisabled()
+                    WithFriendsRow(selection: $tagged)
                 } header: {
                     Text("Details")
                 } footer: {
@@ -149,6 +153,7 @@ struct FlownEditView: View {
         seat = flight.seat ?? ""
         date = min(flight.occurredAt, Date())
         originalDate = date
+        tagged = tags
         hasRoomForPhoto = ((try? CheckInStore(context: modelContext).photoCount(for: id)) ?? 0) < CheckInStore.maxPhotos
         loaded = true
     }
@@ -160,7 +165,9 @@ struct FlownEditView: View {
                 id: flightID, registration: registration, type: typeCode.map { .init(icaoCode: $0, name: typeName ?? $0) },
                 flightNumber: flightNumber, cabin: cabin, seat: seat,
                 // The time stays as it was unless another day is chosen.
-                occurredAt: Calendar.current.isDate(date, inSameDayAs: originalDate) ? nil : FlightDay.moment(of: date)
+                occurredAt: Calendar.current.isDate(date, inSameDayAs: originalDate) ? nil : FlightDay.moment(of: date),
+                // Only sent when the choice changed, so friends tagged on another device stay.
+                tagged: tagged.map(\.id) == tags.map(\.id) ? nil : tagged.map(\.id)
             )
             if let photo { try store.addPhoto(photo, to: flightID) }
             sync?.requestSync()

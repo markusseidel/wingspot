@@ -76,9 +76,9 @@ struct FeedScreen: View {
                     }
                 }
                 if edited.kind == "flown" {
-                    FlownEditView(flightID: edited.id, onSaved: saved)
+                    FlownEditView(flightID: edited.id, tags: feed.tags[edited.id] ?? [], onSaved: saved)
                 } else {
-                    CheckInEditView(checkInID: edited.id, onSaved: saved)
+                    CheckInEditView(checkInID: edited.id, tags: feed.tags[edited.id] ?? [], onSaved: saved)
                 }
             }
         }
@@ -184,7 +184,8 @@ struct FeedScreen: View {
                     onReport: { report = ReportTarget(kind: .checkin, id: item.id, subject: "this check-in") },
                     onReportPhoto: { report = ReportTarget(kind: .photo, id: $0.id, subject: "this photo") },
                     onEdit: item.userID == account.userID && editable.contains(item.id) ? { editing = EditedCheckIn(id: item.id, kind: item.kind) } : nil,
-                    onDelete: item.userID == account.userID ? { deleting = item } : nil
+                    onDelete: item.userID == account.userID ? { deleting = item } : nil,
+                    tags: feed.tags[item.id] ?? []
                 )
                     .task {
                         // Close to the end: ask for older check-ins.
@@ -217,6 +218,8 @@ struct FeedCard: View {
     var onEdit: (() -> Void)?
     /// Set for your own check-ins.
     var onDelete: (() -> Void)?
+    /// The friends tagged on this check-in.
+    var tags: [PersonTag] = []
     @State private var viewing: FeedPhoto?
 
     var body: some View {
@@ -279,6 +282,11 @@ struct FeedCard: View {
             }
             if let detail {
                 Text(verbatim: detail)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            if !tags.isEmpty {
+                Label { Text("With \(tags.map(\.name).formatted())") } icon: { Image(systemName: "person.2") }
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }

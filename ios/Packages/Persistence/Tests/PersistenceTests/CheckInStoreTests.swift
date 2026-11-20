@@ -231,6 +231,29 @@ private let dus = SpottedDraft.Place(airportID: 7, code: "DUS")
     #expect(visits.count == 2 && visits.allSatisfy { $0.occurredAt == newDay })
 }
 
+@MainActor @Test func friendsTaggedOnAFlightAndAVisitAreKeptAndChangedOnEdit() throws {
+    let context = try makeContext()
+    let store = CheckInStore(context: context)
+    let anna = UUID()
+    let max = UUID()
+    let flight = try store.saveFlown(FlownDraft(origin: fra, destination: dus, tagged: [anna, max]))
+    let visit = try store.saveAirport(AirportDraft(airportID: 7, code: "DUS", context: .spotting, tagged: [anna]))
+    let plain = try store.saveAirport(AirportDraft(airportID: 3, code: "FRA", context: .spotting))
+    func tags(_ id: UUID) throws -> [UUID]? { try context.fetch(FetchDescriptor<LocalCheckIn>()).first { $0.id == id }?.taggedIDs }
+
+    #expect(try tags(flight.id) == [anna, max])
+    #expect(try tags(visit.id) == [anna])
+    #expect(try tags(plain.id) == nil, "no tags means the server's tags are left alone")
+
+    // An edit that doesn't mention the tags keeps them, one that does replaces them, and an empty list clears them.
+    try store.updateFlown(id: flight.id, registration: nil, type: nil, flightNumber: nil, cabin: nil, seat: nil)
+    #expect(try tags(flight.id) == [anna, max])
+    try store.updateFlown(id: flight.id, registration: nil, type: nil, flightNumber: nil, cabin: nil, seat: nil, tagged: [max])
+    #expect(try tags(flight.id) == [max])
+    try store.updateVisit(id: visit.id, reason: .spotting, tagged: [])
+    #expect(try tags(visit.id) == [])
+}
+
 @MainActor @Test func changingTheDayOfAFlightMovesItsAirportVisitsToo() throws {
     let context = try makeContext()
     let store = CheckInStore(context: context)
