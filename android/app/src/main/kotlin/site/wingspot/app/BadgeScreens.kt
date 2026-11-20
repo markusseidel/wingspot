@@ -1,5 +1,7 @@
 package site.wingspot.app
 
+import androidx.compose.ui.platform.testTag
+
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.ui.res.painterResource
@@ -54,7 +56,7 @@ fun languages(): List<String> {
 
 /** The Badges tab: level and XP on top, then every badge with its progress. */
 @Composable
-fun BadgesTab(model: BadgesViewModel, signedIn: Boolean, onSignIn: () -> Unit) {
+fun BadgesTab(model: BadgesViewModel, signedIn: Boolean, onSignIn: () -> Unit, onShare: (ShareCardModel) -> Unit = {}) {
     val state by model.state.collectAsState()
     var filter by remember { mutableStateOf(BadgeFilter.ALL) }
     val progress = state.progress
@@ -66,7 +68,7 @@ fun BadgesTab(model: BadgesViewModel, signedIn: Boolean, onSignIn: () -> Unit) {
                     Button(onClick = onSignIn) { Text(stringResource(R.string.sign_in_title)) }
                 }
             }
-            progress != null -> BadgeList(progress, filter, { filter = it }, model::refresh)
+            progress != null -> BadgeList(progress, filter, { filter = it }, model::refresh, onShare)
             state.refreshFailed -> {
                 Text(stringResource(R.string.badges_failed), color = MaterialTheme.colorScheme.error)
                 OutlinedButton(onClick = model::refresh) { Text(stringResource(R.string.try_again)) }
@@ -77,13 +79,23 @@ fun BadgesTab(model: BadgesViewModel, signedIn: Boolean, onSignIn: () -> Unit) {
 }
 
 @Composable
-private fun BadgeList(progress: UserProgress, filter: BadgeFilter, onFilter: (BadgeFilter) -> Unit, onRefresh: () -> Unit) {
+private fun BadgeList(progress: UserProgress, filter: BadgeFilter, onFilter: (BadgeFilter) -> Unit, onRefresh: () -> Unit, onShare: (ShareCardModel) -> Unit) {
+    val levelWord = stringResource(R.string.share_level)
+    val badgeWord = stringResource(R.string.share_badge)
+    val langs = languages()
+    val rank = stringResource(rankTitle(Rank.of(progress.level)))
+    val levelText = stringResource(R.string.level_n, progress.level)
+    val levelMessage = stringResource(R.string.share_level_message, progress.level)
+    val levelCaption = stringResource(R.string.share_level_caption, progress.xp, progress.earnedCount)
     val groups = run {
         val categories = CATEGORY_ORDER + progress.badges.map { it.category }.distinct().filter { it !in CATEGORY_ORDER }.sorted()
         categories.mapNotNull { category -> progress.badges.filter { it.category == category && filter.matches(it) }.takeIf { it.isNotEmpty() }?.let { category to it } }
     }
     LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         item { LevelHeader(progress) }
+        item {
+            TextButton(onClick = { onShare(ShareCardModel(levelWord, levelText, rank, levelCaption, levelMessage)) }, modifier = Modifier.testTag("share-level")) { Text(stringResource(R.string.invite_share)) }
+        }
         item { Text(stringResource(R.string.badges_earned, progress.earnedCount, progress.badges.size), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         item {
             Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -94,7 +106,16 @@ private fun BadgeList(progress: UserProgress, filter: BadgeFilter, onFilter: (Ba
         }
         for ((category, badges) in groups) {
             item(key = "h-$category") { Text(categoryTitle(category), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 8.dp)) }
-            items(badges, key = { it.id }) { BadgeRow(it) }
+            items(badges, key = { it.id }) { badge ->
+                BadgeRow(badge)
+                // Earned badges can be shared as a picture; the hidden ones stay a surprise.
+                if (badge.level > 0 && !badge.isHidden) {
+                    val title = badge.title(langs)
+                    val levelLine = if (badge.isSingle) null else stringResource(R.string.badge_level_of, badge.level, badge.levels.size)
+                    val message = stringResource(R.string.share_badge_message, title)
+                    TextButton(onClick = { onShare(ShareCardModel(badgeWord, title, levelLine, null, message)) }) { Text(stringResource(R.string.invite_share)) }
+                }
+            }
             if (category == "hidden" && progress.hiddenRemaining > 0) {
                 item(key = "hidden-left") { Text(stringResource(R.string.hidden_left, progress.hiddenRemaining), color = MaterialTheme.colorScheme.onSurfaceVariant) }
             }

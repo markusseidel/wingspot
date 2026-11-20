@@ -41,6 +41,13 @@
                 <data android:scheme="wingspot" android:host="invite" />
             </intent-filter>
         </activity>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
+        </provider>
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="${mapsApiKey}" />
         <receiver android:name=".SaluteReceiver" android:exported="false" />
         <service android:name=".PushService" android:exported="false">

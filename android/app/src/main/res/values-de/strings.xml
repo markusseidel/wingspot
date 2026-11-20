@@ -427,4 +427,12 @@
     <string name="invite_follow_title">%1$s folgen?</string>
     <string name="invite_follow_message">Die Person hat dich zu Wingspot eingeladen. Du kannst jederzeit entfolgen.</string>
     <string name="not_now">Nicht jetzt</string>
+    <string name="share_flown">Geflogen</string>
+    <string name="share_airport">Flughafen</string>
+    <string name="share_spotted">Gespottet</string>
+    <string name="share_level">Level</string>
+    <string name="share_badge">Badge</string>
+    <string name="share_level_message">Ich habe Level %1$d bei Wingspot erreicht.</string>
+    <string name="share_level_caption">%1$d XP · %2$d Badges</string>
+    <string name="share_badge_message">Ich habe das Badge %1$s bei Wingspot verdient.</string>
 </resources>

@@ -1,5 +1,7 @@
 package site.wingspot.app
 
+import kotlinx.coroutines.launch
+
 import androidx.compose.material3.IconButton
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
@@ -126,7 +128,11 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
                             }
                             RecentCheckIns(checkInState.recent, onEdit = checkIn::edit, onDelete = checkIn::delete)
                         }
-                        Tab.BADGES -> BadgesTab(badges, me != null) { social.tab = Tab.PROFILE }
+                        Tab.BADGES -> {
+                            val shareContext = androidx.compose.ui.platform.LocalContext.current
+                            val shareScope = androidx.compose.runtime.rememberCoroutineScope()
+                            BadgesTab(badges, me != null, { social.tab = Tab.PROFILE }) { card -> if (me != null) shareScope.launch { ShareCards.share(app, shareContext, me, card) } }
+                        }
                         // ProfileTab scrolls by itself; a second scroll around it crashes ("infinite height").
                         Tab.PROFILE -> ProfileTab(app, state, model, badges, social, refState, reference::search, reference::refresh, checkInState.all, checkIn::reload)
                     }

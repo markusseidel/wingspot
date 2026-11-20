@@ -86,6 +86,29 @@ struct CheckInDetailView: View {
     private var canCopy: Bool { !isOwn && isTagged && (shown.kind == "flown" || shown.kind == "airport") }
     private var inMyLogbook: Bool { localCheckIns.contains { $0.sourceID == item.id } }
     private var isOwn: Bool { item.userID == account.userID }
+
+    /// The card for sharing your own flight, or airport visit or sighting, as a picture.
+    private var shareModel: ShareCardModel? {
+        let name = account.profile?.displayName ?? account.profile?.username ?? ""
+        let date = shown.occurredAt.formatted(date: .abbreviated, time: .omitted)
+        switch shown.kind {
+        case "flown":
+            guard let from = shown.originCode, let to = shown.destinationCode else { return nil }
+            let details = [shown.flightNumber, shown.typeName, date].compactMap { $0 }.joined(separator: " · ")
+            return ShareCardModel(
+                kicker: String(localized: "Flown"), headline: "\(from) → \(to)", figure: shown.distanceKm.map { "\($0.formatted()) km" },
+                caption: details, name: name, message: String(localized: "I flew \(from) → \(to) (Wingspot).")
+            )
+        case "airport":
+            guard let code = shown.airportCode else { return nil }
+            return ShareCardModel(kicker: String(localized: "Airport"), headline: code, figure: nil, caption: date, name: name,
+                                  message: String(localized: "I was at \(code) (Wingspot)."))
+        default:
+            guard let what = shown.registration ?? shown.typeICAO else { return nil }
+            return ShareCardModel(kicker: String(localized: "Spotted"), headline: what, figure: shown.typeName, caption: date, name: name,
+                                  message: String(localized: "I spotted \(what) (Wingspot)."))
+        }
+    }
     private var canEdit: Bool { isOwn && localCheckIns.contains { $0.id == item.id } }
 
     private func content(_ store: CheckInCommentStore) -> some View {
@@ -309,6 +332,7 @@ struct CheckInDetailView: View {
                 if shown.kind == "flown", shown.originID != nil, shown.destinationID != nil {
                     Button("Return flight", systemImage: "arrow.uturn.backward") { Task { await prepareReturn() } }
                 }
+                if let card = shareModel { ShareCardButton(model: card) }
                 Button("Delete", systemImage: "trash", role: .destructive) { confirmDelete = true }
             }
             Section { CheckInVisibilityPicker(checkInID: item.id) }
