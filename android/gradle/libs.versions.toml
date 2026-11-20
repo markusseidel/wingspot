@@ -15,6 +15,7 @@ googleServices = "4.6.0"
 mapsCompose = "9.0.1"
 cameraX = "1.6.2"
 mlkitBarcode = "17.3.0"
+zxing = "3.5.3"
 credentials = "1.6.0"
 googleId = "1.2.1"
 playServicesMaps = "20.1.0"
@@ -42,6 +43,7 @@ camerax-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "ca
 camerax-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraX" }
 camerax-view = { module = "androidx.camera:camera-view", version.ref = "cameraX" }
 mlkit-barcode = { module = "com.google.mlkit:barcode-scanning", version.ref = "mlkitBarcode" }
+zxing-core = { module = "com.google.zxing:core", version.ref = "zxing" }
 credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 credentials-play = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
 google-id = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleId" }

@@ -138,6 +138,14 @@ three or more of the people you follow, plus people who were tagged on a flight 
 **Apps:** share sheet with text, link and a QR image; Android and iOS handle the link (see decision 1); a landing
 card "Anna invited you" after sign-in.
 
+## 1b. How invite links were built (no web domain yet)
+
+Decision 1 (a web domain) is still open, so the link is `wingspot://invite/CODE`, which opens the app on a phone that has
+it. The invite screen also shows the code and a QR code of that link, and a friend can type the code in. The share text
+carries the code and the link. When there is a domain, only the link text changes. Migration `20261121700000_invite_friends.sql`:
+`get_my_invite_code`, `reset_my_invite_code`, `invite_owner`, `follow_by_code`, `people_you_may_know`, and
+`profiles.allow_suggestions`. The codes are never readable through the table.
+
 ## 2. Share card
 
 **What:** a "Share" button on a check-in, a badge and a level-up. It renders a nice image (route line or map,

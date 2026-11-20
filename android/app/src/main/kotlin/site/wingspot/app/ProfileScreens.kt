@@ -117,6 +117,7 @@ fun ProfileTab(
             if (stats.checkIns > 0) StatsCard(stats, reference.database)
             OutlinedButton(onClick = { social.open(Route.Collections) }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.collections)) }
             OutlinedButton(onClick = { social.open(Route.Leaderboard) }, modifier = Modifier.fillMaxWidth().testTag("open-leaderboard")) { Text(stringResource(R.string.leaderboard_title)) }
+            OutlinedButton(onClick = { social.open(Route.Invite) }, modifier = Modifier.fillMaxWidth().testTag("open-invite")) { Text(stringResource(R.string.invite_title)) }
         } else {
             progress.progress?.let { LevelHeader(it) }
             StatsCard(stats, reference.database)

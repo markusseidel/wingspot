@@ -299,6 +299,51 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
     @Serializable
     private data class CopyRow(@SerialName("user_id") val userId: String, val username: String, @SerialName("display_name") val displayName: String? = null)
 
+    /** Someone with an invite code. */
+    @Serializable
+    data class InvitePerson(val id: String, val username: String, @SerialName("display_name") val displayName: String? = null) {
+        val who: String get() = displayName?.takeIf { it.isNotBlank() } ?: username
+    }
+
+    /** Someone you may know. [reason] is `mutual` or `tagged`. */
+    @Serializable
+    data class Suggestion(
+        @SerialName("user_id") val userId: String,
+        val username: String,
+        @SerialName("display_name") val displayName: String? = null,
+        val reason: String = "mutual",
+        val mutual: Int = 0,
+    ) {
+        val who: String get() = displayName?.takeIf { it.isNotBlank() } ?: username
+    }
+
+    suspend fun myInviteCode(): String = json.parseToJsonElement(rest.call("POST", "/rest/v1/rpc/get_my_invite_code", "{}")).jsonPrimitive.content
+
+    suspend fun resetInviteCode(): String = json.parseToJsonElement(rest.call("POST", "/rest/v1/rpc/reset_my_invite_code", "{}")).jsonPrimitive.content
+
+    /** Who owns the code. Null for an unknown code, a blocked person or yourself. */
+    suspend fun inviteOwner(code: String): InvitePerson? {
+        val body = buildJsonObject { put("p_code", code) }.toString()
+        return json.decodeFromString(ListSerializer(InvitePerson.serializer()), rest.call("POST", "/rest/v1/rpc/invite_owner", body)).firstOrNull()
+    }
+
+    /** Follows the owner of the code and returns them. Null for an unknown code. */
+    suspend fun followByCode(code: String): InvitePerson? {
+        val body = buildJsonObject { put("p_code", code) }.toString()
+        return json.decodeFromString(ListSerializer(InvitePerson.serializer()), rest.call("POST", "/rest/v1/rpc/follow_by_code", body)).firstOrNull()
+    }
+
+    suspend fun suggestions(): List<Suggestion> =
+        json.decodeFromString(ListSerializer(Suggestion.serializer()), rest.call("POST", "/rest/v1/rpc/people_you_may_know", "{}"))
+
+    suspend fun allowsSuggestions(me: String): Boolean =
+        json.parseToJsonElement(rest.call("GET", "/rest/v1/profiles?select=allow_suggestions&id=eq.$me")).jsonArray.firstOrNull()
+            ?.jsonObject?.get("allow_suggestions")?.jsonPrimitive?.content != "false"
+
+    suspend fun setAllowsSuggestions(me: String, allowed: Boolean) {
+        rest.call("PATCH", "/rest/v1/profiles?id=eq.$me", """{"allow_suggestions":$allowed}""", prefer = "return=minimal")
+    }
+
     /** One place on the friends leaderboard. */
     @Serializable
     data class LeaderboardRow(

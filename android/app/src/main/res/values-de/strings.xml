@@ -406,4 +406,25 @@
     <string name="leaderboard_alone">Hier erscheinen nur Leute, denen du folgst und die „In Bestenlisten von Freunden zeigen“ eingeschaltet haben.</string>
     <string name="leaderboard_show_me">In Bestenlisten von Freunden zeigen</string>
     <string name="leaderboard_show_me_hint">Freunde, die dir folgen, sehen dich dann in ihrer Bestenliste, gezählt werden nur Check-ins, die sie sehen dürfen. Standardmäßig aus.</string>
+    <string name="invite_title">Freunde einladen</string>
+    <string name="invite_your_code">Dein Einladungscode</string>
+    <string name="invite_your_code_hint">Wer den Link öffnet, den Code scannt oder eintippt, kann dir in einem Schritt folgen.</string>
+    <string name="invite_share">Teilen</string>
+    <string name="invite_share_text">Komm zu Wingspot! Mein Einladungscode ist %1$s, oder öffne %2$s</string>
+    <string name="invite_qr">QR-Code deines Einladungslinks</string>
+    <string name="invite_add_by_code">Freund per Code hinzufügen</string>
+    <string name="invite_code_hint">Code von einem Freund</string>
+    <string name="invite_you_follow">Du folgst jetzt %s.</string>
+    <string name="invite_no_match">Dieser Code gehört niemandem.</string>
+    <string name="invite_may_know">Leute, die du kennen könntest</string>
+    <string name="invite_reason_tagged">War mit dir auf einem Flug</string>
+    <string name="invite_reason_mutual">Wird von %1$d Leuten gefolgt, denen du folgst</string>
+    <string name="invite_suggest_me">Mich anderen vorschlagen</string>
+    <string name="invite_new_code">Neuen Code erstellen</string>
+    <string name="invite_new_code_hint">Ein neuer Code beendet den alten Link und Code.</string>
+    <string name="invite_new_code_title">Neuen Einladungscode erstellen?</string>
+    <string name="invite_new_code_message">Der alte Link und Code funktionieren dann nicht mehr.</string>
+    <string name="invite_follow_title">%1$s folgen?</string>
+    <string name="invite_follow_message">Die Person hat dich zu Wingspot eingeladen. Du kannst jederzeit entfolgen.</string>
+    <string name="not_now">Nicht jetzt</string>
 </resources>

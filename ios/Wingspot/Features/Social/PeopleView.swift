@@ -23,6 +23,7 @@ struct PeopleView: View {
                 }
             } else {
                 Section {
+                    NavigationLink { InviteView() } label: { Label("Invite friends", systemImage: "person.badge.plus") }
                     NavigationLink { LeaderboardView() } label: { Label("Leaderboard", systemImage: "list.number") }
                 }
                 Section {

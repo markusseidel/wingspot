@@ -109,6 +109,21 @@ class SocialApiTests {
     }
 
     @Test
+    fun theInviteCodeFollowingByCodeAndSuggestionsAreRead() = withApi { server, api, _ ->
+        server.enqueue(ok(""""ABCD2345""""))
+        assertEquals("ABCD2345", api.myInviteCode())
+        assertEquals("/rest/v1/rpc/get_my_invite_code", server.takeRequest().url.encodedPath)
+        server.enqueue(ok("""[{"id":"$OTHER","username":"anna","display_name":"Anna K"}]"""))
+        assertEquals("Anna K", api.followByCode("ABCD2345")!!.who)
+        assertEquals("/rest/v1/rpc/follow_by_code", server.takeRequest().url.encodedPath)
+        server.enqueue(ok("[]"))
+        assertNull(api.inviteOwner("ABCD2345"))
+        server.takeRequest()
+        server.enqueue(ok("""[{"user_id":"$OTHER","username":"anna","display_name":null,"reason":"tagged","mutual":0}]"""))
+        assertEquals("tagged", api.suggestions().single().reason)
+    }
+
+    @Test
     fun theInboxIsReadPagedByTimeAndMarkedRead() = withApi { server, api, _ ->
         server.enqueue(ok("""[{"id":"i1","kind":"salute","actor_id":"$OTHER","username":"anna","display_name":null,"checkin_id":"$CHECKIN",
             "subject":"FRA → JFK","snippet":null,"created_at":"2026-11-21T10:00:00.5+00:00","is_read":false}]"""))

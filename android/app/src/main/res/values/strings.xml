@@ -406,4 +406,25 @@
     <string name="leaderboard_alone">Only people you follow who switched on \"Show me on friends\' leaderboards\" appear here.</string>
     <string name="leaderboard_show_me">Show me on friends\' leaderboards</string>
     <string name="leaderboard_show_me_hint">Friends who follow you can then see you on their board, counting only the check-ins they may see. Off by default.</string>
+    <string name="invite_title">Invite friends</string>
+    <string name="invite_your_code">Your invite code</string>
+    <string name="invite_your_code_hint">A friend who opens the link, scans the code or types it can follow you in one step.</string>
+    <string name="invite_share">Share</string>
+    <string name="invite_share_text">Join me on Wingspot! My invite code is %1$s, or open %2$s</string>
+    <string name="invite_qr">QR code of your invite link</string>
+    <string name="invite_add_by_code">Add a friend by code</string>
+    <string name="invite_code_hint">Code from a friend</string>
+    <string name="invite_you_follow">You now follow %s.</string>
+    <string name="invite_no_match">That code doesn\'t match anyone.</string>
+    <string name="invite_may_know">People you may know</string>
+    <string name="invite_reason_tagged">Was on a flight with you</string>
+    <string name="invite_reason_mutual">Followed by %1$d people you follow</string>
+    <string name="invite_suggest_me">Suggest me to others</string>
+    <string name="invite_new_code">Make a new code</string>
+    <string name="invite_new_code_hint">A new code ends the old link and code.</string>
+    <string name="invite_new_code_title">Make a new invite code?</string>
+    <string name="invite_new_code_message">The old link and code stop working.</string>
+    <string name="invite_follow_title">Follow %1$s?</string>
+    <string name="invite_follow_message">They invited you to Wingspot. You can unfollow any time.</string>
+    <string name="not_now">Not now</string>
 </resources>
