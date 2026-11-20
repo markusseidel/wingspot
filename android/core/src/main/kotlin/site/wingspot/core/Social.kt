@@ -185,6 +185,31 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
         return json.decodeFromString(ListSerializer(CheckInComment.serializer()), text).first()
     }
 
+    /** A person named in a comment with @username. */
+    @Serializable
+    data class CommentMention(val id: String, val username: String)
+
+    /** What a comment has besides its text: salutes, and the people it mentions (`get_comment_extras`). */
+    @Serializable
+    data class CommentExtra(
+        @SerialName("comment_id") val commentId: String,
+        val salutes: Int = 0,
+        val saluted: Boolean = false,
+        val mentions: List<CommentMention> = emptyList(),
+    )
+
+    /** The salutes and mentions of the comments under a check-in, by comment id. */
+    suspend fun commentExtras(checkIn: String): Map<String, CommentExtra> {
+        val body = buildJsonObject { put("p_checkin", checkIn) }.toString()
+        return json.decodeFromString(ListSerializer(CommentExtra.serializer()), rest.call("POST", "/rest/v1/rpc/get_comment_extras", body))
+            .associateBy { it.commentId }
+    }
+
+    suspend fun setCommentSalute(comment: String, on: Boolean) {
+        val body = buildJsonObject { put("p_comment", comment); put("p_on", on) }.toString()
+        rest.call("POST", "/rest/v1/rpc/set_comment_salute", body)
+    }
+
     suspend fun deleteComment(id: String) {
         rest.call("DELETE", "/rest/v1/comments?id=eq.$id")
     }

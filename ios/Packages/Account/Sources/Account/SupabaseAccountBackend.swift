@@ -885,6 +885,19 @@ extension SupabaseAccountBackend: ReactionBackend {
         }
     }
 
+    public func commentExtras(checkIn: UUID) async throws -> [UUID: CommentExtra] {
+        let rows: [CommentExtraRow] = try await socialErrors {
+            try await client.rpc("get_comment_extras", params: ["p_checkin": checkIn]).execute().value
+        }
+        return Dictionary(rows.map { ($0.commentID, $0.extra) }, uniquingKeysWith: { first, _ in first })
+    }
+
+    public func setCommentSalute(_ on: Bool, comment: UUID) async throws {
+        try await socialErrors {
+            _ = try await client.rpc("set_comment_salute", params: CommentSaluteParams(comment: comment, on: on)).execute()
+        }
+    }
+
     public func deleteComment(_ id: UUID) async throws {
         try await socialErrors {
             _ = try await client.from("comments").delete().eq("id", value: id).execute()
@@ -1071,5 +1084,34 @@ private struct DeviceParams: Encodable {
         try c.encode(device.environment.rawValue, forKey: .env)
         try c.encode(device.osVersion, forKey: .osVersion)
         try c.encode(device.locale, forKey: .locale)
+    }
+}
+
+private struct CommentSaluteParams: Encodable {
+    let comment: UUID
+    let on: Bool
+
+    private enum CodingKeys: String, CodingKey {
+        case comment = "p_comment"
+        case on = "p_on"
+    }
+}
+
+private struct CommentExtraRow: Decodable {
+    let commentID: UUID
+    let extra: CommentExtra
+
+    private enum CodingKeys: String, CodingKey {
+        case commentID = "comment_id"
+        case salutes, saluted, mentions
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        commentID = try c.decode(UUID.self, forKey: .commentID)
+        extra = CommentExtra(
+            salutes: try c.decode(Int.self, forKey: .salutes), saluted: try c.decode(Bool.self, forKey: .saluted),
+            mentions: try c.decode([CommentMention].self, forKey: .mentions)
+        )
     }
 }

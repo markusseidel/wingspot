@@ -52,6 +52,22 @@ class SocialApiTests {
     }
 
     @Test
+    fun theSalutesAndMentionsOfCommentsAreReadAndASaluteIsSent() = withApi { server, api, _ ->
+        server.enqueue(ok("""[{"comment_id":"c1","salutes":2,"saluted":true,"mentions":[{"id":"$OTHER","username":"anna"}]},{"comment_id":"c2","salutes":0,"saluted":false,"mentions":[]}]"""))
+        val extras = api.commentExtras(CHECKIN)
+        assertEquals(2, extras.getValue("c1").salutes)
+        assertEquals("anna", extras.getValue("c1").mentions.single().username)
+        assertEquals("/rest/v1/rpc/get_comment_extras", server.takeRequest().url.encodedPath)
+        server.enqueue(ok("null", 200))
+        api.setCommentSalute("c2", true)
+        val request = server.takeRequest()
+        assertEquals("/rest/v1/rpc/set_comment_salute", request.url.encodedPath)
+        val body = Rest(server.url("/").toString(), "k", { "t" }).json.parseToJsonElement(request.body!!.utf8()).jsonObject
+        assertEquals("c2", body["p_comment"]!!.jsonPrimitive.content)
+        assertEquals("true", body["p_on"]!!.jsonPrimitive.content)
+    }
+
+    @Test
     fun theInboxIsReadPagedByTimeAndMarkedRead() = withApi { server, api, _ ->
         server.enqueue(ok("""[{"id":"i1","kind":"salute","actor_id":"$OTHER","username":"anna","display_name":null,"checkin_id":"$CHECKIN",
             "subject":"FRA → JFK","snippet":null,"created_at":"2026-11-21T10:00:00.5+00:00","is_read":false}]"""))

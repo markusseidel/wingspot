@@ -139,7 +139,7 @@ private struct InboxRow: View {
                 Text(text)
                     .font(.subheadline)
                     .multilineTextAlignment(.leading)
-                if let quote = item.snippet, !quote.isEmpty, item.kind == "comment" {
+                if let quote = item.snippet, !quote.isEmpty, (item.kind == "comment" || item.kind == "mention") {
                     Text("“\(quote)”")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
@@ -174,6 +174,10 @@ private struct InboxRow: View {
         case "checkin":
             if let subject { return bold(String(localized: "\(name) checked in \(subject)"), name) }
             return bold(String(localized: "\(name) has a new check-in"), name)
+        case "mention":
+            return bold(String(localized: "\(name) mentioned you in a comment"), name)
+        case "comment_like":
+            return bold(String(localized: "\(name) saluted your comment"), name)
         default:
             return bold(String(localized: "\(name) has news for you"), name)
         }

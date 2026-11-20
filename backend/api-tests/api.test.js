@@ -736,6 +736,20 @@ describe("social: sharing, feed, reports and comments", () => {
     const fine = await rest("comments", { token: bob.token, body: { checkin_id: checkin, user_id: bob.id, body: "Great shot!" } });
     assert.equal(fine.status, 201, JSON.stringify(fine.body));
   });
+
+  test("comments are read with their author embedded, as every installed app does, and have salutes and mentions", async () => {
+    // The mention and salute tables must not give PostgREST a second way from comments to profiles (PGRST201).
+    const read = await rest(`comments?select=id,user_id,body,created_at,profiles(username,display_name)&checkin_id=eq.${checkin}&order=created_at.asc`, { method: "GET", token: bob.token });
+    assert.equal(read.status, 200, JSON.stringify(read.body));
+    assert.ok(read.body.length >= 1 && read.body[0].profiles.username, "the author is embedded");
+    const extras = await rest("rpc/get_comment_extras", { token: bob.token, body: { p_checkin: checkin } });
+    assert.equal(extras.status, 200, JSON.stringify(extras.body));
+    assert.equal(extras.body.length, read.body.length);
+    const salute = await rest("rpc/set_comment_salute", { token: bob.token, body: { p_comment: read.body[0].id, p_on: true } });
+    assert.equal(salute.status, 204, JSON.stringify(salute.body));
+    const again = await rest("rpc/get_comment_extras", { token: bob.token, body: { p_checkin: checkin } });
+    assert.equal(again.body.find((row) => row.comment_id === read.body[0].id).salutes, 1);
+  });
 });
 
 describe("photos for other people", () => {

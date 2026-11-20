@@ -78,7 +78,7 @@ private fun InboxRow(row: SocialApi.ActivityItem, onClick: () -> Unit) {
         Avatar(row.actorId, row.who, 40.dp)
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(sentence(row), style = MaterialTheme.typography.bodyMedium)
-            if (row.kind == "comment" && !row.snippet.isNullOrBlank()) {
+            if ((row.kind == "comment" || row.kind == "mention") && !row.snippet.isNullOrBlank()) {
                 Text("\u201C${row.snippet}\u201D", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2)
             }
             Text(relativeTime(row.createdAt), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -97,6 +97,8 @@ private fun sentence(row: SocialApi.ActivityItem): AnnotatedString {
         "comment" -> if (subject != null) stringResource(R.string.activity_comment_on, name, subject) else stringResource(R.string.activity_comment, name)
         "tagged" -> if (subject != null) stringResource(R.string.activity_tagged_on, name, subject) else stringResource(R.string.activity_tagged, name)
         "checkin" -> if (subject != null) stringResource(R.string.activity_checkin_on, name, subject) else stringResource(R.string.activity_checkin, name)
+        "mention" -> stringResource(R.string.activity_mention, name)
+        "comment_like" -> stringResource(R.string.activity_comment_like, name)
         else -> stringResource(R.string.activity_other, name)
     }
     return buildAnnotatedString {

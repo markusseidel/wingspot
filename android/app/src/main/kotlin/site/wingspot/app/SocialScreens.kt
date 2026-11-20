@@ -4,6 +4,10 @@ import android.graphics.BitmapFactory
 import android.text.format.DateUtils
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.withLink
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -62,6 +66,8 @@ import kotlinx.coroutines.withContext
 import site.wingspot.core.ApiException
 import site.wingspot.core.CabinClass
 import site.wingspot.core.CheckInComment
+import site.wingspot.core.CommentText
+import site.wingspot.core.SocialApi
 import site.wingspot.core.Downloads
 import site.wingspot.core.FeedItem
 import site.wingspot.core.FeedSort
@@ -210,6 +216,10 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
     var photos by remember { mutableStateOf(emptyList<FeedPhoto>()) }
     var comments by remember { mutableStateOf(emptyList<CheckInComment>()) }
     var commentsFailed by remember { mutableStateOf(false) }
+    var extras by remember { mutableStateOf(emptyMap<String, SocialApi.CommentExtra>()) }
+    // Friends who can be mentioned, loaded the first time an "@" is typed.
+    var friends by remember { mutableStateOf(emptyList<site.wingspot.core.Person>()) }
+    var friendsLoaded by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
     var problem by remember { mutableStateOf<Int?>(null) }
@@ -235,6 +245,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
             tags = model.reloadTags(id)
             comments = app.social.comments(id)
             model.setCommentCount(id, comments.size)
+            extras = runCatching { app.social.commentExtras(id) }.getOrDefault(extras)
         } catch (e: ApiException) {
             commentsFailed = true
         }
@@ -386,7 +397,23 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                                 Text(comment.who, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 Text(relativeTime(comment.createdAt), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
-                            Text(comment.body, style = MaterialTheme.typography.bodyLarge)
+                            val extra = extras[comment.id]
+                            Text(mentionText(comment.body, extra?.mentions.orEmpty()) { model.openPerson(it) }, style = MaterialTheme.typography.bodyLarge)
+                            Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
+                                if (comment.userId != me) TextButton(onClick = {
+                                    text = CommentText.replying(comment.profiles?.username ?: "", text)
+                                }, modifier = Modifier.testTag("reply")) { Text(stringResource(R.string.reply)) }
+                                TextButton(onClick = {
+                                    val before = extra ?: SocialApi.CommentExtra(comment.id)
+                                    val now = !before.saluted
+                                    extras = extras + (comment.id to before.copy(saluted = now, salutes = (before.salutes + if (now) 1 else -1).coerceAtLeast(0)))
+                                    scope.launch {
+                                        try { app.social.setCommentSalute(comment.id, now) } catch (e: ApiException) { extras = extras + (comment.id to before) }
+                                    }
+                                }, modifier = Modifier.testTag("salute-comment")) {
+                                    Text(stringResource(if (extra?.saluted == true) R.string.salute_comment_on else R.string.salute_comment) + (extra?.salutes?.takeIf { it > 0 }?.let { " $it" } ?: ""))
+                                }
+                            }
                         }
                         Box {
                             IconButton(onClick = { open = true }, modifier = Modifier.size(48.dp)) { Text("⋮", style = MaterialTheme.typography.titleLarge) }
@@ -408,6 +435,24 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
             }
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    val prefix = CommentText.activePrefix(text)
+                    LaunchedEffect(prefix != null) {
+                        if (prefix != null && !friendsLoaded) { friendsLoaded = true; friends = runCatching { app.social.taggableFriends() }.getOrDefault(emptyList()) }
+                    }
+                    val suggestions = if (prefix == null) emptyList() else friends.filter { it.id != me }
+                        .filter { prefix.isEmpty() || it.username.startsWith(prefix) || it.who.lowercase().contains(prefix) }.take(10)
+                    if (suggestions.isNotEmpty()) Row(Modifier.horizontalScroll(rememberScrollState()).testTag("mention-suggestions"), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        for (person in suggestions) {
+                            Row(
+                                Modifier.background(MaterialTheme.colorScheme.surfaceVariant, CircleShape).clickable { text = CommentText.completing(text, person.username) }
+                                    .padding(start = 6.dp, end = 12.dp, top = 4.dp, bottom = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            ) {
+                                Avatar(person.id, person.who, 24.dp)
+                                Text(person.who, style = MaterialTheme.typography.bodyMedium)
+                            }
+                        }
+                    }
                     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         OutlinedTextField(
                             value = text, onValueChange = { text = it }, modifier = Modifier.weight(1f).testTag("comment"),
@@ -422,6 +467,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                                     try {
                                         val added = app.social.addComment(text.trim(), id, me)
                                         comments = comments + added
+                                        extras = runCatching { app.social.commentExtras(id) }.getOrDefault(extras)
                                         text = ""
                                         problem = null
                                         focusManager.clearFocus()
@@ -565,5 +611,27 @@ fun FeedBadgesLine(badges: List<site.wingspot.core.SocialApi.FeedBadge>) {
                 if (!badge.isSingle) Text(stringResource(R.string.level_n, badge.level), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
+    }
+}
+
+
+/** A comment's text with each mentioned @name in the accent colour, bold, as a link to that person's page. */
+@Composable
+private fun mentionText(body: String, mentions: List<SocialApi.CommentMention>, onPerson: (String) -> Unit): androidx.compose.ui.text.AnnotatedString {
+    if (mentions.isEmpty()) return androidx.compose.ui.text.AnnotatedString(body)
+    val byName = mentions.associate { it.username to it.id }
+    val color = MaterialTheme.colorScheme.primary
+    return androidx.compose.ui.text.buildAnnotatedString {
+        var at = 0
+        for ((range, name) in CommentText.mentionRanges(body, byName.keys)) {
+            if (range.first < at) continue
+            append(body.substring(at, range.first))
+            val person = byName.getValue(name)
+            withLink(androidx.compose.ui.text.LinkAnnotation.Clickable(person) { onPerson(person) }) {
+                withStyle(androidx.compose.ui.text.SpanStyle(color = color, fontWeight = FontWeight.SemiBold)) { append(body.substring(range.first, range.last + 1)) }
+            }
+            at = range.last + 1
+        }
+        append(body.substring(at))
     }
 }

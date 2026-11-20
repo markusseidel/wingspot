@@ -376,4 +376,9 @@
     <string name="activity_checkin_on">%1$s hat %2$s eingecheckt</string>
     <string name="activity_other">%1$s hat Neuigkeiten für dich</string>
     <string name="activity_mark_all_read">Alle gelesen</string>
+    <string name="reply">Antworten</string>
+    <string name="salute_comment">Salutieren</string>
+    <string name="salute_comment_on">Salutiert</string>
+    <string name="activity_mention">%1$s hat dich in einem Kommentar erwähnt</string>
+    <string name="activity_comment_like">%1$s hat deinen Kommentar salutiert</string>
 </resources>
