@@ -23,6 +23,7 @@ struct WingspotApp: App {
     @State private var avatars: AvatarStore
     @State private var personProgress: PersonProgressStore
     @State private var inbox: InboxStore
+    @State private var compare: CompareStore
     @State private var sync: CheckInSyncCoordinator
     @State private var badges: BadgeStore
     @State private var push: PushStore
@@ -64,6 +65,7 @@ struct WingspotApp: App {
         _avatars = State(initialValue: AvatarStore(projectURL: Self.supabaseURL, backend: accountBackend))
         _personProgress = State(initialValue: PersonProgressStore(backend: accountBackend))
         _inbox = State(initialValue: InboxStore(backend: accountBackend))
+        _compare = State(initialValue: CompareStore(backend: accountBackend))
         let uploader = APICheckInUploader(
             client: Self.apiClient,
             accessToken: { await account.accessToken() }
@@ -104,6 +106,7 @@ struct WingspotApp: App {
                 .environment(avatars)
                 .environment(personProgress)
                 .environment(inbox)
+                .environment(compare)
                 .environment(sync)
                 .environment(badges)
                 .environment(push)
@@ -170,7 +173,7 @@ struct WingspotApp: App {
         return url.flatMap(URL.init(string:))
     }
 
-    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend & MyCheckInsBackend & ReactionBackend & PushBackend & AnnouncementBackend & CheckInVisibilityBackend & AvatarBackend & PersonProgressBackend & ActivityBackend {
+    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend & MyCheckInsBackend & ReactionBackend & PushBackend & AnnouncementBackend & CheckInVisibilityBackend & AvatarBackend & PersonProgressBackend & ActivityBackend & CompareBackend {
         var url = Bundle.main.object(forInfoDictionaryKey: "WingspotSupabaseURL") as? String
         var key = Bundle.main.object(forInfoDictionaryKey: "WingspotPublishableKey") as? String
         #if DEBUG

@@ -73,6 +73,18 @@ class SocialApiTests {
         val copies = api.checkInCopies(CHECKIN)
         assertEquals("Anna K", copies.single().who)
         assertEquals("/rest/v1/rpc/get_checkin_copies", server.takeRequest().url.encodedPath)
+    fun aComparisonIsReadAndAHiddenProfileAnswersNull() = withApi { server, api, _ ->
+        server.enqueue(ok("""{"me":{"flights":2,"distance_km":1200,"airports":3,"countries":3,"airlines":1,"types":2},
+          "them":{"flights":2,"distance_km":1400,"airports":3,"countries":3,"airlines":2,"types":1},
+          "airports":{"common":[{"key":1,"code":"ZA1","name":"Alpha"}],"mine":[],"theirs":[{"key":4,"code":"ZA4","name":"Delta"}]},
+          "countries":{"common":[{"key":"DE","code":"DE"}],"mine":[],"theirs":[]},
+          "airlines":{"common":[],"mine":[],"theirs":[]},"types":{"common":[],"mine":[{"key":"ZT2","code":"ZT2","name":"Test Two"}],"theirs":[]}}"""))
+        val result = api.compare(OTHER)!!
+        assertEquals(1200, result.me.distanceKm)
+        assertEquals("Delta", result.airports.theirs.single().name)
+        assertEquals("/rest/v1/rpc/compare_with", server.takeRequest().url.encodedPath)
+        server.enqueue(ok("null"))
+        assertNull(api.compare(OTHER))
     }
 
     @Test

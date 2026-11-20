@@ -385,4 +385,18 @@
     <string name="copies_hint">Diese Freunde haben das zu ihren eigenen Check-ins hinzugefügt.</string>
     <string name="activity_tag_copy">%1$s hat deinen Check-in zu seinem Logbuch hinzugefügt</string>
     <string name="activity_tag_copy_on">%1$s hat deinen Flug %2$s zu seinem Logbuch hinzugefügt</string>
+    <string name="compare_with_you">Mit dir vergleichen</string>
+    <string name="compare_title">Vergleich</string>
+    <string name="compare_failed">Vergleich konnte nicht geladen werden. Bitte prüfe deine Verbindung und versuche es erneut.</string>
+    <string name="compare_nothing">Du kannst nur mit Leuten vergleichen, deren Profil du sehen darfst.</string>
+    <string name="compare_flights">Flüge</string>
+    <string name="compare_distance">Strecke</string>
+    <string name="compare_countries">Länder</string>
+    <string name="compare_airports">Flughäfen</string>
+    <string name="compare_airlines">Airlines</string>
+    <string name="compare_types">Flugzeugtypen</string>
+    <string name="compare_common">Gemeinsam</string>
+    <string name="compare_only_you">Nur du</string>
+    <string name="compare_only_them">Nur %1$s</string>
+    <string name="compare_footer">Gezählt werden nur Check-ins, die du sehen darfst.</string>
 </resources>

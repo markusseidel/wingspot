@@ -385,4 +385,18 @@
     <string name="copies_hint">These friends added this to their own check-ins.</string>
     <string name="activity_tag_copy">%1$s added your check-in to their logbook</string>
     <string name="activity_tag_copy_on">%1$s added your flight %2$s to their logbook</string>
+    <string name="compare_with_you">Compare with you</string>
+    <string name="compare_title">Compare</string>
+    <string name="compare_failed">Couldn\'t load the comparison. Please check your connection and try again.</string>
+    <string name="compare_nothing">You can only compare with people whose profile you may see.</string>
+    <string name="compare_flights">Flights</string>
+    <string name="compare_distance">Distance</string>
+    <string name="compare_countries">Countries</string>
+    <string name="compare_airports">Airports</string>
+    <string name="compare_airlines">Airlines</string>
+    <string name="compare_types">Aircraft types</string>
+    <string name="compare_common">In common</string>
+    <string name="compare_only_you">Only you</string>
+    <string name="compare_only_them">Only %1$s</string>
+    <string name="compare_footer">Counts include only the check-ins you are allowed to see.</string>
 </resources>

@@ -13,6 +13,7 @@ struct PersonDetailView: View {
     @State private var report: ReportTarget?
     @State private var failure: AccountError?
     @Environment(PersonProgressStore.self) private var progressStore
+    @Environment(AccountStore.self) private var account
     @State private var progress: UserProgress?
 
     var body: some View {
@@ -44,6 +45,13 @@ struct PersonDetailView: View {
             }
             .disabled(isWorking)
             if let progress { PersonProgressSection(person: person, progress: progress) }
+            if progress != nil, person.id != account.userID {
+                Section {
+                    NavigationLink { CompareView(person: person) } label: {
+                        Label("Compare with you", systemImage: "chart.bar.xaxis")
+                    }
+                }
+            }
             if person.isFollowing { PersonAlertsSection(person: person) }
             PersonCheckInsSection(person: person)
             Section {
