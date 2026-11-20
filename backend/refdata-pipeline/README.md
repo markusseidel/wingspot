@@ -36,6 +36,16 @@ python3 add_types_to_snapshot.py --snapshot published.sqlite --types seed/aircra
 
 Then publish it as below.
 
+## Add closed airports
+
+OurAirports lists closed airports, but the import leaves them out, so people couldn't pick one for a flight from the past. The ones we want are listed by hand in `seed/closed_airports.csv`, with IDs from 9,000,000 up so they never clash with an OurAirports ID. Make the new snapshot from the published one, as with the types, and run the same migration rows into Postgres (`closed_on` is set by the migration, not by the snapshot):
+
+```bash
+python3 add_airports_to_snapshot.py --snapshot published.sqlite --out /tmp/refdata --data-version 2026-11-20
+```
+
+After a full rebuild from OurAirports, run this on the result again. To add another airport, add its row to the CSV and to a migration (`airports` with `closed_on`).
+
 ## Load into Postgres
 
 Check-ins reference airports and aircraft types by the IDs in the snapshot, so load each snapshot into Postgres **before** publishing it. Otherwise an app could send an ID the server doesn't have. Run these from `backend/`, linked to the hosted project:
@@ -62,7 +72,7 @@ Download the file from `https://<project-ref>.supabase.co/storage/v1/object/publ
 
 | Table | Source | Status |
 |---|---|---|
-| `airports` | OurAirports, excluding closed airports. Its `keywords` column is searchable, plus German names from [`seed/airport_keywords.csv`](seed/airport_keywords.csv), curated by hand | Imported |
+| `airports` | OurAirports, excluding closed airports, plus the closed ones in [`seed/closed_airports.csv`](seed/closed_airports.csv) (see above). Its `keywords` column is searchable, plus German names from [`seed/airport_keywords.csv`](seed/airport_keywords.csv), curated by hand | Imported |
 | `aircraft_types` | [`seed/aircraft_types.csv`](seed/aircraft_types.csv), generated from FAA Order JO 7360.1, with [`seed/aircraft_type_overrides.csv`](seed/aircraft_type_overrides.csv) and [`seed/aircraft_families.csv`](seed/aircraft_families.csv) curated by hand | Generated. Reuse terms for commercial use still need confirming |
 | `operators` | Wikidata (CC0) plus manual curation | Empty, import not built yet |
 | `aircraft` | User-entered, not imported (concept §10) | Stays empty in the snapshot |

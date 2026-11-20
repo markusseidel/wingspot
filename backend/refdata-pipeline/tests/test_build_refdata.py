@@ -8,6 +8,7 @@ from pathlib import Path
 TESTS_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(TESTS_DIR.parent))
 
+import add_airports_to_snapshot  # noqa: E402
 import build_refdata  # noqa: E402
 import faa_aircraft_types  # noqa: E402
 import postgres_import  # noqa: E402
@@ -391,6 +392,56 @@ class PostgresImportTests(unittest.TestCase):
     def test_rejects_missing_snapshot(self):
         with self.assertRaisesRegex(postgres_import.InputError, "not found"):
             postgres_import.write_batches(self.tmp / "missing.sqlite", self.out)
+
+
+class AddAirportsToSnapshotTests(unittest.TestCase):
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.tmp = Path(directory.name)
+        build_refdata.build(AIRPORTS, build_refdata.DEFAULT_TYPES_PATH, self.tmp / "published", "test-1")
+
+    def run_script(self, airports=None, version="test-2"):
+        argv = ["add_airports_to_snapshot.py", "--snapshot", str(self.tmp / "published" / "refdata.sqlite"),
+                "--out", str(self.tmp / "new"), "--data-version", version]
+        if airports:
+            argv += ["--airports", str(airports)]
+        old, sys.argv = sys.argv, argv
+        try:
+            return add_airports_to_snapshot.main()
+        finally:
+            sys.argv = old
+
+    def test_adds_the_closed_airports_and_leaves_the_others(self):
+        self.assertEqual(self.run_script(), 0)
+        db = sqlite3.connect(self.tmp / "new" / "refdata.sqlite")
+        self.addCleanup(db.close)
+        self.assertEqual(db.execute("SELECT COUNT(*) FROM airports").fetchone()[0], 6 + 2)
+        self.assertEqual(db.execute("SELECT iata, name FROM airports WHERE id = 9000001").fetchone(), ("TXL", "Berlin Tegel Airport"))
+        self.assertEqual(db.execute("SELECT name FROM airports WHERE id = 1").fetchone()[0], "Frankfurt Airport")
+        self.assertEqual(db.execute("SELECT value FROM meta WHERE key = 'data_version'").fetchone()[0], "test-2")
+        found = db.execute("SELECT airports.iata FROM airports_fts JOIN airports ON airports.id = airports_fts.rowid"
+                           " WHERE airports_fts MATCH 'tegel'").fetchall()
+        self.assertEqual(found, [("TXL",)])
+        manifest = json.loads((self.tmp / "new" / "manifest.json").read_text())
+        self.assertEqual(manifest["added_airports"], [9000001, 9000002])
+        self.assertEqual(manifest["counts"]["airports"], 8)
+
+    def test_a_second_run_changes_nothing(self):
+        self.run_script()
+        shutil_copy = self.tmp / "published" / "refdata.sqlite"
+        shutil_copy.write_bytes((self.tmp / "new" / "refdata.sqlite").read_bytes())
+        self.assertEqual(self.run_script(version="test-3"), 0)
+        manifest = json.loads((self.tmp / "new" / "manifest.json").read_text())
+        self.assertEqual(manifest["added_airports"], [])
+        self.assertEqual(manifest["counts"]["airports"], 8)
+
+    def test_the_seed_ids_stay_clear_of_the_ourairports_ids(self):
+        import csv
+        with (TESTS_DIR.parent / "seed" / "closed_airports.csv").open(newline="", encoding="utf-8") as file:
+            ids = [int(row["id"]) for row in csv.DictReader(file)]
+        self.assertTrue(all(value >= 9_000_000 for value in ids))
+        self.assertEqual(len(ids), len(set(ids)))
 
 
 if __name__ == "__main__":
