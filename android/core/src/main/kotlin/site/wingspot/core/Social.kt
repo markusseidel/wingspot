@@ -242,6 +242,22 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
     suspend fun taggableFriends(): List<Person> =
         json.decodeFromString(ListSerializer(Person.serializer()), rest.call("POST", "/rest/v1/rpc/get_taggable_friends", "{}"))
 
+    /** Sets the caller's profile image: uploads the JPEG, then keeps its address on the profile. */
+    suspend fun uploadAvatar(me: String, jpeg: ByteArray, projectUrl: String) {
+        rest.storage(
+            "POST", "/storage/v1/object/avatars/${AvatarImage.folder(me)}/avatar.jpg", jpeg, "image/jpeg",
+            mapOf("x-upsert" to "true", "cache-control" to "max-age=${AvatarImage.CACHE_SECONDS}"),
+        )
+        val address = AvatarImage.url(projectUrl, me) + "?v=${System.currentTimeMillis() / 1000}"
+        rest.call("PATCH", "/rest/v1/profiles?id=eq.$me", """{"avatar_url":"$address"}""", prefer = "return=minimal")
+    }
+
+    /** Removes the caller's profile image. */
+    suspend fun removeAvatar(me: String) {
+        rest.storage("DELETE", "/storage/v1/object/avatars/${AvatarImage.folder(me)}/avatar.jpg")
+        rest.call("PATCH", "/rest/v1/profiles?id=eq.$me", """{"avatar_url":null}""", prefer = "return=minimal")
+    }
+
     /** The caller leaves a check-in they are tagged on, for good. */
     suspend fun removeMyTag(checkIn: String) {
         rest.call("POST", "/rest/v1/rpc/remove_my_tag", """{"checkin":"$checkIn"}""")
@@ -386,7 +402,9 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
     }
 
     /** Your own profile: username, name and home airport id. */
-    data class MyProfile(val username: String, val displayName: String?, val homeAirport: Long?)
+    data class MyProfile(val username: String, val displayName: String?, val homeAirport: Long?) {
+        val who: String get() = displayName?.takeIf { it.isNotBlank() } ?: username
+    }
 
     suspend fun myProfile(me: String): MyProfile? {
         val row = json.parseToJsonElement(rest.call("GET", "/rest/v1/profiles?select=username,display_name&id=eq.$me")).jsonArray.firstOrNull()?.jsonObject ?: return null
