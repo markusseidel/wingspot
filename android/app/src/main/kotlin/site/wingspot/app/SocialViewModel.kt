@@ -33,6 +33,7 @@ sealed class Route {
     object AirportsMap : Route()
     object Collections : Route()
     object Settings : Route()
+    object Inbox : Route()
     object EditProfile : Route()
 }
 
@@ -87,6 +88,70 @@ class SocialViewModel(
 
     fun openPerson(id: String) {
         stack.add(Route.PersonPage(id))
+    }
+
+    // Activity inbox ---------------------------------------------------------------------------------------------
+
+    /** What is unread in the inbox, up to 99. Drives the dot on the bell. */
+    var unread by mutableStateOf(0)
+        private set
+    var inbox by mutableStateOf(emptyList<SocialApi.ActivityItem>())
+        private set
+    var inboxLoaded by mutableStateOf(false)
+        private set
+    var inboxFailed by mutableStateOf(false)
+        private set
+    var inboxMore by mutableStateOf(false)
+        private set
+
+    fun refreshUnread() {
+        if (me() == null) return
+        viewModelScope.launch { try { unread = api.unreadActivityCount() } catch (e: ApiException) { } }
+    }
+
+    /** Loads the first page. Nothing is marked read by looking: the person does that with "Mark all read". */
+    fun loadInbox() {
+        if (me() == null) return
+        viewModelScope.launch {
+            try {
+                val page = api.activity(null, INBOX_PAGE)
+                inbox = page
+                inboxMore = page.size >= INBOX_PAGE
+                inboxFailed = false
+                inboxLoaded = true
+                refreshUnread()
+            } catch (e: ApiException) {
+                inboxFailed = true
+                inboxLoaded = true
+            }
+        }
+    }
+
+    val inboxHasUnread: Boolean get() = unread > 0 || inbox.any { !it.isRead }
+
+    fun markAllRead() {
+        val before = inbox to unread
+        inbox = inbox.map { it.copy(isRead = true) }
+        unread = 0
+        viewModelScope.launch {
+            try { api.markActivityRead() } catch (e: ApiException) { inbox = before.first; unread = before.second }
+        }
+    }
+
+    fun loadMoreInbox() {
+        val last = inbox.lastOrNull() ?: return
+        if (!inboxMore) return
+        inboxMore = false
+        viewModelScope.launch {
+            try {
+                val page = api.activity(last.createdAt, INBOX_PAGE)
+                val known = inbox.map { it.id }.toSet()
+                inbox = inbox + page.filter { it.id !in known }
+                inboxMore = page.size >= INBOX_PAGE
+            } catch (e: ApiException) {
+                inboxMore = true
+            }
+        }
     }
 
     fun back() {
@@ -191,10 +256,16 @@ class SocialViewModel(
         mutable.value = FeedState()
         stack.clear()
         opened.clear()
+        unread = 0
+        inbox = emptyList()
+        inboxLoaded = false
+        inboxFailed = false
+        inboxMore = false
     }
 
     companion object {
         private const val PAGE = 30
+        private const val INBOX_PAGE = 30
 
         fun factory(app: WingspotApp): ViewModelProvider.Factory = viewModelFactory {
             initializer { SocialViewModel(app.social, { app.sessions.load()?.user?.id }, app.prefs.feedSort, app.prefs::chooseFeedSort) }

@@ -283,6 +283,42 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
         rest.call("PATCH", "/rest/v1/profiles?id=eq.$me", """{"avatar_url":null}""", prefer = "return=minimal")
     }
 
+    /** One row of the activity inbox. [createdAt] is the time as the server sent it, to be sent back to page. */
+    @Serializable
+    data class ActivityItem(
+        val id: String,
+        /** What happened: follow, salute, comment, checkin, tagged, and the kinds later features add. */
+        val kind: String,
+        @SerialName("actor_id") val actorId: String,
+        val username: String,
+        @SerialName("display_name") val displayName: String? = null,
+        /** The check-in it is about, if the caller may still see it. */
+        @SerialName("checkin_id") val checkInId: String? = null,
+        /** The route, airport or registration of that check-in. */
+        val subject: String? = null,
+        val snippet: String? = null,
+        @SerialName("created_at") val createdAt: String,
+        @SerialName("is_read") val isRead: Boolean = false,
+    ) {
+        val who: String get() = displayName?.takeIf { it.isNotBlank() } ?: username
+    }
+
+    /** The caller's inbox, newest first. [before] is the createdAt of the last row of the page before. */
+    suspend fun activity(before: String?, limit: Int = 30): List<ActivityItem> {
+        val body = buildJsonObject {
+            put("before", before?.let(::JsonPrimitive) ?: kotlinx.serialization.json.JsonNull)
+            put("lim", limit)
+        }.toString()
+        return json.decodeFromString(ListSerializer(ActivityItem.serializer()), rest.call("POST", "/rest/v1/rpc/get_notifications", body))
+    }
+
+    /** How many are unread, up to 99. */
+    suspend fun unreadActivityCount(): Int = rest.call("POST", "/rest/v1/rpc/unread_notification_count", "{}").trim().toIntOrNull() ?: 0
+
+    suspend fun markActivityRead() {
+        rest.call("POST", "/rest/v1/rpc/mark_notifications_read", "{}")
+    }
+
     /** Someone's level and the badges they earned. Null when their profile can't be seen: private, or blocked. */
     suspend fun personProgress(id: String): UserProgress? {
         val body = rest.call("POST", "/rest/v1/rpc/get_person_progress", """{"target":"$id"}""").trim()

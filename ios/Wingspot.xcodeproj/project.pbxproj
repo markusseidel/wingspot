@@ -62,6 +62,7 @@
 		C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A035100ED13735493AF7BF1 /* LocationProvider.swift */; };
 		CCB6285BC5F2D2D0C2D23BAD /* PeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A6E9C03029947E148B9EBB /* PeopleView.swift */; };
 		CF3807277F1FDA241609254C /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 5B2EB62437C5BE2130BABF23 /* Persistence */; };
+		D083C97B175DAAD5DC7A05EA /* Inbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C6ED1702C36D93C339FDB0 /* Inbox.swift */; };
 		D42859E57A7C92F579D0B015 /* TabHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BCA5440AA98EA8FE6080DA /* TabHeader.swift */; };
 		D85287110D33AEDB2AE2653E /* PushSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578259FF97F6C378ABA27E94 /* PushSupport.swift */; };
 		D866E9760B084CDB160CA4D5 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */; };
@@ -91,6 +92,7 @@
 		346D15D5FD800AAFC82408CF /* FlownEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlownEditView.swift; sourceTree = "<group>"; };
 		3A82AC64122C34A3DE053C4F /* PhotoSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSection.swift; sourceTree = "<group>"; };
 		41CBBBAF8DD8DAC4FD7390E9 /* SpottedCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpottedCheckInView.swift; sourceTree = "<group>"; };
+		42C6ED1702C36D93C339FDB0 /* Inbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Inbox.swift; sourceTree = "<group>"; };
 		4459DE5C40C01B9A974864C6 /* CheckInHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInHistoryView.swift; sourceTree = "<group>"; };
 		45BFC3E5CAEEFABF9A34E20E /* Wingspot.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Wingspot.xcconfig; sourceTree = "<group>"; };
 		48B545FD209FC2942BD45E71 /* CheckInResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInResultView.swift; sourceTree = "<group>"; };
@@ -333,6 +335,7 @@
 			children = (
 				1072182D625807362ADE4FB1 /* AirportPageView.swift */,
 				E575C7D649385E50E82F597F /* CheckInVisibilityPicker.swift */,
+				42C6ED1702C36D93C339FDB0 /* Inbox.swift */,
 				E3A6E9C03029947E148B9EBB /* PeopleView.swift */,
 				769842784C2049C177DB02CD /* PersonCheckInsSection.swift */,
 				5CABAD3AAA0CB6C6317A73DE /* PersonDetailView.swift */,
@@ -481,6 +484,7 @@
 				B9781CFA9DE1264E690E8F1B /* FeedScreen.swift in Sources */,
 				5EFAD640812D73C675B33326 /* FlownCheckInView.swift in Sources */,
 				FCBB4985FC51D2F3A7B55D66 /* FlownEditView.swift in Sources */,
+				D083C97B175DAAD5DC7A05EA /* Inbox.swift in Sources */,
 				FCE2BFC52E897A29214244A2 /* LegalLinks.swift in Sources */,
 				C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */,
 				2E4689A87246BCE2846B568F /* NetworkMonitor.swift in Sources */,

@@ -19,7 +19,7 @@ create function pg_temp.reset_role() returns void language sql as $$
   select set_config('role', 'postgres', true), set_config('request.jwt.claims', '', true);
 $$;
 create function pg_temp.alerts(n integer) returns integer language sql as $$
-  select count(*)::integer from public.notifications where recipient = pg_temp.u(n) and kind = 'checkin'
+  select count(*)::integer from public.notifications where recipient = pg_temp.u(n) and kind = 'checkin' and not silent
 $$;
 -- A check-in by the author, made now unless said otherwise.
 create function pg_temp.checkin(kind_ public.checkin_kind, visibility_ text default 'public',

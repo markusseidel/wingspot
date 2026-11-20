@@ -12,7 +12,8 @@ struct TabHeader<Trailing: View>: View {
                 .font(.largeTitle.bold())
                 .accessibilityAddTraits(.isHeader)
             Spacer()
-            trailing.font(.title3)
+            // Evenly spaced, whatever the icons are: each trailing control is its own item.
+            HStack(spacing: 14) { trailing }.font(.title3)
         }
         .padding(.horizontal, 20)
         .padding(.top, 4)
