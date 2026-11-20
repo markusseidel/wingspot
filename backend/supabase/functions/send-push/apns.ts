@@ -13,7 +13,7 @@ export interface PushDevice {
 /** One row from `claim_notifications`. */
 export interface PushRow {
   id: string;
-  kind: "follow" | "salute" | "comment" | "checkin" | "tagged" | "mention" | "comment_like";
+  kind: "follow" | "salute" | "comment" | "checkin" | "tagged" | "mention" | "comment_like" | "tag_copy";
   actor_id: string;
   actor_username: string;
   actor_name: string | null;
@@ -74,6 +74,11 @@ export function render(row: PushRow, locale: string | null): Rendered {
     case "mention": {
       const text = (row.snippet ?? "").replace(/\s+/g, " ").trim();
       return { title: name, body: german ? `hat dich erwähnt: „${text}“` : `mentioned you: “${text}”` };
+    }
+    case "tag_copy": {
+      const what = row.subject ?? "";
+      if (what) return { title: name, body: german ? `hat deinen Flug ${what} zu seinem Logbuch hinzugefügt.` : `added your flight ${what} to their logbook.` };
+      return { title: name, body: german ? "hat deinen Check-in zu seinem Logbuch hinzugefügt." : "added your check-in to their logbook." };
     }
     case "comment_like":
       return { title: name, body: german ? "hat deinen Kommentar salutiert." : "saluted your comment." };

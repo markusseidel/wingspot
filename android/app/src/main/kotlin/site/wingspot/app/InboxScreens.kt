@@ -97,6 +97,7 @@ private fun sentence(row: SocialApi.ActivityItem): AnnotatedString {
         "comment" -> if (subject != null) stringResource(R.string.activity_comment_on, name, subject) else stringResource(R.string.activity_comment, name)
         "tagged" -> if (subject != null) stringResource(R.string.activity_tagged_on, name, subject) else stringResource(R.string.activity_tagged, name)
         "checkin" -> if (subject != null) stringResource(R.string.activity_checkin_on, name, subject) else stringResource(R.string.activity_checkin, name)
+        "tag_copy" -> if (subject != null) stringResource(R.string.activity_tag_copy_on, name, subject) else stringResource(R.string.activity_tag_copy, name)
         "mention" -> stringResource(R.string.activity_mention, name)
         "comment_like" -> stringResource(R.string.activity_comment_like, name)
         else -> stringResource(R.string.activity_other, name)

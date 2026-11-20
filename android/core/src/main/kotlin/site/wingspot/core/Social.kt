@@ -289,6 +289,16 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
     }
 
     /** The caller's mutual friends who allow being tagged. */
+    /** The friends who added this check-in of the caller's to their own logbook. Empty for anyone but its author. */
+    suspend fun checkInCopies(checkIn: String): List<Person> {
+        val body = buildJsonObject { put("p_checkin", checkIn) }.toString()
+        return json.decodeFromString(ListSerializer(CopyRow.serializer()), rest.call("POST", "/rest/v1/rpc/get_checkin_copies", body))
+            .map { Person(it.userId, it.username, it.displayName) }
+    }
+
+    @Serializable
+    private data class CopyRow(@SerialName("user_id") val userId: String, val username: String, @SerialName("display_name") val displayName: String? = null)
+
     suspend fun taggableFriends(): List<Person> =
         json.decodeFromString(ListSerializer(Person.serializer()), rest.call("POST", "/rest/v1/rpc/get_taggable_friends", "{}"))
 

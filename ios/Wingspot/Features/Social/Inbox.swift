@@ -174,6 +174,9 @@ private struct InboxRow: View {
         case "checkin":
             if let subject { return bold(String(localized: "\(name) checked in \(subject)"), name) }
             return bold(String(localized: "\(name) has a new check-in"), name)
+        case "tag_copy":
+            if let subject { return bold(String(localized: "\(name) added your flight \(subject) to their logbook"), name) }
+            return bold(String(localized: "\(name) added your check-in to their logbook"), name)
         case "mention":
             return bold(String(localized: "\(name) mentioned you in a comment"), name)
         case "comment_like":

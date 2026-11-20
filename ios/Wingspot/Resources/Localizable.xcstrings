@@ -1,6 +1,32 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ added your check-in to their logbook" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hat deinen Check-in zu seinem Logbuch hinzugefügt"
+          }
+        }
+      }
+    },
+    "%@ added your flight %@ to their logbook" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ added your flight %2$@ to their logbook"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ hat deinen Flug %2$@ zu seinem Logbuch hinzugefügt"
+          }
+        }
+      }
+    },
     "%@ checked in %@" : {
       "localizations" : {
         "de" : {
@@ -2168,6 +2194,16 @@
         }
       }
     },
+    "In their logbook" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In ihrem Logbuch"
+          }
+        }
+      }
+    },
     "In your logbook" : {
       "localizations" : {
         "de" : {
@@ -3915,6 +3951,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dein Konto kann nicht wiederhergestellt werden."
+          }
+        }
+      }
+    },
+    "These friends added this to their own check-ins." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Freunde haben das zu ihren eigenen Check-ins hinzugefügt."
           }
         }
       }

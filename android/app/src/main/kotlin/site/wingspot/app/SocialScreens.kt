@@ -231,6 +231,8 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
     var viewing by remember { mutableStateOf<FeedPhoto?>(null) }
     var tags by remember { mutableStateOf(feed.tags[id].orEmpty()) }
     var confirmLeave by remember { mutableStateOf(false) }
+    // Friends who added this check-in to their own logbook. Only filled for your own check-ins.
+    var copies by remember { mutableStateOf(emptyList<site.wingspot.core.Person>()) }
     val mine by checkIn.state.collectAsState()
 
     // The list's copy has the live counts. The copy loaded by id has the airports and your own cabin and seat.
@@ -243,6 +245,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
             gone = loaded == null && fromList == null
             photos = feed.photos[id] ?: app.social.photos(listOf(id))
             tags = model.reloadTags(id)
+            if (fromList?.userId == me || loaded?.userId == me) copies = runCatching { app.social.checkInCopies(id) }.getOrDefault(emptyList())
             comments = app.social.comments(id)
             model.setCommentCount(id, comments.size)
             extras = runCatching { app.social.commentExtras(id) }.getOrDefault(extras)
@@ -348,6 +351,26 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                             }
                         }
                     }
+                }
+            }
+            if (copies.isNotEmpty()) item {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(R.string.copies_label), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Column {
+                            copies.forEachIndexed { index, person ->
+                                if (index > 0) HorizontalDivider(Modifier.padding(start = 64.dp))
+                                Row(
+                                    Modifier.fillMaxWidth().clickable { model.openPerson(person.id) }.padding(horizontal = 12.dp, vertical = 10.dp),
+                                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                ) {
+                                    Avatar(person.id, person.who, 40.dp)
+                                    Text(person.who, style = MaterialTheme.typography.bodyLarge)
+                                }
+                            }
+                        }
+                    }
+                    Text(stringResource(R.string.copies_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
             item { SaluteButton(shown) { model.toggleSalute(id) } }

@@ -37,6 +37,8 @@ struct CheckInDetailView: View {
     @State private var friends: [PersonTag] = []
     @State private var friendsLoaded = false
     @State private var mentionedPerson: MentionedPerson?
+    /// Friends who added this check-in to their own logbook. Only filled for your own check-ins.
+    @State private var copies: [PersonTag] = []
 
     private struct MentionedPerson: Identifiable, Hashable { let id: UUID }
 
@@ -63,6 +65,7 @@ struct CheckInDetailView: View {
             async let loaded: Void = created.load()
             async let tagged: Void = (source ?? feed).reloadTags(for: item.id)
             full = await (source ?? feed).checkIn(item.id)
+            if item.userID == account.userID { copies = await (source ?? feed).copies(of: item.id) }
             await loaded
             await tagged
         }
@@ -90,6 +93,7 @@ struct CheckInDetailView: View {
             summary
             if !earned.isEmpty { Section { FeedBadgesLine(badges: earned) } header: { Text("Badges earned").font(.headline).textCase(nil) } }
             if !tags.isEmpty { withSection }
+            if !copies.isEmpty { copiesSection }
             if !photos.isEmpty { photoSection }
             reactions
             actions
@@ -230,6 +234,19 @@ struct CheckInDetailView: View {
             }
         } header: {
             Text("With").font(.headline).textCase(nil)
+        }
+    }
+
+    /// The friends who added your flight or visit to their own logbook.
+    private var copiesSection: some View {
+        Section {
+            ForEach(copies) { person in
+                NavigationLink { PersonLoaderView(id: person.id) } label: { friendRow(person.name, id: person.id) }
+            }
+        } header: {
+            Text("In their logbook").font(.headline).textCase(nil)
+        } footer: {
+            Text("These friends added this to their own check-ins.")
         }
     }
 

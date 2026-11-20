@@ -75,16 +75,13 @@ each comment, both kinds in the inbox.
 
 ## 6. Shared flights, polish
 
-**What exists:** "Add to my logbook" from a tagged check-in.
+**What exists:** "Add to my logbook" from a tagged check-in, and the "In your logbook" state of its button.
 
-**What to add**
-- The author gets a `tag_copy` notification when a friend adds their flight ("Max added your flight to their
-  logbook"). One per friend and check-in.
-- The tagged person's notification and the check-in page both show the same single button. After adding it turns into
-  "In your logbook" and opens the copy.
-- "Added by 2 of 3 friends" line for the author on the check-in page.
-
-**Server:** the notification goes out of the existing `valid_tag_source` path through a trigger. No new tables.
+**What was added** (`20261121400000_tag_copy_notifications.sql`)
+- The author gets a `tag_copy` notification when a tagged friend adds their flight or visit ("Max added your flight
+  FRA → JFK to their logbook"), with push texts in English and German and the switch for being tagged.
+- On the author's check-in page an "In their logbook" list names the friends who did (`get_checkin_copies`, only for the
+  author, blocked people left out).
 
 ## 3. Compare with a friend
 
