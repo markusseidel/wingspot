@@ -333,6 +333,12 @@
     <string name="optional">Optional</string>
     <string name="with_names">Mit %1$s</string>
     <string name="no_results">Keine Treffer</string>
+    <string name="profile_photo">Profilfoto</string>
+    <string name="choose_photo">Foto auswählen</string>
+    <string name="change_photo">Foto ändern</string>
+    <string name="remove_photo">Foto entfernen</string>
+    <string name="profile_photo_hint">Wird neben deinem Namen angezeigt, wo andere dich sehen. Es wird ein Quadrat aus der Mitte des Bildes verwendet.</string>
+    <string name="profile_photo_failed">Das Foto konnte nicht gespeichert werden. Versuche es noch einmal.</string>
     <string name="friends_often">Oft gemeinsam geflogen mit</string>
     <string name="friends_all">Alle Freunde</string>
     <string name="search_friends">Freunde suchen</string>

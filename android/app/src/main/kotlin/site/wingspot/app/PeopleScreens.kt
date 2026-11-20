@@ -97,6 +97,7 @@ fun PersonPage(app: WingspotApp, model: SocialViewModel, id: String, me: String)
         person?.let { p ->
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Avatar(p.id, p.who, 88.dp)
                     Text(p.who, style = MaterialTheme.typography.headlineSmall)
                     Text("@" + p.username, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     if (p.isPrivate) Text(stringResource(R.string.private_profile), style = MaterialTheme.typography.bodySmall)

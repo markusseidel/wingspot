@@ -2,6 +2,7 @@ package site.wingspot.app
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -80,7 +81,8 @@ private fun FriendPickerDialog(selected: List<Person>, onChange: (List<Person>) 
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Checkbox(checked = chosen, onCheckedChange = null, enabled = chosen || !atLimit)
-            Text(friend.who, modifier = Modifier.padding(start = 8.dp))
+            Box(Modifier.padding(start = 4.dp)) { Avatar(friend.id, friend.who, 32.dp) }
+            Text(friend.who, modifier = Modifier.padding(start = 12.dp))
         }
     }
     AlertDialog(
