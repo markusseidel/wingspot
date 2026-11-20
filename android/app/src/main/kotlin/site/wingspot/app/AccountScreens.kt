@@ -117,7 +117,8 @@ fun SocialSettings(app: WingspotApp, me: String) {
         if (blocked.isNotEmpty()) {
             Text(stringResource(R.string.blocked_title), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 8.dp))
             blocked.forEach { person ->
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Avatar(person.id, person.who, 36.dp)
                     Text(person.who, modifier = Modifier.weight(1f))
                     TextButton(onClick = { scope.launch { try { app.social.unblock(person.id, me); blocked = blocked.filterNot { it.id == person.id } } catch (e: ApiException) { failed = true } } }) { Text(stringResource(R.string.unblock)) }
                 }

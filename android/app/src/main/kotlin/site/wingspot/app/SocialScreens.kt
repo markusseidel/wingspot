@@ -129,7 +129,8 @@ fun FeedCard(
 ) {
     Card(Modifier.fillMaxWidth().clickable(onClick = onOpen)) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Avatar(item.userId, item.who, 28.dp)
                 if (item.userId == me) {
                     Text(stringResource(R.string.you), fontWeight = FontWeight.Bold)
                 } else {
@@ -286,9 +287,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp),
                                 ) {
                                     val name = if (isMe) stringResource(R.string.you) else person.who
-                                    Box(Modifier.size(40.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)), contentAlignment = Alignment.Center) {
-                                        Text(name.take(1).uppercase(), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
-                                    }
+                                    Avatar(person.id, name, 40.dp)
                                     Text(name, style = MaterialTheme.typography.bodyLarge)
                                 }
                             }
@@ -337,10 +336,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                 var open by remember { mutableStateOf(false) }
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Row(Modifier.padding(start = 12.dp, top = 8.dp, bottom = 8.dp), verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Box(
-                            Modifier.padding(top = 4.dp).size(40.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
-                            contentAlignment = Alignment.Center,
-                        ) { Text(comment.who.take(1).uppercase(), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary) }
+                        Box(Modifier.padding(top = 4.dp)) { Avatar(comment.userId, comment.who, 40.dp) }
                         Column(Modifier.weight(1f).padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Row(horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                                 Text(comment.who, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)

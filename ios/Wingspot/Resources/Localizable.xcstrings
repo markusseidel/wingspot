@@ -502,6 +502,16 @@
         }
       }
     },
+    "All friends" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Freunde"
+          }
+        }
+      }
+    },
     "All levels reached" : {
       "localizations" : {
         "de" : {
@@ -706,6 +716,16 @@
         }
       }
     },
+    "Change photo" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto ändern"
+          }
+        }
+      }
+    },
     "Check in" : {
       "localizations" : {
         "de" : {
@@ -863,6 +883,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Auswählen"
+          }
+        }
+      }
+    },
+    "Choose photo" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto auswählen"
           }
         }
       }
@@ -1162,6 +1192,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Profil konnte nicht geladen werden"
+          }
+        }
+      }
+    },
+    "Couldn't save the photo. Try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Foto konnte nicht gespeichert werden. Versuche es noch einmal."
           }
         }
       }
@@ -2577,6 +2617,16 @@
         }
       }
     },
+    "Often flown with" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oft gemeinsam geflogen mit"
+          }
+        }
+      }
+    },
     "Only check-ins you are allowed to see are shown." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2841,6 +2891,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Profil"
+          }
+        }
+      }
+    },
+    "Profile photo" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profilfoto"
           }
         }
       }
@@ -3270,6 +3330,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Flughäfen in meiner Nähe zeigen"
+          }
+        }
+      }
+    },
+    "Shown next to your name wherever people see you. A square from the middle of the picture is used." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird neben deinem Namen angezeigt, wo andere dich sehen. Es wird ein Quadrat aus der Mitte des Bildes verwendet."
           }
         }
       }

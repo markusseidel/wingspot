@@ -9,6 +9,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
 /**
@@ -38,13 +39,26 @@ class Rest(
 
     private class Answer(val code: Int, val text: String)
 
+    /** Uploads ([body] set) or deletes ([body] null) a Storage file as the signed-in person. [path] starts with `/storage/v1/`. */
+    suspend fun storage(method: String, path: String, body: ByteArray? = null, contentType: String? = null, headers: Map<String, String> = emptyMap()) {
+        val requestBody = body?.toRequestBody((contentType ?: "application/octet-stream").toMediaType())
+        val first = sendBody(method, path, requestBody, null, accessToken(false) ?: throw ApiException.Unauthorized, headers)
+        if (first.code != 401) { finish(first); return }
+        finish(sendBody(method, path, requestBody, null, accessToken(true) ?: throw ApiException.Unauthorized, headers))
+    }
+
     private suspend fun send(method: String, path: String, body: String?, prefer: String?, token: String?): Answer =
+        sendBody(method, path, body?.toRequestBody("application/json".toMediaType()), prefer, token, emptyMap())
+
+    private suspend fun sendBody(
+        method: String, path: String, requestBody: RequestBody?, prefer: String?, token: String?, headers: Map<String, String>,
+    ): Answer =
         withContext(Dispatchers.IO) {
             val builder = Request.Builder().url(root + path)
                 .header("apikey", apiKey).header("Accept", "application/json")
             token?.let { builder.header("Authorization", "Bearer $it") }
             prefer?.let { builder.header("Prefer", it) }
-            val requestBody = body?.toRequestBody("application/json".toMediaType())
+            headers.forEach { (name, value) -> builder.header(name, value) }
             builder.method(method, requestBody ?: if (method == "GET" || method == "DELETE") null else "".toRequestBody())
             try {
                 client.newCall(builder.build()).execute().use { Answer(it.code, it.body.string()) }
@@ -67,6 +81,17 @@ class Rest(
 /** Downloads a picture from a signed link. Null if it can't be fetched. */
 object Downloads {
     private val client = OkHttpClient()
+
+    /** The status of the answer, or null without a connection, and the body when it was a success. */
+    class Fetched(val code: Int?, val bytes: ByteArray?)
+
+    suspend fun fetch(url: String): Fetched = withContext(Dispatchers.IO) {
+        try {
+            client.newCall(Request.Builder().url(url).build()).execute().use { Fetched(it.code, if (it.isSuccessful) it.body.bytes() else null) }
+        } catch (e: IOException) {
+            Fetched(null, null)
+        }
+    }
 
     suspend fun bytes(url: String): ByteArray? = withContext(Dispatchers.IO) {
         try {

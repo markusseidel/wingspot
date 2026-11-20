@@ -69,20 +69,23 @@ struct PersonRow: View {
     let person: Person
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(verbatim: person.displayName ?? person.username).font(.headline)
-            HStack(spacing: 6) {
-                Text(verbatim: "@\(person.username)")
-                if person.isFriend {
-                    Text("Friends")
-                } else if person.followsYou {
-                    Text("Follows you")
-                } else if person.isFollowing {
-                    Text("Following")
+        HStack(spacing: 12) {
+            AvatarView(id: person.id, name: person.displayName ?? person.username, size: 44)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(verbatim: person.displayName ?? person.username).font(.headline)
+                HStack(spacing: 6) {
+                    Text(verbatim: "@\(person.username)")
+                    if person.isFriend {
+                        Text("Friends")
+                    } else if person.followsYou {
+                        Text("Follows you")
+                    } else if person.isFollowing {
+                        Text("Following")
+                    }
                 }
+                .font(.caption)
+                .foregroundStyle(.secondary)
             }
-            .font(.caption)
-            .foregroundStyle(.secondary)
         }
         .accessibilityElement(children: .combine)
     }

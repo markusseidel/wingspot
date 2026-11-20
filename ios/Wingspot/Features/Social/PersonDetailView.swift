@@ -15,7 +15,8 @@ struct PersonDetailView: View {
     var body: some View {
         List {
             Section {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 8) {
+                    AvatarView(id: person.id, name: person.displayName ?? person.username, size: 88)
                     Text(verbatim: person.displayName ?? person.username).font(.title2.bold())
                     Text(verbatim: "@\(person.username)").foregroundStyle(.secondary)
                     if person.isPrivate {

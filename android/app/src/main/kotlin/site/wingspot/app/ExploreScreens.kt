@@ -28,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -101,9 +102,12 @@ fun ExploreTab(app: WingspotApp, model: SocialViewModel, me: String?, reference:
             if (people.isNotEmpty()) {
                 SectionTitle(R.string.tab_people)
                 people.forEach { person ->
-                    Column(Modifier.fillMaxWidth().clickable { model.openPerson(person.id) }.padding(vertical = 8.dp)) {
-                        Text(person.who, fontWeight = FontWeight.Bold)
-                        Text("@" + person.username, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Row(Modifier.fillMaxWidth().clickable { model.openPerson(person.id) }.padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Avatar(person.id, person.who, 44.dp)
+                        Column {
+                            Text(person.who, fontWeight = FontWeight.Bold)
+                            Text("@" + person.username, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
                     }
                 }
             }

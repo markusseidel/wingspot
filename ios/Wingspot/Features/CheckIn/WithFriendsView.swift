@@ -1,4 +1,6 @@
 import Account
+import Persistence
+import SwiftData
 import SwiftUI
 
 /// The most friends one check-in takes. The server cuts the list at the same number.
@@ -22,54 +24,85 @@ struct FriendPickerView: View {
     @Binding var selection: [PersonTag]
 
     @Environment(FeedStore.self) private var feed
+    @Query private var local: [LocalCheckIn]
     @State private var friends: [PersonTag] = []
     @State private var isLoading = true
     @State private var search = ""
+    @FocusState private var isSearching: Bool
 
-    private var shown: [PersonTag] {
-        // People already chosen stay in the list, even if they can no longer be tagged, so they can be taken off.
-        let all = friends + selection.filter { chosen in !friends.contains { $0.id == chosen.id } }
+    /// Everyone to choose from. People already chosen stay in, even if they can no longer be tagged, so they can be taken off.
+    private var everyone: [PersonTag] {
+        friends + selection.filter { chosen in !friends.contains { $0.id == chosen.id } }
+    }
+
+    /// The friends you flew with most often, from the check-ins on this phone.
+    private var often: [PersonTag] {
+        var counts: [UUID: Int] = [:]
+        for checkIn in local { for id in checkIn.taggedIDs ?? [] { counts[id, default: 0] += 1 } }
+        return everyone.filter { counts[$0.id, default: 0] > 0 }
+            .sorted { (counts[$0.id] ?? 0, $1.name) > (counts[$1.id] ?? 0, $0.name) }
+            .prefix(3).map { $0 }
+    }
+
+    private var matches: [PersonTag] {
         let text = search.trimmingCharacters(in: .whitespaces)
-        guard !text.isEmpty else { return all }
-        return all.filter { $0.name.localizedCaseInsensitiveContains(text) || $0.username.localizedCaseInsensitiveContains(text) }
+        return everyone.filter { $0.name.localizedCaseInsensitiveContains(text) || $0.username.localizedCaseInsensitiveContains(text) }
     }
 
     var body: some View {
-        List {
-            if friends.isEmpty, selection.isEmpty {
-                if isLoading {
-                    ProgressView().frame(maxWidth: .infinity)
-                } else {
-                    Text("Friends you follow and who follow you back show up here.").foregroundStyle(.secondary)
-                }
-            } else {
-                Section {
-                    ForEach(shown) { friend in
-                        let isChosen = selection.contains { $0.id == friend.id }
-                        Button {
-                            toggle(friend)
-                        } label: {
-                            HStack {
-                                Text(verbatim: friend.name).foregroundStyle(.primary)
-                                Spacer()
-                                if isChosen { Image(systemName: "checkmark").foregroundStyle(.tint) }
-                            }
-                        }
-                        .disabled(!isChosen && selection.count >= maxTaggedFriends)
-                        .accessibilityAddTraits(isChosen ? .isSelected : [])
+        VStack(spacing: 0) {
+            PageSearchField(prompt: "Search friends", text: $search, isFocused: $isSearching)
+            List {
+                if everyone.isEmpty {
+                    if isLoading {
+                        ProgressView().frame(maxWidth: .infinity)
+                    } else {
+                        Text("Friends you follow and who follow you back show up here.").foregroundStyle(.secondary)
                     }
-                } footer: {
-                    Text("The friends you choose will see this check-in. Up to \(maxTaggedFriends).")
+                } else if search.trimmingCharacters(in: .whitespaces).isEmpty {
+                    let frequent = often
+                    if !frequent.isEmpty {
+                        Section("Often flown with") { ForEach(frequent) { row($0) } }
+                    }
+                    Section {
+                        ForEach(everyone.filter { friend in !frequent.contains { $0.id == friend.id } }) { row($0) }
+                    } header: {
+                        if !frequent.isEmpty { Text("All friends") }
+                    } footer: {
+                        Text("The friends you choose will see this check-in. Up to \(maxTaggedFriends).")
+                    }
+                } else {
+                    ForEach(matches) { row($0) }
                 }
             }
+            .overlay {
+                if !search.trimmingCharacters(in: .whitespaces).isEmpty, matches.isEmpty { ContentUnavailableView.search(text: search) }
+            }
+            .scrollDismissesKeyboard(.interactively)
         }
         .navigationTitle("With")
         .navigationBarTitleDisplayMode(.inline)
-        .searchable(text: $search, prompt: Text("Search friends"))
+        .autocorrectionDisabled()
         .task {
             friends = await feed.taggableFriends()
             isLoading = false
         }
+    }
+
+    private func row(_ friend: PersonTag) -> some View {
+        let isChosen = selection.contains { $0.id == friend.id }
+        return Button {
+            toggle(friend)
+        } label: {
+            HStack(spacing: 12) {
+                AvatarView(id: friend.id, name: friend.name, size: 36)
+                Text(verbatim: friend.name).foregroundStyle(.primary)
+                Spacer()
+                if isChosen { Image(systemName: "checkmark").foregroundStyle(.tint) }
+            }
+        }
+        .disabled(!isChosen && selection.count >= maxTaggedFriends)
+        .accessibilityAddTraits(isChosen ? .isSelected : [])
     }
 
     private func toggle(_ friend: PersonTag) {

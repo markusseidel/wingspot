@@ -27,6 +27,8 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -119,6 +121,13 @@ fun ProfileTab(
             StatsCard(stats, reference.database)
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Row(Modifier.padding(bottom = 8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        Avatar(session.user.id, mine?.who ?: "?", 64.dp)
+                        Column {
+                            Text(mine?.who ?: "…", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                            mine?.username?.let { Text("@$it", color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                        }
+                    }
                     Detail(stringResource(R.string.username_label), mine?.username?.let { "@$it" } ?: "…")
                     mine?.displayName?.let { Detail(stringResource(R.string.name_label), it) }
                     home?.let { Detail(stringResource(R.string.home_airport), "${it.code} · ${it.name}") }
@@ -338,6 +347,7 @@ fun EditProfilePage(app: WingspotApp, me: String, reference: ReferenceState, soc
     val name = Username.normalized(username)
     Column(Modifier.fillMaxWidth().verticalScrollState(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         PageHeader(stringResource(R.string.edit_profile), social::back)
+        ProfilePhotoSection(app, me, displayName.ifBlank { username })
         OutlinedTextField(username, { username = it }, singleLine = true, label = { Text(stringResource(R.string.username_label)) }, modifier = Modifier.fillMaxWidth())
         if (username.isNotBlank() && !Username.isValid(name)) Text(stringResource(R.string.username_rule), style = MaterialTheme.typography.bodySmall)
         OutlinedTextField(displayName, { displayName = it }, singleLine = true, label = { Text(stringResource(R.string.display_name_label)) }, modifier = Modifier.fillMaxWidth())
@@ -354,5 +364,61 @@ fun EditProfilePage(app: WingspotApp, me: String, reference: ReferenceState, soc
                 catch (e: ApiException) { error = R.string.error_offline }
             }
         }) { Text(stringResource(R.string.save)) }
+    }
+}
+
+
+/** The profile image on the edit page: pick a picture or remove the one you have. */
+@Composable
+private fun ProfilePhotoSection(app: WingspotApp, me: String, name: String) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var current by remember { mutableStateOf<android.graphics.Bitmap?>(null) }
+    var changing by remember { mutableStateOf(false) }
+    var failed by remember { mutableStateOf(false) }
+    val changes = Avatars.changes
+    LaunchedEffect(me, changes) { current = Avatars.load(me) }
+    val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) scope.launch {
+            changing = true
+            failed = false
+            val prepared = Avatars.prepare(context, uri)
+            if (prepared == null) {
+                failed = true
+            } else {
+                try {
+                    app.social.uploadAvatar(me, prepared.jpeg, BuildConfig.SUPABASE_URL)
+                    Avatars.changed(me, prepared.preview)
+                } catch (e: ApiException) { failed = true }
+            }
+            changing = false
+        }
+    }
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionHeader(stringResource(R.string.profile_photo))
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Avatar(me, name.ifBlank { "?" }, 72.dp)
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                OutlinedButton(
+                    enabled = !changing, modifier = Modifier.testTag("choose-profile-photo"),
+                    onClick = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
+                ) { Text(stringResource(if (current == null) R.string.choose_photo else R.string.change_photo)) }
+                if (current != null) TextButton(
+                    enabled = !changing,
+                    onClick = {
+                        scope.launch {
+                            changing = true
+                            failed = false
+                            try { app.social.removeAvatar(me); Avatars.changed(me, null) } catch (e: ApiException) { failed = true }
+                            changing = false
+                        }
+                    },
+                ) { Text(stringResource(R.string.remove_photo), color = MaterialTheme.colorScheme.error) }
+            }
+        }
+        Text(
+            stringResource(if (failed) R.string.profile_photo_failed else R.string.profile_photo_hint),
+            style = MaterialTheme.typography.bodySmall, color = if (failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
