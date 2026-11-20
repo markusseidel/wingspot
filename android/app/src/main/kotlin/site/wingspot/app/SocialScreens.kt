@@ -43,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -184,6 +185,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
     var comments by remember { mutableStateOf(emptyList<CheckInComment>()) }
     var commentsFailed by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
+    val focusManager = LocalFocusManager.current
     var problem by remember { mutableStateOf<Int?>(null) }
     var menu by remember { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
@@ -333,6 +335,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                                     comments = comments + added
                                     text = ""
                                     problem = null
+                                    focusManager.clearFocus()
                                     model.setCommentCount(id, comments.size)
                                 } catch (e: ApiException.Failed) {
                                     problem = if (e.code == "23514") R.string.comment_refused else R.string.error_unknown

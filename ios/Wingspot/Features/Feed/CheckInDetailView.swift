@@ -27,6 +27,7 @@ struct CheckInDetailView: View {
     @State private var full: FeedItem?
     @State private var store: CheckInCommentStore?
     @State private var text = ""
+    @FocusState private var commentFocused: Bool
     @State private var problem: AccountError?
     @State private var report: ReportTarget?
 
@@ -153,6 +154,7 @@ struct CheckInDetailView: View {
                 CheckInEditView(checkInID: item.id, tags: tags, onSaved: saved)
             }
         }
+        .scrollDismissesKeyboard(.interactively)
         .safeAreaInset(edge: .bottom) { composer(store) }
         .alert("Couldn't complete this", isPresented: Binding(get: { problem != nil }, set: { if !$0 { problem = nil } })) {
             Button("OK", role: .cancel) {}
@@ -358,6 +360,7 @@ struct CheckInDetailView: View {
             TextField("Write a comment…", text: $text, axis: .vertical)
                 .lineLimit(1...4)
                 .textFieldStyle(.roundedBorder)
+                .focused($commentFocused)
             Button {
                 send(store)
             } label: {
@@ -401,6 +404,7 @@ struct CheckInDetailView: View {
             do {
                 try await store.send(draft)
                 text = ""
+                commentFocused = false
             } catch {
                 problem = (error as? AccountError) ?? .unknown
             }
