@@ -116,6 +116,10 @@ numbers use the check-in's flight date, not its created date.
 **Apps:** segmented controls for metric and period, rows with avatar, rank and value, your row highlighted. A short
 first-time explanation when the switch is off.
 
+**As built** (`20261121600000_friends_leaderboard.sql`): `get_leaderboard(metric, period)` with distance, flights, countries or
+airports, this year or all time, at most 50 rows. The switch is `profiles.show_on_leaderboard`. iOS reaches it from
+People, Android from the Profile tab; both have the switch on the screen itself.
+
 **Tests:** pgTAP that opted-out people, blocked people and non-followed people never appear.
 
 ## 1. Invite friends

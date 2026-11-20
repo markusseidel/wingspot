@@ -399,4 +399,11 @@
     <string name="compare_only_you">Nur du</string>
     <string name="compare_only_them">Nur %1$s</string>
     <string name="compare_footer">Gezählt werden nur Check-ins, die du sehen darfst.</string>
+    <string name="leaderboard_title">Bestenliste</string>
+    <string name="leaderboard_year">Dieses Jahr</string>
+    <string name="leaderboard_all">Gesamt</string>
+    <string name="leaderboard_failed">Bestenliste konnte nicht geladen werden. Bitte prüfe deine Verbindung und versuche es erneut.</string>
+    <string name="leaderboard_alone">Hier erscheinen nur Leute, denen du folgst und die „In Bestenlisten von Freunden zeigen“ eingeschaltet haben.</string>
+    <string name="leaderboard_show_me">In Bestenlisten von Freunden zeigen</string>
+    <string name="leaderboard_show_me_hint">Freunde, die dir folgen, sehen dich dann in ihrer Bestenliste, gezählt werden nur Check-ins, die sie sehen dürfen. Standardmäßig aus.</string>
 </resources>
