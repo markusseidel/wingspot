@@ -9,6 +9,38 @@ struct SuggestionSection<Item: Identifiable & Hashable & Sendable> {
     let items: [Item]
 }
 
+/// The search field of a picker. It is part of the page, not the navigation bar: the bar's own search field folds
+/// back into the title when it is cancelled, and iOS puts it at the bottom of the screen in a sheet.
+struct PageSearchField: View {
+    let prompt: LocalizedStringKey
+    @Binding var text: String
+    var isFocused: FocusState<Bool>.Binding
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
+            TextField(prompt, text: $text)
+                .focused(isFocused)
+                .submitLabel(.search)
+            if isFocused.wrappedValue || !text.isEmpty {
+                Button {
+                    text = ""
+                    isFocused.wrappedValue = false
+                } label: {
+                    Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Clear search")
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(.fill.tertiary, in: Capsule())
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+    }
+}
+
 /// A searchable list that picks one item from the reference database.
 private struct ReferenceSearchView<Item: Identifiable & Hashable & Sendable, Row: View>: View {
     let title: LocalizedStringKey
@@ -42,30 +74,8 @@ private struct ReferenceSearchView<Item: Identifiable & Hashable & Sendable, Row
         }
     }
 
-    /// The field is part of the page, not the navigation bar. The bar's own search field folds back into the title
-    /// when it is cancelled, and the list jumps while the keyboard closes.
     private var searchField: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
-            TextField(prompt, text: $query)
-                .focused($isFocused)
-                .submitLabel(.search)
-            if isFocused || !query.isEmpty {
-                Button {
-                    query = ""
-                    isFocused = false
-                } label: {
-                    Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Clear search")
-            }
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
-        .background(.fill.tertiary, in: Capsule())
-        .padding(.horizontal)
-        .padding(.vertical, 8)
+        PageSearchField(prompt: prompt, text: $query, isFocused: $isFocused)
     }
 
     private var list: some View {

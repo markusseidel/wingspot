@@ -60,30 +60,55 @@ private fun FriendPickerDialog(selected: List<Person>, onChange: (List<Person>) 
     }
     val friends = loaded?.first.orEmpty()
     // People already chosen stay in the list, even if they can no longer be tagged, so they can be taken off.
-    val all = friends + selected.filter { chosen -> friends.none { it.id == chosen.id } }
+    val everyone = friends + selected.filter { chosen -> friends.none { it.id == chosen.id } }
+    var search by remember { mutableStateOf("") }
+    val query = search.trim()
+    // The friends you flew with most often, from the check-ins on this phone.
+    val local = LocalCheckIns.current
+    val often = remember(local, everyone) {
+        val counts = local.flatMap { it.taggedIds.orEmpty() }.groupingBy { it.toString() }.eachCount()
+        everyone.filter { (counts[it.id] ?: 0) > 0 }.sortedWith(compareByDescending<Person> { counts[it.id] ?: 0 }.thenBy { it.who }).take(3)
+    }
+    val atLimit = selected.size >= MAX_TAGGED_FRIENDS
+    @Composable
+    fun FriendRow(friend: Person) {
+        val chosen = selected.any { it.id == friend.id }
+        Row(
+            Modifier.fillMaxWidth().clickable(enabled = chosen || !atLimit) {
+                onChange(if (chosen) selected.filterNot { it.id == friend.id } else selected + friend)
+            }.padding(vertical = 2.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Checkbox(checked = chosen, onCheckedChange = null, enabled = chosen || !atLimit)
+            Text(friend.who, modifier = Modifier.padding(start = 8.dp))
+        }
+    }
     AlertDialog(
         onDismissRequest = onClose,
         title = { Text(stringResource(R.string.with_label)) },
         text = {
-            Column {
-                Text(stringResource(R.string.with_footer, MAX_TAGGED_FRIENDS), style = MaterialTheme.typography.bodySmall)
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(
+                    value = search, onValueChange = { search = it }, modifier = Modifier.fillMaxWidth().testTag("friend-search"),
+                    placeholder = { Text(stringResource(R.string.search_friends)) }, singleLine = true,
+                )
                 when {
                     loaded == null -> Text(stringResource(R.string.loading))
                     loaded?.second == true -> Text(stringResource(R.string.with_failed))
-                    all.isEmpty() -> Text(stringResource(R.string.with_no_friends))
+                    everyone.isEmpty() -> Text(stringResource(R.string.with_no_friends))
+                    query.isNotEmpty() -> {
+                        val found = everyone.filter { it.who.contains(query, ignoreCase = true) || it.username.contains(query, ignoreCase = true) }
+                        if (found.isEmpty()) Text(stringResource(R.string.no_results), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        else LazyColumn { items(found, key = { it.id }) { FriendRow(it) } }
+                    }
                     else -> LazyColumn {
-                        items(all, key = { it.id }) { friend ->
-                            val chosen = selected.any { it.id == friend.id }
-                            Row(
-                                Modifier.fillMaxWidth().clickable(enabled = chosen || selected.size < MAX_TAGGED_FRIENDS) {
-                                    onChange(if (chosen) selected.filterNot { it.id == friend.id } else selected + friend)
-                                },
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Checkbox(checked = chosen, onCheckedChange = null, enabled = chosen || selected.size < MAX_TAGGED_FRIENDS)
-                                Text(friend.who, modifier = Modifier.padding(start = 8.dp))
-                            }
+                        if (often.isNotEmpty()) {
+                            item { SectionHeader(stringResource(R.string.friends_often), Modifier.padding(top = 4.dp)) }
+                            items(often, key = { "often-" + it.id }) { FriendRow(it) }
+                            item { SectionHeader(stringResource(R.string.friends_all), Modifier.padding(top = 8.dp)) }
                         }
+                        items(everyone.filter { f -> often.none { it.id == f.id } }, key = { it.id }) { FriendRow(it) }
+                        item { Text(stringResource(R.string.with_footer, MAX_TAGGED_FRIENDS), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp)) }
                     }
                 }
             }

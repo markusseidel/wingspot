@@ -1,4 +1,5 @@
 import Account
+import PhotosUI
 import ReferenceData
 import SwiftUI
 
@@ -10,6 +11,7 @@ struct ProfileEditorView: View {
     @Environment(AccountStore.self) private var account
     @Environment(ReferenceDataStore.self) private var referenceData
     @Environment(\.dismiss) private var dismiss
+    @Environment(AvatarStore.self) private var avatars
 
     @State private var username: String
     @State private var displayName: String
@@ -17,6 +19,10 @@ struct ProfileEditorView: View {
     @State private var homeAirportID: Int?
     @State private var isSaving = false
     @State private var error: LocalizedStringResource?
+    @State private var pickedPhoto: PhotosPickerItem?
+    @State private var currentPhoto: UIImage?
+    @State private var isChangingPhoto = false
+    @State private var photoFailed = false
 
     init(profile: Profile, isFirstSetup: Bool) {
         self.profile = profile
@@ -29,8 +35,64 @@ struct ProfileEditorView: View {
 
     private var normalizedUsername: String { Username.normalized(username) }
 
+    private var photoSection: some View {
+        Section {
+            HStack(spacing: 16) {
+                AvatarView(id: profile.id, name: displayName.isEmpty ? username : displayName, size: 72)
+                VStack(alignment: .leading, spacing: 10) {
+                    PhotosPicker(selection: $pickedPhoto, matching: .images) {
+                        Text(currentPhoto == nil ? "Choose photo" : "Change photo")
+                    }
+                    if currentPhoto != nil {
+                        Button("Remove photo", role: .destructive) { Task { await changePhoto(nil) } }
+                    }
+                }
+                .disabled(isChangingPhoto)
+                if isChangingPhoto { ProgressView() }
+            }
+        } header: {
+            Text("Profile photo")
+        } footer: {
+            if photoFailed {
+                Text("Couldn't save the photo. Try again.").foregroundStyle(.red)
+            } else {
+                Text("Shown next to your name wherever people see you. A square from the middle of the picture is used.")
+            }
+        }
+        .task { currentPhoto = await avatars.image(for: profile.id) }
+        .onChange(of: pickedPhoto) {
+            guard let item = pickedPhoto else { return }
+            pickedPhoto = nil
+            Task { await changePhoto(item) }
+        }
+    }
+
+    /// Sets the picked picture as the profile image, or removes the image when there is none.
+    private func changePhoto(_ item: PhotosPickerItem?) async {
+        isChangingPhoto = true
+        photoFailed = false
+        defer { isChangingPhoto = false }
+        do {
+            if let item {
+                guard let data = try await item.loadTransferable(type: Data.self),
+                      let prepared = await Task.detached(operation: { AvatarStore.prepare(data) }).value else {
+                    photoFailed = true
+                    return
+                }
+                try await avatars.setMine(profile.id, jpeg: prepared.jpeg, preview: prepared.preview)
+                currentPhoto = prepared.preview
+            } else {
+                try await avatars.setMine(profile.id, jpeg: nil, preview: nil)
+                currentPhoto = nil
+            }
+        } catch {
+            photoFailed = true
+        }
+    }
+
     var body: some View {
         Form {
+            photoSection
             Section {
                 TextField("Username", text: $username)
                     .keyboardType(.asciiCapable)

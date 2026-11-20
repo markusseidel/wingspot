@@ -224,12 +224,15 @@ struct FeedCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            HStack(alignment: .firstTextBaseline) {
-                if isOwn {
-                    Text("You").font(.subheadline.bold())
-                } else {
-                    NavigationLink { PersonLoaderView(id: item.userID) } label: {
-                        Text(verbatim: item.displayName ?? item.username).font(.subheadline.bold())
+            HStack(alignment: .center) {
+                HStack(spacing: 8) {
+                    AvatarView(id: item.userID, name: item.displayName ?? item.username, size: 28)
+                    if isOwn {
+                        Text("You").font(.subheadline.bold())
+                    } else {
+                        NavigationLink { PersonLoaderView(id: item.userID) } label: {
+                            Text(verbatim: item.displayName ?? item.username).font(.subheadline.bold())
+                        }
                     }
                 }
                 Spacer()
