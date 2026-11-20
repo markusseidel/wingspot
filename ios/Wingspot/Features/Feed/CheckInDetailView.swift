@@ -1,5 +1,6 @@
 import Account
 import Persistence
+import ReferenceData
 import SwiftData
 import SwiftUI
 import WingspotCore
@@ -15,11 +16,13 @@ struct CheckInDetailView: View {
     @Environment(AccountStore.self) private var account
     @Environment(FeedStore.self) private var feed
     @Environment(BadgeStore.self) private var badges
+    @Environment(ReferenceDataStore.self) private var referenceData
     @Environment(CheckInSyncCoordinator.self) private var sync: CheckInSyncCoordinator?
     /// Your check-ins saved on this device. Only these can be edited, because the details are sent from here.
     @Query private var localCheckIns: [LocalCheckIn]
     @State private var viewing: FeedPhoto?
     @State private var editing = false
+    @State private var returnStart: ReturnStart?
     @State private var confirmDelete = false
     @State private var confirmLeave = false
     @Environment(\.modelContext) private var modelContext
@@ -109,6 +112,14 @@ struct CheckInDetailView: View {
                         problem = list.failure ?? .unknown
                     }
                 }
+            }
+        }
+        .sheet(item: $returnStart) { start in
+            NavigationStack {
+                FlownCheckInView(start: start, onDone: { returnStart = nil })
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) { Button("Cancel") { returnStart = nil } }
+                    }
             }
         }
         .sheet(isPresented: $editing) {
@@ -262,6 +273,9 @@ struct CheckInDetailView: View {
             Section {
                 if canEdit {
                     Button("Edit details", systemImage: "pencil") { editing = true }
+                }
+                if shown.kind == "flown", shown.originID != nil, shown.destinationID != nil {
+                    Button("Return flight", systemImage: "arrow.uturn.backward") { Task { await prepareReturn() } }
                 }
                 Button("Delete", systemImage: "trash", role: .destructive) { confirmDelete = true }
             }
@@ -443,6 +457,20 @@ struct CheckInDetailView: View {
         } catch {
             problem = .unknown
         }
+    }
+
+    /// Opens the flight form for the way back: this flight's route the other way round, on the same day.
+    private func prepareReturn() async {
+        guard let database = referenceData.database, let from = shown.originID, let to = shown.destinationID,
+              let origin = try? await database.airport(id: from), let destination = try? await database.airport(id: to)
+        else {
+            problem = .unknown
+            return
+        }
+        returnStart = ReturnStart(
+            origin: destination, destination: origin, date: min(shown.occurredAt, Date()),
+            cabin: shown.cabin.flatMap(CabinClass.init(rawValue:)), tagged: tags.filter { $0.id != account.userID }
+        )
     }
 
     private func send(_ store: CheckInCommentStore) {

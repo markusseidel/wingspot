@@ -91,7 +91,7 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
                 when {
                     editing != null -> Scrolling { if (editing.kind == "flown") FlownEditScreen(editing, checkInState, refState, checkIn) else SimpleEditScreen(app, editing, checkInState, refState, checkIn) }
                     checkInState.isOpen -> Scrolling { CheckInScreen(checkInState, refState, checkIn) }
-                    page is Route.CheckInPage && me != null -> CheckInPage(app, social, checkIn, page.id, me)
+                    page is Route.CheckInPage && me != null -> CheckInPage(app, social, checkIn, page.id, me, refState)
                     page is Route.PersonPage && me != null -> PersonPage(app, social, page.id, me)
                     page is Route.AirportPage -> Scrolling { AirportPage(app, social, page.id, me, refState, checkInState.all) }
                     page is Route.TypePage -> Scrolling { TypePage(app, social, page.code, me, checkInState.all) }

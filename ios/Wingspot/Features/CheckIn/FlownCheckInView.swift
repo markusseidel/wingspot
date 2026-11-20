@@ -19,8 +19,28 @@ extension CabinClass {
 }
 
 /// The Flown check-in (concept §4.2). Saves on the device first and works offline once the airport data is downloaded.
+/// The first values of the flight form for a return flight: the route the other way round, the same day, and the
+/// cabin and friends of the flight before. The flight number, aircraft and seat differ, so they stay empty.
+struct ReturnStart: Identifiable {
+    let id = UUID()
+    let origin: Airport
+    let destination: Airport
+    let date: Date
+    let cabin: CabinClass?
+    let tagged: [PersonTag]
+}
+
 struct FlownCheckInView: View {
     let onDone: () -> Void
+
+    init(start: ReturnStart? = nil, onDone: @escaping () -> Void) {
+        self.onDone = onDone
+        _origin = State(initialValue: start?.origin)
+        _destination = State(initialValue: start?.destination)
+        _date = State(initialValue: start?.date ?? Date())
+        _cabin = State(initialValue: start?.cabin)
+        _tagged = State(initialValue: start?.tagged ?? [])
+    }
 
     @Environment(ReferenceDataStore.self) private var referenceData
     @Environment(\.modelContext) private var modelContext
@@ -76,7 +96,7 @@ struct FlownCheckInView: View {
     var body: some View {
         Group {
             if let result {
-                FlownResultView(result: result, onAnother: reset, onDone: onDone)
+                FlownResultView(result: result, onReturn: startReturn, onAnother: reset, onDone: onDone)
             } else {
                 form
             }
@@ -273,6 +293,20 @@ struct FlownCheckInView: View {
         }
     }
 
+    /// Starts the flight back: the route the other way round, with the same day, cabin and friends.
+    private func startReturn() {
+        guard let from = origin, let to = destination else { return }
+        origin = to
+        destination = from
+        flightNumber = ""
+        registrationInput = ""
+        type = nil
+        seat = ""
+        tripPhoto = nil
+        assumedYear = nil
+        result = nil
+    }
+
     /// Starts the next flight and keeps the date.
     private func reset() {
         origin = nil
@@ -290,6 +324,7 @@ struct FlownCheckInView: View {
 
 private struct FlownResultView: View {
     let result: FlownResult
+    let onReturn: () -> Void
     let onAnother: () -> Void
     let onDone: () -> Void
 
@@ -313,10 +348,14 @@ private struct FlownResultView: View {
             }
             Spacer()
             VStack(spacing: 12) {
+                Button(action: onReturn) {
+                    Label("Return flight", systemImage: "arrow.uturn.backward").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
                 Button(action: onAnother) {
                     Text("Check in another").frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.bordered)
                 Button(action: onDone) {
                     Text("Done").frame(maxWidth: .infinity)
                 }

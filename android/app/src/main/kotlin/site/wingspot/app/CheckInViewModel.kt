@@ -30,6 +30,15 @@ enum class Kind { SPOTTED, AIRPORT, FLOWN }
 /** What the result page says after a save. [count] includes the check-in just saved; [lastSeen] is for spotted ones seen before. */
 data class SavedResult(val kind: Kind, val title: String, val count: Int, val lastSeen: Instant?)
 
+/**
+ * The first values of the flight form for a return flight: the route the other way round, the same day, and the cabin
+ * and friends of the flight before. The flight number, aircraft and seat differ, so they stay empty.
+ */
+data class ReturnStart(
+    val origin: Airport, val destination: Airport, val date: java.time.LocalDate, val cabin: CabinClass?,
+    val tagged: List<site.wingspot.core.Person>,
+)
+
 data class CheckInState(
     val isOpen: Boolean = false,
     val kind: Kind = Kind.SPOTTED,
@@ -43,6 +52,10 @@ data class CheckInState(
     /** Whether the check-in being edited can still take a photo. */
     val roomForPhoto: Boolean = false,
     val deleteFailed: Boolean = false,
+    /** What the flight form starts with, when it was opened for a return flight. */
+    val returnStart: ReturnStart? = null,
+    /** The flight back for the flight just saved, offered on its result page. */
+    val afterFlight: ReturnStart? = null,
 )
 
 /** Saves check-ins on the phone first, then asks for an upload. Works fully offline. */
@@ -59,11 +72,21 @@ class CheckInViewModel(
     }
 
     fun open() {
-        mutable.value = mutable.value.copy(isOpen = true, result = null, saveFailed = false)
+        mutable.value = mutable.value.copy(isOpen = true, result = null, saveFailed = false, returnStart = null)
+    }
+
+    /** Opens the flight form for a return flight, from the page of a flight or from the result of one. */
+    fun startReturn(start: ReturnStart) {
+        mutable.value = mutable.value.copy(isOpen = true, result = null, saveFailed = false, kind = Kind.FLOWN, returnStart = start)
+    }
+
+    /** From the result page: the flight back for the flight just saved. */
+    fun returnFromResult() {
+        mutable.value.afterFlight?.let(::startReturn)
     }
 
     fun close() {
-        mutable.value = mutable.value.copy(isOpen = false, result = null, editing = null)
+        mutable.value = mutable.value.copy(isOpen = false, result = null, editing = null, returnStart = null, afterFlight = null)
     }
 
     fun chooseKind(kind: Kind) {
@@ -72,7 +95,7 @@ class CheckInViewModel(
 
     /** Starts the next check-in. The form keeps its airport, because spotters log several planes in one place. */
     fun another() {
-        mutable.value = mutable.value.copy(result = null)
+        mutable.value = mutable.value.copy(result = null, returnStart = null)
     }
 
     fun save(registration: Registration?, type: AircraftType?, airport: Airport?, photo: PreparedPhoto?) {
@@ -95,7 +118,8 @@ class CheckInViewModel(
     fun saveFlight(
         origin: Airport, destination: Airport, flightNumber: String, registration: Registration?, type: AircraftType?,
         cabin: CabinClass?, seat: String, photo: PreparedPhoto?, at: Instant = Instant.now(), tagged: List<UUID> = emptyList(),
-    ) = run(photo) {
+        returnTo: ReturnStart? = null,
+    ) = run(photo, onSaved = { it.copy(afterFlight = returnTo) }) {
         val result = store.saveFlown(
             FlownDraft(
                 Place(origin.id, origin.code), Place(destination.id, destination.code), flightNumber, registration,
@@ -106,12 +130,12 @@ class CheckInViewModel(
         result.id to SavedResult(Kind.FLOWN, result.route, result.timesOnRoute, null)
     }
 
-    private fun run(photo: PreparedPhoto?, save: suspend () -> Pair<UUID, SavedResult>) {
+    private fun run(photo: PreparedPhoto?, onSaved: (CheckInState) -> CheckInState = { it }, save: suspend () -> Pair<UUID, SavedResult>) {
         viewModelScope.launch {
             try {
                 val (id, result) = save()
                 if (photo != null) store.addPhoto(id, photo.jpeg, photo.width, photo.height)
-                mutable.value = mutable.value.copy(result = result, saveFailed = false)
+                mutable.value = onSaved(mutable.value.copy(result = result, saveFailed = false))
                 requestUpload()
                 reload()
             } catch (e: Exception) {
