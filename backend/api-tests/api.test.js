@@ -796,6 +796,57 @@ describe("photos for other people", () => {
   });
 });
 
+/** Uploads a JPEG as a profile image into the folder of [folderOwnerId], acting as [user]. */
+function putAvatar(user, folderOwnerId, { body = jpeg(JFIF, SOF), type = "image/jpeg" } = {}) {
+  return fetch(`${API}/storage/v1/object/avatars/${folderOwnerId}/avatar.jpg`, {
+    method: "POST", headers: { apikey: ANON_KEY, Authorization: `Bearer ${user.token}`, "Content-Type": type, "x-upsert": "true" }, body,
+  });
+}
+
+describe("profile images", () => {
+  let alice, bob;
+  before(async () => {
+    alice = await signUp();
+    bob = await signUp();
+  });
+  after(async () => {
+    for (const user of [alice, bob]) {
+      await fetch(`${API}/auth/v1/admin/users/${user.id}`, { method: "DELETE", headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } });
+    }
+  });
+
+  test("you can set and replace your own image, and anyone can read it", async () => {
+    assert.equal((await putAvatar(alice, alice.id)).status, 200);
+    assert.equal((await putAvatar(alice, alice.id)).status, 200, "replacing works");
+    const read = await fetch(`${API}/storage/v1/object/public/avatars/${alice.id}/avatar.jpg`);
+    assert.equal(read.status, 200, "no sign-in is needed to read it");
+    assert.equal(read.headers.get("content-type"), "image/jpeg");
+  });
+
+  test("you cannot write into someone else's folder", async () => {
+    const response = await putAvatar(bob, alice.id);
+    assert.ok(response.status === 400 || response.status === 403, `refused, got ${response.status}`);
+  });
+
+  test("only JPEG files are accepted", async () => {
+    const response = await putAvatar(alice, alice.id, { body: Buffer.from("not an image"), type: "text/plain" });
+    assert.ok(response.status >= 400, `refused, got ${response.status}`);
+  });
+
+  test("a file over 512 KB is refused", async () => {
+    const response = await putAvatar(alice, alice.id, { body: Buffer.alloc(600 * 1024, 1) });
+    assert.ok(response.status >= 400, `refused, got ${response.status}`);
+  });
+
+  test("you can remove your own image", async () => {
+    const response = await fetch(`${API}/storage/v1/object/avatars/${alice.id}/avatar.jpg`, {
+      method: "DELETE", headers: { apikey: ANON_KEY, Authorization: `Bearer ${alice.token}` },
+    });
+    assert.equal(response.status, 200);
+    assert.equal((await fetch(`${API}/storage/v1/object/public/avatars/${alice.id}/avatar.jpg`)).status, 400);
+  });
+});
+
 describe("DELETE /v1/me", () => {
   let alice, bob;
   const checkin = randomUUID();
@@ -816,6 +867,8 @@ describe("DELETE /v1/me", () => {
       method: "PUT", headers: { Authorization: `Bearer ${alice.token}`, "Content-Type": "image/jpeg" }, body: jpeg(JFIF, SOF),
     });
     assert.equal(put.status, 200);
+    const avatar = await putAvatar(alice, alice.id);
+    assert.equal(avatar.status, 200, "the avatar upload works");
     await service("follows", { method: "POST", body: { follower: bob.id, followee: alice.id } });
     await rest("comments", { token: bob.token, body: { checkin_id: checkin, user_id: bob.id, body: "Nice" } });
     await rest("comments", { token: alice.token, body: { checkin_id: kept, user_id: alice.id, body: "Thanks" } });
@@ -845,6 +898,7 @@ describe("DELETE /v1/me", () => {
       headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` },
     });
     assert.equal(file.status, 400, "the photo file is gone");
+    assert.equal((await fetch(`${API}/storage/v1/object/public/avatars/${alice.id}/avatar.jpg`)).status, 400, "the profile image is gone");
     const users = await fetch(`${API}/auth/v1/admin/users/${alice.id}`, { headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } });
     assert.equal(users.status, 404, "the sign-in is gone");
 
