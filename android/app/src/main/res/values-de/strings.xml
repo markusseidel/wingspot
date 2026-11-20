@@ -45,6 +45,7 @@
     <string name="first_time">Zum ersten Mal gesehen!</string>
     <string name="seen_again">Zum %1$d. Mal gesehen</string>
     <string name="last_time">Zuletzt am %1$s</string>
+    <string name="return_flight">Rückflug</string>
     <string name="check_in_another">Noch einen einchecken</string>
     <string name="done">Fertig</string>
     <string name="recent_title">Deine Check-ins</string>

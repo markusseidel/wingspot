@@ -58,7 +58,7 @@ import site.wingspot.core.VisitContext
 fun CheckInScreen(state: CheckInState, reference: ReferenceState, model: CheckInViewModel) {
     val result = state.result
     if (result != null) {
-        ResultView(result, onAnother = model::another, onDone = model::close)
+        ResultView(result, onReturn = if (state.afterFlight != null) model::returnFromResult else null, onAnother = model::another, onDone = model::close)
         return
     }
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -120,16 +120,19 @@ private fun AirportForm(state: CheckInState, reference: ReferenceState, model: C
 private fun FlownForm(state: CheckInState, reference: ReferenceState, model: CheckInViewModel) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var origin by remember { mutableStateOf<Airport?>(null) }
-    var destination by remember { mutableStateOf<Airport?>(null) }
-    var flightNumber by rememberSaveable { mutableStateOf("") }
-    var input by rememberSaveable { mutableStateOf("") }
-    var type by remember { mutableStateOf<AircraftType?>(null) }
-    var cabin by rememberSaveable { mutableStateOf<CabinClass?>(null) }
-    var seat by rememberSaveable { mutableStateOf("") }
-    var photo by remember { mutableStateOf<PreparedPhoto?>(null) }
+    // For a return flight the form starts with the route the other way round, the same day, and the cabin and friends of the flight before.
+    val start = state.returnStart
+    var origin by remember(start) { mutableStateOf<Airport?>(start?.origin) }
+    var destination by remember(start) { mutableStateOf<Airport?>(start?.destination) }
+    var flightNumber by rememberSaveable(start) { mutableStateOf("") }
+    var input by rememberSaveable(start) { mutableStateOf("") }
+    var type by remember(start) { mutableStateOf<AircraftType?>(null) }
+    var cabin by rememberSaveable(start) { mutableStateOf<CabinClass?>(start?.cabin) }
+    var seat by rememberSaveable(start) { mutableStateOf("") }
+    var photo by remember(start) { mutableStateOf<PreparedPhoto?>(null) }
     val tags = rememberTagChoice()
-    var date by rememberSaveable { mutableStateOf(LocalDate.now().toString()) }
+    LaunchedEffect(start) { if (start != null) tags.chosen = start.tagged }
+    var date by rememberSaveable(start) { mutableStateOf((start?.date ?: LocalDate.now()).toString()) }
     var pickDate by remember { mutableStateOf(false) }
     var scanning by remember { mutableStateOf(false) }
     var reading by remember { mutableStateOf(false) }
@@ -201,7 +204,10 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
         onSave = {
             // A flight has a day but no time here. Today keeps the real time; any other day uses midday, which stays on that day.
             val at = if (day == LocalDate.now()) java.time.Instant.now() else day.atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant()
-            model.saveFlight(origin!!, destination!!, flightNumber, registration, type, cabin, seat, photo, at, tags.all())
+            model.saveFlight(
+                origin!!, destination!!, flightNumber, registration, type, cabin, seat, photo, at, tags.all(),
+                returnTo = ReturnStart(destination!!, origin!!, day, cabin, tags.chosen),
+            )
         },
         onCancel = model::close,
     )
@@ -508,7 +514,7 @@ private fun <T> Picker(
 }
 
 @Composable
-private fun ResultView(result: SavedResult, onAnother: () -> Unit, onDone: () -> Unit) {
+private fun ResultView(result: SavedResult, onReturn: (() -> Unit)?, onAnother: () -> Unit, onDone: () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(result.title, style = MaterialTheme.typography.displaySmall, fontFamily = FontFamily.Monospace)
         when (result.kind) {
@@ -529,7 +535,12 @@ private fun ResultView(result: SavedResult, onAnother: () -> Unit, onDone: () ->
                 style = MaterialTheme.typography.titleLarge,
             )
         }
-        Button(onClick = onAnother, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.check_in_another)) }
+        if (onReturn != null && result.kind == Kind.FLOWN) {
+            Button(onClick = onReturn, modifier = Modifier.fillMaxWidth().testTag("return-flight")) { Text(stringResource(R.string.return_flight)) }
+            OutlinedButton(onClick = onAnother, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.check_in_another)) }
+        } else {
+            Button(onClick = onAnother, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.check_in_another)) }
+        }
         OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.done)) }
     }
 }

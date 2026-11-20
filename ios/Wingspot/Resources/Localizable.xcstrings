@@ -3075,6 +3075,16 @@
         }
       }
     },
+    "Return flight" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rückflug"
+          }
+        }
+      }
+    },
     "Salute" : {
       "localizations" : {
         "de" : {

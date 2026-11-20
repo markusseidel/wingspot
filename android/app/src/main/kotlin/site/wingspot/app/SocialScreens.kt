@@ -181,7 +181,7 @@ private fun SaluteButton(item: FeedItem, onSalute: () -> Unit) {
 
 /** One check-in on its own page: who, when and what, the photos, salute, and the comments with a field to write a new one. */
 @Composable
-fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewModel, id: String, me: String) {
+fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewModel, id: String, me: String, reference: ReferenceState = ReferenceState()) {
     val scope = rememberCoroutineScope()
     val feed by model.state.collectAsState()
     var loaded by remember { mutableStateOf<FeedItem?>(null) }
@@ -232,6 +232,21 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                         if (shown.userId == me) {
                             if (localFlight) {
                                 DropdownMenuItem(text = { Text(stringResource(R.string.edit_details)) }, onClick = { menu = false; checkIn.edit(UUID.fromString(id)) })
+                            }
+                            val from = shown.originId
+                            val to = shown.destinationId
+                            if (shown.kind == "flown" && from != null && to != null) {
+                                DropdownMenuItem(text = { Text(stringResource(R.string.return_flight)) }, onClick = {
+                                    menu = false
+                                    scope.launch {
+                                        val db = reference.database
+                                        val origin = db?.airport(from)
+                                        val destination = db?.airport(to)
+                                        if (origin == null || destination == null) { problem = R.string.error_unknown; return@launch }
+                                        val day = runCatching { OffsetDateTime.parse(shown.occurredAt).toLocalDate() }.getOrNull()?.let { minOf(it, java.time.LocalDate.now()) } ?: java.time.LocalDate.now()
+                                        checkIn.startReturn(ReturnStart(destination, origin, day, shown.cabin?.let { CabinClass.fromWire(it) }, tags.filter { it.id != me }))
+                                    }
+                                })
                             }
                             DropdownMenuItem(text = { Text(stringResource(R.string.who_can_see)) }, onClick = { menu = false; pickVisibility = true })
                             DropdownMenuItem(text = { Text(stringResource(R.string.delete)) }, onClick = { menu = false; confirmDelete = true })
