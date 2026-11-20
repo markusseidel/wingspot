@@ -111,7 +111,7 @@ select results_eq(
   $$ values ('10000000-0000-0000-0000-000000000001'::uuid), ('10000000-0000-0000-0000-000000000005'::uuid) $$,
   'anon sees only public, undelayed check-ins of public profiles'
 );
-select is((select count(*)::int from public.airports), 1, 'anon can read airports');
+select is((select count(*)::int from public.airports where id = 1), 1, 'anon can read airports');
 select is((select count(*)::int from public.app_config), 1, 'anon can read config');
 select is((select count(*)::int from public.spotting_locations), 1, 'anon sees only approved spotting locations');
 select throws_ok($$ select location from public.checkins $$, '42501', null, 'anon cannot read raw GPS');
