@@ -301,6 +301,8 @@ public protocol FeedBackend: Sendable {
     func badges(for checkIns: [UUID]) async throws -> [UUID: [FeedBadge]]
     /// The caller's mutual friends who allow being tagged.
     func taggableFriends() async throws -> [PersonTag]
+    /// The friends who added this check-in of the caller's to their own logbook. Empty for anyone but its author.
+    func checkInCopies(_ checkIn: UUID) async throws -> [PersonTag]
     /// The caller leaves a check-in they are tagged on, for good.
     func removeMyTag(_ checkIn: UUID) async throws
     /// Whether friends may tag the caller, and changing it.
@@ -312,6 +314,7 @@ extension FeedBackend {
     public func tags(for checkIns: [UUID]) async throws -> [UUID: [PersonTag]] { [:] }
     public func badges(for checkIns: [UUID]) async throws -> [UUID: [FeedBadge]] { [:] }
     public func taggableFriends() async throws -> [PersonTag] { [] }
+    public func checkInCopies(_ checkIn: UUID) async throws -> [PersonTag] { [] }
     public func removeMyTag(_ checkIn: UUID) async throws {}
     public func allowsTags(of me: UUID) async throws -> Bool { true }
     public func setAllowsTags(_ allowed: Bool, as me: UUID) async throws {}
@@ -579,6 +582,11 @@ public final class FeedStore {
     /// Your mutual friends who allow being tagged. Empty if they can't be loaded.
     public func taggableFriends() async -> [PersonTag] {
         (try? await backend.taggableFriends()) ?? []
+    }
+
+    /// The friends who added your check-in to their own logbook. Empty if there are none or it can't be loaded.
+    public func copies(of checkIn: UUID) async -> [PersonTag] {
+        (try? await backend.checkInCopies(checkIn)) ?? []
     }
 
     /// Leaves a check-in you are tagged on. Returns `false` if that failed, in which case you stay on it.

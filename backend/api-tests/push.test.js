@@ -33,6 +33,8 @@ describe("push texts", () => {
     assert.equal(render(row({ kind: "mention", snippet: "Hi  @max\nlook" }), "en").body, "mentioned you: “Hi @max look”");
     assert.equal(render(row({ kind: "mention", snippet: "Hallo @max" }), "de").body, "hat dich erwähnt: „Hallo @max“");
     assert.equal(render(row({ kind: "comment_like" }), "en").body, "saluted your comment.");
+    assert.equal(render(row({ kind: "tag_copy", subject: "FRA → JFK" }), "en").body, "added your flight FRA → JFK to their logbook.");
+    assert.equal(render(row({ kind: "tag_copy", subject: null }), "de").body, "hat deinen Check-in zu seinem Logbuch hinzugefügt.");
     assert.equal(render(row({ kind: "comment_like" }), "de").body, "hat deinen Kommentar salutiert.");
   });
 

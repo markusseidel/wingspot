@@ -68,6 +68,14 @@ class SocialApiTests {
     }
 
     @Test
+    fun theFriendsWhoAddedACheckInToTheirLogbookAreRead() = withApi { server, api, _ ->
+        server.enqueue(ok("""[{"user_id":"$OTHER","username":"anna","display_name":"Anna K"}]"""))
+        val copies = api.checkInCopies(CHECKIN)
+        assertEquals("Anna K", copies.single().who)
+        assertEquals("/rest/v1/rpc/get_checkin_copies", server.takeRequest().url.encodedPath)
+    }
+
+    @Test
     fun theInboxIsReadPagedByTimeAndMarkedRead() = withApi { server, api, _ ->
         server.enqueue(ok("""[{"id":"i1","kind":"salute","actor_id":"$OTHER","username":"anna","display_name":null,"checkin_id":"$CHECKIN",
             "subject":"FRA → JFK","snippet":null,"created_at":"2026-11-21T10:00:00.5+00:00","is_read":false}]"""))

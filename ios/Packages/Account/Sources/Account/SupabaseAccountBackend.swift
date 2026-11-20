@@ -655,6 +655,13 @@ extension SupabaseAccountBackend {
         return found
     }
 
+    public func checkInCopies(_ checkIn: UUID) async throws -> [PersonTag] {
+        let rows: [CopyRow] = try await socialErrors {
+            try await client.rpc("get_checkin_copies", params: ["p_checkin": checkIn]).execute().value
+        }
+        return rows.map { PersonTag(id: $0.userID, username: $0.username, displayName: $0.displayName) }
+    }
+
     public func taggableFriends() async throws -> [PersonTag] {
         let rows: [FriendRow] = try await socialErrors {
             try await client.rpc("get_taggable_friends").execute().value
@@ -1113,5 +1120,17 @@ private struct CommentExtraRow: Decodable {
             salutes: try c.decode(Int.self, forKey: .salutes), saluted: try c.decode(Bool.self, forKey: .saluted),
             mentions: try c.decode([CommentMention].self, forKey: .mentions)
         )
+    }
+}
+
+private struct CopyRow: Decodable {
+    let userID: UUID
+    let username: String
+    let displayName: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case username
+        case userID = "user_id"
+        case displayName = "display_name"
     }
 }
