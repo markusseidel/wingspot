@@ -49,7 +49,7 @@ select is((select count(*)::int from public.notifications where recipient = pg_t
           'following again within the hour does not tell them again');
 
 insert into public.follows (follower, followee) values (pg_temp.u(2), pg_temp.u(4));
-select is((select count(*)::int from public.notifications where recipient = pg_temp.u(4)), 0, 'nothing for someone without a phone');
+select is((select count(*)::int from public.notifications where recipient = pg_temp.u(4) and not silent), 0, 'nothing is pushed to someone without a phone');
 
 -- Salutes
 select pg_temp.as_user(2);
@@ -82,15 +82,15 @@ select is((select count(*)::int from public.notifications where actor = pg_temp.
 
 update public.notification_prefs set salutes = false where user_id = pg_temp.u(1);
 select private.queue_notification(pg_temp.u(1), 'salute', pg_temp.u(3), '77100000-0000-0000-0000-000000000001', null);
-select is((select count(*)::int from public.notifications where actor = pg_temp.u(3)), 0, 'nothing for a kind the person switched off');
+select is((select count(*)::int from public.notifications where actor = pg_temp.u(3) and not silent), 0, 'nothing is pushed for a kind the person switched off');
 select private.queue_notification(pg_temp.u(1), 'comment', pg_temp.u(3), '77100000-0000-0000-0000-000000000001', 'still on');
-select is((select count(*)::int from public.notifications where actor = pg_temp.u(3)), 1, 'other kinds still arrive');
+select is((select count(*)::int from public.notifications where actor = pg_temp.u(3) and not silent), 1, 'other kinds still arrive');
 
 -- The daily cap
 insert into public.notifications (recipient, kind, actor, checkin_id, snippet, sent_at)
 select pg_temp.u(3), 'comment', pg_temp.u(2), null, 'filler', now() from generate_series(1, 30);
 select private.queue_notification(pg_temp.u(3), 'follow', pg_temp.u(1), null, null);
-select is((select count(*)::int from public.notifications where recipient = pg_temp.u(3) and kind = 'follow'), 0, 'at most 30 a day per person');
+select is((select count(*)::int from public.notifications where recipient = pg_temp.u(3) and kind = 'follow' and not silent), 0, 'at most 30 pushes a day per person');
 
 -- Claiming
 delete from public.notifications where recipient = pg_temp.u(3);
@@ -102,11 +102,11 @@ select is((select jsonb_array_length(devices) from public.claim_notifications(1)
 update public.notifications set claimed_at = null;
 select is((select subject from public.claim_notifications(10) where kind = 'salute'), 'D-AIPC', 'a salute says what it was about');
 update public.notifications set claimed_at = null;
-select is((select attempts from public.notifications where kind = 'follow'), 3, 'each claim counts as an attempt');
+select is((select attempts from public.notifications where kind = 'follow' and not silent), 3, 'each claim counts as an attempt');
 
 -- Finishing
-select public.finish_notification((select id from public.notifications where kind = 'follow'), true, array['77000000-0000-0000-0000-000000000002']::uuid[]);
-select is((select count(*)::int from public.notifications where kind = 'follow' and sent_at is not null), 1, 'a delivered row is marked sent');
+select public.finish_notification((select id from public.notifications where kind = 'follow' and not silent), true, array['77000000-0000-0000-0000-000000000002']::uuid[]);
+select is((select count(*)::int from public.notifications where kind = 'follow' and not silent and sent_at is not null), 1, 'a delivered row is marked sent');
 select is((select count(*)::int from public.devices where id = '77000000-0000-0000-0000-000000000002'), 0, 'a dead device is removed');
 update public.notifications set claimed_at = now() where kind = 'comment';
 select public.finish_notification((select id from public.notifications where kind = 'comment' limit 1), false);

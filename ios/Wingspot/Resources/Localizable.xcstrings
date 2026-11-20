@@ -1,6 +1,130 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ checked in %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ checked in %2$@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ hat %2$@ eingecheckt"
+          }
+        }
+      }
+    },
+    "%@ commented on %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ commented on %2$@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ hat %2$@ kommentiert"
+          }
+        }
+      }
+    },
+    "%@ commented on your check-in" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hat deinen Check-in kommentiert"
+          }
+        }
+      }
+    },
+    "%@ has a new check-in" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hat neu eingecheckt"
+          }
+        }
+      }
+    },
+    "%@ has news for you" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hat Neuigkeiten für dich"
+          }
+        }
+      }
+    },
+    "%@ saluted your check-in" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hat deinen Check-in salutiert"
+          }
+        }
+      }
+    },
+    "%@ saluted your check-in %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ saluted your check-in %2$@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ hat deinen Check-in %2$@ salutiert"
+          }
+        }
+      }
+    },
+    "%@ started following you" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ folgt dir jetzt"
+          }
+        }
+      }
+    },
+    "%@ tagged you on %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ tagged you on %2$@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ hat dich bei %2$@ markiert"
+          }
+        }
+      }
+    },
+    "%@ tagged you on a check-in" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hat dich bei einem Check-in markiert"
+          }
+        }
+      }
+    },
     "%@ → %@ · %@%@" : {
       "localizations" : {
         "de" : {
@@ -277,6 +401,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aktivität"
+          }
+        }
+      }
+    },
+    "Activity, %lld new" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktivität, %lld neu"
           }
         }
       }
@@ -1172,6 +1306,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Das konnte nicht geladen werden. Prüfe deine Verbindung."
+          }
+        }
+      }
+    },
+    "Couldn't load your activity" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktivität konnte nicht geladen werden"
           }
         }
       }
@@ -2180,6 +2324,16 @@
         }
       }
     },
+    "Mark all read" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle gelesen"
+          }
+        }
+      }
+    },
     "Miles" : {
       "localizations" : {
         "de" : {
@@ -2306,6 +2460,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Neue Follower"
+          }
+        }
+      }
+    },
+    "New followers, salutes, comments and tags show up here." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neue Follower, Salutes, Kommentare und Markierungen erscheinen hier."
           }
         }
       }
@@ -2573,6 +2737,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Noch nichts zu zeigen."
+          }
+        }
+      }
+    },
+    "Nothing yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nichts"
           }
         }
       }
@@ -4333,6 +4507,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "dieses Foto"
+          }
+        }
+      }
+    },
+    "“%@”" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%@“"
           }
         }
       }

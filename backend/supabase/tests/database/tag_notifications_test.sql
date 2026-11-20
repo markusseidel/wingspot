@@ -26,10 +26,10 @@ select public.sync_checkins(jsonb_build_array(jsonb_build_object(
   'with', jsonb_build_array('00000000-0000-0000-0000-0000000000e2', '00000000-0000-0000-0000-0000000000e3', '00000000-0000-0000-0000-0000000000e4'))));
 select set_config('role', 'postgres', true), set_config('request.jwt.claims', '', true);
 
-select is((select count(*)::int from public.notifications where kind = 'tagged'), 1, 'only the friend with a phone and the alert on is told');
-select is((select actor from public.notifications where kind = 'tagged'), '00000000-0000-0000-0000-0000000000e1'::uuid, 'it names the author');
-select is((select recipient from public.notifications where kind = 'tagged'), '00000000-0000-0000-0000-0000000000e2'::uuid, 'and goes to the tagged friend');
-select is((select checkin_id from public.notifications where kind = 'tagged'), 'a0000000-0000-7000-8000-000000000001'::uuid, 'about that check-in');
+select is((select count(*)::int from public.notifications where kind = 'tagged' and not silent), 1, 'only the friend with a phone and the alert on is told');
+select is((select actor from public.notifications where kind = 'tagged' and not silent), '00000000-0000-0000-0000-0000000000e1'::uuid, 'it names the author');
+select is((select recipient from public.notifications where kind = 'tagged' and not silent), '00000000-0000-0000-0000-0000000000e2'::uuid, 'and goes to the tagged friend');
+select is((select checkin_id from public.notifications where kind = 'tagged' and not silent), 'a0000000-0000-7000-8000-000000000001'::uuid, 'about that check-in');
 
 -- Sending the same tags again tells nobody again
 select set_config('request.jwt.claims', json_build_object('sub', '00000000-0000-0000-0000-0000000000e1', 'role', 'authenticated')::text, true),
@@ -39,7 +39,7 @@ select public.sync_checkins(jsonb_build_array(jsonb_build_object(
   'origin_id', 896001, 'destination_id', 896002,
   'with', jsonb_build_array('00000000-0000-0000-0000-0000000000e2', '00000000-0000-0000-0000-0000000000e3', '00000000-0000-0000-0000-0000000000e4'))));
 select set_config('role', 'postgres', true), set_config('request.jwt.claims', '', true);
-select is((select count(*)::int from public.notifications where kind = 'tagged'), 1, 'the same tags again send nothing new');
+select is((select count(*)::int from public.notifications where kind = 'tagged' and not silent), 1, 'the same tags again send nothing new');
 
 -- The sending function sees the kind
 select ok((select count(*) from public.claim_notifications(10) where kind = 'tagged') >= 0, 'the sender can claim it');

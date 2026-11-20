@@ -10,6 +10,8 @@ struct FeedScreen: View {
     @Environment(FeedStore.self) private var feed
     @Environment(BadgeStore.self) private var badges
     @Environment(AnnouncementStore.self) private var announcements
+    @Environment(InboxStore.self) private var inbox
+    @Environment(\.scenePhase) private var scenePhase
     @State private var commentsFor: FeedItem?
     @AppStorage("feedSort") private var sortChoice = FeedSort.created.rawValue
     @State private var report: ReportTarget?
@@ -45,10 +47,15 @@ struct FeedScreen: View {
                             Text("Check-in date").tag(FeedSort.created)
                             Text("Flight date").tag(FeedSort.occurred)
                         }
-                    } label: { Image(systemName: "arrow.up.arrow.down") }
+                    } label: { headerIcon("arrow.up.arrow.down") }
                         .accessibilityLabel("Sort")
-                    NavigationLink { PeopleView() } label: { Image(systemName: "person.badge.plus") }
+                    NavigationLink { PeopleView() } label: { headerIcon("person.badge.plus") }
                         .accessibilityLabel("Find people")
+                    NavigationLink { InboxView() } label: {
+                        headerIcon(inbox.unread > 0 ? "bell.badge.fill" : "bell")
+                            .symbolRenderingMode(inbox.unread > 0 ? .multicolor : .monochrome)
+                    }
+                    .accessibilityLabel(inbox.unread > 0 ? Text("Activity, \(inbox.unread) new") : Text("Activity"))
                 }
             }
             .navigationDestination(item: $commentsFor) { CheckInDetailView(item: $0) }
@@ -87,13 +94,21 @@ struct FeedScreen: View {
             await announcements.refresh()
             if account.userID == nil {
                 feed.clear()
+                inbox.clear()
             } else {
+                Task { await inbox.refreshCount() }
                 feed.sort = FeedSort(rawValue: sortChoice) ?? .created
                 await feed.refresh()
             }
             await openPushDestination()
         }
         .onChange(of: router.destination) { Task { await openPushDestination() } }
+        .onChange(of: scenePhase) { if scenePhase == .active, account.userID != nil { Task { await inbox.refreshCount() } } }
+    }
+
+    /// The three icons at the top right share one size, so the gaps between them are even.
+    private func headerIcon(_ name: String) -> some View {
+        Image(systemName: name).frame(width: 32, height: 32).contentShape(Rectangle())
     }
 
     @ViewBuilder private var content: some View {

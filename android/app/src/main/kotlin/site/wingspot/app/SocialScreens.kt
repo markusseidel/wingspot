@@ -33,6 +33,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -91,10 +92,28 @@ fun RemoteImage(photo: FeedPhoto, modifier: Modifier = Modifier) {
 fun FeedTab(model: SocialViewModel, me: String, announcements: AnnouncementsViewModel) {
     val state by model.state.collectAsState()
     LaunchedEffect(me) { announcements.refresh(); if (!state.hasLoaded) model.refresh() }
+    // The dot on the bell: when this tab opens, when the app comes back, and when a page above it closes.
+    val lifecycle = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    DisposableEffect(lifecycle) {
+        val watcher = androidx.lifecycle.LifecycleEventObserver { _, event -> if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) model.refreshUnread() }
+        lifecycle.lifecycle.addObserver(watcher)
+        onDispose { lifecycle.lifecycle.removeObserver(watcher) }
+    }
+    LaunchedEffect(me) { model.refreshUnread() }
     LazyColumn(Modifier.fillMaxWidth().testTag("feed"), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         item {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.tab_feed), style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top = 16.dp).weight(1f))
+                Box {
+                    IconButton(onClick = { model.open(Route.Inbox) }, modifier = Modifier.size(48.dp).testTag("open-inbox")) {
+                        Icon(
+                            painterResource(R.drawable.ic_bell),
+                            contentDescription = stringResource(if (model.unread > 0) R.string.activity_open_new else R.string.activity_open),
+                            tint = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                    if (model.unread > 0) Box(Modifier.align(Alignment.TopEnd).padding(top = 10.dp, end = 10.dp).size(10.dp).background(MaterialTheme.colorScheme.error, CircleShape).testTag("inbox-dot"))
+                }
                 var menu by remember { mutableStateOf(false) }
                 Box {
                     TextButton(onClick = { menu = true }, modifier = Modifier.testTag("feed-sort")) {

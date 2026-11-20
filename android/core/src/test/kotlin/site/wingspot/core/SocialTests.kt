@@ -52,6 +52,28 @@ class SocialApiTests {
     }
 
     @Test
+    fun theInboxIsReadPagedByTimeAndMarkedRead() = withApi { server, api, _ ->
+        server.enqueue(ok("""[{"id":"i1","kind":"salute","actor_id":"$OTHER","username":"anna","display_name":null,"checkin_id":"$CHECKIN",
+            "subject":"FRA → JFK","snippet":null,"created_at":"2026-11-21T10:00:00.5+00:00","is_read":false}]"""))
+        val row = api.activity("2026-11-22T10:00:00+00:00", 10).single()
+        assertEquals("anna", row.who)
+        assertEquals("FRA → JFK", row.subject)
+        assertEquals(false, row.isRead)
+        val request = server.takeRequest()
+        assertEquals("/rest/v1/rpc/get_notifications", request.url.encodedPath)
+        val body = Rest(server.url("/").toString(), "k", { "t" }).json.parseToJsonElement(request.body!!.utf8()).jsonObject
+        assertEquals("2026-11-22T10:00:00+00:00", body["before"]!!.jsonPrimitive.content)
+        assertEquals(10, body["lim"]!!.jsonPrimitive.content.toInt())
+
+        server.enqueue(ok("7"))
+        assertEquals(7, api.unreadActivityCount())
+        assertEquals("/rest/v1/rpc/unread_notification_count", server.takeRequest().url.encodedPath)
+        server.enqueue(ok("null"))
+        api.markActivityRead()
+        assertEquals("/rest/v1/rpc/mark_notifications_read", server.takeRequest().url.encodedPath)
+    }
+
+    @Test
     fun theFeedCanBeSortedByCheckInTimeAndPagesByThatTime() = withApi { server, api, _ ->
         server.enqueue(ok("[" + feedRow().replace("\"something_new\":1", "\"cursor_time\":\"2026-11-03T09:00:00+00:00\"") + "]"))
         val item = api.feed(null, 30, FeedSort.CREATED).single()

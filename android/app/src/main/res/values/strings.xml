@@ -359,4 +359,21 @@
     <string name="add_to_logbook">Add to my logbook</string>
     <string name="add_to_logbook_hint">Adds it to your own check-ins, so it counts for your statistics and badges.</string>
     <string name="in_my_logbook">In your logbook</string>
+    <string name="activity_title">Activity</string>
+    <string name="activity_open">Activity</string>
+    <string name="activity_open_new">Activity, new</string>
+    <string name="activity_failed">Couldn\'t load your activity. Please check your connection and try again.</string>
+    <string name="activity_empty_title">Nothing yet</string>
+    <string name="activity_empty">New followers, salutes, comments and tags show up here.</string>
+    <string name="activity_follow">%1$s started following you</string>
+    <string name="activity_salute">%1$s saluted your check-in</string>
+    <string name="activity_salute_on">%1$s saluted your check-in %2$s</string>
+    <string name="activity_comment">%1$s commented on your check-in</string>
+    <string name="activity_comment_on">%1$s commented on %2$s</string>
+    <string name="activity_tagged">%1$s tagged you on a check-in</string>
+    <string name="activity_tagged_on">%1$s tagged you on %2$s</string>
+    <string name="activity_checkin">%1$s has a new check-in</string>
+    <string name="activity_checkin_on">%1$s checked in %2$s</string>
+    <string name="activity_other">%1$s has news for you</string>
+    <string name="activity_mark_all_read">Mark all read</string>
 </resources>
