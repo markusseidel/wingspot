@@ -194,6 +194,7 @@ class ApiClient(
         c.visitContext?.let { put("context", it) }
         c.flightId?.let { put("flight_id", it.toString()) }
         c.taggedIds?.let { ids -> put("with", JsonArray(ids.map { JsonPrimitive(it.toString()) })) }
+        c.sourceId?.let { put("source_checkin_id", it.toString()) }
         if (c.latitude != null && c.longitude != null) {
             put("latitude", c.latitude)
             put("longitude", c.longitude)

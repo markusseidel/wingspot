@@ -193,6 +193,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
     var viewing by remember { mutableStateOf<FeedPhoto?>(null) }
     var tags by remember { mutableStateOf(feed.tags[id].orEmpty()) }
     var confirmLeave by remember { mutableStateOf(false) }
+    val mine by checkIn.state.collectAsState()
 
     // The list's copy has the live counts. The copy loaded by id has the airports and your own cabin and seat.
     val fromList = feed.items.firstOrNull { it.id == id } ?: model.opened[id]
@@ -268,6 +269,17 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                 }
             }
             item { SaluteButton(shown) { model.toggleSalute(id) } }
+            // A friend's flight or airport visit that you are tagged on can be added to your own logbook, once.
+            if (shown.userId != me && tags.any { it.id == me } && (shown.kind == "flown" || shown.kind == "airport")) item {
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    if (mine.all.any { it.sourceId?.toString() == id }) {
+                        Text(stringResource(R.string.in_my_logbook), color = MaterialTheme.colorScheme.primary)
+                    } else {
+                        OutlinedButton(onClick = { checkIn.addFromFriend(shown) }, modifier = Modifier.testTag("add-to-logbook")) { Text(stringResource(R.string.add_to_logbook)) }
+                        Text(stringResource(R.string.add_to_logbook_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+            }
             val flightPage = if (shown.userId == me && shown.kind == "flown") shown.flightNumber?.let(Flightradar24::flight) else null
             val aircraftPage = if (shown.userId == me && shown.kind == "flown") shown.registration?.let(Flightradar24::aircraft) else null
             if (flightPage != null || aircraftPage != null) item {

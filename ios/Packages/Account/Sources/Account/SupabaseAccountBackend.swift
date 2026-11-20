@@ -911,10 +911,10 @@ extension SupabaseAccountBackend: PushBackend {
     public func notificationPrefs(of me: UUID) async throws -> NotificationPrefs {
         try await socialErrors {
             let row: PrefsRow = try await client.from("notification_prefs")
-                .select("new_followers, salutes, comments, followed_checkins").eq("user_id", value: me).single().execute().value
+                .select("new_followers, salutes, comments, followed_checkins, tagged").eq("user_id", value: me).single().execute().value
             return NotificationPrefs(
                 newFollowers: row.newFollowers, salutes: row.salutes, comments: row.comments,
-                followedCheckins: row.followedCheckins
+                followedCheckins: row.followedCheckins, tagged: row.tagged
             )
         }
     }
@@ -925,7 +925,7 @@ extension SupabaseAccountBackend: PushBackend {
                 .update(
                     PrefsRow(
                         newFollowers: prefs.newFollowers, salutes: prefs.salutes, comments: prefs.comments,
-                        followedCheckins: prefs.followedCheckins
+                        followedCheckins: prefs.followedCheckins, tagged: prefs.tagged
                     ),
                     returning: .minimal
                 )
@@ -1000,9 +1000,10 @@ private struct PrefsRow: Codable {
     let salutes: Bool
     let comments: Bool
     let followedCheckins: Bool
+    let tagged: Bool
 
     private enum CodingKeys: String, CodingKey {
-        case salutes, comments
+        case salutes, comments, tagged
         case newFollowers = "new_followers"
         case followedCheckins = "followed_checkins"
     }

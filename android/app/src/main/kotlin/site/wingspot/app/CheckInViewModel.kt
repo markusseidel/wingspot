@@ -127,6 +127,33 @@ class CheckInViewModel(
         }
     }
 
+    /** Adds a friend's flight or airport visit that you are tagged on to your own logbook, linked to the original. */
+    fun addFromFriend(item: site.wingspot.core.FeedItem) {
+        val at = runCatching { java.time.OffsetDateTime.parse(item.occurredAt).toInstant() }.getOrNull() ?: return
+        val source = runCatching { UUID.fromString(item.id) }.getOrNull() ?: return
+        viewModelScope.launch {
+            try {
+                if (item.kind == "flown" && item.originId != null && item.destinationId != null) {
+                    store.saveFlown(
+                        FlownDraft(
+                            Place(item.originId!!, item.originCode ?: "?"), Place(item.destinationId!!, item.destinationCode ?: "?"),
+                            item.flightNumber, item.registration?.let { Registration.parse(it) }, item.typeIcao, sourceId = source,
+                        ),
+                        at,
+                    )
+                } else if (item.kind == "airport" && item.airportId != null) {
+                    store.saveAirport(AirportDraft(Place(item.airportId!!, item.airportCode ?: "?"), VisitContext.SPOTTING, sourceId = source), at)
+                } else {
+                    return@launch
+                }
+                requestUpload()
+                reload()
+            } catch (e: Exception) {
+                mutable.value = mutable.value.copy(saveFailed = true)
+            }
+        }
+    }
+
     fun cancelEdit() {
         mutable.value = mutable.value.copy(editing = null)
     }

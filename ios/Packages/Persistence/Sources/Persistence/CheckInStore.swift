@@ -77,12 +77,15 @@ public struct AirportDraft: Sendable {
     public var photo: PreparedPhoto?
     /// Friends who were there too.
     public var tagged: [UUID]
+    /// The friend's check-in this one is made from, when it was added from a tag.
+    public var sourceID: UUID?
 
     public init(
         airportID: Int, code: String, context: VisitContext = .spotting, position: GeoCoordinate? = nil,
-        photo: PreparedPhoto? = nil, tagged: [UUID] = []
+        photo: PreparedPhoto? = nil, tagged: [UUID] = [], sourceID: UUID? = nil
     ) {
         self.tagged = tagged
+        self.sourceID = sourceID
         self.airportID = airportID
         self.code = code
         self.context = context
@@ -128,13 +131,16 @@ public struct FlownDraft: Sendable {
     public var photo: PreparedPhoto?
     /// Friends who flew with you.
     public var tagged: [UUID]
+    /// The friend's flight this one is made from, when it was added from a tag.
+    public var sourceID: UUID?
 
     public init(
         origin: SpottedDraft.Place, destination: SpottedDraft.Place, distanceKm: Int? = nil, flightNumber: String? = nil,
         registration: Registration? = nil, type: SpottedDraft.AircraftTypeChoice? = nil, cabin: CabinClass? = nil,
-        seat: String? = nil, photo: PreparedPhoto? = nil, tagged: [UUID] = []
+        seat: String? = nil, photo: PreparedPhoto? = nil, tagged: [UUID] = [], sourceID: UUID? = nil
     ) {
         self.tagged = tagged
+        self.sourceID = sourceID
         self.photo = photo
         self.origin = origin
         self.destination = destination
@@ -229,7 +235,7 @@ public struct CheckInStore {
             airportID: draft.airportID, airportCode: draft.code,
             latitude: draft.position?.latitude, longitude: draft.position?.longitude,
             occurredAt: date, syncState: .pending, ownerID: ownerID, visitContext: draft.context.rawValue,
-            taggedIDs: draft.tagged.isEmpty ? nil : draft.tagged
+            taggedIDs: draft.tagged.isEmpty ? nil : draft.tagged, sourceID: draft.sourceID
         ))
         insertPhoto(draft.photo, for: id, at: date)
         try context.save()
@@ -258,7 +264,7 @@ public struct CheckInStore {
             originID: from, destinationID: to, originCode: draft.origin.code, destinationCode: draft.destination.code,
             flightNumber: (flight?.isEmpty ?? true) ? nil : flight, cabin: draft.cabin?.rawValue,
             seat: draft.seat?.isEmpty ?? true ? nil : draft.seat?.uppercased(),
-            taggedIDs: draft.tagged.isEmpty ? nil : draft.tagged
+            taggedIDs: draft.tagged.isEmpty ? nil : draft.tagged, sourceID: draft.sourceID
         ))
         insertPhoto(draft.photo, for: id, at: date)
         // The airports are checked in too, so they count as visited and show on the airport pages.

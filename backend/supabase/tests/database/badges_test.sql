@@ -178,7 +178,7 @@ select is(
 
 -- Progress for a user with no check-ins: hidden badges stay hidden and dormant ones don't show
 select pg_temp.as_user('aaaaaaaa-0000-0000-0000-000000000002');
-select is(jsonb_array_length(public.get_my_progress() -> 'badges'), 31, 'a new user sees 31 badges: not the 6 hidden or the 2 dormant');
+select is(jsonb_array_length(public.get_my_progress() -> 'badges'), 32, 'a new user sees 32 badges: not the 6 hidden or the 2 dormant');
 select is((public.get_my_progress() ->> 'hidden_remaining')::integer, 6, 'and is told 6 hidden ones remain');
 select is((public.get_my_progress() ->> 'xp')::integer, 0, 'with no XP');
 select is((public.get_my_progress() ->> 'level')::integer, 1, 'at level 1');
@@ -187,7 +187,7 @@ reset role;
 
 -- Alice sees her earned hidden badges
 select pg_temp.as_user('aaaaaaaa-0000-0000-0000-000000000001');
-select is(jsonb_array_length(public.get_my_progress() -> 'badges'), 34, 'alice sees 31 plus her 3 earned hidden badges');
+select is(jsonb_array_length(public.get_my_progress() -> 'badges'), 35, 'alice sees 32 plus her 3 earned hidden badges');
 select is((public.get_my_progress() ->> 'hidden_remaining')::integer, 3, 'and the 3 distance badges she has not earned remain hidden');
 reset role;
 

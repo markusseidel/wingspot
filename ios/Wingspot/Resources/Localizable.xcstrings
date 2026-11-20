@@ -291,6 +291,26 @@
         }
       }
     },
+    "Add to my logbook" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu meinem Logbuch hinzufügen"
+          }
+        }
+      }
+    },
+    "Adds it to your own check-ins, so it counts for your statistics and badges." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fügt ihn deinen eigenen Check-ins hinzu, damit er für deine Statistik und Abzeichen zählt."
+          }
+        }
+      }
+    },
     "Agree to the community rules in the Feed tab to see what others checked in here." : {
       "localizations" : {
         "de" : {
@@ -1807,6 +1827,16 @@
         }
       }
     },
+    "Friends tag me" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Freunde markieren mich"
+          }
+        }
+      }
+    },
     "Friends you follow and who follow you back show up here." : {
       "localizations" : {
         "de" : {
@@ -1920,6 +1950,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "In Arbeit"
+          }
+        }
+      }
+    },
+    "In your logbook" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In deinem Logbuch"
           }
         }
       }

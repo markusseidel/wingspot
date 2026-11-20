@@ -13,7 +13,7 @@ export interface PushDevice {
 /** One row from `claim_notifications`. */
 export interface PushRow {
   id: string;
-  kind: "follow" | "salute" | "comment" | "checkin";
+  kind: "follow" | "salute" | "comment" | "checkin" | "tagged";
   actor_id: string;
   actor_username: string;
   actor_name: string | null;
@@ -65,6 +65,11 @@ export function render(row: PushRow, locale: string | null): Rendered {
         return { title: name, body: visitText(row.visit_context, place, german) };
       }
       return { title: name, body: german ? "hat eingecheckt." : "checked in." };
+    }
+    case "tagged": {
+      const what = row.subject ?? "";
+      if (what) return { title: name, body: german ? `hat dich bei ${what} markiert.` : `tagged you on ${what}.` };
+      return { title: name, body: german ? "hat dich auf einem Check-in markiert." : "tagged you on a check-in." };
     }
     case "comment": {
       const text = (row.snippet ?? "").replace(/\s+/g, " ").trim();

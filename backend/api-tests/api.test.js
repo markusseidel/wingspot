@@ -577,7 +577,7 @@ describe("badges and progress", () => {
     assert.equal(response.body.xp, 0);
     assert.equal(response.body.level, 1);
     assert.equal(response.body.hidden_remaining, 6);
-    assert.equal(response.body.badges.length, 31);
+    assert.equal(response.body.badges.length, 32);
     assert.ok(response.body.badges.every((badge) => !badge.hidden && badge.level === 0));
     assert.ok(response.body.badges.every((badge) => typeof badge.name.en === "string" && typeof badge.name.de === "string"));
   });

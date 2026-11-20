@@ -340,4 +340,8 @@
     <string name="remove_me">Mich entfernen</string>
     <string name="allow_tags">Freunde dürfen mich markieren</string>
     <string name="allow_tags_hint">Nur Freunde können dich markieren. Auf dem Check-in eines Freundes erscheinst du dann, und du kannst dich jederzeit selbst entfernen.</string>
+    <string name="notify_tagged">Freunde markieren mich</string>
+    <string name="add_to_logbook">Zu meinem Logbuch hinzufügen</string>
+    <string name="add_to_logbook_hint">Fügt ihn deinen eigenen Check-ins hinzu, damit er für deine Statistik und Abzeichen zählt.</string>
+    <string name="in_my_logbook">In deinem Logbuch</string>
 </resources>

@@ -81,6 +81,23 @@ private func state(_ context: ModelContext, _ id: UUID) throws -> LocalCheckIn {
 }
 
 @MainActor struct CheckInOutboxTests {
+    @Test func aCheckInAddedFromAFriendsGoesUpWithTheFriendsCheckInId() async throws {
+        let context = try makeContext()
+        let source = UUID()
+        let store = CheckInStore(context: context)
+        let copy = try store.saveFlown(
+            FlownDraft(origin: .init(airportID: 3, code: "FRA"), destination: .init(airportID: 7, code: "DUS"), sourceID: source),
+            ownerID: alice
+        )
+        let own = try store.saveAirport(AirportDraft(airportID: 3, code: "FRA"), ownerID: alice)
+        let server = FakeServer()
+        _ = await CheckInOutbox(context: context, uploader: server).sync(userID: alice)
+
+        let sent = await server.sent
+        #expect(sent.first { $0.id == copy.id }?.sourceCheckInID == source)
+        #expect(sent.first { $0.id == own.id }?.sourceCheckInID == nil)
+    }
+
     @Test func theTaggedFriendsGoUpWithTheCheckIn() async throws {
         let context = try makeContext()
         let anna = UUID()

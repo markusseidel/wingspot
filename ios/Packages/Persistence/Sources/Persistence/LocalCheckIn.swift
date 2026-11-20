@@ -46,6 +46,8 @@ public final class LocalCheckIn {
     /// The friends tagged on a flight or an airport visit. `nil` leaves the tags on the server as they are, an empty
     /// list clears them. Like `ownerID`, it opens an existing store without a migration step.
     public var taggedIDs: [UUID]?
+    /// For a check-in made by adding a friend's flight or visit to your own logbook: the friend's check-in.
+    public var sourceID: UUID?
 
     init(
         id: UUID, kind: String, registration: String?, typeICAO: String?, typeName: String?, airportID: Int?,
@@ -53,7 +55,7 @@ public final class LocalCheckIn {
         ownerID: UUID? = nil, visitContext: String? = nil,
         originID: Int? = nil, destinationID: Int? = nil, originCode: String? = nil, destinationCode: String? = nil,
         flightNumber: String? = nil, cabin: String? = nil, seat: String? = nil, flightID: UUID? = nil,
-        taggedIDs: [UUID]? = nil
+        taggedIDs: [UUID]? = nil, sourceID: UUID? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -77,5 +79,6 @@ public final class LocalCheckIn {
         self.seat = seat
         self.flightID = flightID
         self.taggedIDs = taggedIDs
+        self.sourceID = sourceID
     }
 }

@@ -61,6 +61,9 @@ struct CheckInDetailView: View {
     private var photos: [FeedPhoto] { list.photos[item.id] ?? [] }
     private var tags: [PersonTag] { list.tags[item.id] ?? [] }
     private var isTagged: Bool { tags.contains { $0.id == account.userID } }
+    /// A friend's flight or airport visit that you are tagged on can be added to your own logbook, once.
+    private var canCopy: Bool { !isOwn && isTagged && (shown.kind == "flown" || shown.kind == "airport") }
+    private var inMyLogbook: Bool { localCheckIns.contains { $0.sourceID == item.id } }
     private var isOwn: Bool { item.userID == account.userID }
     private var canEdit: Bool { isOwn && localCheckIns.contains { $0.id == item.id } }
 
@@ -281,6 +284,17 @@ struct CheckInDetailView: View {
             }
             Section { CheckInVisibilityPicker(checkInID: item.id) }
         } else {
+            if canCopy {
+                Section {
+                    if inMyLogbook {
+                        Label("In your logbook", systemImage: "checkmark.circle")
+                    } else {
+                        Button("Add to my logbook", systemImage: "plus.circle") { addToLogbook() }
+                    }
+                } footer: {
+                    if !inMyLogbook { Text("Adds it to your own check-ins, so it counts for your statistics and badges.") }
+                }
+            }
             if isTagged {
                 Section {
                     Button("Remove me from this check-in", systemImage: "person.crop.circle.badge.minus") { confirmLeave = true }
@@ -354,6 +368,31 @@ struct CheckInDetailView: View {
         }
         .padding()
         .background(.bar)
+    }
+
+    /// Saves a copy of the friend's flight or visit on this device, linked to the original. It goes up with the next sync.
+    private func addToLogbook() {
+        let store = CheckInStore(context: modelContext)
+        do {
+            if shown.kind == "flown", let origin = shown.originID, let destination = shown.destinationID {
+                let draft = FlownDraft(
+                    origin: .init(airportID: origin, code: shown.originCode ?? "?"),
+                    destination: .init(airportID: destination, code: shown.destinationCode ?? "?"),
+                    distanceKm: shown.distanceKm, flightNumber: shown.flightNumber,
+                    registration: shown.registration.flatMap { Registration($0) },
+                    type: shown.typeICAO.map { .init(icaoCode: $0, name: shown.typeName ?? $0) }, sourceID: item.id
+                )
+                _ = try store.saveFlown(draft, ownerID: account.userID, at: shown.occurredAt)
+            } else if shown.kind == "airport", let airport = shown.airportID {
+                let draft = AirportDraft(airportID: airport, code: shown.airportCode ?? "?", context: .spotting, sourceID: item.id)
+                _ = try store.saveAirport(draft, ownerID: account.userID, at: shown.occurredAt)
+            } else {
+                return
+            }
+            sync?.requestSync()
+        } catch {
+            problem = .unknown
+        }
     }
 
     private func send(_ store: CheckInCommentStore) {

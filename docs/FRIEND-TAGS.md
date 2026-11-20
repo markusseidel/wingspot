@@ -77,10 +77,22 @@ A new notification kind `tagged`: "Jan tagged you on FRA → JFK" (German: "Jan 
 
 | Step | What | Status |
 |---|---|---|
-| 1a | Tables, rules, functions, sync; picker, display and "Remove me" on iOS and Android; setting "Friends may tag me" | this change |
-| 1b | Push notification `tagged` with its Settings switch, `send-push` text | next |
-| 2 | "Add to my logbook" for the tagged person: copies the flight or visit (route, date, flight number, airport, reason) into their own logbook, linked to the original so it can't be added twice. The Wingman badge | later |
-| 3 | "Most flown with" in the extended statistics | later |
+| 1a | Tables, rules, functions, sync; picker, display and "Remove me" on iOS and Android; setting "Friends may tag me" | done (#191) |
+| 1b | Push notification `tagged` with its Settings switch ("Friends tag me"), `send-push` text | done |
+| 2 | "Add to my logbook" for the tagged person, and the Wingman badge | done |
+| 3 | "Most flown with" in the extended statistics | later, with the extended statistics |
+
+### Step 1b: the notification
+
+- Migration `20261120500000_tag_notifications.sql`: kind `tagged`, `notification_prefs.tagged` (default on), `queue_notification` knows the kind, and a trigger on new rows in `checkin_tags`. Only newly added tags notify, so uploading the same list again tells nobody again.
+- `send-push` writes "Jan tagged you on FRA → JFK." (German: "Jan hat dich bei FRA → JFK markiert."). Tapping it opens the check-in, like the other kinds.
+
+### Step 2: add to my logbook and Wingman
+
+- Migration `20261120600000_tag_copies_and_wingman.sql`: `checkins.source_checkin_id`. The upload may carry `source_checkin_id`. The server keeps it only when the caller is tagged on that check-in and has no copy of it yet; otherwise the check-in is stored without the link, so an upload never fails over it.
+- The apps show "Add to my logbook" on a friend's flight or airport visit you are tagged on. It saves a local copy (route, date, flight number, registration, type; for a visit the reason is "Spotting", to be changed in Edit) linked to the original. The button turns into "In your logbook" once the copy exists on the phone. A flight creates its two airport visits as usual.
+- Not covered: a copy made on another device, or before a reinstall, is not known to the phone, so the button shows again. The server still refuses a second link, so the copy would be an unlinked duplicate that the person can delete.
+- Wingman (`wingman`, levels 1, 5, 10, 25): the check-ins you did together with friends, as the author or as a tagged friend. Like all badges it only goes down when you delete a check-in.
 
 ## 7. Tests
 
@@ -98,5 +110,5 @@ A new notification kind `tagged`: "Jan tagged you on FRA → JFK" (German: "Jan 
 
 - Tagging grants view access to that check-in (option A).
 - Mutual friends only.
-- Version 1 is tags with display and "Remove me". "Add to my logbook" waits for step 2.
+- Version 1 was tags with display and "Remove me"; the notification and "Add to my logbook" followed in steps 1b and 2.
 - No free-text names for people without the app.

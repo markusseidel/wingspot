@@ -8,12 +8,17 @@ public struct NotificationPrefs: Equatable, Sendable {
     public var comments: Bool
     /// The master switch for alerts about the check-ins of people you follow. Each person has switches of their own.
     public var followedCheckins: Bool
+    /// A friend tagged you on a flight or an airport visit.
+    public var tagged: Bool
 
-    public init(newFollowers: Bool = true, salutes: Bool = true, comments: Bool = true, followedCheckins: Bool = true) {
+    public init(
+        newFollowers: Bool = true, salutes: Bool = true, comments: Bool = true, followedCheckins: Bool = true, tagged: Bool = true
+    ) {
         self.newFollowers = newFollowers
         self.salutes = salutes
         self.comments = comments
         self.followedCheckins = followedCheckins
+        self.tagged = tagged
     }
 }
 
