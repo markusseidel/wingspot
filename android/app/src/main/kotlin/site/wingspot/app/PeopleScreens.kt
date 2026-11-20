@@ -54,6 +54,7 @@ fun PersonPage(app: WingspotApp, model: SocialViewModel, id: String, me: String)
     var items by remember { mutableStateOf(emptyList<FeedItem>()) }
     var photos by remember { mutableStateOf(emptyMap<String, List<site.wingspot.core.FeedPhoto>>()) }
     var tags by remember { mutableStateOf(emptyMap<String, List<site.wingspot.core.Person>>()) }
+    var badges by remember { mutableStateOf(emptyMap<String, List<site.wingspot.core.SocialApi.FeedBadge>>()) }
     var more by remember { mutableStateOf(false) }
     var failed by remember { mutableStateOf(false) }
     var menu by remember { mutableStateOf(false) }
@@ -67,6 +68,7 @@ fun PersonPage(app: WingspotApp, model: SocialViewModel, id: String, me: String)
         more = got.size >= 30
         photos = photos + runCatching { app.social.photos(got.map { it.id }).groupBy { it.checkInId } }.getOrDefault(emptyMap())
         tags = tags + runCatching { app.social.tags(got.map { it.id }) }.getOrDefault(emptyMap())
+        badges = badges + runCatching { app.social.badges(got.map { it.id }) }.getOrDefault(emptyMap())
     }
 
     // Their level and earned badges, where their privacy allows. A failure just leaves the card out.
@@ -150,7 +152,7 @@ fun PersonPage(app: WingspotApp, model: SocialViewModel, id: String, me: String)
                 val on = !item.saluted
                 items = items.map { if (it.id == item.id) it.copy(saluted = on, salutes = (it.salutes + if (on) 1 else -1).coerceAtLeast(0)) else it }
                 scope.launch { try { app.social.setSalute(on, item.id, me) } catch (e: ApiException) { items = items.map { if (it.id == item.id) item else it } } }
-            }, onPerson = {}, tags = tags[item.id].orEmpty())
+            }, onPerson = {}, tags = tags[item.id].orEmpty(), badges = badges[item.id].orEmpty())
         }
         if (more) item { TextButton(onClick = { scope.launch { items.lastOrNull()?.let { runCatching { page(FeedCursor(it.occurredAt, it.id)) } } } }) { Text(stringResource(R.string.load_more)) } }
     }

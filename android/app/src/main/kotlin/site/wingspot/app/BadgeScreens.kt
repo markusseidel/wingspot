@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import site.wingspot.core.BadgeFilter
 import site.wingspot.core.BadgeProgress
 import site.wingspot.core.Rank
@@ -46,7 +47,7 @@ private val CATEGORY_ORDER = listOf("milestones", "airports", "countries", "type
 
 /** The languages of the phone, most preferred first, for badge texts. */
 @Composable
-private fun languages(): List<String> {
+fun languages(): List<String> {
     val locales = LocalConfiguration.current.locales
     return (0 until locales.size()).map { locales[it].language }
 }
@@ -160,6 +161,14 @@ private fun badgeColor(level: Int, of: Int): Color {
 
 private fun symbol(category: String) = when (category) {
     "milestones" -> "🏁"; "airports" -> "🛬"; "countries" -> "🌍"; "types" -> "✈️"; "time" -> "🕐"; "hidden" -> "✨"; else -> "🎖"
+}
+
+/** The round symbol of a badge, from its category and how far its levels are reached. */
+@Composable
+fun BadgeSymbol(category: String, level: Int, of: Int, size: Int = 44) {
+    Box(Modifier.size(size.dp).clip(CircleShape).background(badgeColor(level, of)), contentAlignment = Alignment.Center) {
+        Text(symbol(category), fontSize = (size * 0.45f).sp)
+    }
 }
 
 @Composable

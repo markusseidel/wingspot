@@ -582,6 +582,16 @@
         }
       }
     },
+    "Badges earned" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verdiente Badges"
+          }
+        }
+      }
+    },
     "Be respectful. No harassment, hate or threats." : {
       "localizations" : {
         "de" : {

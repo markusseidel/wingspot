@@ -111,7 +111,7 @@ fun FeedTab(model: SocialViewModel, me: String, announcements: AnnouncementsView
         if (state.failed) item { Text(stringResource(R.string.feed_failed), color = MaterialTheme.colorScheme.error) }
         if (state.hasLoaded && state.items.isEmpty() && !state.failed) item { Text(stringResource(R.string.feed_empty)) }
         items(state.items, key = { it.id }) { item ->
-            FeedCard(item, me, state.photos[item.id].orEmpty(), onOpen = { model.open(item) }, onSalute = { model.toggleSalute(item.id) }, onPerson = { model.openPerson(item.userId) }, tags = state.tags[item.id].orEmpty())
+            FeedCard(item, me, state.photos[item.id].orEmpty(), onOpen = { model.open(item) }, onSalute = { model.toggleSalute(item.id) }, onPerson = { model.openPerson(item.userId) }, tags = state.tags[item.id].orEmpty(), badges = state.badges[item.id].orEmpty())
             if (item.id == state.items.lastOrNull()?.id) LaunchedEffect(item.id) { model.loadMore() }
         }
         item {
@@ -126,6 +126,7 @@ fun FeedTab(model: SocialViewModel, me: String, announcements: AnnouncementsView
 fun FeedCard(
     item: FeedItem, me: String, photos: List<FeedPhoto>, onOpen: () -> Unit, onSalute: () -> Unit, onPerson: () -> Unit,
     tags: List<site.wingspot.core.Person> = emptyList(),
+    badges: List<site.wingspot.core.SocialApi.FeedBadge> = emptyList(),
 ) {
     Card(Modifier.fillMaxWidth().clickable(onClick = onOpen)) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -141,6 +142,7 @@ fun FeedCard(
             }
             KindAndTitle(item)
             if (tags.isNotEmpty()) Text(stringResource(R.string.with_names, tags.joinToString(", ") { it.who }), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            if (badges.isNotEmpty()) FeedBadgesLine(badges)
             photos.firstOrNull()?.let { RemoteImage(it, Modifier.fillMaxWidth().height(200.dp).clip(MaterialTheme.shapes.medium)) }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 SaluteButton(item, onSalute)
@@ -287,6 +289,14 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                 Box {
                     RemoteImage(photo, Modifier.fillMaxWidth().clip(MaterialTheme.shapes.medium).clickable { viewing = photo })
                     if (shown.userId != me) TextButton(onClick = { reporting = ReportKind.PHOTO to photo.id }, modifier = Modifier.align(Alignment.TopEnd)) { Text(stringResource(R.string.report)) }
+                }
+            }
+            feed.badges[id]?.takeIf { it.isNotEmpty() }?.let { earned ->
+                item {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(stringResource(R.string.badges_earned_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        FeedBadgesLine(earned)
+                    }
                 }
             }
             if (tags.isNotEmpty()) item {
@@ -522,4 +532,19 @@ fun ReportDialog(app: WingspotApp, kind: ReportKind, target: String, onClose: ()
         },
         dismissButton = { if (!sent) TextButton(onClick = onClose) { Text(stringResource(R.string.cancel)) } },
     )
+}
+
+/** What a check-in earned, as a line on its card: the badge's symbol, name and, for a leveled one, its level. */
+@Composable
+fun FeedBadgesLine(badges: List<site.wingspot.core.SocialApi.FeedBadge>) {
+    val langs = languages()
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        for (badge in badges) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                BadgeSymbol(badge.category, badge.level, badge.levels.size, 24)
+                Text(badge.title(langs), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+                if (!badge.isSingle) Text(stringResource(R.string.level_n, badge.level), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
+    }
 }

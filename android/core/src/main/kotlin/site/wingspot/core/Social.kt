@@ -227,6 +227,31 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
         @SerialName("display_name") val displayName: String? = null,
     )
 
+    /** A badge a check-in earned, as its card shows it. */
+    @Serializable
+    data class FeedBadge(
+        @SerialName("checkin_id") val checkInId: String,
+        @SerialName("badge_id") val badgeId: String,
+        val name: Map<String, String> = emptyMap(),
+        val category: String = "",
+        val levels: List<Int> = emptyList(),
+        val level: Int = 0,
+    ) {
+        val isSingle: Boolean get() = levels.size <= 1
+        fun title(languages: List<String>) = LocalizedText(name).resolved(languages)
+    }
+
+    /** The badges these check-ins earned, for the ones the caller may see. Hidden badges are never in it. */
+    suspend fun badges(checkIns: List<String>): Map<String, List<FeedBadge>> {
+        val found = mutableMapOf<String, MutableList<FeedBadge>>()
+        for (chunk in checkIns.chunked(200)) {
+            val body = buildJsonObject { put("ids", JsonArray(chunk.map { JsonPrimitive(it) })) }.toString()
+            val rows = json.decodeFromString(ListSerializer(FeedBadge.serializer()), rest.call("POST", "/rest/v1/rpc/get_checkin_badges", body))
+            for (row in rows) found.getOrPut(row.checkInId) { mutableListOf() }.add(row)
+        }
+        return found
+    }
+
     /** The friends tagged on these check-ins, for the ones the caller may see. The server answers for 200 at a time. */
     suspend fun tags(checkIns: List<String>): Map<String, List<Person>> {
         val found = mutableMapOf<String, MutableList<Person>>()

@@ -64,6 +64,7 @@ struct CheckInDetailView: View {
     }
     private var photos: [FeedPhoto] { list.photos[item.id] ?? [] }
     private var tags: [PersonTag] { list.tags[item.id] ?? [] }
+    private var earned: [FeedBadge] { list.badges[item.id] ?? [] }
     private var isTagged: Bool { tags.contains { $0.id == account.userID } }
     /// A friend's flight or airport visit that you are tagged on can be added to your own logbook, once.
     private var canCopy: Bool { !isOwn && isTagged && (shown.kind == "flown" || shown.kind == "airport") }
@@ -74,6 +75,7 @@ struct CheckInDetailView: View {
     private func content(_ store: CheckInCommentStore) -> some View {
         List {
             summary
+            if !earned.isEmpty { Section { FeedBadgesLine(badges: earned) } header: { Text("Badges earned").font(.headline).textCase(nil) } }
             if !tags.isEmpty { withSection }
             if !photos.isEmpty { photoSection }
             reactions
