@@ -6,8 +6,8 @@ alter table public.airports add column closed_on date;
 alter table public.operators add column ceased_on date;
 
 insert into public.airports (id, icao, iata, name, city, country_code, continent, elevation_ft, location, closed_on) values
-  (9000001, 'EDDT', 'TXL', 'Berlin Tegel Airport', 'Berlin', 'DE', 'EU', 122, st_geogfromtext('POINT(13.2877 52.5597)'), '2020-11-08'),
-  (9000002, 'EDDI', 'THF', 'Berlin Tempelhof Airport', 'Berlin', 'DE', 'EU', 167, st_geogfromtext('POINT(13.4039 52.4725)'), '2008-10-30')
+  (9000001, 'EDDT', 'TXL', 'Berlin Tegel Airport', 'Berlin', 'DE', 'EU', 122, 'POINT(13.2877 52.5597)', '2020-11-08'),
+  (9000002, 'EDDI', 'THF', 'Berlin Tempelhof Airport', 'Berlin', 'DE', 'EU', 167, 'POINT(13.4039 52.4725)', '2008-10-30')
 on conflict (id) do update set closed_on = excluded.closed_on;
 
 insert into public.operators (icao, iata, name, country_code, ceased_on) values
