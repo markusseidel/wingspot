@@ -73,6 +73,9 @@ class SocialApiTests {
         val copies = api.checkInCopies(CHECKIN)
         assertEquals("Anna K", copies.single().who)
         assertEquals("/rest/v1/rpc/get_checkin_copies", server.takeRequest().url.encodedPath)
+    }
+
+    @Test
     fun aComparisonIsReadAndAHiddenProfileAnswersNull() = withApi { server, api, _ ->
         server.enqueue(ok("""{"me":{"flights":2,"distance_km":1200,"airports":3,"countries":3,"airlines":1,"types":2},
           "them":{"flights":2,"distance_km":1400,"airports":3,"countries":3,"airlines":2,"types":1},
