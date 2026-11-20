@@ -145,6 +145,13 @@ fun PersonPage(app: WingspotApp, model: SocialViewModel, id: String, me: String)
                 }
             }
         }
+        if (progress != null && id != me) person?.let { p ->
+            item {
+                OutlinedButton(onClick = { model.open(Route.ComparePage(id, p.who)) }, modifier = Modifier.fillMaxWidth().testTag("compare")) {
+                    Text(stringResource(R.string.compare_with_you))
+                }
+            }
+        }
         if (failed) item { Text(stringResource(R.string.error_unknown), color = MaterialTheme.colorScheme.error) }
         else if (person != null && items.isEmpty()) item { Text(stringResource(R.string.no_check_ins_visible), color = MaterialTheme.colorScheme.onSurfaceVariant) }
         items(items, key = { it.id }) { item ->

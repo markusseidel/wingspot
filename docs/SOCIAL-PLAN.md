@@ -95,6 +95,10 @@ profile is not visible. **Hidden badges are never part of the result.** Done in 
 
 **Apps:** a new page reached from the profile card; a horizontal bar per number; the lists in expandable sections.
 
+**As built** (`20261121500000_compare_with_friend.sql`): `compare_with` returns both sides' flights, distance, countries,
+airports, airlines and aircraft types, and for each of the last four what is in common, only yours and only theirs.
+The apps show it from a "Compare with you" button on the friend's profile.
+
 **Keep in mind:** these per-user number queries are the same ones the extended statistics view needs. Put them in
 shared SQL functions (`private.user_stat_counts`), so docs/EXTENDED-STATS.md and the leaderboard reuse them.
 

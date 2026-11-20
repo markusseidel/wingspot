@@ -299,6 +299,39 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
     @Serializable
     private data class CopyRow(@SerialName("user_id") val userId: String, val username: String, @SerialName("display_name") val displayName: String? = null)
 
+    /** The numbers of one side of a comparison. */
+    @Serializable
+    data class CompareStats(
+        val flights: Int = 0,
+        @SerialName("distance_km") val distanceKm: Int = 0,
+        val airports: Int = 0,
+        val countries: Int = 0,
+        val airlines: Int = 0,
+        val types: Int = 0,
+    )
+
+    /** An airport, country, airline or aircraft type in a comparison. A country has only a code. */
+    @Serializable
+    data class CompareItem(val code: String, val name: String? = null)
+
+    /** What is in both lists, only in yours and only in theirs. */
+    @Serializable
+    data class CompareSet(val common: List<CompareItem> = emptyList(), val mine: List<CompareItem> = emptyList(), val theirs: List<CompareItem> = emptyList())
+
+    /** You next to a friend (`compare_with`). Only what you may see of them is in it. */
+    @Serializable
+    data class CompareResult(
+        val me: CompareStats, val them: CompareStats,
+        val airports: CompareSet, val countries: CompareSet, val airlines: CompareSet, val types: CompareSet,
+    )
+
+    /** The caller next to a friend. Null when their profile can't be seen. */
+    suspend fun compare(target: String): CompareResult? {
+        val body = buildJsonObject { put("p_target", target) }.toString()
+        val text = rest.call("POST", "/rest/v1/rpc/compare_with", body).trim()
+        return if (text == "null") null else json.decodeFromString(CompareResult.serializer(), text)
+    }
+
     suspend fun taggableFriends(): List<Person> =
         json.decodeFromString(ListSerializer(Person.serializer()), rest.call("POST", "/rest/v1/rpc/get_taggable_friends", "{}"))
 

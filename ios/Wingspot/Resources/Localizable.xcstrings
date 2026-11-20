@@ -551,6 +551,16 @@
         }
       }
     },
+    "Airlines" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Airlines"
+          }
+        }
+      }
+    },
     "Airport" : {
       "localizations" : {
         "de" : {
@@ -1232,6 +1242,26 @@
         }
       }
     },
+    "Compare" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vergleich"
+          }
+        }
+      }
+    },
+    "Compare with you" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit dir vergleichen"
+          }
+        }
+      }
+    },
     "Contact" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1332,6 +1362,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Couldn't load the busy airports. Check your connection."
+          }
+        }
+      }
+    },
+    "Couldn't load the comparison" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vergleich konnte nicht geladen werden"
           }
         }
       }
@@ -1457,6 +1497,16 @@
       }
     },
     "Counts include only check-ins you are allowed to see." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gezählt werden nur Check-ins, die du sehen darfst."
+          }
+        }
+      }
+    },
+    "Counts include only the check-ins you are allowed to see." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2184,6 +2234,16 @@
         }
       }
     },
+    "In common" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gemeinsam"
+          }
+        }
+      }
+    },
     "In progress" : {
       "localizations" : {
         "de" : {
@@ -2787,6 +2847,16 @@
         }
       }
     },
+    "Nothing to compare" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nichts zu vergleichen"
+          }
+        }
+      }
+    },
     "Nothing to show yet." : {
       "localizations" : {
         "de" : {
@@ -2877,6 +2947,16 @@
         }
       }
     },
+    "Only %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur %@"
+          }
+        }
+      }
+    },
     "Only check-ins you are allowed to see are shown." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2937,6 +3017,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nur neue Check-ins"
+          }
+        }
+      }
+    },
+    "Only you" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur du"
           }
         }
       }
@@ -4369,6 +4459,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Du kannst jemanden auch in seinem Profil blockieren, dann siehst du ihn nicht mehr."
+          }
+        }
+      }
+    },
+    "You can only compare with people whose profile you may see." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du kannst nur mit Leuten vergleichen, deren Profil du sehen darfst."
           }
         }
       }

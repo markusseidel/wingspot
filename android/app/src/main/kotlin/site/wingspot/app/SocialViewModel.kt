@@ -26,6 +26,7 @@ enum class Tab { FEED, CHECK_IN, EXPLORE, BADGES, PROFILE }
 sealed class Route {
     data class CheckInPage(val id: String) : Route()
     data class PersonPage(val id: String) : Route()
+    data class ComparePage(val id: String, val name: String) : Route()
     data class AirportPage(val id: Long) : Route()
     data class TypePage(val code: String) : Route()
     data class RegistrationPage(val registration: String) : Route()
