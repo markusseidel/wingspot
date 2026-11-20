@@ -52,6 +52,30 @@ public struct CheckInComment: Equatable, Sendable, Identifiable, Decodable {
     }
 }
 
+/// A person named in a comment with @username.
+public struct CommentMention: Equatable, Sendable, Decodable {
+    public let id: UUID
+    public let username: String
+
+    public init(id: UUID, username: String) {
+        self.id = id
+        self.username = username
+    }
+}
+
+/// What a comment has besides its text: salutes and the people it mentions (`get_comment_extras`).
+public struct CommentExtra: Equatable, Sendable, Decodable {
+    public var salutes: Int
+    public var saluted: Bool
+    public let mentions: [CommentMention]
+
+    public init(salutes: Int = 0, saluted: Bool = false, mentions: [CommentMention] = []) {
+        self.salutes = salutes
+        self.saluted = saluted
+        self.mentions = mentions
+    }
+}
+
 /// Salutes and comments on a check-in. The database rules decide who may do what.
 public protocol ReactionBackend: Sendable {
     func setSalute(_ on: Bool, checkIn: UUID, as me: UUID) async throws
@@ -60,6 +84,14 @@ public protocol ReactionBackend: Sendable {
     func addComment(_ body: String, checkIn: UUID, as me: UUID) async throws -> CheckInComment
     func deleteComment(_ id: UUID) async throws
     func report(_ kind: ReportKind, target: UUID, reason: String) async throws -> ReportOutcome
+    /// The salutes and mentions of the comments under a check-in, by comment id.
+    func commentExtras(checkIn: UUID) async throws -> [UUID: CommentExtra]
+    func setCommentSalute(_ on: Bool, comment: UUID) async throws
+}
+
+extension ReactionBackend {
+    public func commentExtras(checkIn: UUID) async throws -> [UUID: CommentExtra] { [:] }
+    public func setCommentSalute(_ on: Bool, comment: UUID) async throws {}
 }
 
 /// The comments under one check-in.
@@ -69,6 +101,8 @@ public final class CheckInCommentStore {
     public static let maxLength = 2000
 
     public private(set) var comments: [CheckInComment] = []
+    /// Salutes and mentions by comment id. A comment without an entry has none.
+    public private(set) var extras: [UUID: CommentExtra] = [:]
     public private(set) var isLoading = false
     public private(set) var hasLoaded = false
     public private(set) var failure: AccountError?
@@ -101,6 +135,8 @@ public final class CheckInCommentStore {
             hasLoaded = true
             failure = nil
             onCountChange(comments.count)
+            // The extras are a bonus: the comments show without them.
+            extras = (try? await backend.commentExtras(checkIn: checkIn)) ?? extras
         } catch {
             failure = (error as? AccountError) ?? .unknown
         }
@@ -122,6 +158,22 @@ public final class CheckInCommentStore {
         comments.append(comment)
         onCountChange(comments.count)
         onPosted()
+        // The server reads the @names of the new comment; ask for them so they are links at once.
+        extras = (try? await backend.commentExtras(checkIn: checkIn)) ?? extras
+    }
+
+    /// Salutes or un-salutes a comment at once and tells the server; goes back if that fails.
+    public func toggleSalute(_ comment: CheckInComment) async {
+        let before = extras[comment.id] ?? CommentExtra()
+        var after = before
+        after.saluted.toggle()
+        after.salutes = max(0, before.salutes + (after.saluted ? 1 : -1))
+        extras[comment.id] = after
+        do {
+            try await backend.setCommentSalute(after.saluted, comment: comment.id)
+        } catch {
+            extras[comment.id] = before
+        }
     }
 
     public func delete(_ comment: CheckInComment) async {

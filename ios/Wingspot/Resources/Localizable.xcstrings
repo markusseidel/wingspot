@@ -3,32 +3,32 @@
   "strings" : {
     "%@ checked in %@" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ checked in %2$@"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ hat %2$@ eingecheckt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ checked in %2$@"
           }
         }
       }
     },
     "%@ commented on %@" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ commented on %2$@"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ hat %2$@ kommentiert"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ commented on %2$@"
           }
         }
       }
@@ -63,6 +63,16 @@
         }
       }
     },
+    "%@ mentioned you in a comment" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hat dich in einem Kommentar erwähnt"
+          }
+        }
+      }
+    },
     "%@ saluted your check-in" : {
       "localizations" : {
         "de" : {
@@ -75,16 +85,26 @@
     },
     "%@ saluted your check-in %@" : {
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ hat deinen Check-in %2$@ salutiert"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@ saluted your check-in %2$@"
           }
-        },
+        }
+      }
+    },
+    "%@ saluted your comment" : {
+      "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ hat deinen Check-in %2$@ salutiert"
+            "value" : "%@ hat deinen Kommentar salutiert"
           }
         }
       }
@@ -101,16 +121,16 @@
     },
     "%@ tagged you on %@" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ tagged you on %2$@"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ hat dich bei %2$@ markiert"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ tagged you on %2$@"
           }
         }
       }
@@ -3249,6 +3269,26 @@
         }
       }
     },
+    "Reply" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antworten"
+          }
+        }
+      }
+    },
+    "Reply to %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ antworten"
+          }
+        }
+      }
+    },
     "Report" : {
       "localizations" : {
         "de" : {
@@ -3285,6 +3325,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Salute"
+          }
+        }
+      }
+    },
+    "Salute comment" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kommentar salutieren"
           }
         }
       }
@@ -3771,6 +3821,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Flugschüler"
+          }
+        }
+      }
+    },
+    "Take back salute" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salut zurücknehmen"
           }
         }
       }

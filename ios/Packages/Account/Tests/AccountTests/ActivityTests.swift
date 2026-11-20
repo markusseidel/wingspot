@@ -33,3 +33,44 @@ import Testing
         #expect(items[0].checkInID == nil)
     }
 }
+
+@Suite struct CommentExtraTests {
+    private actor Backend: ReactionBackend {
+        var saluteCalls: [(Bool, UUID)] = []
+        var failSalute = false
+        func setSalute(_ on: Bool, checkIn: UUID, as me: UUID) async throws {}
+        func comments(checkIn: UUID) async throws -> [CheckInComment] { [] }
+        func addComment(_ body: String, checkIn: UUID, as me: UUID) async throws -> CheckInComment {
+            CheckInComment(id: UUID(), userID: me, username: "me", body: body, createdAt: Date())
+        }
+        func deleteComment(_ id: UUID) async throws {}
+        func report(_ kind: ReportKind, target: UUID, reason: String) async throws -> ReportOutcome { fatalError() }
+        func setCommentSalute(_ on: Bool, comment: UUID) async throws {
+            if failSalute { throw AccountError.unknown }
+            saluteCalls.append((on, comment))
+        }
+        func makeFail() { failSalute = true }
+    }
+
+    @MainActor @Test func aCommentSaluteIsCountedAtOnceAndGoesBackWhenItFails() async {
+        let backend = Backend()
+        let store = CheckInCommentStore(checkIn: UUID(), backend: backend, userID: { UUID() })
+        let comment = CheckInComment(id: UUID(), userID: UUID(), username: "anna", body: "hi", createdAt: Date())
+        await store.toggleSalute(comment)
+        #expect(store.extras[comment.id]?.salutes == 1)
+        #expect(store.extras[comment.id]?.saluted == true)
+        await store.toggleSalute(comment)
+        #expect(store.extras[comment.id]?.salutes == 0)
+        #expect(store.extras[comment.id]?.saluted == false)
+        await backend.makeFail()
+        await store.toggleSalute(comment)
+        #expect(store.extras[comment.id]?.salutes == 0)
+        #expect(store.extras[comment.id]?.saluted == false)
+    }
+
+    @Test func theExtrasAreReadFromTheServerAnswer() throws {
+        let json = #"{"id":"11111111-1111-1111-1111-111111111111","username":"max"}"#
+        let mention = try JSONDecoder().decode(CommentMention.self, from: Data(json.utf8))
+        #expect(mention.username == "max")
+    }
+}

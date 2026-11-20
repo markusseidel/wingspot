@@ -30,6 +30,10 @@ describe("push texts", () => {
     assert.equal(render(row({ kind: "tagged", subject: null }), "en").body, "tagged you on a check-in.");
     assert.equal(render(row({ kind: "comment", snippet: "Nice  one\n!" }), "en").body, "commented: “Nice one !”");
     assert.equal(render(row({ kind: "comment", snippet: "Toll" }), "de").body, "hat kommentiert: „Toll“");
+    assert.equal(render(row({ kind: "mention", snippet: "Hi  @max\nlook" }), "en").body, "mentioned you: “Hi @max look”");
+    assert.equal(render(row({ kind: "mention", snippet: "Hallo @max" }), "de").body, "hat dich erwähnt: „Hallo @max“");
+    assert.equal(render(row({ kind: "comment_like" }), "en").body, "saluted your comment.");
+    assert.equal(render(row({ kind: "comment_like" }), "de").body, "hat deinen Kommentar salutiert.");
   });
 
   test("alerts about new check-ins say what was done, in English and German", () => {

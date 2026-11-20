@@ -33,6 +33,12 @@ struct CheckInDetailView: View {
     @FocusState private var commentFocused: Bool
     @State private var problem: AccountError?
     @State private var report: ReportTarget?
+    /// Friends who can be mentioned, loaded the first time an "@" is typed.
+    @State private var friends: [PersonTag] = []
+    @State private var friendsLoaded = false
+    @State private var mentionedPerson: MentionedPerson?
+
+    private struct MentionedPerson: Identifiable, Hashable { let id: UUID }
 
     var body: some View {
         Group {
@@ -44,6 +50,13 @@ struct CheckInDetailView: View {
         }
         .navigationTitle("Check-in")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(item: $mentionedPerson) { PersonLoaderView(id: $0.id) }
+        .environment(\.openURL, OpenURLAction { url in
+            // A tapped @name in a comment carries the person's id.
+            guard url.scheme == "wingspot-person", let host = url.host, let id = UUID(uuidString: host) else { return .systemAction }
+            mentionedPerson = MentionedPerson(id: id)
+            return .handled
+        })
         .task {
             let created = (source ?? feed).commentStore(for: item.id)
             store = created
@@ -381,11 +394,11 @@ struct CheckInDetailView: View {
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
                         }
-                        Text(verbatim: comment.body).font(.body)
+                        Text(commentText(comment, extra: store.extras[comment.id])).font(.body)
+                        commentActions(comment, store: store)
                     }
                 }
                 .padding(.vertical, 6)
-                .accessibilityElement(children: .combine)
                 .swipeActions {
                     // Your own comments, and any comment under your own check-in.
                     if comment.userID == account.userID || item.userID == account.userID {
@@ -409,7 +422,97 @@ struct CheckInDetailView: View {
         }
     }
 
+    /// The comment text, with each mentioned @name in the accent colour as a link to that person.
+    private func commentText(_ comment: CheckInComment, extra: CommentExtra?) -> AttributedString {
+        var result = AttributedString(comment.body)
+        guard let mentions = extra?.mentions, !mentions.isEmpty else { return result }
+        let byName = Dictionary(mentions.map { ($0.username, $0.id) }, uniquingKeysWith: { first, _ in first })
+        for found in CommentText.mentionRanges(in: comment.body, usernames: Array(byName.keys)) {
+            guard let range = Range(found.range, in: result), let id = byName[found.username],
+                  let link = URL(string: "wingspot-person://\(id.uuidString.lowercased())") else { continue }
+            result[range].link = link
+            result[range].foregroundColor = .accentColor
+            result[range].font = .body.weight(.semibold)
+        }
+        return result
+    }
+
+    /// Reply and salute under a comment.
+    private func commentActions(_ comment: CheckInComment, store: CheckInCommentStore) -> some View {
+        let extra = store.extras[comment.id] ?? CommentExtra()
+        return HStack(spacing: 20) {
+            if comment.userID != account.userID {
+                Button("Reply") {
+                    text = CommentText.replying(to: comment.username, in: text)
+                    commentFocused = true
+                }
+                .accessibilityLabel(Text("Reply to \(comment.displayName ?? comment.username)"))
+            }
+            Button {
+                Task { await store.toggleSalute(comment) }
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: extra.saluted ? "hands.clap.fill" : "hands.clap")
+                    if extra.salutes > 0 { Text("\(extra.salutes)") }
+                }
+            }
+            .accessibilityLabel(extra.saluted ? Text("Take back salute") : Text("Salute comment"))
+            .accessibilityValue(Text("\(extra.salutes)"))
+            Spacer(minLength: 0)
+        }
+        .font(.footnote.weight(.semibold))
+        .buttonStyle(.borderless)
+        .padding(.top, 2)
+    }
+
+    /// Friends that fit what is being typed after an "@", for the strip above the field.
+    private var mentionSuggestions: [PersonTag] {
+        guard let prefix = CommentText.activePrefix(in: text) else { return [] }
+        return friends
+            .filter { $0.id != account.userID }
+            .filter { prefix.isEmpty || $0.username.lowercased().hasPrefix(prefix) || $0.name.lowercased().contains(prefix) }
+            .prefix(10).map { $0 }
+    }
+
+    private func mentionStrip(_ people: [PersonTag]) -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(people) { person in
+                    Button {
+                        text = CommentText.completing(text, with: person.username)
+                    } label: {
+                        HStack(spacing: 6) {
+                            AvatarView(id: person.id, name: person.name, size: 24)
+                            Text(verbatim: person.name).font(.subheadline)
+                        }
+                        .padding(.vertical, 4)
+                        .padding(.leading, 6)
+                        .padding(.trailing, 12)
+                        .background(Color(.secondarySystemBackground), in: Capsule())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 16)
+        }
+        .padding(.top, 8)
+    }
+
     private func composer(_ store: CheckInCommentStore) -> some View {
+        VStack(spacing: 0) {
+            let people = mentionSuggestions
+            if !people.isEmpty { mentionStrip(people) }
+            composerField(store)
+        }
+        .background(.bar)
+        .onChange(of: text) {
+            guard !friendsLoaded, CommentText.activePrefix(in: text) != nil else { return }
+            friendsLoaded = true
+            Task { friends = await list.taggableFriends() }
+        }
+    }
+
+    private func composerField(_ store: CheckInCommentStore) -> some View {
         let canSend = CheckInCommentStore.isSendable(text) && !store.isSending
         return HStack(alignment: .bottom, spacing: 10) {
             TextField("Write a comment…", text: $text, axis: .vertical)
@@ -433,7 +536,6 @@ struct CheckInDetailView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background(.bar)
     }
 
     /// Saves a copy of the friend's flight or visit on this device, linked to the original. It goes up with the next sync.

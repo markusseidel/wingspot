@@ -54,22 +54,24 @@ Opening the screen marks nothing read; a "Mark all read" button does.
 
 ## 5. Mentions and comment replies
 
-**What:** type `@` in a comment, pick a person from your friends (people you follow and who follow you). The mention
-is a link to their profile and sends a `mention` notification. "Reply" on a comment prefixes `@name` and sends a
-`reply` to the comment's author. Likes on comments ("salute" on a comment) as a small heart count.
+**What:** type `@` in a comment and pick a friend from the strip above the keyboard (the same friends the "With" list
+offers). The name becomes a link to their profile and sends a `mention` notification. **Reply** under a comment puts
+`@username ` at the start of the composer, so a reply is simply a mention of the person it answers (no separate
+`reply` kind). A comment can be saluted like a check-in; its author gets a `comment_like` notification.
 
-**Server**
-- `comment_mentions (comment_id, user_id)` filled by a trigger that parses `@username` in the saved text. Only users
-  who can see the check-in and are not blocked are kept, at most 5 per comment.
-- `comment_salutes (comment_id, user_id)`, one per user. `get_comments` returns the count and whether the caller
-  saluted. A like notifies the author once per comment, with the existing flood limit.
-- The word filter already runs on insert; mentions are parsed after it.
+**Server** (`20261121300000_comment_mentions_and_salutes.sql`)
+- `comment_mentions` is filled by a trigger that reads `@username` (lowercase letters, digits, underscore). Only mutual
+  friends of the author who may see the check-in are kept, at most 5; anyone else is dropped silently.
+- `comment_salutes` and `set_comment_salute(comment, on)`. `get_comment_extras(checkin)` returns salutes, whether the
+  caller saluted, and the mentions of each comment in one call.
+- Neither table has a foreign key to `profiles`. With one, PostgREST finds a second path from comments to profiles and
+  the `comments?select=...,profiles(username)` read of every installed app fails (PGRST201). An API test guards this.
+- Push texts for both kinds in English and German.
 
-**Apps:** the composer shows a friend list above the keyboard after `@`; mentions render in the accent colour; the
-reply and like controls sit under each comment bubble.
+**Apps:** suggestions strip, mentions in the accent colour as links (tap opens the person), Reply and salute under
+each comment, both kinds in the inbox.
 
-**Privacy:** a mention never reveals a check-in the person could not see. A mention of someone who cannot see it is
-dropped silently.
+**Privacy:** a mention never reveals a check-in the person could not see.
 
 ## 6. Shared flights, polish
 
