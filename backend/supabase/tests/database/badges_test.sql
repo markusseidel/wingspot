@@ -4,6 +4,15 @@ begin;
 create extension if not exists pgtap with schema extensions;
 select * from no_plan();
 
+-- Hidden badges are not in the repository (see backend/private/README.md), so this test makes its own. The ones a
+-- database may already have are removed for the length of the test.
+delete from public.user_badges where badge_id in (select id from public.badges where hidden);
+delete from public.badges where hidden;
+insert into public.badges (id, name, description, category, kind, rule, levels, hidden, valid_from, position) values
+  ('test_hidden_1', '{"en": "Test hidden 1"}'::jsonb, '{"en": "Test"}'::jsonb, 'hidden', 'single', '{"metric": "same_registration_airport_days"}'::jsonb, '{3}', true, null, 34),
+  ('test_hidden_2', '{"en": "Test hidden 2"}'::jsonb, '{"en": "Test"}'::jsonb, 'hidden', 'single', '{"metric": "palindrome_registrations"}'::jsonb, '{1}', true, null, 35),
+  ('test_hidden_3', '{"en": "Test hidden 3"}'::jsonb, '{"en": "Test"}'::jsonb, 'hidden', 'single', '{"metric": "checkins_on_date", "month": 1, "day": 1}'::jsonb, '{1}', true, null, 36);
+
 -- Country of registration, checked against contracts/test-vectors/registrations.json (37 valid cases)
 select is(private.register_country('D-AIMA')::text, 'DE', 'registration D-AIMA is from DE');
 select is(private.register_country('D-AIMA')::text, 'DE', 'registration D-AIMA is from DE');
@@ -155,16 +164,16 @@ select is(pg_temp.v('prop_power'), 1::bigint, 'one turboprop type');
 select is(pg_temp.v('early_bird'), 1::bigint, 'one early check-in');
 select is(pg_temp.v('night_owl'), 1::bigint, 'one late check-in');
 select is(pg_temp.v('anniversary'), 1::bigint, 'one anniversary');
-select is(pg_temp.v('deja_vu'), 4::bigint, 'the same registration at one airport on 4 days');
-select is(pg_temp.v('mirror_image'), 1::bigint, 'one palindrome');
-select is(pg_temp.v('new_year'), 1::bigint, 'one check-in on 1 January');
+select is(pg_temp.v('test_hidden_1'), 4::bigint, 'the same registration at one airport on 4 days');
+select is(pg_temp.v('test_hidden_2'), 1::bigint, 'one palindrome');
+select is(pg_temp.v('test_hidden_3'), 1::bigint, 'one check-in on 1 January');
 select is((select count(*)::int from private.badge_values('aaaaaaaa-0000-0000-0000-000000000001') where badge_id in ('island_hopper', 'short_field')), 0,
           'dormant badges are not evaluated');
 
 -- Levels and XP
 select is(jsonb_array_length(private.evaluate_badges('aaaaaaaa-0000-0000-0000-000000000001') -> 'badges_unlocked'), 28, 'first evaluation unlocks 28 badges');
 select is(pg_temp.levels(),
-  'wheels_up:1,logbook:1,fresh_metal:1,old_friend:2,daily_spotter:1,weekend_warrior:1,gate_hopper:2,home_turf:1,continental:3,high_altitude:1,arctic_circle:1,southern_cross:1,passport_stamps:3,register_collector:2,global_fleet:3,type_rater:2,superjumbo:1,queen_of_the_skies:1,dreamliner:1,triple_seven:1,boeing_fan:1,prop_power:1,early_bird:1,night_owl:1,anniversary:1,deja_vu:1,mirror_image:1,new_year:1',
+  'wheels_up:1,logbook:1,fresh_metal:1,old_friend:2,daily_spotter:1,weekend_warrior:1,gate_hopper:2,home_turf:1,continental:3,high_altitude:1,arctic_circle:1,southern_cross:1,passport_stamps:3,register_collector:2,global_fleet:3,type_rater:2,superjumbo:1,queen_of_the_skies:1,dreamliner:1,triple_seven:1,boeing_fan:1,prop_power:1,early_bird:1,night_owl:1,anniversary:1,test_hidden_1:1,test_hidden_2:1,test_hidden_3:1',
   'the right levels');
 select is(
   (select xp from public.profiles where id = 'aaaaaaaa-0000-0000-0000-000000000001'),
@@ -178,8 +187,8 @@ select is(
 
 -- Progress for a user with no check-ins: hidden badges stay hidden and dormant ones don't show
 select pg_temp.as_user('aaaaaaaa-0000-0000-0000-000000000002');
-select is(jsonb_array_length(public.get_my_progress() -> 'badges'), 32, 'a new user sees 32 badges: not the 6 hidden or the 2 dormant');
-select is((public.get_my_progress() ->> 'hidden_remaining')::integer, 6, 'and is told 6 hidden ones remain');
+select is(jsonb_array_length(public.get_my_progress() -> 'badges'), 32, 'a new user sees 32 badges: not the 3 hidden or the 2 dormant');
+select is((public.get_my_progress() ->> 'hidden_remaining')::integer, 3, 'and is told 3 hidden ones remain');
 select is((public.get_my_progress() ->> 'xp')::integer, 0, 'with no XP');
 select is((public.get_my_progress() ->> 'level')::integer, 1, 'at level 1');
 select is((select (e ->> 'value')::integer from jsonb_array_elements(public.get_my_progress() -> 'badges') e where e ->> 'id' = 'logbook'), 0, 'logbook progress is 0');
@@ -188,7 +197,7 @@ reset role;
 -- Alice sees her earned hidden badges
 select pg_temp.as_user('aaaaaaaa-0000-0000-0000-000000000001');
 select is(jsonb_array_length(public.get_my_progress() -> 'badges'), 35, 'alice sees 32 plus her 3 earned hidden badges');
-select is((public.get_my_progress() ->> 'hidden_remaining')::integer, 3, 'and the 3 distance badges she has not earned remain hidden');
+select is((public.get_my_progress() ->> 'hidden_remaining')::integer, 0, 'and none remain hidden');
 reset role;
 
 -- Dormant badges wake up when the data exists, and levels never go down
