@@ -39,6 +39,7 @@ After the data is in the snapshot, the app needs no change: switch the badges on
 | fresh_metal | Fresh Metal | Frisches Metall | Distinct registrations | 5, 10, 25, 50, 100, 250, 500 |
 | old_friend | Old Friend | Alter Bekannter | The same registration seen on different days | 2, 3, 5, 10 times |
 | busy_day | Busy Day | Voller Tag | Check-ins in one day | 5, 10, 25 |
+| wingman | Wingman | Wingman | Check-ins done together with friends, as the author or the tagged friend (see [FRIEND-TAGS.md](FRIEND-TAGS.md)) | 1, 5, 10, 25 |
 | daily_spotter | Daily Spotter | Täglicher Spotter | Consecutive days with a check-in | 3, 7, 14, 30 |
 | weekend_warrior | Weekend Warrior | Wochenend-Spotter | Consecutive weekends with a check-in | 2, 4, 8, 16 |
 

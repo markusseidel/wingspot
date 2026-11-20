@@ -129,6 +129,18 @@ class OutboxTests {
     }
 
     @Test
+    fun aCheckInAddedFromAFriendGoesUpWithTheFriendsCheckInId() = withOutbox { server, store, outbox, _ ->
+        val source = UUID.randomUUID()
+        val copy = store.saveFlown(FlownDraft(Place(3, "FRA"), Place(7, "DUS"), sourceId = source))
+        val own = store.saveAirport(AirportDraft(Place(3, "FRA")))
+        server.enqueue(answer(*store.pending().map { it.id to "stored" }.toTypedArray()))
+        outbox.sync()
+        val items = Json.parseToJsonElement(server.takeRequest().body!!.utf8()).jsonObject["checkins"]!!.jsonArray.map { it.jsonObject }
+        assertEquals(source.toString(), items.single { it["id"]!!.jsonPrimitive.content == copy.id.toString() }["source_checkin_id"]!!.jsonPrimitive.content)
+        assertTrue("source_checkin_id" !in items.single { it["id"]!!.jsonPrimitive.content == own.id.toString() })
+    }
+
+    @Test
     fun theTaggedFriendsGoUpWithTheCheckIn() = withOutbox { server, store, outbox, _ ->
         val anna = UUID.randomUUID()
         val tagged = store.saveAirport(AirportDraft(Place(3, "FRA"), tagged = listOf(anna)))

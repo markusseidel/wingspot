@@ -67,13 +67,15 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
     /// The friends tagged on a flight or an airport visit. Left out when the tags are not meant to change; an empty
     /// list removes them all.
     public let with: [UUID]?
+    /// For a check-in made by adding a friend's flight or visit to your own logbook: the friend's check-in.
+    public let sourceCheckInID: UUID?
 
     public init(
         id: UUID, kind: String, occurredAt: Date, registration: String?, typeICAO: String?, airportID: Int?,
         latitude: Double?, longitude: Double?, context: String? = nil,
         originID: Int? = nil, destinationID: Int? = nil, flightNumber: String? = nil, cabin: String? = nil,
         seat: String? = nil, visibility: String? = nil, flightID: UUID? = nil,
-        with: [UUID]? = nil
+        with: [UUID]? = nil, sourceCheckInID: UUID? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -92,6 +94,7 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
         self.seat = seat
         self.visibility = visibility
         self.with = with
+        self.sourceCheckInID = sourceCheckInID
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -106,6 +109,7 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
         case destinationID = "destination_id"
         case flightNumber = "flight_number"
         case cabin, seat, visibility, with
+        case sourceCheckInID = "source_checkin_id"
     }
 }
 

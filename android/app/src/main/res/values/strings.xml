@@ -341,4 +341,7 @@
     <string name="allow_tags">Friends may tag me</string>
     <string name="allow_tags_hint">Only friends can tag you. A tagged friend\'s check-in shows you on it, and you can remove yourself from it at any time.</string>
     <string name="notify_tagged">Friends tag me</string>
+    <string name="add_to_logbook">Add to my logbook</string>
+    <string name="add_to_logbook_hint">Adds it to your own check-ins, so it counts for your statistics and badges.</string>
+    <string name="in_my_logbook">In your logbook</string>
 </resources>
