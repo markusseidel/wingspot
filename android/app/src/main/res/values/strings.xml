@@ -171,6 +171,7 @@
     <string name="hidden_left">Hidden badges left: %1$d</string>
     <string name="badges_title">Badges</string>
     <string name="no_badges_yet">No badges yet</string>
+    <string name="badges_earned_title">Badges earned</string>
     <string name="no_badges_here">No badges here yet</string>
     <string name="cat_milestones">Milestones</string>
     <string name="cat_airports">Airports</string>

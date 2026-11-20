@@ -41,6 +41,8 @@ data class FeedState(
     val photos: Map<String, List<FeedPhoto>> = emptyMap(),
     /** The friends tagged on the check-ins in [items]. */
     val tags: Map<String, List<site.wingspot.core.Person>> = emptyMap(),
+    /** The badges the check-ins in [items] earned. */
+    val badges: Map<String, List<SocialApi.FeedBadge>> = emptyMap(),
     val isLoading: Boolean = false,
     val reachedEnd: Boolean = false,
     val hasLoaded: Boolean = false,
@@ -99,7 +101,7 @@ class SocialViewModel(
             try {
                 val page = api.feed(null, PAGE, sort)
                 if (mine != generation) return@launch
-                mutable.value = FeedState(page, loadPhotos(page), loadTags(page), false, page.size < PAGE, true, false)
+                mutable.value = FeedState(items = page, photos = loadPhotos(page), tags = loadTags(page), badges = loadBadges(page), isLoading = false, reachedEnd = page.size < PAGE, hasLoaded = true, failed = false)
             } catch (e: ApiException) {
                 if (mine == generation) mutable.value = mutable.value.copy(isLoading = false, failed = true, hasLoaded = true)
             }
@@ -119,7 +121,7 @@ class SocialViewModel(
                 val known = mutable.value.items.map { it.id }.toSet()
                 val fresh = page.filter { it.id !in known }
                 mutable.value = mutable.value.copy(
-                    items = mutable.value.items + fresh, photos = mutable.value.photos + loadPhotos(fresh), tags = mutable.value.tags + loadTags(fresh),
+                    items = mutable.value.items + fresh, photos = mutable.value.photos + loadPhotos(fresh), tags = mutable.value.tags + loadTags(fresh), badges = mutable.value.badges + loadBadges(fresh),
                     isLoading = false, reachedEnd = page.size < PAGE,
                 )
             } catch (e: ApiException) {
@@ -140,6 +142,13 @@ class SocialViewModel(
             api.tags(items.map { it.id })
         } catch (e: ApiException) {
             emptyMap() // the cards show without their friends
+        }
+
+    suspend fun loadBadges(items: List<FeedItem>): Map<String, List<SocialApi.FeedBadge>> =
+        try {
+            api.badges(items.map { it.id })
+        } catch (e: ApiException) {
+            emptyMap() // the cards show without their badges
         }
 
     /** The tags of one check-in, loaded again, for example after they were changed. */
@@ -174,7 +183,7 @@ class SocialViewModel(
     }
 
     fun remove(id: String) {
-        mutable.value = mutable.value.copy(items = mutable.value.items.filterNot { it.id == id }, photos = mutable.value.photos - id, tags = mutable.value.tags - id)
+        mutable.value = mutable.value.copy(items = mutable.value.items.filterNot { it.id == id }, photos = mutable.value.photos - id, tags = mutable.value.tags - id, badges = mutable.value.badges - id)
     }
 
     fun clear() {

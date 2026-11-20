@@ -297,6 +297,8 @@ public protocol FeedBackend: Sendable {
     func photos(for checkIns: [UUID]) async throws -> [FeedPhoto]
     /// The friends tagged on these check-ins, for the ones the caller may see.
     func tags(for checkIns: [UUID]) async throws -> [UUID: [PersonTag]]
+    /// The badges these check-ins earned, for the ones the caller may see. Hidden badges are never in it.
+    func badges(for checkIns: [UUID]) async throws -> [UUID: [FeedBadge]]
     /// The caller's mutual friends who allow being tagged.
     func taggableFriends() async throws -> [PersonTag]
     /// The caller leaves a check-in they are tagged on, for good.
@@ -308,6 +310,7 @@ public protocol FeedBackend: Sendable {
 
 extension FeedBackend {
     public func tags(for checkIns: [UUID]) async throws -> [UUID: [PersonTag]] { [:] }
+    public func badges(for checkIns: [UUID]) async throws -> [UUID: [FeedBadge]] { [:] }
     public func taggableFriends() async throws -> [PersonTag] { [] }
     public func removeMyTag(_ checkIn: UUID) async throws {}
     public func allowsTags(of me: UUID) async throws -> Bool { true }
@@ -350,6 +353,8 @@ public final class FeedStore {
     public private(set) var photos: [UUID: [FeedPhoto]] = [:]
     /// The friends tagged on the check-ins in `items`. A card shows them once they arrive.
     public private(set) var tags: [UUID: [PersonTag]] = [:]
+    /// The badges the check-ins in `items` earned. A card shows them once they arrive.
+    public private(set) var badges: [UUID: [FeedBadge]] = [:]
 
     /// How the Feed tab is sorted. The lists of a person, an airport or an aircraft are always by the day of the event.
     /// Changing it needs a refresh.
@@ -406,6 +411,7 @@ public final class FeedStore {
         items.removeAll { $0.id == id }
         photos[id] = nil
         tags[id] = nil
+        badges[id] = nil
     }
 
     /// Salutes or un-salutes a check-in. The card changes at once, and goes back if the request fails.
@@ -497,8 +503,10 @@ public final class FeedStore {
             hasLoaded = true
             photos = [:]
             tags = [:]
+            badges = [:]
             await loadPhotos(for: items.map(\.id), generation: mine)
             await loadTags(for: items.map(\.id), generation: mine)
+            await loadBadges(for: items.map(\.id), generation: mine)
         } catch {
             guard mine == generation else { return }
             failure = (error as? AccountError) ?? .unknown
@@ -521,6 +529,7 @@ public final class FeedStore {
             failure = nil
             await loadPhotos(for: added.map(\.id), generation: mine)
             await loadTags(for: added.map(\.id), generation: mine)
+            await loadBadges(for: added.map(\.id), generation: mine)
         } catch {
             guard mine == generation else { return }
             failure = (error as? AccountError) ?? .unknown
@@ -553,6 +562,12 @@ public final class FeedStore {
     private func loadTags(for ids: [UUID], generation mine: Int) async {
         guard !ids.isEmpty, let found = try? await backend.tags(for: ids), mine == generation else { return }
         for (id, group) in found { tags[id] = group }
+    }
+
+    /// Badges are a bonus as well: if they can't be loaded, the cards stay as they are.
+    private func loadBadges(for ids: [UUID], generation mine: Int) async {
+        guard !ids.isEmpty, let found = try? await backend.badges(for: ids), mine == generation else { return }
+        for (id, group) in found { badges[id] = group }
     }
 
     /// The tags of one check-in, loaded again, for example after they were changed.
@@ -601,6 +616,7 @@ public final class FeedStore {
         items = []
         photos = [:]
         tags = [:]
+        badges = [:]
         isLoading = false
         reachedEnd = false
         failure = nil
@@ -704,4 +720,35 @@ public struct MyCheckIn: Hashable, Sendable, Decodable {
 public protocol MyCheckInsBackend: Sendable {
     /// One page, oldest first, after the check-in with this time and id.
     func myCheckIns(after cursor: FeedCursor?, pageSize: Int) async throws -> [MyCheckIn]
+}
+
+/// A badge a check-in earned, as its card shows it.
+public struct FeedBadge: Identifiable, Hashable, Sendable {
+    public let id: String
+    /// The name by language code, English always there.
+    public let name: [String: String]
+    public let category: String
+    /// The value needed for each level, ascending. One entry for a single badge.
+    public let levels: [Int]
+    /// The level the check-in reached.
+    public let level: Int
+
+    public init(id: String, name: [String: String], category: String, levels: [Int], level: Int) {
+        self.id = id
+        self.name = name
+        self.category = category
+        self.levels = levels
+        self.level = level
+    }
+
+    public var isSingle: Bool { levels.count <= 1 }
+
+    /// The name in the first of `languages` that has one, then English.
+    public func title(preferring languages: [String]) -> String {
+        for language in languages {
+            let code = language.split(whereSeparator: { $0 == "-" || $0 == "_" }).first.map(String.init) ?? language
+            if let text = name[code] { return text }
+        }
+        return name["en"] ?? name.values.sorted().first ?? ""
+    }
 }

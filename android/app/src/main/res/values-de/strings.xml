@@ -171,6 +171,7 @@
     <string name="hidden_left">Versteckte Abzeichen übrig: %1$d</string>
     <string name="badges_title">Badges</string>
     <string name="no_badges_yet">Noch keine Badges</string>
+    <string name="badges_earned_title">Verdiente Badges</string>
     <string name="no_badges_here">Hier noch keine Abzeichen</string>
     <string name="cat_milestones">Meilensteine</string>
     <string name="cat_airports">Flughäfen</string>

@@ -185,7 +185,8 @@ struct FeedScreen: View {
                     onReportPhoto: { report = ReportTarget(kind: .photo, id: $0.id, subject: "this photo") },
                     onEdit: item.userID == account.userID && editable.contains(item.id) ? { editing = EditedCheckIn(id: item.id, kind: item.kind) } : nil,
                     onDelete: item.userID == account.userID ? { deleting = item } : nil,
-                    tags: feed.tags[item.id] ?? []
+                    tags: feed.tags[item.id] ?? [],
+                    badges: feed.badges[item.id] ?? []
                 )
                     .task {
                         // Close to the end: ask for older check-ins.
@@ -220,6 +221,8 @@ struct FeedCard: View {
     var onDelete: (() -> Void)?
     /// The friends tagged on this check-in.
     var tags: [PersonTag] = []
+    /// The badges this check-in earned.
+    var badges: [FeedBadge] = []
     @State private var viewing: FeedPhoto?
 
     var body: some View {
@@ -293,6 +296,7 @@ struct FeedCard: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
+            if !badges.isEmpty { FeedBadgesLine(badges: badges) }
             if !photos.isEmpty {
                 photoStrip
             }
@@ -440,5 +444,32 @@ struct AnnouncementCards: View {
             .listRowSeparator(.hidden)
             .accessibilityIdentifier("announcement")
         }
+    }
+}
+
+/// What a check-in earned, as a line on its card: the badge's symbol, name and, for a leveled one, its level.
+struct FeedBadgesLine: View {
+    let badges: [FeedBadge]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            ForEach(badges) { badge in
+                HStack(spacing: 8) {
+                    Image(systemName: BadgeStyle.symbol(for: badge.category))
+                        .font(.caption.bold())
+                        .foregroundStyle(.white)
+                        .frame(width: 24, height: 24)
+                        .background(BadgeStyle.color(level: badge.level, of: badge.levels.count), in: Circle())
+                        .accessibilityHidden(true)
+                    Text(verbatim: badge.title(preferring: Locale.preferredLanguages))
+                        .font(.subheadline.weight(.semibold))
+                    if !badge.isSingle {
+                        Text("Level \(badge.level)").font(.subheadline).foregroundStyle(.secondary)
+                    }
+                }
+                .accessibilityElement(children: .combine)
+            }
+        }
+        .padding(.vertical, 2)
     }
 }

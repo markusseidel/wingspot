@@ -571,6 +571,21 @@ extension SupabaseAccountBackend: FeedBackend {
 
 // MARK: - Friends on check-ins
 
+private struct BadgeRow: Decodable {
+    let checkInID: UUID
+    let badgeID: String
+    let name: [String: String]
+    let category: String
+    let levels: [Int]
+    let level: Int
+
+    private enum CodingKeys: String, CodingKey {
+        case checkInID = "checkin_id"
+        case badgeID = "badge_id"
+        case name, category, levels, level
+    }
+}
+
 private struct TagRow: Decodable {
     let checkInID: UUID
     let userID: UUID
@@ -618,6 +633,23 @@ extension SupabaseAccountBackend {
             }
             for row in rows {
                 found[row.checkInID, default: []].append(PersonTag(id: row.userID, username: row.username, displayName: row.displayName))
+            }
+        }
+        return found
+    }
+
+    public func badges(for checkIns: [UUID]) async throws -> [UUID: [FeedBadge]] {
+        guard !checkIns.isEmpty else { return [:] }
+        var found: [UUID: [FeedBadge]] = [:]
+        // The server answers for at most 200 check-ins at a time.
+        for start in stride(from: 0, to: checkIns.count, by: 200) {
+            let ids = Array(checkIns[start..<min(start + 200, checkIns.count)])
+            let rows: [BadgeRow] = try await socialErrors {
+                try await client.rpc("get_checkin_badges", params: TagIDs(ids: ids)).execute().value
+            }
+            for row in rows {
+                found[row.checkInID, default: []].append(
+                    FeedBadge(id: row.badgeID, name: row.name, category: row.category, levels: row.levels, level: row.level))
             }
         }
         return found
