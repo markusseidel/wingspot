@@ -100,6 +100,7 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
                     page is Route.ExploreMap -> ExploreMapPage(app, me, checkInState.all, refState, social)
                     page is Route.AirportsMap -> AirportsMapPage(checkInState.all, refState, social)
                     page is Route.Collections -> CollectionsPage(checkInState.all, social)
+                    page is Route.Leaderboard && me != null -> LeaderboardPage(app, social, me)
                     page is Route.Inbox && me != null -> InboxPage(social)
                     page is Route.Settings -> SettingsPage(app, me, social)
                     page is Route.EditProfile && me != null -> EditProfilePage(app, me, refState, social)

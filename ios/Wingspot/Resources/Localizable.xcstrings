@@ -13,16 +13,16 @@
     },
     "%@ added your flight %@ to their logbook" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ added your flight %2$@ to their logbook"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ hat deinen Flug %2$@ zu seinem Logbuch hinzugefügt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ added your flight %2$@ to their logbook"
           }
         }
       }
@@ -712,6 +712,16 @@
         }
       }
     },
+    "All time" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesamt"
+          }
+        }
+      }
+    },
     "Also change your earlier check-ins?" : {
       "localizations" : {
         "de" : {
@@ -1372,6 +1382,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vergleich konnte nicht geladen werden"
+          }
+        }
+      }
+    },
+    "Couldn't load the leaderboard" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bestenliste konnte nicht geladen werden"
           }
         }
       }
@@ -2127,6 +2147,16 @@
         }
       }
     },
+    "Friends who follow you can then see you on their board, counting only the check-ins they may see. Off by default." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Freunde, die dir folgen, sehen dich dann in ihrer Bestenliste, gezählt werden nur Check-ins, die sie sehen dürfen. Standardmäßig aus."
+          }
+        }
+      }
+    },
     "Friends you follow and who follow you back show up here." : {
       "localizations" : {
         "de" : {
@@ -2326,6 +2356,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zuletzt am %@"
+          }
+        }
+      }
+    },
+    "Leaderboard" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bestenliste"
           }
         }
       }
@@ -3021,6 +3061,16 @@
         }
       }
     },
+    "Only people you follow who switched on \"Show me on friends' leaderboards\" appear here." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier erscheinen nur Leute, denen du folgst und die „In Bestenlisten von Freunden zeigen“ eingeschaltet haben."
+          }
+        }
+      }
+    },
     "Only you" : {
       "localizations" : {
         "de" : {
@@ -3104,6 +3154,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Leute, von denen du Hinweise bekommst"
+          }
+        }
+      }
+    },
+    "Period" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeitraum"
           }
         }
       }
@@ -3241,6 +3301,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Profilfoto"
+          }
+        }
+      }
+    },
+    "Ranked by" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortiert nach"
           }
         }
       }
@@ -3714,6 +3784,16 @@
         }
       }
     },
+    "Show me on friends' leaderboards" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Bestenlisten von Freunden zeigen"
+          }
+        }
+      }
+    },
     "Shown next to your name wherever people see you. A square from the middle of the picture is used." : {
       "localizations" : {
         "de" : {
@@ -4102,6 +4182,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dieser Benutzername ist vergeben. Bitte versuche einen anderen."
+          }
+        }
+      }
+    },
+    "This year" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Jahr"
           }
         }
       }

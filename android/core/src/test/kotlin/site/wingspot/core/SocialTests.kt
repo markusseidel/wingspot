@@ -91,6 +91,24 @@ class SocialApiTests {
     }
 
     @Test
+    fun theLeaderboardIsReadAndTheSwitchIsSent() = withApi { server, api, _ ->
+        server.enqueue(ok("""[{"user_id":"$OTHER","username":"anna","display_name":"Anna K","value":5400,"is_me":false},{"user_id":"$ME","username":"max","display_name":null,"value":500,"is_me":true}]"""))
+        val rows = api.leaderboard("distance", "all")
+        assertEquals(listOf("Anna K", "max"), rows.map { it.who })
+        assertEquals(true, rows[1].isMe)
+        val request = server.takeRequest()
+        assertEquals("/rest/v1/rpc/get_leaderboard", request.url.encodedPath)
+        val body = Rest(server.url("/").toString(), "k", { "t" }).json.parseToJsonElement(request.body!!.utf8()).jsonObject
+        assertEquals("distance", body["p_metric"]!!.jsonPrimitive.content)
+        server.enqueue(ok("""[{"show_on_leaderboard":true}]"""))
+        assertEquals(true, api.showsOnLeaderboard(ME))
+        server.takeRequest()
+        server.enqueue(ok("", 204))
+        api.setShowsOnLeaderboard(ME, true)
+        assertEquals("PATCH", server.takeRequest().method)
+    }
+
+    @Test
     fun theInboxIsReadPagedByTimeAndMarkedRead() = withApi { server, api, _ ->
         server.enqueue(ok("""[{"id":"i1","kind":"salute","actor_id":"$OTHER","username":"anna","display_name":null,"checkin_id":"$CHECKIN",
             "subject":"FRA → JFK","snippet":null,"created_at":"2026-11-21T10:00:00.5+00:00","is_read":false}]"""))

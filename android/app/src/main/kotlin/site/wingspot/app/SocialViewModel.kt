@@ -33,6 +33,7 @@ sealed class Route {
     object ExploreMap : Route()
     object AirportsMap : Route()
     object Collections : Route()
+    object Leaderboard : Route()
     object Settings : Route()
     object Inbox : Route()
     object EditProfile : Route()

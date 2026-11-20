@@ -299,6 +299,32 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
     @Serializable
     private data class CopyRow(@SerialName("user_id") val userId: String, val username: String, @SerialName("display_name") val displayName: String? = null)
 
+    /** One place on the friends leaderboard. */
+    @Serializable
+    data class LeaderboardRow(
+        @SerialName("user_id") val userId: String,
+        val username: String,
+        @SerialName("display_name") val displayName: String? = null,
+        val value: Long = 0,
+        @SerialName("is_me") val isMe: Boolean = false,
+    ) {
+        val who: String get() = displayName?.takeIf { it.isNotBlank() } ?: username
+    }
+
+    /** The caller and the people they follow who switched it on, ranked. [metric]: distance, flights, countries or airports. [period]: year or all. */
+    suspend fun leaderboard(metric: String, period: String): List<LeaderboardRow> {
+        val body = buildJsonObject { put("p_metric", metric); put("p_period", period) }.toString()
+        return json.decodeFromString(ListSerializer(LeaderboardRow.serializer()), rest.call("POST", "/rest/v1/rpc/get_leaderboard", body))
+    }
+
+    suspend fun showsOnLeaderboard(me: String): Boolean =
+        json.parseToJsonElement(rest.call("GET", "/rest/v1/profiles?select=show_on_leaderboard&id=eq.$me")).jsonArray.firstOrNull()
+            ?.jsonObject?.get("show_on_leaderboard")?.jsonPrimitive?.content == "true"
+
+    suspend fun setShowsOnLeaderboard(me: String, shown: Boolean) {
+        rest.call("PATCH", "/rest/v1/profiles?id=eq.$me", """{"show_on_leaderboard":$shown}""", prefer = "return=minimal")
+    }
+
     /** The numbers of one side of a comparison. */
     @Serializable
     data class CompareStats(

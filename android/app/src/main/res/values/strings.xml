@@ -399,4 +399,11 @@
     <string name="compare_only_you">Only you</string>
     <string name="compare_only_them">Only %1$s</string>
     <string name="compare_footer">Counts include only the check-ins you are allowed to see.</string>
+    <string name="leaderboard_title">Leaderboard</string>
+    <string name="leaderboard_year">This year</string>
+    <string name="leaderboard_all">All time</string>
+    <string name="leaderboard_failed">Couldn\'t load the leaderboard. Please check your connection and try again.</string>
+    <string name="leaderboard_alone">Only people you follow who switched on \"Show me on friends\' leaderboards\" appear here.</string>
+    <string name="leaderboard_show_me">Show me on friends\' leaderboards</string>
+    <string name="leaderboard_show_me_hint">Friends who follow you can then see you on their board, counting only the check-ins they may see. Off by default.</string>
 </resources>

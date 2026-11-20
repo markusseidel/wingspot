@@ -116,6 +116,7 @@ fun ProfileTab(
             state.error?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error, modifier = Modifier.testTag("error")) }
             if (stats.checkIns > 0) StatsCard(stats, reference.database)
             OutlinedButton(onClick = { social.open(Route.Collections) }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.collections)) }
+            OutlinedButton(onClick = { social.open(Route.Leaderboard) }, modifier = Modifier.fillMaxWidth().testTag("open-leaderboard")) { Text(stringResource(R.string.leaderboard_title)) }
         } else {
             progress.progress?.let { LevelHeader(it) }
             StatsCard(stats, reference.database)

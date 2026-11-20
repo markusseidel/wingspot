@@ -23,6 +23,9 @@ struct PeopleView: View {
                 }
             } else {
                 Section {
+                    NavigationLink { LeaderboardView() } label: { Label("Leaderboard", systemImage: "list.number") }
+                }
+                Section {
                     NavigationLink("Following") { PeopleListView(list: .following) }
                     NavigationLink("Followers") { PeopleListView(list: .followers) }
                     NavigationLink("Blocked") { PeopleListView(list: .blocked) }
