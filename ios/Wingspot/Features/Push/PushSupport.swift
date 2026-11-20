@@ -170,6 +170,7 @@ struct NotificationsSection: View {
                     Toggle("New followers", isOn: binding(prefs, \.newFollowers))
                     Toggle("Salutes", isOn: binding(prefs, \.salutes))
                     Toggle("Comments", isOn: binding(prefs, \.comments))
+                    Toggle("Friends tag me", isOn: binding(prefs, \.tagged))
                     Toggle("Check-ins of people you follow", isOn: binding(prefs, \.followedCheckins))
                     NavigationLink("People you get alerts from") { AlertRulesView() }
                     Button("Hide the text until unlocked") {

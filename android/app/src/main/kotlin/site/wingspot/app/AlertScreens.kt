@@ -78,6 +78,7 @@ fun NotificationSettings(app: WingspotApp, me: String) {
             Triple(R.string.notify_followers, { x: SocialApi.NotificationPrefs -> x.newFollowers }, { x: SocialApi.NotificationPrefs, v: Boolean -> x.copy(newFollowers = v) }),
             Triple(R.string.notify_salutes, { x: SocialApi.NotificationPrefs -> x.salutes }, { x: SocialApi.NotificationPrefs, v: Boolean -> x.copy(salutes = v) }),
             Triple(R.string.notify_comments, { x: SocialApi.NotificationPrefs -> x.comments }, { x: SocialApi.NotificationPrefs, v: Boolean -> x.copy(comments = v) }),
+            Triple(R.string.notify_tagged, { x: SocialApi.NotificationPrefs -> x.tagged }, { x: SocialApi.NotificationPrefs, v: Boolean -> x.copy(tagged = v) }),
             Triple(R.string.notify_followed, { x: SocialApi.NotificationPrefs -> x.followedCheckins }, { x: SocialApi.NotificationPrefs, v: Boolean -> x.copy(followedCheckins = v) }),
         )) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {

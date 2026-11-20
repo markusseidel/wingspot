@@ -25,6 +25,9 @@ describe("push texts", () => {
     assert.equal(render(row(), "en").body, "saluted your check-in (D-AIPC).");
     assert.equal(render(row(), "de").body, "hat deinen Check-in salutiert (D-AIPC).");
     assert.equal(render(row({ subject: null }), "en").body, "saluted your check-in.");
+    assert.equal(render(row({ kind: "tagged", subject: "FRA → JFK" }), "en").body, "tagged you on FRA → JFK.");
+    assert.equal(render(row({ kind: "tagged", subject: "FRA → JFK" }), "de").body, "hat dich bei FRA → JFK markiert.");
+    assert.equal(render(row({ kind: "tagged", subject: null }), "en").body, "tagged you on a check-in.");
     assert.equal(render(row({ kind: "comment", snippet: "Nice  one\n!" }), "en").body, "commented: “Nice one !”");
     assert.equal(render(row({ kind: "comment", snippet: "Toll" }), "de").body, "hat kommentiert: „Toll“");
   });

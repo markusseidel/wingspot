@@ -408,11 +408,13 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
         val salutes: Boolean = true,
         val comments: Boolean = true,
         @SerialName("followed_checkins") val followedCheckins: Boolean = true,
+        /** A friend tagged you on a flight or an airport visit. */
+        val tagged: Boolean = true,
     )
 
     suspend fun notificationPrefs(me: String): NotificationPrefs = json.decodeFromString(
         ListSerializer(NotificationPrefs.serializer()),
-        rest.call("GET", "/rest/v1/notification_prefs?select=new_followers,salutes,comments,followed_checkins&user_id=eq.$me"),
+        rest.call("GET", "/rest/v1/notification_prefs?select=new_followers,salutes,comments,followed_checkins,tagged&user_id=eq.$me"),
     ).firstOrNull() ?: NotificationPrefs()
 
     suspend fun setNotificationPrefs(me: String, prefs: NotificationPrefs) {

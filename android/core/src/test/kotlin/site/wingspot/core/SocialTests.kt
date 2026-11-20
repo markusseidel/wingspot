@@ -200,8 +200,8 @@ class AlertTests {
     fun prefsAreReadWithEverythingOnByDefault() = withApi { server, api ->
         server.enqueue(ok("[]"))
         assertEquals(SocialApi.NotificationPrefs(), api.notificationPrefs(ME))
-        server.enqueue(ok("""[{"new_followers":true,"salutes":false,"comments":true,"followed_checkins":false}]"""))
-        assertEquals(SocialApi.NotificationPrefs(salutes = false, followedCheckins = false), api.notificationPrefs(ME))
+        server.enqueue(ok("""[{"new_followers":true,"salutes":false,"comments":true,"followed_checkins":false,"tagged":false}]"""))
+        assertEquals(SocialApi.NotificationPrefs(salutes = false, followedCheckins = false, tagged = false), api.notificationPrefs(ME))
         server.enqueue(ok("", 204))
         api.setNotificationPrefs(ME, SocialApi.NotificationPrefs(comments = false))
         server.takeRequest(); server.takeRequest()
