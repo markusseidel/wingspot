@@ -8,6 +8,7 @@ import WingspotCore
 struct FeedScreen: View {
     @Environment(AccountStore.self) private var account
     @Environment(FeedStore.self) private var feed
+    @Environment(BadgeStore.self) private var badges
     @Environment(AnnouncementStore.self) private var announcements
     @State private var commentsFor: FeedItem?
     @AppStorage("feedSort") private var sortChoice = FeedSort.created.rawValue
@@ -57,7 +58,7 @@ struct FeedScreen: View {
                 Button("Delete", role: .destructive) {
                     guard let item = deleting else { return }
                     deleting = nil
-                    Task { deleteFailed = !(await CheckInDeletion.delete(item.id, feed: feed, context: modelContext)) }
+                    Task { deleteFailed = !(await CheckInDeletion.delete(item.id, feed: feed, badges: badges, context: modelContext)) }
                 }
             } message: {
                 Text("It is removed for good, with its photos, salutes and comments.")

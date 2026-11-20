@@ -104,6 +104,42 @@ private actor FakeSource: ProgressSource {
         #expect(badges.celebrations.isEmpty, "the same level isn't celebrated twice")
     }
 
+    @Test func aBadgeTakenBackByADeleteIsCelebratedAgainWhenEarnedAgain() async throws {
+        let source = FakeSource()
+        let badges = store(try makeContext(), source)
+        badges.begin(userID: user)
+        await source.set(.success(try answer([("wheels_up", 1, now.addingTimeInterval(60))])))
+        await badges.refresh()
+        badges.acknowledge()
+
+        // The check-in is deleted: the server no longer lists the level.
+        await source.set(.success(try answer([("wheels_up", 0, nil)])))
+        await badges.refresh()
+        #expect(badges.celebrations.isEmpty)
+
+        await source.set(.success(try answer([("wheels_up", 1, now.addingTimeInterval(120))])))
+        await badges.refresh()
+        #expect(badges.celebrations.map(\.badge.id) == ["wheels_up"])
+        #expect(badges.celebrations.first?.previousLevel == 0)
+    }
+
+    @Test func aLevelThatWentDownIsCelebratedFromTheLowerLevelOnly() async throws {
+        let source = FakeSource()
+        let badges = store(try makeContext(), source)
+        badges.begin(userID: user)
+        await source.set(.success(try answer([("logbook", 2, now.addingTimeInterval(60))])))
+        await badges.refresh()
+        badges.acknowledge()
+
+        await source.set(.success(try answer([("logbook", 1, now.addingTimeInterval(60))])))
+        await badges.refresh()
+        #expect(badges.celebrations.isEmpty)
+
+        await source.set(.success(try answer([("logbook", 2, now.addingTimeInterval(180))])))
+        await badges.refresh()
+        #expect(badges.celebrations.first?.previousLevel == 1)
+    }
+
     @Test func aHigherLevelIsCelebratedWithItsPreviousLevel() async throws {
         let source = FakeSource()
         let badges = store(try makeContext(), source)

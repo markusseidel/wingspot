@@ -58,7 +58,8 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
     // Badges follow the signed-in person and are refreshed when check-ins reach the server.
     val synced = checkInState.recent.count { it.syncState == site.wingspot.core.SyncState.SYNCED }
     LaunchedEffect(me) { badges.begin(me); if (me != null) Push.register(app) }
-    LaunchedEffect(synced) { if (me != null && synced > 0) badges.refresh() }
+    // Also when it goes down: deleting a check-in can take a badge back.
+    LaunchedEffect(synced) { if (me != null) badges.refresh() }
     // After a check-in, a flight or an edit went up, the lists show it without a pull to refresh.
     LaunchedEffect(me) { app.uploads.collect { if (me != null) { checkIn.reload(); social.refresh() } } }
     CelebrationDialog(badges)

@@ -111,6 +111,33 @@ class BadgeTests {
     }
 }
 
+class BadgesTakenBackTests {
+    private val api = SocialApi(Rest("http://x/", "k", { "t" }), "http://x/storage/v1")
+    private fun progress(level: Int) = api.parseProgress(
+        """{"xp":0,"level":1,"xp_for_level":0,"xp_for_next_level":100,"hidden_remaining":0,"badges":[
+        {"id":"logbook","name":{"en":"Logbook"},"category":"milestones","kind":"leveled","hidden":false,"levels":[10,25],"value":$level,"level":$level,
+        "unlocked_at":"2026-11-05T20:31:20.920684+00:00"}]}""",
+    )
+    private val firstSeen = Instant.parse("2026-11-05T20:00:00Z").toEpochMilli()
+
+    @Test
+    fun aBadgeThatWentDownLowersWhatWasShownSoEarningItAgainIsCelebrated() {
+        // Level 2 was shown. A delete took it down to level 1.
+        val down = Celebrations.compute(progress(1), mapOf("logbook" to 2), firstSeen)
+        assertEquals(mapOf("logbook" to 1), down.loweredAcks)
+        assertTrue(down.celebrations.isEmpty())
+        // Earning level 2 again: the stored acknowledgement is now 1, so it is celebrated from level 1.
+        val again = Celebrations.compute(progress(2), mapOf("logbook" to 1), firstSeen)
+        assertEquals(1, again.celebrations.single().previousLevel)
+    }
+
+    @Test
+    fun aBadgeTheServerNoLongerListsCountsAsLevelZero() {
+        val result = Celebrations.compute(progress(0).copy(badges = emptyList()), mapOf("logbook" to 1), firstSeen)
+        assertEquals(mapOf("logbook" to 0), result.loweredAcks)
+    }
+}
+
 class AccountCallsTests {
     private fun withServer(block: suspend (MockWebServer, SocialApi, ApiClient) -> Unit) {
         MockWebServer().use { server ->

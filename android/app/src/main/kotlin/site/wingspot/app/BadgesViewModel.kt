@@ -44,6 +44,7 @@ class BadgesViewModel(private val api: SocialApi, private val prefs: Prefs) : Vi
                 if (me != user) return@launch
                 val progress = api.parseProgress(text)
                 val result = Celebrations.compute(progress, prefs.acks(me), prefs.firstSeen(me))
+                prefs.lowerAcks(me, result.loweredAcks)
                 prefs.setAcks(me, result.newAcks)
                 prefs.cacheProgress(me, text)
                 mutable.value = BadgesState(progress, result.celebrations, false)

@@ -14,6 +14,7 @@ struct CheckInDetailView: View {
     @AppStorage(DistanceUnit.storageKey) private var unit = DistanceUnit.kilometres
     @Environment(AccountStore.self) private var account
     @Environment(FeedStore.self) private var feed
+    @Environment(BadgeStore.self) private var badges
     @Environment(CheckInSyncCoordinator.self) private var sync: CheckInSyncCoordinator?
     /// Your check-ins saved on this device. Only these can be edited, because the details are sent from here.
     @Query private var localCheckIns: [LocalCheckIn]
@@ -105,7 +106,7 @@ struct CheckInDetailView: View {
             Button("Delete", role: .destructive) {
                 Task {
                     let others = source == nil ? [] : [feed]
-                    if await CheckInDeletion.delete(item.id, feed: list, others: others, context: modelContext) {
+                    if await CheckInDeletion.delete(item.id, feed: list, others: others, badges: badges, context: modelContext) {
                         dismiss()
                     } else {
                         problem = list.failure ?? .unknown

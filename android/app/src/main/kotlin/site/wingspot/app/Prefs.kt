@@ -51,6 +51,14 @@ class Prefs(context: Context) {
         edit.apply()
     }
 
+    /** Takes back what was shown for badges that went down, so earning them again is celebrated again. */
+    fun lowerAcks(user: String, acks: Map<String, Int>) {
+        if (acks.isEmpty()) return
+        val edit = prefs.edit()
+        for ((badge, level) in acks) edit.putInt("ack.$user.$badge", level)
+        edit.apply()
+    }
+
     /** When this account first appeared on this phone. Badges unlocked before then are not celebrated again. */
     fun firstSeen(user: String): Long {
         val key = "firstSeen.$user"
