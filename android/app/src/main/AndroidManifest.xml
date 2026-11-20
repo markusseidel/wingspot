@@ -33,6 +33,13 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="wingspot" android:host="auth-callback" />
             </intent-filter>
+            <!-- An invite link: wingspot://invite/CODE -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="wingspot" android:host="invite" />
+            </intent-filter>
         </activity>
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="${mapsApiKey}" />
         <receiver android:name=".SaluteReceiver" android:exported="false" />

@@ -34,6 +34,7 @@ sealed class Route {
     object AirportsMap : Route()
     object Collections : Route()
     object Leaderboard : Route()
+    object Invite : Route()
     object Settings : Route()
     object Inbox : Route()
     object EditProfile : Route()
@@ -90,6 +91,30 @@ class SocialViewModel(
 
     fun openPerson(id: String) {
         stack.add(Route.PersonPage(id))
+    }
+
+    // Invite links ----------------------------------------------------------------------------------------------
+
+    /** Whose invite link was opened and is waiting for a "Follow?". */
+    var pendingInvite by mutableStateOf<SocialApi.InvitePerson?>(null)
+        private set
+    private var pendingCode: String? = null
+
+    /** A link was opened: remember who it is for, and ask whether to follow them. */
+    fun receiveInvite(code: String) {
+        pendingCode = code
+        viewModelScope.launch { pendingInvite = try { api.inviteOwner(code) } catch (e: ApiException) { null } }
+    }
+
+    fun followPendingInvite() {
+        val code = pendingCode ?: return
+        dismissInvite()
+        viewModelScope.launch { try { api.followByCode(code); refresh() } catch (e: ApiException) { } }
+    }
+
+    fun dismissInvite() {
+        pendingCode = null
+        pendingInvite = null
     }
 
     // Activity inbox ---------------------------------------------------------------------------------------------

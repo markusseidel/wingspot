@@ -23,6 +23,7 @@
 		2419BA1DA1B17C761D9D0036 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62A4921DD7585EFD9F3F97A /* SettingsView.swift */; };
 		27F83E299CBA8188CF0AA61F /* SharingSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995610FFAC434B480B981139 /* SharingSection.swift */; };
 		2E4689A87246BCE2846B568F /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82163058748258D0AE08F801 /* NetworkMonitor.swift */; };
+		2FF0C87FC72E3499ADF81C3A /* Invite.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5F9A03781612B9B04E6C31 /* Invite.swift */; };
 		3450A879ADAE02CB4E496D96 /* AlertRulesViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29AD035B27FB3BE30BCB737 /* AlertRulesViews.swift */; };
 		34EDCAD11D0A2B6F135DD128 /* RegistrationPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB0A4D42441D44A92BC24E5 /* RegistrationPageView.swift */; };
 		39383DB2983A80C96D05EA39 /* ReferenceSearchViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */; };
@@ -149,6 +150,7 @@
 		E539BCC329B1D95E5DE61344 /* AirportCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirportCheckInView.swift; sourceTree = "<group>"; };
 		E575C7D649385E50E82F597F /* CheckInVisibilityPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInVisibilityPicker.swift; sourceTree = "<group>"; };
 		E5FA579E4545ECB4DB72649A /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		EB5F9A03781612B9B04E6C31 /* Invite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Invite.swift; sourceTree = "<group>"; };
 		ED0A9822D906C56C092225ED /* PasswordSignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordSignInView.swift; sourceTree = "<group>"; };
 		ED53FE5B4A009D5575119BB4 /* FlownCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlownCheckInView.swift; sourceTree = "<group>"; };
 		EEADFFA0580043E3265322F0 /* BadgesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgesScreen.swift; sourceTree = "<group>"; };
@@ -341,6 +343,7 @@
 				E575C7D649385E50E82F597F /* CheckInVisibilityPicker.swift */,
 				3081197D3CD4BE4B1DB4B618 /* Compare.swift */,
 				42C6ED1702C36D93C339FDB0 /* Inbox.swift */,
+				EB5F9A03781612B9B04E6C31 /* Invite.swift */,
 				33B92659A5AE5ABC21AA1484 /* Leaderboard.swift */,
 				E3A6E9C03029947E148B9EBB /* PeopleView.swift */,
 				769842784C2049C177DB02CD /* PersonCheckInsSection.swift */,
@@ -492,6 +495,7 @@
 				5EFAD640812D73C675B33326 /* FlownCheckInView.swift in Sources */,
 				FCBB4985FC51D2F3A7B55D66 /* FlownEditView.swift in Sources */,
 				D083C97B175DAAD5DC7A05EA /* Inbox.swift in Sources */,
+				2FF0C87FC72E3499ADF81C3A /* Invite.swift in Sources */,
 				6B48DE11557CC1E967961233 /* Leaderboard.swift in Sources */,
 				FCE2BFC52E897A29214244A2 /* LegalLinks.swift in Sources */,
 				C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */,

@@ -25,6 +25,7 @@ struct WingspotApp: App {
     @State private var inbox: InboxStore
     @State private var compare: CompareStore
     @State private var leaderboard: LeaderboardStore
+    @State private var invites: InviteStore
     @State private var sync: CheckInSyncCoordinator
     @State private var badges: BadgeStore
     @State private var push: PushStore
@@ -68,6 +69,7 @@ struct WingspotApp: App {
         _inbox = State(initialValue: InboxStore(backend: accountBackend))
         _compare = State(initialValue: CompareStore(backend: accountBackend))
         _leaderboard = State(initialValue: LeaderboardStore(backend: accountBackend))
+        _invites = State(initialValue: InviteStore(backend: accountBackend))
         let uploader = APICheckInUploader(
             client: Self.apiClient,
             accessToken: { await account.accessToken() }
@@ -97,6 +99,7 @@ struct WingspotApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .modifier(InviteLinkAlert())
                 .environment(referenceData)
                 .environment(account)
                 .environment(social)
@@ -110,6 +113,7 @@ struct WingspotApp: App {
                 .environment(inbox)
                 .environment(compare)
                 .environment(leaderboard)
+                .environment(invites)
                 .environment(sync)
                 .environment(badges)
                 .environment(push)
@@ -176,7 +180,7 @@ struct WingspotApp: App {
         return url.flatMap(URL.init(string:))
     }
 
-    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend & MyCheckInsBackend & ReactionBackend & PushBackend & AnnouncementBackend & CheckInVisibilityBackend & AvatarBackend & PersonProgressBackend & ActivityBackend & CompareBackend & LeaderboardBackend {
+    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend & MyCheckInsBackend & ReactionBackend & PushBackend & AnnouncementBackend & CheckInVisibilityBackend & AvatarBackend & PersonProgressBackend & ActivityBackend & CompareBackend & LeaderboardBackend & InviteBackend {
         var url = Bundle.main.object(forInfoDictionaryKey: "WingspotSupabaseURL") as? String
         var key = Bundle.main.object(forInfoDictionaryKey: "WingspotPublishableKey") as? String
         #if DEBUG
@@ -213,6 +217,10 @@ struct WingspotApp: App {
 
     /// Never log the full URL: it can carry sign-in codes.
     private func handleLink(_ url: URL) {
+        if let code = InviteLink.code(in: url) {
+            Task { await invites.receive(code: code) }
+            return
+        }
         Task {
             if await !account.handle(url) {
                 logger.notice("Ignored an unknown link")

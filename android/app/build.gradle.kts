@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.camerax.lifecycle)
     implementation(libs.camerax.view)
     implementation(libs.mlkit.barcode)
+    implementation(libs.zxing.core)
     implementation(libs.credentials)
     implementation(libs.credentials.play)
     implementation(libs.google.id)

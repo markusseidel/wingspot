@@ -44,5 +44,6 @@ class MainActivity : ComponentActivity() {
         }
         val link = intent?.data?.toString() ?: return
         if (link.startsWith("wingspot://auth-callback")) model.completeSignIn(link)
+        else site.wingspot.core.InviteLink.code(link)?.let(social::receiveInvite)
     }
 }

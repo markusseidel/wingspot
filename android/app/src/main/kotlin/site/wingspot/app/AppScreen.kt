@@ -18,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -63,6 +64,15 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
     // After a check-in, a flight or an edit went up, the lists show it without a pull to refresh.
     LaunchedEffect(me) { app.uploads.collect { if (me != null) { checkIn.reload(); social.refresh() } } }
     CelebrationDialog(badges)
+    social.pendingInvite?.let { owner ->
+        if (me != null) AlertDialog(
+            onDismissRequest = social::dismissInvite,
+            title = { Text(stringResource(R.string.invite_follow_title, owner.who)) },
+            text = { Text(stringResource(R.string.invite_follow_message)) },
+            confirmButton = { TextButton(onClick = social::followPendingInvite) { Text(stringResource(R.string.follow)) } },
+            dismissButton = { TextButton(onClick = social::dismissInvite) { Text(stringResource(R.string.not_now)) } },
+        )
+    }
 
     BackHandler(enabled = page != null) { social.back() }
     BackHandler(enabled = page == null && formOpen) { if (editing != null) checkIn.cancelEdit() else checkIn.close() }
@@ -101,6 +111,7 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
                     page is Route.AirportsMap -> AirportsMapPage(checkInState.all, refState, social)
                     page is Route.Collections -> CollectionsPage(checkInState.all, social)
                     page is Route.Leaderboard && me != null -> LeaderboardPage(app, social, me)
+                    page is Route.Invite && me != null -> InvitePage(app, social, me)
                     page is Route.Inbox && me != null -> InboxPage(social)
                     page is Route.Settings -> SettingsPage(app, me, social)
                     page is Route.EditProfile && me != null -> EditProfilePage(app, me, refState, social)
