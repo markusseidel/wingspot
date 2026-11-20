@@ -103,9 +103,11 @@ private let sampleItem = CheckInUploadItem(
         id: UUID(), kind: "airport", occurredAt: Date(), registration: nil, typeICAO: nil, airportID: 3,
         latitude: nil, longitude: nil, context: "transit", flightID: flightID
     )
+    let friend = UUID()
     let flight = CheckInUploadItem(
         id: UUID(), kind: "flown", occurredAt: Date(), registration: "D-AIMA", typeICAO: "A388", airportID: nil,
-        latitude: nil, longitude: nil, originID: 3, destinationID: 7, flightNumber: "LH400", cabin: "business", seat: "2A"
+        latitude: nil, longitude: nil, originID: 3, destinationID: 7, flightNumber: "LH400", cabin: "business", seat: "2A",
+        with: [friend]
     )
     let client = APIClient(baseURL: baseURL) { request in
         let body = try #require(request.httpBody)
@@ -120,6 +122,8 @@ private let sampleItem = CheckInUploadItem(
         #expect(items[1]["flight_number"] as? String == "LH400")
         #expect(items[1]["cabin"] as? String == "business")
         #expect(items[1]["seat"] as? String == "2A")
+        #expect(items[1]["with"] as? [String] == [friend.uuidString])
+        #expect(items[0]["with"] == nil)
         let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
         return (Data(#"{"results":[]}"#.utf8), response)
     }

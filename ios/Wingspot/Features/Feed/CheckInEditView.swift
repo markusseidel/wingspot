@@ -1,3 +1,4 @@
+import Account
 import Persistence
 import ReferenceData
 import SwiftData
@@ -8,6 +9,8 @@ import WingspotCore
 /// own, longer screen.
 struct CheckInEditView: View {
     let checkInID: UUID
+    /// The friends tagged on the visit now.
+    let tags: [PersonTag]
     let onSaved: () -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -25,6 +28,7 @@ struct CheckInEditView: View {
     @State private var photo: PreparedPhoto?
     @State private var isPreparingPhoto = false
     @State private var hasRoomForPhoto = false
+    @State private var tagged: [PersonTag] = []
 
     private var registration: Registration? { Registration(registrationInput) }
     private var hasRegistrationInput: Bool { !registrationInput.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -71,6 +75,7 @@ struct CheckInEditView: View {
                         Picker("Reason", selection: $reason) {
                             ForEach(VisitContext.allCases, id: \.self) { Text($0.title).tag($0) }
                         }
+                        WithFriendsRow(selection: $tagged)
                     }
                 }
                 if hasRoomForPhoto { PhotoSection(photo: $photo, isPreparing: $isPreparingPhoto) }
@@ -112,6 +117,7 @@ struct CheckInEditView: View {
             break
         }
         hasRoomForPhoto = ((try? CheckInStore(context: modelContext).photoCount(for: id)) ?? 0) < CheckInStore.maxPhotos
+        tagged = tags
         loaded = true
     }
 
@@ -124,7 +130,7 @@ struct CheckInEditView: View {
                     type: typeCode.map { .init(icaoCode: $0, name: typeName ?? $0) }
                 )
             } else if kind == "airport" {
-                try store.updateVisit(id: checkInID, reason: reason)
+                try store.updateVisit(id: checkInID, reason: reason, tagged: tagged.map(\.id) == tags.map(\.id) ? nil : tagged.map(\.id))
             }
             if let photo { try store.addPhoto(photo, to: checkInID) }
             sync?.requestSync()

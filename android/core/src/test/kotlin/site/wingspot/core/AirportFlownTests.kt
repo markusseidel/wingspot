@@ -105,6 +105,27 @@ class AirportAndFlownStoreTests {
     }
 
     @Test
+    fun friendsTaggedOnAFlightAndAVisitAreKeptAndChangedOnEdit() = runBlocking {
+        val s = store()
+        val anna = UUID.randomUUID()
+        val max = UUID.randomUUID()
+        val flight = s.saveFlown(FlownDraft(FRA, JFK, tagged = listOf(anna, max)))
+        val visit = s.saveAirport(AirportDraft(JFK, VisitContext.SPOTTING, tagged = listOf(anna)))
+        val plain = s.saveAirport(AirportDraft(FRA, VisitContext.SPOTTING))
+        assertEquals(listOf(anna, max), s.find(flight.id)!!.taggedIds)
+        assertEquals(listOf(anna), s.find(visit.id)!!.taggedIds)
+        assertEquals(null, s.find(plain.id)!!.taggedIds, "no tags means the server's tags are left alone")
+
+        // An edit that doesn't mention the tags keeps them, one that does replaces them, and an empty list clears them.
+        s.updateFlown(flight.id, null, null, null, null, null)
+        assertEquals(listOf(anna, max), s.find(flight.id)!!.taggedIds)
+        s.updateFlown(flight.id, null, null, null, null, null, tagged = listOf(max))
+        assertEquals(listOf(max), s.find(flight.id)!!.taggedIds)
+        s.updateVisit(visit.id, VisitContext.SPOTTING, tagged = emptyList())
+        assertEquals(emptyList(), s.find(visit.id)!!.taggedIds)
+    }
+
+    @Test
     fun aFlightIsSavedWithItsRouteAndAnAirportVisitForEachEnd() = runBlocking {
         val s = store()
         val first = s.saveFlown(FlownDraft(FRA, JFK, flightNumber = " lh 400 ", seat = " 12a ", cabin = CabinClass.BUSINESS))

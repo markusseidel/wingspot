@@ -328,4 +328,16 @@
     <string name="empty_feed_title">Dein Feed</string>
     <string name="empty_badges_title">Sammle Badges</string>
     <string name="empty_profile_title">Dein Profil</string>
+    <string name="with_label">Mit</string>
+    <string name="optional">Optional</string>
+    <string name="with_names">Mit %1$s</string>
+    <string name="with_footer">Die gewählten Freunde sehen diesen Check-in. Bis zu %1$d.</string>
+    <string name="with_failed">Deine Freunde konnten nicht geladen werden. Prüfe die Verbindung und versuche es erneut.</string>
+    <string name="with_no_friends">Hier erscheinen Freunde, denen du folgst und die dir auch folgen.</string>
+    <string name="remove_me_tag">Mich von diesem Check-in entfernen</string>
+    <string name="remove_me_title">Dich von diesem Check-in entfernen?</string>
+    <string name="remove_me_message">Du wirst dort nicht erneut markiert und siehst den Check-in nicht mehr, außer er ist öffentlich.</string>
+    <string name="remove_me">Mich entfernen</string>
+    <string name="allow_tags">Freunde dürfen mich markieren</string>
+    <string name="allow_tags_hint">Nur Freunde können dich markieren. Auf dem Check-in eines Freundes erscheinst du dann, und du kannst dich jederzeit selbst entfernen.</string>
 </resources>

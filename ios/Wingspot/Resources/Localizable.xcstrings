@@ -1019,6 +1019,16 @@
         }
       }
     },
+    "Couldn't change this setting" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstellung konnte nicht geändert werden"
+          }
+        }
+      }
+    },
     "Couldn't complete this" : {
       "localizations" : {
         "de" : {
@@ -1787,6 +1797,26 @@
         }
       }
     },
+    "Friends may tag me" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Freunde dürfen mich markieren"
+          }
+        }
+      }
+    },
+    "Friends you follow and who follow you back show up here." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier erscheinen Freunde, denen du folgst und die dir auch folgen."
+          }
+        }
+      }
+    },
     "From" : {
       "localizations" : {
         "de" : {
@@ -2541,6 +2571,16 @@
         }
       }
     },
+    "Only friends can tag you. A tagged friend's check-in shows you on it, and you can remove yourself from it at any time." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur Freunde können dich markieren. Auf dem Check-in eines Freundes erscheinst du dann, und du kannst dich jederzeit selbst entfernen."
+          }
+        }
+      }
+    },
     "Only me" : {
       "localizations" : {
         "de" : {
@@ -2855,6 +2895,26 @@
         }
       }
     },
+    "Remove me" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mich entfernen"
+          }
+        }
+      }
+    },
+    "Remove me from this check-in" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mich von diesem Check-in entfernen"
+          }
+        }
+      }
+    },
     "Remove photo" : {
       "localizations" : {
         "de" : {
@@ -2881,6 +2941,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Salute entfernen. Salutes: %lld"
+          }
+        }
+      }
+    },
+    "Remove yourself from this check-in?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dich von diesem Check-in entfernen?"
           }
         }
       }
@@ -2993,6 +3063,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nach Benutzername suchen"
+          }
+        }
+      }
+    },
+    "Search friends" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Freunde suchen"
           }
         }
       }
@@ -3435,6 +3515,16 @@
         }
       }
     },
+    "The friends you choose will see this check-in. Up to %lld." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die gewählten Freunde sehen diesen Check-in. Bis zu %lld."
+          }
+        }
+      }
+    },
     "The map needs the airport data. Open the app once while online." : {
       "localizations" : {
         "de" : {
@@ -3803,6 +3893,26 @@
         }
       }
     },
+    "With" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit"
+          }
+        }
+      }
+    },
+    "With %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit %@"
+          }
+        }
+      }
+    },
     "Working" : {
       "localizations" : {
         "de" : {
@@ -3896,6 +4006,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Du hast diesen Typ noch nicht gesehen."
+          }
+        }
+      }
+    },
+    "You won't be tagged on it again, and you won't see it any more unless it is public." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du wirst dort nicht erneut markiert und siehst den Check-in nicht mehr, außer er ist öffentlich."
           }
         }
       }

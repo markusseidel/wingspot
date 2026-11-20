@@ -392,6 +392,17 @@ components:
             Only for `airport` check-ins that a flight created: the id of that flight. Deleting the flight deletes the
             visit, and changing the flight's day moves it. The flight may arrive in the same or a later request. Visits
             without it are matched to their flight by time and airports.
+        with:
+          type: array
+          maxItems: 8
+          items:
+            type: string
+            format: uuid
+          description: >-
+            Only for `flown` and `airport` check-ins: the friends tagged on it. Replaces the tags. Left out, the tags
+            stay as they are; an empty list removes them all. People who are not mutual friends of the author, who
+            switched tagging off, who left the check-in, or beyond the eighth are ignored. Tagged people can see the
+            check-in.
         occurred_at:
           type: string
           format: date-time

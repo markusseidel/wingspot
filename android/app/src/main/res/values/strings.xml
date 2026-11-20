@@ -328,4 +328,16 @@
     <string name="empty_feed_title">Your feed</string>
     <string name="empty_badges_title">Collect badges</string>
     <string name="empty_profile_title">Your profile</string>
+    <string name="with_label">With</string>
+    <string name="optional">Optional</string>
+    <string name="with_names">With %1$s</string>
+    <string name="with_footer">The friends you choose will see this check-in. Up to %1$d.</string>
+    <string name="with_failed">Couldn\'t load your friends. Check your connection and try again.</string>
+    <string name="with_no_friends">Friends you follow and who follow you back show up here.</string>
+    <string name="remove_me_tag">Remove me from this check-in</string>
+    <string name="remove_me_title">Remove yourself from this check-in?</string>
+    <string name="remove_me_message">You won\'t be tagged on it again, and you won\'t see it any more unless it is public.</string>
+    <string name="remove_me">Remove me</string>
+    <string name="allow_tags">Friends may tag me</string>
+    <string name="allow_tags_hint">Only friends can tag you. A tagged friend\'s check-in shows you on it, and you can remove yourself from it at any time.</string>
 </resources>

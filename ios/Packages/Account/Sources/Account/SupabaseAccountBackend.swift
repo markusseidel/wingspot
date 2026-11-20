@@ -561,6 +561,88 @@ extension SupabaseAccountBackend: FeedBackend {
     }
 }
 
+// MARK: - Friends on check-ins
+
+private struct TagRow: Decodable {
+    let checkInID: UUID
+    let userID: UUID
+    let username: String
+    let displayName: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case checkInID = "checkin_id"
+        case userID = "user_id"
+        case username
+        case displayName = "display_name"
+    }
+}
+
+private struct FriendRow: Decodable {
+    let id: UUID
+    let username: String
+    let displayName: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case id, username
+        case displayName = "display_name"
+    }
+}
+
+private struct TagIDs: Encodable { let ids: [UUID] }
+private struct AllowTagsRow: Decodable {
+    let allowTags: Bool
+    private enum CodingKeys: String, CodingKey { case allowTags = "allow_tags" }
+}
+private struct AllowTagsUpdate: Encodable {
+    let allowTags: Bool
+    private enum CodingKeys: String, CodingKey { case allowTags = "allow_tags" }
+}
+
+extension SupabaseAccountBackend {
+    public func tags(for checkIns: [UUID]) async throws -> [UUID: [PersonTag]] {
+        guard !checkIns.isEmpty else { return [:] }
+        var found: [UUID: [PersonTag]] = [:]
+        // The server answers for at most 200 check-ins at a time.
+        for start in stride(from: 0, to: checkIns.count, by: 200) {
+            let ids = Array(checkIns[start..<min(start + 200, checkIns.count)])
+            let rows: [TagRow] = try await socialErrors {
+                try await client.rpc("get_checkin_tags", params: TagIDs(ids: ids)).execute().value
+            }
+            for row in rows {
+                found[row.checkInID, default: []].append(PersonTag(id: row.userID, username: row.username, displayName: row.displayName))
+            }
+        }
+        return found
+    }
+
+    public func taggableFriends() async throws -> [PersonTag] {
+        let rows: [FriendRow] = try await socialErrors {
+            try await client.rpc("get_taggable_friends").execute().value
+        }
+        return rows.map { PersonTag(id: $0.id, username: $0.username, displayName: $0.displayName) }
+    }
+
+    public func removeMyTag(_ checkIn: UUID) async throws {
+        try await socialErrors {
+            _ = try await client.rpc("remove_my_tag", params: ["checkin": checkIn]).execute()
+        }
+    }
+
+    public func allowsTags(of me: UUID) async throws -> Bool {
+        let row: AllowTagsRow = try await socialErrors {
+            try await client.from("profiles").select("allow_tags").eq("id", value: me).single().execute().value
+        }
+        return row.allowTags
+    }
+
+    public func setAllowsTags(_ allowed: Bool, as me: UUID) async throws {
+        try await socialErrors {
+            _ = try await client.from("profiles").update(AllowTagsUpdate(allowTags: allowed), returning: .minimal)
+                .eq("id", value: me).execute()
+        }
+    }
+}
+
 private struct PhotoRow: Decodable {
     let id: UUID
     let checkInID: UUID

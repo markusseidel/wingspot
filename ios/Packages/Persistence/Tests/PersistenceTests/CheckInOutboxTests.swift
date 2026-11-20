@@ -81,6 +81,20 @@ private func state(_ context: ModelContext, _ id: UUID) throws -> LocalCheckIn {
 }
 
 @MainActor struct CheckInOutboxTests {
+    @Test func theTaggedFriendsGoUpWithTheCheckIn() async throws {
+        let context = try makeContext()
+        let anna = UUID()
+        let store = CheckInStore(context: context)
+        let tagged = try store.saveAirport(AirportDraft(airportID: 3, code: "FRA", tagged: [anna]), ownerID: alice)
+        let plain = try store.saveAirport(AirportDraft(airportID: 7, code: "DUS"), ownerID: alice)
+        let server = FakeServer()
+        _ = await CheckInOutbox(context: context, uploader: server).sync(userID: alice)
+
+        let sent = await server.sent
+        #expect(sent.first { $0.id == tagged.id }?.with == [anna])
+        #expect(sent.first { $0.id == plain.id }?.with == nil)
+    }
+
     @Test func uploadsWhatWaitsAndMarksItSynced() async throws {
         let context = try makeContext()
         let id = try save(context, "DAIMA", owner: alice)

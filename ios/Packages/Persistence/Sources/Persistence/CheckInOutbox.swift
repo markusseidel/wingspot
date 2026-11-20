@@ -171,7 +171,7 @@ public final class CheckInOutbox {
             originID: checkIn.originID, destinationID: checkIn.destinationID,
             flightNumber: dropped.contains(.flightNumber) ? nil : checkIn.flightNumber,
             cabin: dropped.contains(.cabin) ? nil : checkIn.cabin, seat: dropped.contains(.seat) ? nil : checkIn.seat,
-            flightID: checkIn.flightID
+            flightID: checkIn.flightID, with: checkIn.taggedIDs
         )
     }
 }

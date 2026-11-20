@@ -43,6 +43,7 @@ struct FlownCheckInView: View {
     @State private var type: AircraftType?
     @State private var cabin: CabinClass?
     @State private var seat = ""
+    @State private var tagged: [PersonTag] = []
     @State private var result: FlownResult?
     @State private var saveFailed = false
     @State private var tripPhoto: PreparedPhoto?
@@ -173,6 +174,7 @@ struct FlownCheckInView: View {
                 TextField("Seat, e.g. 34K", text: $seat)
                     .textInputAutocapitalization(.characters)
                     .autocorrectionDisabled()
+                WithFriendsRow(selection: $tagged)
             }
 
             PhotoSection(photo: $tripPhoto, isPreparing: $isPreparingPhoto)
@@ -261,7 +263,7 @@ struct FlownCheckInView: View {
             destination: .init(airportID: destination.id, code: destination.code),
             distanceKm: Int(distance.rounded()), flightNumber: flightNumber, registration: registration,
             type: type.map { .init(icaoCode: $0.icaoCode, name: $0.name) }, cabin: cabin, seat: seat,
-            photo: tripPhoto
+            photo: tripPhoto, tagged: tagged.map(\.id)
         )
         do {
             result = try CheckInStore(context: modelContext).saveFlown(draft, ownerID: account.userID, at: FlightDay.moment(of: date))
@@ -280,6 +282,7 @@ struct FlownCheckInView: View {
         type = nil
         cabin = nil
         seat = ""
+        tagged = []
         tripPhoto = nil
         result = nil
     }
