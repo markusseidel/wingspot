@@ -167,7 +167,6 @@ Like a venue check-in.
 |---|---|
 | Frequent Flyer (Lvl) | Flights: 10, 25, 50, 100, 250, 500 |
 | Distance (Lvl) | Distance flown: 10k, 50k, 100k, 250k, 500k, 1M km |
-| Around the World | Cumulative 40,075 km |
 | Long Haul | Single flight > 8,000 km |
 | Hop | Single flight < 100 km |
 | Red-Eye | Departure between 22:00 and 04:00 local |

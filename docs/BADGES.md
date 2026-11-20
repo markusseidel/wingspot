@@ -91,18 +91,9 @@ Counts only the types in the database, 22 on hosted at first.
 | night_owl | Night Owl | Nachteule | Check-ins between 22:00 and 04:00 local time | 1, 10, 25 |
 | anniversary | Anniversary | Jahrestag | Years in which you checked in on the day you joined, in a later year | 1, 2, 3, 5, 10 |
 
-## Hidden (6)
+## Hidden badges
 
-These show as "???" until earned. Drop any you don't like.
-
-| id | English | Deutsch | Rule |
-|---|---|---|---|
-| deja_vu | Déjà Vu | Déjà-vu | The same registration at the same airport on 3 different days |
-| mirror_image | Mirror Image | Spiegelbild | A registration that reads the same backwards, such as D-ADAD with the dash ignored |
-| new_year | New Year's Spot | Neujahrs-Spot | A check-in on 1 January |
-| earth_radius | Down to the Core | Bis zum Erdkern | Flights add up to more than the radius of the Earth (6,371 km) |
-| earth_circumference | Around the World | Einmal um die Welt | Flights add up to more than the circumference of the Earth (40,075 km) |
-| to_the_moon | To the Moon | Zum Mond | Flights add up to more than the distance to the Moon (384,400 km) |
+There are a few hidden badges. They show as "???" until earned. Their names, descriptions and rules are not in this repository, because it is public and a surprise should stay one. Their definitions are kept in `backend/private/hidden_badges.sql`, which is not committed (see `backend/private/README.md`). Production has them. The tests make their own hidden badges.
 
 ## Later, when the data exists
 
@@ -114,5 +105,5 @@ These show as "???" until earned. Drop any you don't like.
 
 ## Decisions
 
-- 36 launch badges are enough, and the three hidden badges stay.
-- Hidden badges are secret in the app, but their names and rules can be read from the public `badges` table. That is acceptable for a surprise mechanic.
+- 36 launch badges are enough, and the hidden badges stay.
+- Hidden badges are secret in the app, and their definitions are not in the public repository. They can still be read from the `badges` table of the running service, which is acceptable for a surprise mechanic. Anyone who wants that closed too needs a change in the database rules (open question).

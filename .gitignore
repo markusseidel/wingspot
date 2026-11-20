@@ -33,3 +33,7 @@ ios/Config/Local.xcconfig
 # Node
 node_modules/
 android/app/google-services.json
+
+# Hidden badge definitions stay out of the public repository (see backend/private/README.md)
+backend/private/*
+!backend/private/README.md
