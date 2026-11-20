@@ -136,7 +136,7 @@ fun ProfileTab(
                     Detail(stringResource(R.string.signed_in_as_short), session.user.email ?: session.user.id)
                 }
             }
-            for ((label, route) in listOf(R.string.collections to Route.Collections, R.string.leaderboard_title to Route.Leaderboard, R.string.edit_profile to Route.EditProfile, R.string.settings to Route.Settings)) {
+            for ((label, route) in listOf(R.string.collections to Route.Collections, R.string.leaderboard_title to Route.Leaderboard, R.string.invite_title to Route.Invite, R.string.edit_profile to Route.EditProfile, R.string.settings to Route.Settings)) {
                 OutlinedButton(onClick = { social.open(route) }, modifier = Modifier.fillMaxWidth().testTag("profile-$label")) { Text(stringResource(label)) }
             }
             HorizontalDivider()
