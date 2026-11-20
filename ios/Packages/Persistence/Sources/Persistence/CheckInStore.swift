@@ -336,14 +336,41 @@ public struct CheckInStore {
     }
 
     /// Removes a check-in from this device, with its photos. Does nothing if there is none.
-    public func deleteLocal(id: UUID) throws {
-        for checkIn in try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id })) {
-            context.delete(checkIn)
+    /// Deleting a flight also removes the two airport visits it created, as the server does. They are found the way
+    /// `updateFlown` finds them. A visit stays while another flight at the same time still uses its airport.
+    /// Returns the ids of everything removed, so the lists on screen can drop them too.
+    @discardableResult
+    public func deleteLocal(id: UUID) throws -> [UUID] {
+        var removed = [UUID]()
+        let found = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id }))
+        for checkIn in found where checkIn.kind == "flown" {
+            let time = checkIn.occurredAt
+            let owner = checkIn.ownerID
+            let airports = [checkIn.originID, checkIn.destinationID].compactMap { $0 }
+            let others = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate {
+                $0.kind == "flown" && $0.occurredAt == time && $0.id != id
+            })).filter { $0.ownerID == owner }
+            let stillUsed = Set(others.flatMap { [$0.originID, $0.destinationID].compactMap { $0 } })
+            let visits = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate {
+                $0.kind == "airport" && $0.occurredAt == time
+            }))
+            for visit in visits where visit.ownerID == owner
+                && (visit.visitContext == "departing" || visit.visitContext == "arriving")
+                && airports.contains(visit.airportID ?? -1) && !stillUsed.contains(visit.airportID ?? -1) {
+                removed.append(visit.id)
+            }
         }
-        for photo in try context.fetch(FetchDescriptor<LocalPhoto>(predicate: #Predicate { $0.checkInID == id })) {
-            context.delete(photo)
+        removed.append(contentsOf: found.map(\.id))
+        for gone in removed {
+            for checkIn in try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == gone })) {
+                context.delete(checkIn)
+            }
+            for photo in try context.fetch(FetchDescriptor<LocalPhoto>(predicate: #Predicate { $0.checkInID == gone })) {
+                context.delete(photo)
+            }
         }
         try context.save()
+        return removed
     }
 
     /// The aircraft types of your earlier flights with this flight number, the most recent first, each type once.
@@ -384,7 +411,14 @@ public struct CheckInStore {
     public func recentAirportIDs(userID: UUID?, limit: Int = 5) throws -> [Int] {
         var seen = Set<Int>()
         var ids = [Int]()
-        for checkIn in CheckInStats.counted(try history(FetchDescriptor<LocalCheckIn>()), userID: userID) {
+        // A flight and the two visits it created share their time. The flight goes first, so its destination leads.
+        let newestFirst = CheckInStats.counted(try history(FetchDescriptor<LocalCheckIn>()), userID: userID)
+            .enumerated().sorted {
+                if $0.element.occurredAt != $1.element.occurredAt { return $0.element.occurredAt > $1.element.occurredAt }
+                if ($0.element.kind == "flown") != ($1.element.kind == "flown") { return $0.element.kind == "flown" }
+                return $0.offset < $1.offset
+            }.map(\.element)
+        for checkIn in newestFirst {
             let airports = checkIn.kind == "flown" ? [checkIn.destinationID, checkIn.originID] : [checkIn.airportID]
             for case let id? in airports where seen.insert(id).inserted {
                 ids.append(id)

@@ -53,6 +53,29 @@ class AirportAndFlownStoreTests {
     }
 
     @Test
+    fun deletingAFlightRemovesItsTwoAirportVisitsAndNothingElse() = runBlocking {
+        val s = store()
+        val day = Instant.parse("2026-03-01T10:00:00Z")
+        val spotting = s.saveAirport(AirportDraft(JFK, VisitContext.SPOTTING), day)
+        val otherDay = s.saveAirport(AirportDraft(FRA, VisitContext.DEPARTING), Instant.parse("2026-03-05T10:00:00Z"))
+        val flight = s.saveFlown(FlownDraft(FRA, JFK), day)
+        s.delete(flight.id)
+        assertEquals(setOf(spotting.id, otherDay.id), s.all().map { it.id }.toSet())
+    }
+
+    @Test
+    fun aVisitStaysWhileAnotherFlightAtTheSameTimeUsesItsAirport() = runBlocking {
+        val s = store()
+        val day = Instant.parse("2026-03-01T10:00:00Z")
+        val first = s.saveFlown(FlownDraft(FRA, JFK), day)
+        val second = s.saveFlown(FlownDraft(FRA, JFK), day)
+        s.delete(first.id)
+        assertEquals(5, s.all().size)
+        s.delete(second.id)
+        assertEquals(emptyList(), s.all())
+    }
+
+    @Test
     fun aFlightIsSavedWithItsRouteAndAnAirportVisitForEachEnd() = runBlocking {
         val s = store()
         val first = s.saveFlown(FlownDraft(FRA, JFK, flightNumber = " lh 400 ", seat = " 12a ", cabin = CabinClass.BUSINESS))

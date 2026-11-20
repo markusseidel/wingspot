@@ -273,8 +273,20 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
         true
     }
 
-    /** Removes a check-in and its photos from this phone. Does nothing if there is none. */
+    /**
+     * Removes a check-in and its photos from this phone. Does nothing if there is none.
+     * Deleting a flight also removes the two airport visits it created, as the server does. They are found the way
+     * [updateFlown] finds them, and a visit stays while another flight at the same time still uses its airport.
+     */
     suspend fun delete(id: UUID) = db {
+        val visits = """SELECT v.id FROM checkins v, checkins f WHERE f.id = ? AND f.kind = 'flown' AND v.kind = 'airport'
+               AND v.visit_context IN ('departing', 'arriving') AND v.occurred_at = f.occurred_at
+               AND v.airport_id IN (f.origin_id, f.destination_id)
+               AND NOT EXISTS (SELECT 1 FROM checkins o WHERE o.kind = 'flown' AND o.id <> f.id AND o.occurred_at = f.occurred_at
+                               AND v.airport_id IN (o.origin_id, o.destination_id))"""
+        for (sql in listOf("DELETE FROM photos WHERE checkin_id IN ($visits)", "DELETE FROM checkins WHERE id IN ($visits)")) {
+            connection.prepare(sql).use { it.bindText(1, id.toString()); it.step() }
+        }
         for (sql in listOf("DELETE FROM photos WHERE checkin_id = ?", "DELETE FROM checkins WHERE id = ?")) {
             connection.prepare(sql).use { it.bindText(1, id.toString()); it.step() }
         }
