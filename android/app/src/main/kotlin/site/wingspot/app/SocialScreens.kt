@@ -256,7 +256,6 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                     }
                     Text(fullTime(shown.occurredAt), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     val unit = app.prefs.unit
-                    if (tags.isNotEmpty()) InfoRow(stringResource(R.string.with_label), tags.joinToString(", ") { if (it.id == me) "" + app.getString(R.string.you) else it.who })
                     shown.flightNumber?.let { InfoRow(stringResource(R.string.flight_label), it) }
                     shown.registration?.let { r -> InfoRow(stringResource(R.string.aircraft_label), r, if (shown.kind == "spotted") null else ({ model.open(Route.RegistrationPage(r)) })) }
                     shown.typeIcao?.let { t -> InfoRow(stringResource(R.string.type_label), shown.typeName ?: t) { model.open(Route.TypePage(t)) } }
@@ -272,6 +271,29 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                 Box {
                     RemoteImage(photo, Modifier.fillMaxWidth().clip(MaterialTheme.shapes.medium).clickable { viewing = photo })
                     if (shown.userId != me) TextButton(onClick = { reporting = ReportKind.PHOTO to photo.id }, modifier = Modifier.align(Alignment.TopEnd)) { Text(stringResource(R.string.report)) }
+                }
+            }
+            if (tags.isNotEmpty()) item {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(R.string.with_label), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Column {
+                            tags.forEachIndexed { index, person ->
+                                if (index > 0) HorizontalDivider(Modifier.padding(start = 64.dp))
+                                val isMe = person.id == me
+                                Row(
+                                    Modifier.fillMaxWidth().then(if (isMe) Modifier else Modifier.clickable { model.openPerson(person.id) }).padding(horizontal = 12.dp, vertical = 10.dp),
+                                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                ) {
+                                    val name = if (isMe) stringResource(R.string.you) else person.who
+                                    Box(Modifier.size(40.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)), contentAlignment = Alignment.Center) {
+                                        Text(name.take(1).uppercase(), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+                                    }
+                                    Text(name, style = MaterialTheme.typography.bodyLarge)
+                                }
+                            }
+                        }
+                    }
                 }
             }
             item { SaluteButton(shown) { model.toggleSalute(id) } }

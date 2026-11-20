@@ -71,6 +71,7 @@ struct CheckInDetailView: View {
     private func content(_ store: CheckInCommentStore) -> some View {
         List {
             summary
+            if !tags.isEmpty { withSection }
             if !photos.isEmpty { photoSection }
             reactions
             actions
@@ -173,18 +174,6 @@ struct CheckInDetailView: View {
                 if let seat = shown.seat { LabeledContent("Seat", value: seat) }
                 if let km = shown.distanceKm { LabeledContent("Distance", value: unit.format(km: km)) }
             }
-            if !tags.isEmpty {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("With").font(.subheadline).foregroundStyle(.secondary)
-                    ForEach(tags) { person in
-                        if person.id == account.userID {
-                            Text("You")
-                        } else {
-                            NavigationLink { PersonLoaderView(id: person.id) } label: { Text(verbatim: person.name) }
-                        }
-                    }
-                }
-            }
             if let registration = shown.registration {
                 NavigationLink { RegistrationPageView(registration: registration) } label: {
                     LabeledContent("Aircraft", value: registration)
@@ -201,6 +190,34 @@ struct CheckInDetailView: View {
                 }
             }
         }
+    }
+
+    /// The friends who were along, one row each, so a tap opens exactly one of them.
+    private var withSection: some View {
+        Section {
+            ForEach(tags) { person in
+                if person.id == account.userID {
+                    friendRow(String(localized: "You"))
+                } else {
+                    NavigationLink { PersonLoaderView(id: person.id) } label: { friendRow(person.name) }
+                }
+            }
+        } header: {
+            Text("With").font(.headline).textCase(nil)
+        }
+    }
+
+    private func friendRow(_ name: String) -> some View {
+        HStack(spacing: 12) {
+            Text(verbatim: String(name.prefix(1)).uppercased())
+                .font(.headline)
+                .foregroundStyle(.tint)
+                .frame(width: 40, height: 40)
+                .background(Color.accentColor.opacity(0.15), in: Circle())
+                .accessibilityHidden(true)
+            Text(verbatim: name).font(.body)
+        }
+        .padding(.vertical, 4)
     }
 
     private var photoSection: some View {
