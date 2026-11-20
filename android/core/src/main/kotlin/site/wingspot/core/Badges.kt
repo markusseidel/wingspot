@@ -96,15 +96,22 @@ object Celebrations {
         val cutoff = firstSeenAtMs - CLOCK_MARGIN_MS
         val pending = mutableListOf<Celebration>()
         val silent = mutableMapOf<String, Int>()
+        // A badge can go down when a check-in is deleted. What was shown for it goes down too, so earning it again is
+        // celebrated again. A badge the server doesn't list any more counts as level 0.
+        val lowered = acks.mapNotNull { (id, seen) ->
+            val level = progress.badges.firstOrNull { it.id == id }?.level ?: 0
+            if (level < seen) id to level else null
+        }.toMap()
         for (badge in progress.badges) {
             if (badge.level <= 0) continue
-            val seen = acks[badge.id] ?: 0
+            val seen = lowered[badge.id] ?: acks[badge.id] ?: 0
             if (badge.level <= seen) continue
             val unlocked = badge.unlockedInstant()?.toEpochMilli()
             if (unlocked != null && unlocked >= cutoff) pending += Celebration(badge, seen) else silent[badge.id] = badge.level
         }
-        return Result(pending, silent)
+        return Result(pending, silent, lowered)
     }
 
-    data class Result(val celebrations: List<Celebration>, val newAcks: Map<String, Int>)
+    /** [loweredAcks] are the badges that went down, with the level now shown for them. */
+    data class Result(val celebrations: List<Celebration>, val newAcks: Map<String, Int>, val loweredAcks: Map<String, Int> = emptyMap())
 }

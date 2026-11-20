@@ -81,6 +81,7 @@ public final class BadgeStore {
     private func apply(_ fresh: UserProgress, raw: Data, for user: UUID) {
         let account = account(for: user)
         let cutoff = account.firstSeenAt.addingTimeInterval(-Self.clockMargin)
+        lowerAcks(to: fresh, for: user)
         var pending: [Celebration] = []
         for badge in fresh.badges where badge.level > 0 {
             let seen = ack(badge.id, user: user)
@@ -97,6 +98,16 @@ public final class BadgeStore {
         try? context.save()
         progress = fresh
         celebrations = pending
+    }
+
+    /// A badge can go down when a check-in is deleted. What was shown for it goes down too, so earning it again
+    /// is celebrated again. A badge the server doesn't list any more counts as level 0.
+    private func lowerAcks(to fresh: UserProgress, for user: UUID) {
+        let acks = (try? context.fetch(FetchDescriptor<BadgeAck>(predicate: #Predicate { $0.userID == user }))) ?? []
+        for ack in acks {
+            let level = fresh.badges.first { $0.id == ack.badgeID }?.level ?? 0
+            if level < ack.level { ack.level = level }
+        }
     }
 
     private func account(for user: UUID) -> BadgeAccount {

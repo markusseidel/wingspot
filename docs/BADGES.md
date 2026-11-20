@@ -10,6 +10,7 @@ The 36 launch badges for Milestone 4 (see [PHASE1.md](PHASE1.md) and concept §5
 - Distinct counts ignore repeats: the same registration, type or airport counts once.
 - "Local time" is estimated from the airport's longitude (UTC plus longitude divided by 15, rounded), because the airport data has no time zones.
 - Level unlocks give bonus XP, 50 times the level (concept §5.3).
+- A level never goes down when badges are evaluated after an upload or when the badges page opens, even if a rule changes later. Deleting a check-in is the exception: it re-evaluates your badges, so levels, progress and XP follow the check-ins that are left. A badge that falls back to level 0 loses its unlock date, and earning it again is celebrated again.
 - Art for now: a symbol and a color per level. You can replace it with drawn art later without changing the rules.
 
 ## Dormant until the data exists

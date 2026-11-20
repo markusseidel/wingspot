@@ -8,7 +8,10 @@ import SwiftData
 enum CheckInDeletion {
     /// Returns `false` when the server could not be reached or refused, so the check-in is still there.
     /// One that never reached the server only has to go from this device.
-    static func delete(_ id: UUID, feed: FeedStore, others: [FeedStore] = [], context: ModelContext) async -> Bool {
+    /// A deleted check-in can take badges and XP back, so the badges are asked for again when they are given.
+    static func delete(
+        _ id: UUID, feed: FeedStore, others: [FeedStore] = [], badges: BadgeStore? = nil, context: ModelContext
+    ) async -> Bool {
         let local = (try? context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id })))?.first
         let neverSent = local.map { $0.syncedAt == nil && $0.syncState == SyncState.pending.rawValue } ?? false
         let removed = await feed.deleteCheckIn(id)
@@ -19,6 +22,7 @@ enum CheckInDeletion {
             feed.remove(removedID)
             for list in others { list.remove(removedID) }
         }
+        await badges?.refresh()
         return true
     }
 }
