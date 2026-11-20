@@ -133,7 +133,7 @@ struct LevelHeader: View {
     }
 }
 
-private struct BadgeRow: View {
+struct BadgeRow: View {
     let badge: BadgeProgress
 
     var body: some View {

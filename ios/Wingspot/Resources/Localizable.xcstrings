@@ -2377,6 +2377,16 @@
         }
       }
     },
+    "No badges yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine Badges"
+          }
+        }
+      }
+    },
     "No boarding pass found" : {
       "localizations" : {
         "de" : {

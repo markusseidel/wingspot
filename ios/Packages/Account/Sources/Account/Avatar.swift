@@ -77,3 +77,21 @@ extension UnconfiguredAccountBackend: AvatarBackend {
     public func uploadAvatar(_ jpeg: Data) async throws { throw AccountError.notConfigured }
     public func removeAvatar() async throws { throw AccountError.notConfigured }
 }
+
+/// Someone's level and earned badges for their profile page, as the server sends them (`get_person_progress`).
+public protocol PersonProgressBackend: Sendable {
+    /// The JSON of the answer, or `nil` when the profile can't be seen: private, or blocked.
+    func personProgress(_ id: UUID) async throws -> Data?
+}
+
+extension SupabaseAccountBackend: PersonProgressBackend {
+    public func personProgress(_ id: UUID) async throws -> Data? {
+        let data = try await mappingErrors { try await client.rpc("get_person_progress", params: ["target": id]).execute().data }
+        // A profile that can't be seen answers with a JSON null.
+        return String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) == "null" ? nil : data
+    }
+}
+
+extension UnconfiguredAccountBackend: PersonProgressBackend {
+    public func personProgress(_ id: UUID) async throws -> Data? { throw AccountError.notConfigured }
+}

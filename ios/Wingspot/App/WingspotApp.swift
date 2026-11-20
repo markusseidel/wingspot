@@ -21,6 +21,7 @@ struct WingspotApp: App {
     @State private var reporter: Reporter
     @State private var terms: TermsStore
     @State private var avatars: AvatarStore
+    @State private var personProgress: PersonProgressStore
     @State private var sync: CheckInSyncCoordinator
     @State private var badges: BadgeStore
     @State private var push: PushStore
@@ -60,6 +61,7 @@ struct WingspotApp: App {
         _reporter = State(initialValue: Reporter(backend: accountBackend))
         _terms = State(initialValue: TermsStore(userID: { account.userID }))
         _avatars = State(initialValue: AvatarStore(projectURL: Self.supabaseURL, backend: accountBackend))
+        _personProgress = State(initialValue: PersonProgressStore(backend: accountBackend))
         let uploader = APICheckInUploader(
             client: Self.apiClient,
             accessToken: { await account.accessToken() }
@@ -98,6 +100,7 @@ struct WingspotApp: App {
                 .environment(reporter)
                 .environment(terms)
                 .environment(avatars)
+                .environment(personProgress)
                 .environment(sync)
                 .environment(badges)
                 .environment(push)
@@ -164,7 +167,7 @@ struct WingspotApp: App {
         return url.flatMap(URL.init(string:))
     }
 
-    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend & MyCheckInsBackend & ReactionBackend & PushBackend & AnnouncementBackend & CheckInVisibilityBackend & AvatarBackend {
+    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend & MyCheckInsBackend & ReactionBackend & PushBackend & AnnouncementBackend & CheckInVisibilityBackend & AvatarBackend & PersonProgressBackend {
         var url = Bundle.main.object(forInfoDictionaryKey: "WingspotSupabaseURL") as? String
         var key = Bundle.main.object(forInfoDictionaryKey: "WingspotPublishableKey") as? String
         #if DEBUG
