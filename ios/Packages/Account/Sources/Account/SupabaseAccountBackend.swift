@@ -8,9 +8,11 @@ private let logger = Logger(subsystem: "site.wingspot.ios", category: "account")
 public struct SupabaseAccountBackend: AccountBackend {
     private static let redirectURL = URL(string: "wingspot://auth-callback")!
 
-    private let client: SupabaseClient
+    let client: SupabaseClient
+    let projectURL: URL
 
     public init(url: URL, publishableKey: String) {
+        projectURL = url
         client = SupabaseClient(
             supabaseURL: url,
             supabaseKey: publishableKey,
@@ -123,6 +125,12 @@ public struct SupabaseAccountBackend: AccountBackend {
         try await mappingErrors {
             try await client.rpc("export_my_data").execute().data
         }
+    }
+
+    /// Runs a profile image change as the signed-in person, with the usual error mapping.
+    func avatarRequest(_ work: (SupabaseClient, UUID) async throws -> Void) async throws {
+        guard let id = client.auth.currentSession?.user.id else { throw AccountError.unknown }
+        try await mappingErrors { try await work(client, id) }
     }
 
     private func mappingErrors<T: Sendable>(_ work: () async throws -> T) async throws -> T {

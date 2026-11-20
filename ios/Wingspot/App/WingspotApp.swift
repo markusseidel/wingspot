@@ -20,6 +20,7 @@ struct WingspotApp: App {
     @State private var visibility: CheckInVisibilityStore
     @State private var reporter: Reporter
     @State private var terms: TermsStore
+    @State private var avatars: AvatarStore
     @State private var sync: CheckInSyncCoordinator
     @State private var badges: BadgeStore
     @State private var push: PushStore
@@ -58,6 +59,7 @@ struct WingspotApp: App {
         _visibility = State(initialValue: CheckInVisibilityStore(backend: accountBackend))
         _reporter = State(initialValue: Reporter(backend: accountBackend))
         _terms = State(initialValue: TermsStore(userID: { account.userID }))
+        _avatars = State(initialValue: AvatarStore(projectURL: Self.supabaseURL, backend: accountBackend))
         let uploader = APICheckInUploader(
             client: Self.apiClient,
             accessToken: { await account.accessToken() }
@@ -95,6 +97,7 @@ struct WingspotApp: App {
                 .environment(visibility)
                 .environment(reporter)
                 .environment(terms)
+                .environment(avatars)
                 .environment(sync)
                 .environment(badges)
                 .environment(push)
@@ -152,7 +155,16 @@ struct WingspotApp: App {
         }
     }
 
-    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend & MyCheckInsBackend & ReactionBackend & PushBackend & AnnouncementBackend & CheckInVisibilityBackend {
+    /// The address of the backend, which the profile images are served from.
+    private static var supabaseURL: URL? {
+        var url = Bundle.main.object(forInfoDictionaryKey: "WingspotSupabaseURL") as? String
+        #if DEBUG
+        url = ProcessInfo.processInfo.environment["WINGSPOT_SUPABASE_URL"] ?? url
+        #endif
+        return url.flatMap(URL.init(string:))
+    }
+
+    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend & MyCheckInsBackend & ReactionBackend & PushBackend & AnnouncementBackend & CheckInVisibilityBackend & AvatarBackend {
         var url = Bundle.main.object(forInfoDictionaryKey: "WingspotSupabaseURL") as? String
         var key = Bundle.main.object(forInfoDictionaryKey: "WingspotPublishableKey") as? String
         #if DEBUG

@@ -138,6 +138,16 @@ private struct ProfileDetailsView: View {
             if let progress = badges.progress {
                 Section { LevelHeader(progress: progress) }
             }
+            Section {
+                HStack(spacing: 16) {
+                    AvatarView(id: profile.id, name: profile.displayName ?? profile.username, size: 64)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(verbatim: profile.displayName ?? profile.username).font(.title3.bold())
+                        Text(verbatim: "@\(profile.username)").foregroundStyle(.secondary)
+                    }
+                }
+                .accessibilityElement(children: .combine)
+            }
             Section { ProfileStatsRows(stats: stats) }
             Section {
                 LabeledContent("Username") { Text(verbatim: "@\(profile.username)") }

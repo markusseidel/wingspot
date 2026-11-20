@@ -197,9 +197,9 @@ struct CheckInDetailView: View {
         Section {
             ForEach(tags) { person in
                 if person.id == account.userID {
-                    friendRow(String(localized: "You"))
+                    friendRow(String(localized: "You"), id: person.id)
                 } else {
-                    NavigationLink { PersonLoaderView(id: person.id) } label: { friendRow(person.name) }
+                    NavigationLink { PersonLoaderView(id: person.id) } label: { friendRow(person.name, id: person.id) }
                 }
             }
         } header: {
@@ -207,14 +207,9 @@ struct CheckInDetailView: View {
         }
     }
 
-    private func friendRow(_ name: String) -> some View {
+    private func friendRow(_ name: String, id: UUID) -> some View {
         HStack(spacing: 12) {
-            Text(verbatim: String(name.prefix(1)).uppercased())
-                .font(.headline)
-                .foregroundStyle(.tint)
-                .frame(width: 40, height: 40)
-                .background(Color.accentColor.opacity(0.15), in: Circle())
-                .accessibilityHidden(true)
+            AvatarView(id: id, name: name, size: 40)
             Text(verbatim: name).font(.body)
         }
         .padding(.vertical, 4)
@@ -361,12 +356,7 @@ struct CheckInDetailView: View {
             ForEach(store.comments) { comment in
                 let name = comment.displayName ?? comment.username
                 HStack(alignment: .top, spacing: 12) {
-                    Text(verbatim: String(name.prefix(1)).uppercased())
-                        .font(.headline)
-                        .foregroundStyle(.tint)
-                        .frame(width: 40, height: 40)
-                        .background(Color.accentColor.opacity(0.15), in: Circle())
-                        .accessibilityHidden(true)
+                    AvatarView(id: comment.userID, name: name, size: 40)
                     VStack(alignment: .leading, spacing: 4) {
                         HStack(alignment: .firstTextBaseline) {
                             Text(verbatim: name).font(.headline)
