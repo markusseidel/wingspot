@@ -205,17 +205,25 @@ class SocialViewModel(
         if (stack.isNotEmpty()) stack.removeAt(stack.lastIndex)
     }
 
+    /** Loads the newest page. The first load tries a second time after a moment, because right after the app starts the
+     *  network or the sign-in is often not ready yet, and an error that goes away by itself should not be shown. */
     fun refresh() {
         if (me() == null) return
         val mine = ++generation
+        val first = !mutable.value.hasLoaded
         mutable.value = mutable.value.copy(isLoading = true, failed = false)
         viewModelScope.launch {
-            try {
-                val page = api.feed(null, PAGE, sort)
-                if (mine != generation) return@launch
-                mutable.value = FeedState(items = page, photos = loadPhotos(page), tags = loadTags(page), badges = loadBadges(page), isLoading = false, reachedEnd = page.size < PAGE, hasLoaded = true, failed = false)
-            } catch (e: ApiException) {
-                if (mine == generation) mutable.value = mutable.value.copy(isLoading = false, failed = true, hasLoaded = true)
+            for (attempt in 1..2) {
+                try {
+                    val page = api.feed(null, PAGE, sort)
+                    if (mine != generation) return@launch
+                    mutable.value = FeedState(items = page, photos = loadPhotos(page), tags = loadTags(page), badges = loadBadges(page), isLoading = false, reachedEnd = page.size < PAGE, hasLoaded = true, failed = false)
+                    return@launch
+                } catch (e: ApiException) {
+                    if (mine != generation) return@launch
+                    if (attempt == 1 && first) { kotlinx.coroutines.delay(1500); if (mine != generation) return@launch; continue }
+                    mutable.value = mutable.value.copy(isLoading = false, failed = true, hasLoaded = true)
+                }
             }
         }
     }

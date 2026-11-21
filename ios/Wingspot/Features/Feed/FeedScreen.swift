@@ -138,7 +138,7 @@ struct FeedScreen: View {
             } else if !terms.hasAccepted {
                 TermsScreen { terms.accept() }
             } else if !feed.hasLoaded {
-                if let failure = feed.failure {
+                if !feed.isLoading, let failure = feed.failure {
                     ContentUnavailableView {
                         Label("Couldn't load your feed", systemImage: "wifi.slash")
                     } description: {

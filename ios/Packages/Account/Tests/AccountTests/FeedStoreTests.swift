@@ -15,6 +15,9 @@ private actor FakeFeed: FeedBackend, ReactionBackend {
     var reactionError: AccountError?
 
     func fail(_ error: AccountError?) { self.error = error }
+    /// The next `count` calls of `feed` fail, then it works again.
+    private var failuresLeft = 0
+    func failFeed(times count: Int) { failuresLeft = count }
 
     func checkIn(_ id: UUID) throws -> FeedItem? {
         if let error { throw error }
@@ -121,6 +124,7 @@ private actor FakeFeed: FeedBackend, ReactionBackend {
     func setBusy(_ rows: [ActiveAirport]) { busy = rows }
 
     func feed(after cursor: FeedCursor?, pageSize: Int, sort: FeedSort) throws -> [FeedItem] {
+        if failuresLeft > 0 { failuresLeft -= 1; throw AccountError.offline }
         cursors.append(cursor)
         sorts.append(sort)
         if let error { throw error }
@@ -135,7 +139,9 @@ private actor FakeFeed: FeedBackend, ReactionBackend {
 private let me = UUID()
 
 @MainActor private func makeStore(_ backend: FakeFeed) -> FeedStore {
-    FeedStore(backend: backend, reactions: backend, userID: { me })
+    let store = FeedStore(backend: backend, reactions: backend, userID: { me })
+    store.retryDelay = .milliseconds(1)
+    return store
 }
 
 private func item(_ n: Int) -> FeedItem {
@@ -152,6 +158,25 @@ private func item(_ n: Int) -> FeedItem {
     #expect(store.items.count == 5)
     #expect(store.hasLoaded)
     #expect(store.reachedEnd)
+}
+
+@MainActor @Test func aFirstLoadThatFailsOnceIsTriedAgainWithoutShowingAnError() async {
+    let backend = FakeFeed(items: (1...5).map(item))
+    await backend.failFeed(times: 1)
+    let store = makeStore(backend)
+    await store.refresh()
+    #expect(store.hasLoaded)
+    #expect(store.failure == nil)
+    #expect(store.items.count == 5)
+}
+
+@MainActor @Test func aFirstLoadThatFailsTwiceShowsTheError() async {
+    let backend = FakeFeed(items: (1...5).map(item))
+    await backend.failFeed(times: 2)
+    let store = makeStore(backend)
+    await store.refresh()
+    #expect(!store.hasLoaded)
+    #expect(store.failure != nil)
 }
 
 @MainActor @Test func moreIsLoadedFromTheLastItemUntilTheEnd() async {
