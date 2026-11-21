@@ -79,6 +79,9 @@ private fun InboxRow(row: SocialApi.ActivityItem, onClick: () -> Unit) {
         Avatar(row.actorId, row.who, 40.dp)
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(sentence(row), style = MaterialTheme.typography.bodyMedium)
+            if (row.kind == "spot_rejected" && row.snippet.orEmpty().contains('\n')) {
+                Text(row.snippet.orEmpty().substringAfter('\n'), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 3)
+            }
             if ((row.kind == "comment" || row.kind == "mention") && !row.snippet.isNullOrBlank()) {
                 Text("\u201C${row.snippet}\u201D", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2)
             }
@@ -90,9 +93,12 @@ private fun InboxRow(row: SocialApi.ActivityItem, onClick: () -> Unit) {
 /** One sentence that starts with who did it, the name in bold. */
 @Composable
 private fun sentence(row: SocialApi.ActivityItem): AnnotatedString {
-    val name = row.who
+    val spotKind = row.kind == "spot_approved" || row.kind == "spot_rejected"
+    val name = if (spotKind) row.snippet.orEmpty().lineSequence().first() else row.who
     val subject = row.subject
     val text = when (row.kind) {
+        "spot_approved" -> stringResource(R.string.activity_spot_approved, name)
+        "spot_rejected" -> stringResource(R.string.activity_spot_rejected, name)
         "follow" -> stringResource(R.string.activity_follow, name)
         "salute" -> if (subject != null) stringResource(R.string.activity_salute_on, name, subject) else stringResource(R.string.activity_salute, name)
         "comment" -> if (subject != null) stringResource(R.string.activity_comment_on, name, subject) else stringResource(R.string.activity_comment, name)

@@ -55,4 +55,14 @@ import Testing
         let refused = try JSONDecoder().decode(NewSpotAnswer.self, from: Data(#"{"status":"rejected","code":"no_airport_nearby"}"#.utf8))
         #expect(refused.code == "no_airport_nearby")
     }
+
+    @Test func aWaitingPlaceAndADecisionAreRead() throws {
+        let json = #"{"id":4,"name":"Terrace","latitude":50.1,"longitude":8.6,"description":null,"best_time":"Morning","facing":null,"tips":null,"legal_notes":null,"airport_id":3,"airport_name":"Frankfurt","airport_code":"FRA","author_id":null,"author_username":"anna","author_name":null,"created_at":"2026-11-21T17:59:27+00:00"}"#
+        let spot = try JSONDecoder().decode(PendingSpot.self, from: Data(json.utf8))
+        #expect(spot.airportCode == "FRA")
+        #expect(spot.bestTime == "Morning")
+        #expect(spot.authorUsername == "anna")
+        let answer = try JSONDecoder().decode(ReviewAnswer.self, from: Data(#"{"status":"rejected","code":"not_pending"}"#.utf8))
+        #expect(answer.code == "not_pending")
+    }
 }

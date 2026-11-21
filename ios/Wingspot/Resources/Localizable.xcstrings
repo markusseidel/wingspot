@@ -828,6 +828,16 @@
         }
       }
     },
+    "Approve" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Freigeben"
+          }
+        }
+      }
+    },
     "Arriving" : {
       "localizations" : {
         "de" : {
@@ -1572,6 +1582,16 @@
         }
       }
     },
+    "Couldn't save the decision. Try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Entscheidung konnte nicht gespeichert werden. Versuch es noch einmal."
+          }
+        }
+      }
+    },
     "Couldn't save the photo. Try again." : {
       "localizations" : {
         "de" : {
@@ -2289,6 +2309,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Folgt deiner Freigabe: %@"
+          }
+        }
+      }
+    },
+    "Founder" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gründer"
           }
         }
       }
@@ -3245,6 +3275,16 @@
         }
       }
     },
+    "Nothing waits for review." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nichts wartet auf Prüfung."
+          }
+        }
+      }
+    },
     "Nothing yet" : {
       "localizations" : {
         "de" : {
@@ -3733,6 +3773,16 @@
         }
       }
     },
+    "Reason (shown to the author)" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grund (wird dem Autor angezeigt)"
+          }
+        }
+      }
+    },
     "Recent aircraft types" : {
       "localizations" : {
         "de" : {
@@ -3779,6 +3829,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Registrierung (DAIMA)"
+          }
+        }
+      }
+    },
+    "Reject" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ablehnen"
+          }
+        }
+      }
+    },
+    "Reject this place?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Ort ablehnen?"
           }
         }
       }
@@ -3889,6 +3959,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rückflug"
+          }
+        }
+      }
+    },
+    "Review places" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orte prüfen"
           }
         }
       }
@@ -4349,6 +4429,16 @@
         }
       }
     },
+    "Someone else already decided on this place." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jemand anderes hat über diesen Ort schon entschieden."
+          }
+        }
+      }
+    },
     "Something else" : {
       "localizations" : {
         "de" : {
@@ -4505,6 +4595,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Diesen Ort vorschlagen"
+          }
+        }
+      }
+    },
+    "Suggested by %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorgeschlagen von %@"
           }
         }
       }
@@ -5394,6 +5494,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dein Foto"
+          }
+        }
+      }
+    },
+    "Your place %@ is now live" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Ort %@ ist jetzt freigegeben"
+          }
+        }
+      }
+    },
+    "Your place %@ was not accepted" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Ort %@ wurde nicht übernommen"
           }
         }
       }

@@ -200,3 +200,90 @@ fun CheckInSpotSection(app: WingspotApp, model: SocialViewModel, checkInId: Stri
         }
     }
 }
+
+private val staffLabels = mutableMapOf<String, String?>()
+
+/** The small mark next to a name for people with a role label (the founder). */
+@Composable
+fun StaffLabel(app: WingspotApp, user: String) {
+    var label by remember(user) { mutableStateOf(staffLabels[user]) }
+    LaunchedEffect(user) {
+        if (!staffLabels.containsKey(user)) {
+            try { staffLabels[user] = app.social.staffLabel(user); label = staffLabels[user] } catch (e: ApiException) { }
+        }
+    }
+    if (label == "founder") {
+        Text(stringResource(R.string.founder_label), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.testTag("staff-label"))
+    }
+}
+
+/** The places that wait for a decision. Shown to people with the review permission. */
+@Composable
+fun ReviewSpotsPage(app: WingspotApp, model: SocialViewModel) {
+    var places by remember { mutableStateOf<List<SocialApi.PendingSpot>?>(null) }
+    var rejecting by remember { mutableStateOf<SocialApi.PendingSpot?>(null) }
+    var note by remember { mutableStateOf("") }
+    var message by remember { mutableStateOf<Int?>(null) }
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    val uriHandler = LocalUriHandler.current
+    LaunchedEffect(Unit) { places = try { app.social.pendingSpots() } catch (e: ApiException) { emptyList() } }
+
+    fun decide(place: SocialApi.PendingSpot, approve: Boolean, text: String?) {
+        scope.launch {
+            val answer = try { app.social.reviewSpot(place.id, approve, text) } catch (e: ApiException) { null }
+            when {
+                answer != null && answer.code == null -> places = places?.filter { it.id != place.id }
+                answer?.code == "not_pending" -> { message = R.string.review_taken; places = places?.filter { it.id != place.id } }
+                else -> message = R.string.review_failed
+            }
+        }
+    }
+
+    Column(Modifier.fillMaxWidth().testTag("review-spots"), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+            TextButton(onClick = model::back) { Text("‹ " + stringResource(R.string.back)) }
+            Text(stringResource(R.string.review_places), style = MaterialTheme.typography.titleLarge)
+        }
+        val list = places
+        when {
+            list == null -> CircularProgressIndicator(Modifier.padding(16.dp))
+            list.isEmpty() -> Text(stringResource(R.string.review_nothing), color = MaterialTheme.colorScheme.onSurfaceVariant)
+            else -> list.forEach { place ->
+                Column(Modifier.fillMaxWidth().testTag("review-row"), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(place.name, style = MaterialTheme.typography.titleMedium)
+                    Text("${place.airportCode} · ${place.airportName}", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    (place.authorName ?: place.authorUsername)?.let {
+                        Text(stringResource(R.string.review_suggested_by, it), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    listOfNotNull(place.description, place.bestTime, place.facing, place.tips, place.legalNotes).forEach {
+                        Text(it, style = MaterialTheme.typography.bodySmall)
+                    }
+                    TextButton(onClick = {
+                        runCatching { uriHandler.openUri("https://www.google.com/maps/search/?api=1&query=${place.latitude},${place.longitude}") }
+                    }) { Text(stringResource(R.string.open_in_maps)) }
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Button(onClick = { decide(place, true, null) }, modifier = Modifier.testTag("review-approve")) { Text(stringResource(R.string.review_approve)) }
+                        OutlinedButton(onClick = { note = ""; rejecting = place }, modifier = Modifier.testTag("review-reject")) { Text(stringResource(R.string.review_reject)) }
+                    }
+                    HorizontalDivider(Modifier.padding(top = 8.dp))
+                }
+            }
+        }
+    }
+    rejecting?.let { place ->
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { rejecting = null },
+            title = { Text(stringResource(R.string.review_reject_title)) },
+            text = { OutlinedTextField(note, { note = it }, label = { Text(stringResource(R.string.review_reason)) }, modifier = Modifier.testTag("review-reason")) },
+            confirmButton = { TextButton(onClick = { rejecting = null; decide(place, false, note) }, modifier = Modifier.testTag("review-confirm-reject")) { Text(stringResource(R.string.review_reject)) } },
+            dismissButton = { TextButton(onClick = { rejecting = null }) { Text(stringResource(R.string.cancel)) } },
+        )
+    }
+    message?.let {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { message = null },
+            text = { Text(stringResource(it)) },
+            confirmButton = { TextButton(onClick = { message = null }) { Text(stringResource(R.string.ok)) } },
+        )
+    }
+}

@@ -174,6 +174,9 @@ private struct InboxRow: View {
                 Text(text)
                     .font(.subheadline)
                     .multilineTextAlignment(.leading)
+                if item.kind == "spot_rejected", let reason {
+                    Text(verbatim: reason).font(.footnote).foregroundStyle(.secondary).lineLimit(3)
+                }
                 if let quote = item.snippet, !quote.isEmpty, (item.kind == "comment" || item.kind == "mention") {
                     Text("“\(quote)”")
                         .font(.footnote)
@@ -216,9 +219,22 @@ private struct InboxRow: View {
             return bold(String(localized: "\(name) mentioned you in a comment"), name)
         case "comment_like":
             return bold(String(localized: "\(name) saluted your comment"), name)
+        case "spot_approved":
+            let place = place
+            return bold(String(localized: "Your place \(place) is now live"), place)
+        case "spot_rejected":
+            let place = place
+            return bold(String(localized: "Your place \(place) was not accepted"), place)
         default:
             return bold(String(localized: "\(name) has news for you"), name)
         }
+    }
+
+    /// The name of the place in a decision notice: the first line of the snippet. A reason follows on the next lines.
+    private var place: String { (item.snippet ?? "").split(separator: "\n", maxSplits: 1).first.map(String.init) ?? "" }
+    private var reason: String? {
+        let parts = (item.snippet ?? "").split(separator: "\n", maxSplits: 1)
+        return parts.count > 1 ? String(parts[1]) : nil
     }
 
     private func bold(_ sentence: String, _ name: String) -> AttributedString {

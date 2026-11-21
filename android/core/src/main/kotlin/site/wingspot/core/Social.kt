@@ -340,6 +340,39 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
         return json.decodeFromString(ListSerializer(SpotLocation.serializer()), rest.call("POST", "/rest/v1/rpc/spotting_locations_at", body))
     }
 
+    /** A suggested place that waits for a decision. */
+    @Serializable
+    data class PendingSpot(
+        val id: Long, val name: String, val latitude: Double, val longitude: Double, val description: String? = null,
+        @SerialName("best_time") val bestTime: String? = null, val facing: String? = null, val tips: String? = null,
+        @SerialName("legal_notes") val legalNotes: String? = null,
+        @SerialName("airport_name") val airportName: String, @SerialName("airport_code") val airportCode: String,
+        @SerialName("author_username") val authorUsername: String? = null, @SerialName("author_name") val authorName: String? = null,
+    )
+
+    /** The answer to a decision: [status] `approved` or `rejected`; [code] says why it did not go through (`not_allowed`, `not_pending`, `invalid_request`). */
+    @Serializable
+    data class ReviewAnswer(val status: String, val code: String? = null)
+
+    /** What you may do beyond the ordinary, e.g. `review_spots`. Empty for most people. */
+    suspend fun myPermissions(): List<String> =
+        json.decodeFromString(ListSerializer(kotlinx.serialization.serializer<String>()), rest.call("POST", "/rest/v1/rpc/my_permissions", "{}"))
+
+    /** The role label a person shows on their profile, e.g. `founder`, or null. */
+    suspend fun staffLabel(user: String): String? {
+        val body = rest.call("POST", "/rest/v1/rpc/staff_label", buildJsonObject { put("p_user", user) }.toString()).trim()
+        return if (body == "null") null else json.decodeFromString(kotlinx.serialization.serializer<String>(), body)
+    }
+
+    /** The places waiting for a decision. Empty unless you may review. */
+    suspend fun pendingSpots(): List<PendingSpot> =
+        json.decodeFromString(ListSerializer(PendingSpot.serializer()), rest.call("POST", "/rest/v1/rpc/pending_spots", "{}"))
+
+    suspend fun reviewSpot(id: Long, approve: Boolean, note: String?): ReviewAnswer {
+        val body = buildJsonObject { put("p_id", id); put("p_approve", approve); note?.let { put("p_note", it) } }.toString()
+        return json.decodeFromString(ReviewAnswer.serializer(), rest.call("POST", "/rest/v1/rpc/review_spot", body))
+    }
+
     /** One place with its numbers, or null when it doesn't exist or isn't visible to you. */
     suspend fun spotDetail(id: Long): SpotDetail? {
         val body = rest.call("POST", "/rest/v1/rpc/get_spotting_location", buildJsonObject { put("p_id", id) }.toString()).trim()

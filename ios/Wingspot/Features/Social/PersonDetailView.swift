@@ -14,6 +14,7 @@ struct PersonDetailView: View {
     @State private var failure: AccountError?
     @Environment(PersonProgressStore.self) private var progressStore
     @Environment(AccountStore.self) private var account
+    @Environment(SpotStore.self) private var spots
     @State private var progress: UserProgress?
 
     var body: some View {
@@ -23,6 +24,7 @@ struct PersonDetailView: View {
                     AvatarView(id: person.id, name: person.displayName ?? person.username, size: 88)
                     Text(verbatim: person.displayName ?? person.username).font(.title2.bold())
                     Text(verbatim: "@\(person.username)").foregroundStyle(.secondary)
+                    StaffLabelView(user: person.id)
                     if person.isPrivate {
                         Label("Private profile", systemImage: "lock")
                             .font(.caption)
@@ -63,6 +65,7 @@ struct PersonDetailView: View {
             }
         }
         .task(id: person.id) { progress = await progressStore.progress(of: person.id) }
+        .task(id: person.id) { await spots.loadLabel(of: person.id) }
         .navigationTitle(Text(verbatim: "@\(person.username)"))
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $report) { ReportSheet(target: $0) }

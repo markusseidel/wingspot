@@ -17,6 +17,40 @@ final class SpotStore {
     func sightings(of visit: UUID) async -> [VisitSighting] { (try? await backend.visitSightings(visit)) ?? [] }
     func spot(of checkIn: UUID) async -> CheckInSpot? { (try? await backend.checkInSpot(checkIn)) ?? nil }
     func add(_ spot: NewSpot) async throws -> NewSpotAnswer { try await backend.addSpot(spot) }
+
+    /// What the signed-in person may do beyond the ordinary (`review_spots`, ...). Loaded when the profile opens.
+    private(set) var permissions: [String] = []
+    var canReview: Bool { permissions.contains("review_spots") }
+    /// Role labels already asked for, by person. `nil` means asked and none. Views read it with `label(of:)`, and the
+    /// parent loads it with `loadLabel(of:)`, because a view with nothing in it never runs its own task.
+    private var labels: [UUID: String?] = [:]
+
+    func loadPermissions() async { permissions = (try? await backend.myPermissions()) ?? [] }
+
+    /// The label a person shows on their profile, e.g. `founder`, once loaded.
+    func label(of user: UUID) -> String? { labels[user] ?? nil }
+
+    func loadLabel(of user: UUID) async {
+        guard labels[user] == nil, let found = try? await backend.staffLabel(of: user) else { return }
+        labels[user] = .some(found)
+    }
+
+    func pending() async -> [PendingSpot]? { try? await backend.pendingSpots() }
+    func review(_ id: Int, approve: Bool, note: String?) async -> ReviewAnswer? {
+        try? await backend.reviewSpot(id, approve: approve, note: note)
+    }
+}
+
+/// The small mark next to a name for people with a role label. The parent calls `SpotStore.loadLabel(of:)`.
+struct StaffLabelView: View {
+    let user: UUID
+    @Environment(SpotStore.self) private var spots
+
+    var body: some View {
+        if spots.label(of: user) == "founder" {
+            Label("Founder", systemImage: "star.fill").font(.caption.bold()).foregroundStyle(.tint)
+        }
+    }
 }
 
 /// The spotting locations of an airport, as a section of its page. Nothing is shown when there are none.

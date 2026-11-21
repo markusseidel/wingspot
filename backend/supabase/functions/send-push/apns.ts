@@ -13,7 +13,7 @@ export interface PushDevice {
 /** One row from `claim_notifications`. */
 export interface PushRow {
   id: string;
-  kind: "follow" | "salute" | "comment" | "checkin" | "tagged" | "mention" | "comment_like" | "tag_copy";
+  kind: "follow" | "salute" | "comment" | "checkin" | "tagged" | "mention" | "comment_like" | "tag_copy" | "spot_approved" | "spot_rejected";
   actor_id: string;
   actor_username: string;
   actor_name: string | null;
@@ -79,6 +79,16 @@ export function render(row: PushRow, locale: string | null): Rendered {
       const what = row.subject ?? "";
       if (what) return { title: name, body: german ? `hat deinen Flug ${what} zu seinem Logbuch hinzugefügt.` : `added your flight ${what} to their logbook.` };
       return { title: name, body: german ? "hat deinen Check-in zu seinem Logbuch hinzugefügt." : "added your check-in to their logbook." };
+    }
+    case "spot_approved": {
+      const place = (row.snippet ?? "").split("\n")[0].trim();
+      return { title: place || "Wingspot", body: german ? "ist freigegeben. Alle können den Ort jetzt sehen." : "is approved. Everyone can see the place now." };
+    }
+    case "spot_rejected": {
+      const [place, ...rest] = (row.snippet ?? "").split("\n");
+      const reason = rest.join(" ").trim();
+      const body = german ? "wurde nicht übernommen." : "was not accepted.";
+      return { title: place.trim() || "Wingspot", body: reason ? `${body} ${reason}` : body };
     }
     case "comment_like":
       return { title: name, body: german ? "hat deinen Kommentar salutiert." : "saluted your comment." };

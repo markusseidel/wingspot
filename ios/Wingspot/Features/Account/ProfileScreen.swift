@@ -118,6 +118,7 @@ private struct ProfileDetailsView: View {
     @Environment(ReferenceDataStore.self) private var referenceData
     @Environment(BadgeStore.self) private var badges
     @Environment(PushStore.self) private var push
+    @Environment(SpotStore.self) private var spots
     @Query private var all: [LocalCheckIn]
     @State private var airport: Airport?
     @State private var signOutFailed = false
@@ -144,6 +145,7 @@ private struct ProfileDetailsView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(verbatim: profile.displayName ?? profile.username).font(.title3.bold())
                         Text(verbatim: "@\(profile.username)").foregroundStyle(.secondary)
+                        StaffLabelView(user: profile.id)
                     }
                 }
                 .accessibilityElement(children: .combine)
@@ -168,6 +170,9 @@ private struct ProfileDetailsView: View {
                     ProfileEditorView(profile: profile, isFirstSetup: false)
                 }
                 NavigationLink("Settings") { SettingsView() }
+                if spots.canReview {
+                    NavigationLink("Review places") { SpotReviewView() }
+                }
             }
             Section {
                 Button(action: exportData) {
@@ -211,6 +216,8 @@ private struct ProfileDetailsView: View {
         } message: {
             if let deleteFailure { Text(deleteFailure.message) }
         }
+        .task { await spots.loadPermissions() }
+        .task { await spots.loadLabel(of: profile.id) }
         .task(id: AirportKey(id: profile.homeAirportID, dataVersion: referenceData.database?.dataVersion)) {
             guard let id = profile.homeAirportID, let database = referenceData.database else {
                 airport = nil
