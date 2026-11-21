@@ -70,7 +70,12 @@ final class InboxStore {
 
 struct InboxView: View {
     @Environment(InboxStore.self) private var inbox
-    @Environment(PushRouter.self) private var router
+    @Environment(FeedStore.self) private var feed
+    /// What was tapped opens from this screen, so Back comes back here and not to the feed.
+    @State private var openedCheckIn: FeedItem?
+    @State private var openedPerson: OpenedPerson?
+
+    private struct OpenedPerson: Identifiable, Hashable { let id: UUID }
 
     var body: some View {
         Group {
@@ -113,6 +118,8 @@ struct InboxView: View {
                     .disabled(!inbox.hasUnread)
             }
         }
+        .navigationDestination(item: $openedCheckIn) { CheckInDetailView(item: $0) }
+        .navigationDestination(item: $openedPerson) { PersonLoaderView(id: $0.id) }
         .task { await inbox.load() }
         .refreshable { await inbox.load() }
     }
@@ -123,9 +130,22 @@ struct InboxView: View {
         return nil
     }
 
-    /// The feed screen opens what the router points at, the same way as for a tapped push notification.
     private func open(_ item: ActivityItem) {
-        router.destination = destination(of: item)
+        switch destination(of: item) {
+        case .person(let id):
+            openedPerson = OpenedPerson(id: id)
+        case .checkIn(let id):
+            // It may be older than the pages loaded, or someone else's, so it is asked for by id.
+            Task {
+                if let known = feed.items.first(where: { $0.id == id }) {
+                    openedCheckIn = known
+                } else {
+                    openedCheckIn = await feed.checkIn(id)
+                }
+            }
+        case nil:
+            break
+        }
     }
 }
 
