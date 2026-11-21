@@ -30,6 +30,7 @@ sealed class Route {
     data class AirportPage(val id: Long) : Route()
     data class SpotPage(val id: Long) : Route()
     object AddSpot : Route()
+    object ReviewSpots : Route()
     data class TypePage(val code: String) : Route()
     data class RegistrationPage(val registration: String) : Route()
     object ExploreMap : Route()

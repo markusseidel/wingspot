@@ -472,4 +472,16 @@
     <string name="end_session">End session</string>
     <string name="spotting_location_label">Spotting location</string>
     <string name="spot_none">None</string>
+    <string name="review_places">Review places</string>
+    <string name="founder_label">Founder</string>
+    <string name="review_nothing">Nothing waits for review.</string>
+    <string name="review_approve">Approve</string>
+    <string name="review_reject">Reject</string>
+    <string name="review_reject_title">Reject this place?</string>
+    <string name="review_reason">Reason (shown to the author)</string>
+    <string name="review_suggested_by">Suggested by %1$s</string>
+    <string name="review_failed">Couldn\'t save the decision. Try again.</string>
+    <string name="review_taken">Someone else already decided on this place.</string>
+    <string name="activity_spot_approved">Your place %1$s is now live</string>
+    <string name="activity_spot_rejected">Your place %1$s was not accepted</string>
 </resources>

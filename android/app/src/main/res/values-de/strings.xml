@@ -472,4 +472,16 @@
     <string name="end_session">Session beenden</string>
     <string name="spotting_location_label">Spotting-Ort</string>
     <string name="spot_none">Keiner</string>
+    <string name="review_places">Orte prüfen</string>
+    <string name="founder_label">Gründer</string>
+    <string name="review_nothing">Nichts wartet auf Prüfung.</string>
+    <string name="review_approve">Freigeben</string>
+    <string name="review_reject">Ablehnen</string>
+    <string name="review_reject_title">Diesen Ort ablehnen?</string>
+    <string name="review_reason">Grund (wird dem Autor angezeigt)</string>
+    <string name="review_suggested_by">Vorgeschlagen von %1$s</string>
+    <string name="review_failed">Die Entscheidung konnte nicht gespeichert werden. Versuch es noch einmal.</string>
+    <string name="review_taken">Jemand anderes hat über diesen Ort schon entschieden.</string>
+    <string name="activity_spot_approved">Dein Ort %1$s ist jetzt freigegeben</string>
+    <string name="activity_spot_rejected">Dein Ort %1$s wurde nicht übernommen</string>
 </resources>

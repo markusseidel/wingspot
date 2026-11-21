@@ -108,3 +108,20 @@ No new migration. iPhone and Android, same behaviour:
   check-in with a place was only covered by unit tests.
 - Open: cover photo upload, the pin on a map instead of a link, and badges (PR 4). A badge named "Busy Day" already
   exists (many check-ins in one day), so the session badge needs another name.
+
+## As built: reviewing places and staff roles
+
+- **Roles**: `public.staff_roles (user_id, role, show_label)` with the roles `founder` and `moderator`. The table has no
+  client access. `private.staff_permissions(uid)` is the one place that maps a role to permissions (`founder`:
+  `review_spots`, `manage_staff`; `moderator`: `review_spots`). To let someone else approve places, add a row with the
+  role `moderator`; to add a permission or role, change that one function. The apps ask `my_permissions()` and show only
+  what it allows, so no app change is needed for a new reviewer.
+- **Label**: `staff_label(user)` returns the role of a person who chose to show it (`show_label`). The apps show a
+  "Founder" mark next to the name on the own profile and on other people's profiles.
+- **Review**: `pending_spots()` lists waiting places (position, details, author, airport); `review_spot(id, approve,
+  note)` approves or rejects one, stores who decided and when, and tells the author with an inbox note and a push
+  (`spot_approved`, `spot_rejected`; the reason of a rejection follows the name on a second line of the snippet). The
+  entry "Review places" is on the profile page for people with the permission.
+- A rejected place is gone for everybody, its author too, and the same place can be suggested again. The two new
+  notification kinds skip the one-hour duplicate check, because two decisions on different places are not the same thing.
+- The founder role is granted by a row in the production database, not by a migration, so no account name is in the repo.

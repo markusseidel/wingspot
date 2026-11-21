@@ -128,6 +128,7 @@ fun ProfileTab(
                         Column {
                             Text(mine?.who ?: "…", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                             mine?.username?.let { Text("@$it", color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                            StaffLabel(app, session.user.id)
                         }
                     }
                     Detail(stringResource(R.string.username_label), mine?.username?.let { "@$it" } ?: "…")
@@ -138,6 +139,11 @@ fun ProfileTab(
             }
             for ((label, route) in listOf(R.string.collections to Route.Collections, R.string.leaderboard_title to Route.Leaderboard, R.string.invite_title to Route.Invite, R.string.edit_profile to Route.EditProfile, R.string.settings to Route.Settings)) {
                 OutlinedButton(onClick = { social.open(route) }, modifier = Modifier.fillMaxWidth().testTag("profile-$label")) { Text(stringResource(label)) }
+            }
+            var canReview by remember { mutableStateOf(false) }
+            LaunchedEffect(session.user.id) { canReview = try { "review_spots" in app.social.myPermissions() } catch (e: ApiException) { false } }
+            if (canReview) {
+                OutlinedButton(onClick = { social.open(Route.ReviewSpots) }, modifier = Modifier.fillMaxWidth().testTag("open-review-spots")) { Text(stringResource(R.string.review_places)) }
             }
             HorizontalDivider()
             OutlinedButton(

@@ -108,6 +108,7 @@ fun PersonPage(app: WingspotApp, model: SocialViewModel, id: String, me: String)
                     Avatar(p.id, p.who, 88.dp)
                     Text(p.who, style = MaterialTheme.typography.headlineSmall)
                     Text("@" + p.username, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    StaffLabel(app, p.id)
                     if (p.isPrivate) Text(stringResource(R.string.private_profile), style = MaterialTheme.typography.bodySmall)
                     if (followsYou) Text(stringResource(R.string.follows_you), style = MaterialTheme.typography.bodySmall)
                     if (id != me) {

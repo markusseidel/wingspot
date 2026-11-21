@@ -106,6 +106,72 @@ public protocol SpotBackend: Sendable {
     func checkInSpot(_ checkIn: UUID) async throws -> CheckInSpot?
     /// Suggests a new place. It waits for approval and is visible only to its author until then.
     func addSpot(_ request: NewSpot) async throws -> NewSpotAnswer
+    /// What the caller may do beyond the ordinary, e.g. `review_spots`. Empty for most people.
+    func myPermissions() async throws -> [String]
+    /// The role label a person shows on their profile, e.g. `founder`, or `nil`.
+    func staffLabel(of user: UUID) async throws -> String?
+    /// The places waiting for a decision. Empty unless the caller may review.
+    func pendingSpots() async throws -> [PendingSpot]
+    func reviewSpot(_ id: Int, approve: Bool, note: String?) async throws -> ReviewAnswer
+}
+
+/// A suggested place that waits for a decision.
+public struct PendingSpot: Decodable, Identifiable, Equatable, Sendable {
+    public let id: Int
+    public let name: String
+    public let latitude: Double
+    public let longitude: Double
+    public let description: String?
+    public let bestTime: String?
+    public let facing: String?
+    public let tips: String?
+    public let legalNotes: String?
+    public let airportName: String
+    public let airportCode: String
+    public let authorUsername: String?
+    public let authorName: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case id, name, latitude, longitude, description, facing, tips
+        case bestTime = "best_time"
+        case legalNotes = "legal_notes"
+        case airportName = "airport_name"
+        case airportCode = "airport_code"
+        case authorUsername = "author_username"
+        case authorName = "author_name"
+    }
+
+    public init(
+        id: Int, name: String, latitude: Double, longitude: Double, description: String? = nil, bestTime: String? = nil,
+        facing: String? = nil, tips: String? = nil, legalNotes: String? = nil, airportName: String, airportCode: String,
+        authorUsername: String? = nil, authorName: String? = nil
+    ) {
+        self.id = id; self.name = name; self.latitude = latitude; self.longitude = longitude; self.description = description
+        self.bestTime = bestTime; self.facing = facing; self.tips = tips; self.legalNotes = legalNotes
+        self.airportName = airportName; self.airportCode = airportCode; self.authorUsername = authorUsername; self.authorName = authorName
+    }
+}
+
+/// The answer to a decision: `approved`, `rejected`, or `rejected` with the `code` that says why it did not go through
+/// (`not_allowed`, `not_pending`, `invalid_request`).
+public struct ReviewAnswer: Decodable, Equatable, Sendable {
+    public let status: String
+    public let code: String?
+    public init(status: String, code: String? = nil) { self.status = status; self.code = code }
+}
+
+private struct ReviewRequest: Encodable, Sendable {
+    let id: Int
+    let approve: Bool
+    let note: String?
+
+    private enum CodingKeys: String, CodingKey { case id = "p_id", approve = "p_approve", note = "p_note" }
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(id, forKey: .id)
+        try c.encode(approve, forKey: .approve)
+        try c.encodeIfPresent(note, forKey: .note)
+    }
 }
 
 /// A place the person suggests.
@@ -259,6 +325,23 @@ extension SupabaseAccountBackend: SpotBackend {
         try await mappingErrors { try await client.rpc("add_spotting_location", params: request).execute().value }
     }
 
+    public func myPermissions() async throws -> [String] {
+        try await mappingErrors { try await client.rpc("my_permissions").execute().value }
+    }
+
+    public func staffLabel(of user: UUID) async throws -> String? {
+        guard let data = try await rawOrNil("staff_label", params: ["p_user": user]) else { return nil }
+        return try JSONDecoder().decode(String.self, from: data)
+    }
+
+    public func pendingSpots() async throws -> [PendingSpot] {
+        try await mappingErrors { try await client.rpc("pending_spots").execute().value }
+    }
+
+    public func reviewSpot(_ id: Int, approve: Bool, note: String?) async throws -> ReviewAnswer {
+        try await mappingErrors { try await client.rpc("review_spot", params: ReviewRequest(id: id, approve: approve, note: note)).execute().value }
+    }
+
     /// The JSON of an answer, or `nil` for a JSON null (an empty answer).
     private func rawOrNil(_ function: String, params: some Encodable & Sendable) async throws -> Data? {
         let data = try await mappingErrors { try await client.rpc(function, params: params).execute().data }
@@ -272,4 +355,8 @@ extension UnconfiguredAccountBackend: SpotBackend {
     public func visitSightings(_ visit: UUID) async throws -> [VisitSighting] { throw AccountError.notConfigured }
     public func checkInSpot(_ checkIn: UUID) async throws -> CheckInSpot? { throw AccountError.notConfigured }
     public func addSpot(_ request: NewSpot) async throws -> NewSpotAnswer { throw AccountError.notConfigured }
+    public func myPermissions() async throws -> [String] { throw AccountError.notConfigured }
+    public func staffLabel(of user: UUID) async throws -> String? { throw AccountError.notConfigured }
+    public func pendingSpots() async throws -> [PendingSpot] { throw AccountError.notConfigured }
+    public func reviewSpot(_ id: Int, approve: Bool, note: String?) async throws -> ReviewAnswer { throw AccountError.notConfigured }
 }

@@ -33,6 +33,7 @@
 		44D09702BD9AEBE667B05854 /* PersonCheckInsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769842784C2049C177DB02CD /* PersonCheckInsSection.swift */; };
 		4644DCAB019919C64F9372FD /* AirportsMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C8DE707D5FBC441F2A0A4 /* AirportsMapView.swift */; };
 		4B791396F639C699E8BF392C /* Spots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D09EFA7CF37248C275F6490 /* Spots.swift */; };
+		4C998BCC2CB92D06E880A185 /* SpotReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB1F2D28D8382E2FB54F51D /* SpotReview.swift */; };
 		59990CC13D4B5789970BC1EA /* AddSpotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C5A69FB55EF9C2811AE084 /* AddSpotView.swift */; };
 		5B37D64341B84157BCB31647 /* AccountCheckInSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534BE6354EF9EC7D6EA1DA13 /* AccountCheckInSource.swift */; };
 		5BF02F7F79B326015B808389 /* AirportPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1072182D625807362ADE4FB1 /* AirportPageView.swift */; };
@@ -97,6 +98,7 @@
 		181278D0BAEE1C7A36510BCE /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		25144FB28F74B094147B5175 /* WithFriendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WithFriendsView.swift; sourceTree = "<group>"; };
 		2A600D9AC1C5768A9B274FA0 /* ReferenceData */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ReferenceData; path = Packages/ReferenceData; sourceTree = SOURCE_ROOT; };
+		2AB1F2D28D8382E2FB54F51D /* SpotReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotReview.swift; sourceTree = "<group>"; };
 		2EEAE6B7A1B3E5CE0F43789E /* Wingspot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Wingspot.entitlements; sourceTree = "<group>"; };
 		3081197D3CD4BE4B1DB4B618 /* Compare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Compare.swift; sourceTree = "<group>"; };
 		33B92659A5AE5ABC21AA1484 /* Leaderboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Leaderboard.swift; sourceTree = "<group>"; };
@@ -362,6 +364,7 @@
 				9EEF8DEDA274D745C08605EB /* ReportSheet.swift */,
 				0A2B6597262EFD3FAD5D6ACE /* ShareCard.swift */,
 				995610FFAC434B480B981139 /* SharingSection.swift */,
+				2AB1F2D28D8382E2FB54F51D /* SpotReview.swift */,
 				9D09EFA7CF37248C275F6490 /* Spots.swift */,
 				DC303584F267AC3877695320 /* SpotSession.swift */,
 				A0AEFDA7AFD99199BC8AC184 /* TermsGate.swift */,
@@ -532,6 +535,7 @@
 				8AD778BF9F9D8A593DB6DC77 /* ShareCard.swift in Sources */,
 				4427FE8EDAE09F2B68624303 /* ShareSheet.swift in Sources */,
 				27F83E299CBA8188CF0AA61F /* SharingSection.swift in Sources */,
+				4C998BCC2CB92D06E880A185 /* SpotReview.swift in Sources */,
 				D361AF59D98CF1F47F241FE4 /* SpotSession.swift in Sources */,
 				4B791396F639C699E8BF392C /* Spots.swift in Sources */,
 				F9804A44218F27F9FAC0B571 /* SpottedCheckInView.swift in Sources */,
