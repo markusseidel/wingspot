@@ -116,7 +116,8 @@ export function payload(row: PushRow, locale: string | null): Record<string, unk
       alert: { title, body },
       sound: "default",
       category: row.kind === "checkin" ? CHECKIN_CATEGORY : CATEGORY,
-      "thread-id": row.checkin_id ? `${row.kind}-${row.checkin_id}` : row.kind,
+      // No thread-id on purpose: a thread per check-in made iOS build a separate stack for each one. Without it,
+      // everything from Wingspot stacks as one group, and the person's own grouping setting still applies.
     },
     type: row.kind,
     checkin: row.checkin_id,
