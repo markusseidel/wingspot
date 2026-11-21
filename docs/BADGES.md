@@ -107,3 +107,19 @@ There are a few hidden badges. They show as "???" until earned. Their names, des
 
 - 36 launch badges are enough, and the hidden badges stay.
 - Hidden badges are secret in the app, and their definitions are not in the public repository. They can still be read from the `badges` table of the running service, which is acceptable for a surprise mechanic. Anyone who wants that closed too needs a change in the database rules (open question).
+
+## Spotting (6)
+
+Added with spotting locations (see [SPOTTING-LOCATIONS-PLAN.md](SPOTTING-LOCATIONS-PLAN.md)). A session is an airport visit at a
+spotting location, and the aircraft spotted during it are linked to it. "Local time" is estimated from the airport's longitude, like the time badges.
+
+| id | English | Deutsch | Rule | Levels |
+|---|---|---|---|---|
+| first_spot_session | First Session | Erste Session | Visits at a spotting location | single |
+| deck_regular | Deck Regular | Stammgast | Most visits at one spotting location | 3, 5, 10, 25 |
+| place_collector | Place Collector | Ortesammler | Different spotting locations visited | 3, 5, 10 |
+| session_pro | Session Pro | Session-Profi | Most aircraft linked to one session | 10, 25, 50 |
+| cartographer | Cartographer | Kartograf | Your own spotting locations that were approved | 1, 3, 10 |
+| sunrise_hunter | Sunrise Hunter | Sonnenjäger | Sessions begun between 05:00 and 08:59 or between 17:00 and 20:59 local time | 1, 5, 15 |
+
+The name "Busy Day" was already taken by the badge for many check-ins on one day, so the session badge is called Session Pro.

@@ -10,6 +10,7 @@ enum BadgeStyle {
         case "countries": "globe.europe.africa"
         case "types": "airplane"
         case "time": "clock"
+        case "spotting": "binoculars"
         case "hidden": "sparkles"
         default: "rosette"
         }
