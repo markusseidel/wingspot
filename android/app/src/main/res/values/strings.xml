@@ -178,6 +178,7 @@
     <string name="cat_countries">Countries</string>
     <string name="cat_types">Aircraft types</string>
     <string name="cat_time">Time of day</string>
+    <string name="cat_spotting">Spotting</string>
     <string name="cat_hidden">Hidden</string>
     <string name="level_n">Level %1$d</string>
     <string name="xp_to_next">%1$d XP to level %2$d</string>

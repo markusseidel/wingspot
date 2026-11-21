@@ -45,7 +45,7 @@ import site.wingspot.core.BadgeProgress
 import site.wingspot.core.Rank
 import site.wingspot.core.UserProgress
 
-private val CATEGORY_ORDER = listOf("milestones", "airports", "countries", "types", "time", "hidden")
+private val CATEGORY_ORDER = listOf("milestones", "airports", "countries", "types", "time", "spotting", "hidden")
 
 /** The languages of the phone, most preferred first, for badge texts. */
 @Composable
@@ -136,6 +136,7 @@ private fun categoryTitle(category: String): String = stringResource(
         "countries" -> R.string.cat_countries
         "types" -> R.string.cat_types
         "time" -> R.string.cat_time
+        "spotting" -> R.string.cat_spotting
         "hidden" -> R.string.cat_hidden
         else -> return category.replaceFirstChar { it.uppercase() }
     },
@@ -181,7 +182,7 @@ private fun badgeColor(level: Int, of: Int): Color {
 }
 
 private fun symbol(category: String) = when (category) {
-    "milestones" -> "🏁"; "airports" -> "🛬"; "countries" -> "🌍"; "types" -> "✈️"; "time" -> "🕐"; "hidden" -> "✨"; else -> "🎖"
+    "milestones" -> "🏁"; "airports" -> "🛬"; "countries" -> "🌍"; "types" -> "✈️"; "time" -> "🕐"; "spotting" -> "🔭"; "hidden" -> "✨"; else -> "🎖"
 }
 
 /** The round symbol of a badge, from its category and how far its levels are reached. */

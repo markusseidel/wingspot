@@ -11,7 +11,7 @@ struct BadgesScreen: View {
 
     private var myName: String { account.profile?.displayName ?? account.profile?.username ?? "" }
 
-    private static let categoryOrder = ["milestones", "airports", "countries", "types", "time", "hidden"]
+    private static let categoryOrder = ["milestones", "airports", "countries", "types", "time", "spotting", "hidden"]
 
     var body: some View {
         NavigationStack {
@@ -102,6 +102,7 @@ struct BadgesScreen: View {
         case "countries": "Countries"
         case "types": "Aircraft types"
         case "time": "Time of day"
+        case "spotting": "Spotting"
         case "hidden": "Hidden"
         default: LocalizedStringKey(category.capitalized)
         }
