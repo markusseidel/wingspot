@@ -151,6 +151,35 @@ class SocialApiTests {
     }
 
     @Test
+    fun spottingLocationsAreReadForAnAirportAndOnePlaceAndASession() = withApi { server, api, _ ->
+        server.enqueue(ok("""[{"id":7,"name":"North fence","latitude":50.1,"longitude":8.5,"description":null,"status":"pending","mine":true,"sessions":0}]"""))
+        val places = api.spotLocations(5)
+        assertEquals("North fence", places.single().name)
+        assertEquals(true, places.single().isPending)
+        val request = server.takeRequest()
+        assertEquals("/rest/v1/rpc/spotting_locations_at", request.url.encodedPath)
+        assertEquals(5, Rest(server.url("/").toString(), "k", { "t" }).json.parseToJsonElement(request.body!!.utf8()).jsonObject["p_airport"]!!.jsonPrimitive.content.toInt())
+
+        server.enqueue(ok("null"))
+        assertEquals(null, api.spotDetail(9))
+        server.takeRequest()
+        server.enqueue(ok("""{"id":7,"airport_id":5,"airport":"Frankfurt","iata":"FRA","name":"North fence","latitude":50.1,"longitude":8.5,"description":"View","best_time":"Morning","facing":null,"tips":null,"legal_notes":null,"photo_path":null,"status":"approved","mine":false,"sessions":3,"aircraft":12,"my_sessions":1}"""))
+        val detail = api.spotDetail(7)!!
+        assertEquals(12, detail.aircraft)
+        assertEquals("Morning", detail.bestTime)
+        server.takeRequest()
+
+        server.enqueue(ok("""[{"id":"a1","occurred_at":"2026-03-01T08:10:00+00:00","registration":"D-AAAA","type_icao":null,"user_id":"u"}]"""))
+        assertEquals("D-AAAA", api.visitSightings("v1").single().registration)
+        server.takeRequest()
+        server.enqueue(ok("null"))
+        assertEquals(null, api.checkInSpot("c1"))
+        server.takeRequest()
+        server.enqueue(ok("""{"visit_id":"v1","spot_id":7,"spot_name":"North fence","sightings":2}"""))
+        assertEquals(2, api.checkInSpot("v1")!!.sightings)
+    }
+
+    @Test
     fun theFeedCanBeSortedByCheckInTimeAndPagesByThatTime() = withApi { server, api, _ ->
         server.enqueue(ok("[" + feedRow().replace("\"something_new\":1", "\"cursor_time\":\"2026-11-03T09:00:00+00:00\"") + "]"))
         val item = api.feed(null, 30, FeedSort.CREATED).single()

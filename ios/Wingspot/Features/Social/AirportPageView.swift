@@ -13,6 +13,8 @@ struct AirportPageView: View {
     @Environment(FeedStore.self) private var feed
     @Environment(TermsStore.self) private var terms
     @Environment(ReferenceDataStore.self) private var referenceData
+    @Environment(SpotStore.self) private var spots
+    @State private var spotPlaces: [SpotLocation] = []
     @Query private var all: [LocalCheckIn]
     @State private var airport: Airport?
     @State private var store: FeedStore?
@@ -23,6 +25,7 @@ struct AirportPageView: View {
         List {
             header
             yourVisits
+            if account.userID != nil, terms.hasAccepted { AirportSpotsSection(locations: spotPlaces) }
             if account.userID != nil {
                 if terms.hasAccepted {
                     activitySection
@@ -47,6 +50,7 @@ struct AirportPageView: View {
         }
         .task(id: account.userID) {
             guard account.userID != nil, terms.hasAccepted else { return }
+            spotPlaces = await spots.locations(at: airportID)
             let created = feed.airportStore(for: airportID)
             store = created
             async let list: Void = created.refresh()

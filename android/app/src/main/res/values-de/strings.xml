@@ -435,4 +435,21 @@
     <string name="share_level_message">Ich habe Level %1$d bei Wingspot erreicht.</string>
     <string name="share_level_caption">%1$d XP · %2$d Badges</string>
     <string name="share_badge_message">Ich habe das Badge %1$s bei Wingspot verdient.</string>
+    <string name="spotting_locations">Spotting-Orte</string>
+    <string name="spot_pending_short">Wartet auf Freigabe</string>
+    <string name="spot_pending">Wartet auf Freigabe. Nur du siehst diesen Ort.</string>
+    <string name="spot_sessions_count">Sessions: %1$d</string>
+    <string name="spot_unavailable">Dieser Ort ist nicht verfügbar.</string>
+    <string name="open_in_maps">In Karten öffnen</string>
+    <string name="spot_sessions">Sessions</string>
+    <string name="spot_aircraft_seen">Gesehene Flugzeuge</string>
+    <string name="spot_your_sessions">Deine Sessions</string>
+    <string name="spot_counts_note">Die Zahlen zählen nur öffentliche Check-ins und deine eigenen.</string>
+    <string name="spot_about">Über diesen Ort</string>
+    <string name="spot_best_time">Beste Zeit</string>
+    <string name="spot_facing">Blickrichtung</string>
+    <string name="spot_tips">Tipps</string>
+    <string name="spot_good_to_know">Gut zu wissen</string>
+    <string name="spot_at">Bei %1$s</string>
+    <string name="spot_spotted_at">Gesehen bei %1$s</string>
 </resources>

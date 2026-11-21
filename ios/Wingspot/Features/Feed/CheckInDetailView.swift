@@ -39,6 +39,9 @@ struct CheckInDetailView: View {
     @State private var mentionedPerson: MentionedPerson?
     /// Friends who added this check-in to their own logbook. Only filled for your own check-ins.
     @State private var copies: [PersonTag] = []
+    @Environment(SpotStore.self) private var spots
+    @State private var spot: CheckInSpot?
+    @State private var spotSightings: [VisitSighting] = []
 
     private struct MentionedPerson: Identifiable, Hashable { let id: UUID }
 
@@ -65,6 +68,10 @@ struct CheckInDetailView: View {
             async let loaded: Void = created.load()
             async let tagged: Void = (source ?? feed).reloadTags(for: item.id)
             full = await (source ?? feed).checkIn(item.id)
+            if item.kind == "airport" || item.kind == "spotted" {
+                spot = await spots.spot(of: item.id)
+                if let spot, item.kind == "airport" { spotSightings = await spots.sightings(of: spot.visitID) }
+            }
             if item.userID == account.userID { copies = await (source ?? feed).copies(of: item.id) }
             await loaded
             await tagged
@@ -116,6 +123,7 @@ struct CheckInDetailView: View {
             summary
             if !earned.isEmpty { Section { FeedBadgesLine(badges: earned) } header: { Text("Badges earned").font(.headline).textCase(nil) } }
             if !tags.isEmpty { withSection }
+            if shown.kind == "airport" || shown.kind == "spotted" { CheckInSpotSection(spot: spot, sightings: spotSightings, kind: shown.kind) }
             if !copies.isEmpty { copiesSection }
             if !photos.isEmpty { photoSection }
             reactions

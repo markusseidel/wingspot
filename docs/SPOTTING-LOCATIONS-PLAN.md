@@ -78,3 +78,13 @@ Migration `20261121900000_spotting_locations.sql`, tests in `spotting_locations_
 - Counts use public check-ins only, plus your own, so a private visit never shows up in someone else's numbers.
 - Not in this PR: the cover photo upload (the `photo_path` column exists), `visit_id` and the place in `get_checkin`
   and the feed (PR 2), and the badges (PR 4).
+
+## As built: PR 2 (read side)
+
+Migration `20261122100000_checkin_spot.sql`: `get_checkin_spot(check-in)` returns the place and the visit of a visit or a
+sighting (and, for a visit, how many aircraft were linked), only for check-ins the caller may see. iOS and Android:
+- The airport page lists the places of the airport (your own waiting ones are marked "Waiting for approval").
+- A place page: map and "Open in Maps", the numbers (sessions, aircraft seen, your sessions), and the tips.
+- A visit shows "At <place>" and the aircraft seen during it. A sighting shows "Spotted at <place>". Both open the place.
+- On iPhone the places and the session are loaded by the screen that holds the list, because a view with nothing in it
+  never runs its own task.

@@ -315,6 +315,7 @@ fun AirportPage(app: WingspotApp, model: SocialViewModel, id: Long, me: String?,
             AirportMiniMap(a)
         } ?: if (reference.database == null) Text(stringResource(R.string.no_airport_data)) else CircularProgressIndicator()
         YouSection(mine.size, null, mine.maxOfOrNull { it.occurredAt }, R.string.not_checked_in_here)
+        if (me != null) AirportSpotsSection(app, model, id)
         ActivitySection(app, me, model, R.string.different_aircraft) { app.social.airportActivity(id) }
         RecentList(app, model, me, { app.social.airportCheckIns(id, it) })
     }

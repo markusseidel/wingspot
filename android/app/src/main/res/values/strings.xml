@@ -435,4 +435,21 @@
     <string name="share_level_message">I reached level %1$d on Wingspot.</string>
     <string name="share_level_caption">%1$d XP · %2$d badges</string>
     <string name="share_badge_message">I earned the badge %1$s on Wingspot.</string>
+    <string name="spotting_locations">Spotting locations</string>
+    <string name="spot_pending_short">Waiting for approval</string>
+    <string name="spot_pending">Waiting for approval. Only you can see this place.</string>
+    <string name="spot_sessions_count">Sessions: %1$d</string>
+    <string name="spot_unavailable">This place isn\'t available.</string>
+    <string name="open_in_maps">Open in Maps</string>
+    <string name="spot_sessions">Sessions</string>
+    <string name="spot_aircraft_seen">Aircraft seen</string>
+    <string name="spot_your_sessions">Your sessions</string>
+    <string name="spot_counts_note">Counts include only public check-ins and your own.</string>
+    <string name="spot_about">About this place</string>
+    <string name="spot_best_time">Best time</string>
+    <string name="spot_facing">Facing</string>
+    <string name="spot_tips">Tips</string>
+    <string name="spot_good_to_know">Good to know</string>
+    <string name="spot_at">At %1$s</string>
+    <string name="spot_spotted_at">Spotted at %1$s</string>
 </resources>
