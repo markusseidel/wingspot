@@ -134,7 +134,9 @@ public struct NewSpot: Encodable, Equatable, Sendable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case description, facing, tips
+        case description = "p_description"
+        case facing = "p_facing"
+        case tips = "p_tips"
         case name = "p_name"
         case latitude = "p_latitude"
         case longitude = "p_longitude"
@@ -170,27 +172,67 @@ public struct NewSpotAnswer: Decodable, Equatable, Sendable {
     }
 }
 
-/// The position in a link or text copied from a maps app. Only links that carry the position are understood.
+/// The position in a link or text copied from a maps app.
 public enum MapsLink {
+    private static let number = "(-?\\d{1,3}(?:\\.\\d+)?)"
+    /// A decimal number written with a point or a comma, optionally followed by a degree sign.
+    private static let loose = "(-?\\d{1,3}(?:[.,]\\d+)?)"
+
     public static func coordinate(in text: String) -> (latitude: Double, longitude: Double)? {
-        let number = "(-?\\d{1,3}(?:\\.\\d+)?)"
         let patterns = [
             "!3d\(number)!4d\(number)",
             "@\(number),\(number)",
-            "[?&](?:ll|q|query|center|sll|destination)=\(number)(?:,|%2C)\(number)",
-            "^\\s*\(number)\\s*[,;]\\s*\(number)\\s*$",
+            "[?&](?:ll|q|query|center|sll|destination|coordinate)=\(number)(?:,|%2C)\(number)",
+            "^[\\s(\\[]*\(number)\\s*[,;]\\s*\(number)[\\s)\\]]*$",
         ]
         for pattern in patterns {
-            guard let regex = try? NSRegularExpression(pattern: pattern),
-                  let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
-                  match.numberOfRanges == 3,
-                  let latRange = Range(match.range(at: 1), in: text), let lonRange = Range(match.range(at: 2), in: text),
-                  let latitude = Double(text[latRange]), let longitude = Double(text[lonRange]),
-                  abs(latitude) <= 90, abs(longitude) <= 180
-            else { continue }
-            return (latitude, longitude)
+            if let found = firstPair(pattern, in: text) { return found }
         }
-        return nil
+        return plainCoordinate(in: text)
+    }
+
+    /// Coordinates typed or copied as text: `51.2805, 6.7699`, `51,28050° N, 6,76986° O` (comma as decimal mark, N/S/E/O/W).
+    private static func plainCoordinate(in text: String) -> (latitude: Double, longitude: Double)? {
+        let pattern = "^[\\s(\\[]*\(loose)\\s*°?\\s*([NSns])?\\s*[,;]?\\s*\(loose)\\s*°?\\s*([EOWeow])?\\s*\\.?[\\s)\\]]*$"
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)), match.numberOfRanges == 5,
+              let a = Range(match.range(at: 1), in: text), let c = Range(match.range(at: 3), in: text),
+              var latitude = Double(text[a].replacingOccurrences(of: ",", with: ".")),
+              var longitude = Double(text[c].replacingOccurrences(of: ",", with: "."))
+        else { return nil }
+        if let r = Range(match.range(at: 2), in: text), text[r].uppercased() == "S" { latitude = -abs(latitude) }
+        if let r = Range(match.range(at: 4), in: text), text[r].uppercased() == "W" { longitude = -abs(longitude) }
+        guard abs(latitude) <= 90, abs(longitude) <= 180 else { return nil }
+        return (latitude, longitude)
+    }
+
+    private static func firstPair(_ pattern: String, in text: String) -> (latitude: Double, longitude: Double)? {
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
+              match.numberOfRanges == 3,
+              let latRange = Range(match.range(at: 1), in: text), let lonRange = Range(match.range(at: 2), in: text),
+              let latitude = Double(text[latRange]), let longitude = Double(text[lonRange]),
+              abs(latitude) <= 90, abs(longitude) <= 180
+        else { return nil }
+        return (latitude, longitude)
+    }
+
+    private static let shortLinkHosts: Set<String> = ["maps.apple", "maps.apple.com", "maps.app.goo.gl", "goo.gl"]
+
+    /// Like `coordinate(in:)`, and for the short links of Apple Maps and Google Maps (which carry no position) it opens the link to find it.
+    public static func resolve(_ text: String) async -> (latitude: Double, longitude: Double)? {
+        if let found = coordinate(in: text) { return found }
+        guard let regex = try? NSRegularExpression(pattern: "https://[^\\s]+"),
+              let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
+              let range = Range(match.range, in: text),
+              let url = URL(string: String(text[range])), let host = url.host?.lowercased(), shortLinkHosts.contains(host)
+        else { return nil }
+        var request = URLRequest(url: url, timeoutInterval: 8)
+        request.setValue("Mozilla/5.0", forHTTPHeaderField: "User-Agent")
+        guard let (data, response) = try? await URLSession.shared.data(for: request) else { return nil }
+        if let final = response.url?.absoluteString, let found = coordinate(in: final) { return found }
+        let page = String(decoding: data.prefix(600_000), as: UTF8.self)
+        return firstPair("coordinate=\(number),\\s?\(number)", in: page)
     }
 }
 

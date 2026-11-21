@@ -70,7 +70,8 @@ fun AddSpotPage(app: WingspotApp, model: SocialViewModel) {
     var sending by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf<Int?>(null) }
     val scope = androidx.compose.runtime.rememberCoroutineScope()
-    val position = MapsLink.coordinate(link)
+    var position by remember { mutableStateOf<Pair<Double, Double>?>(null) }
+    LaunchedEffect(link) { position = if (link.isBlank()) null else MapsLink.resolve(link) }
     val canSend = name.trim().length >= 3 && position != null && !sending
 
     fun send() {
@@ -101,7 +102,7 @@ fun AddSpotPage(app: WingspotApp, model: SocialViewModel) {
         OutlinedTextField(name, { name = it }, singleLine = true, label = { Text(stringResource(R.string.spot_name_label)) }, modifier = Modifier.fillMaxWidth().testTag("spot-name"))
         OutlinedTextField(link, { link = it }, singleLine = true, label = { Text(stringResource(R.string.spot_link_label)) }, modifier = Modifier.fillMaxWidth().testTag("spot-link"))
         when {
-            position != null -> Text(stringResource(R.string.spot_position, "%.5f, %.5f".format(position.first, position.second)), color = MaterialTheme.colorScheme.onSurfaceVariant)
+            position != null -> Text(stringResource(R.string.spot_position, "%.5f, %.5f".format(position!!.first, position!!.second)), color = MaterialTheme.colorScheme.onSurfaceVariant)
             link.isNotBlank() -> Text(stringResource(R.string.spot_link_unclear), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Text(stringResource(R.string.spot_where_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

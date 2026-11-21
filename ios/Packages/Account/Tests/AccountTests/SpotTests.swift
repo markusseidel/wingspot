@@ -19,6 +19,16 @@ import Testing
         #expect(read("https://maps.apple.com/?ll=50.1,8.6&q=Deck")?.1 == 8.6)
         #expect(read("https://www.google.com/maps/search/?api=1&query=50.2%2C8.7")?.1 == 8.7)
         #expect(read("50.05, -8.5")?.1 == -8.5)
+        #expect(read("https://maps.apple.com/place?coordinate=51.280503,6.769860&name=x")?.1 == 6.76986)
+    }
+
+    @Test func coordinatesWithCommaDecimalsAndCompassLettersAreRead() {
+        let found = read("51,28050° N, 6,76986° O.")
+        #expect(found?.0 == 51.2805)
+        #expect(found?.1 == 6.76986)
+        #expect(read("33,9° S 18,4° E")?.0 == -33.9)
+        #expect(read("40.7 N, 74.0 W")?.1 == -74.0)
+        #expect(read("51,2805 6,76986")?.1 == 6.76986)
     }
 
     @Test func textWithoutAPositionOrWithAnImpossibleOneIsRefused() {
@@ -29,11 +39,14 @@ import Testing
     }
 
     @Test func aSuggestedPlaceIsSentWithTheNamesTheServerExpects() throws {
-        let data = try JSONEncoder().encode(NewSpot(name: "Deck", latitude: 50.1, longitude: 8.6, bestTime: "Morning"))
+        let data = try JSONEncoder().encode(NewSpot(name: "Deck", latitude: 50.1, longitude: 8.6, description: "About", bestTime: "Morning", facing: "South", tips: "Parking"))
         let json = try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
         #expect(json["p_name"] as? String == "Deck")
         #expect(json["p_best_time"] as? String == "Morning")
-        #expect(json["p_tips"] == nil)
+        #expect(json["p_description"] as? String == "About")
+        #expect(json["p_facing"] as? String == "South")
+        #expect(json["p_tips"] as? String == "Parking")
+        #expect(json["tips"] == nil)
     }
 
     @Test func anAnswerIsReadForAddedDuplicateAndRefused() throws {

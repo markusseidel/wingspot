@@ -24,6 +24,17 @@ class SpotTests {
     }
 
     @Test
+    fun commaDecimalsAndCompassLettersAreRead() {
+        assertEquals(51.2805 to 6.76986, MapsLink.coordinate("51,28050° N, 6,76986° O."))
+        assertEquals(-33.9, MapsLink.coordinate("33,9° S 18,4° E")?.first)
+        assertEquals(-74.0, MapsLink.coordinate("40.7 N, 74.0 W")?.second)
+        assertEquals(51.280503 to 6.76986, MapsLink.coordinate("https://maps.apple.com/place?coordinate=51.280503,6.769860&name=x"))
+        assertEquals(51.2807494 to 6.7701494, MapsLink.coordinate("(51.2807494, 6.7701494)"))
+        assertEquals(51.2807494 to 6.7701494, MapsLink.coordinate("https://www.google.com/maps?q=51.2807494,6.7701494&entry=gps"))
+        assertNull(MapsLink.coordinate("hello"))
+    }
+
+    @Test
     fun textWithoutAPositionOrWithAnImpossibleOneIsRefused() {
         assertNull(MapsLink.coordinate("https://maps.app.goo.gl/abc123"))
         assertNull(MapsLink.coordinate("hello"))
