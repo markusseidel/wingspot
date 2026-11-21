@@ -47,6 +47,7 @@
 		7C48842DEE1C6C143770A7E9 /* Avatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1617F1561EB21E242955326E /* Avatar.swift */; };
 		8724536D4B58E82924192AC3 /* TermsGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0AEFDA7AFD99199BC8AC184 /* TermsGate.swift */; };
 		8A1E836A067C7D670EE85441 /* BadgeStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 887512D89A6F5865C984DC89 /* BadgeStyle.swift */; };
+		8AD778BF9F9D8A593DB6DC77 /* ShareCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2B6597262EFD3FAD5D6ACE /* ShareCard.swift */; };
 		9370EEC0F52860F9BEB227EB /* CheckInDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF19EBCDF218D5810AAEA61 /* CheckInDetailView.swift */; };
 		96D09D7A0351104460703E5B /* PhotoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A82AC64122C34A3DE053C4F /* PhotoSection.swift */; };
 		9A3659845BE545C339AE2055 /* AppleSignInButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E18517ABA8FEAD7497EE58 /* AppleSignInButton.swift */; };
@@ -82,6 +83,7 @@
 
 /* Begin PBXFileReference section */
 		04D41472169C437C8D788A92 /* DistanceUnitSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistanceUnitSetting.swift; sourceTree = "<group>"; };
+		0A2B6597262EFD3FAD5D6ACE /* ShareCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCard.swift; sourceTree = "<group>"; };
 		0BA65F3D7DF5E25F2228C346 /* EmailSignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSignInView.swift; sourceTree = "<group>"; };
 		0CB50BDD1D3F4FB1EB8B8007 /* ExploreMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreMapView.swift; sourceTree = "<group>"; };
 		1072182D625807362ADE4FB1 /* AirportPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirportPageView.swift; sourceTree = "<group>"; };
@@ -351,6 +353,7 @@
 				F35ED9494A001B152E822AB1 /* PersonProgress.swift */,
 				8AB0A4D42441D44A92BC24E5 /* RegistrationPageView.swift */,
 				9EEF8DEDA274D745C08605EB /* ReportSheet.swift */,
+				0A2B6597262EFD3FAD5D6ACE /* ShareCard.swift */,
 				995610FFAC434B480B981139 /* SharingSection.swift */,
 				A0AEFDA7AFD99199BC8AC184 /* TermsGate.swift */,
 				A1C3026B7554DE42D34613B0 /* TypePageView.swift */,
@@ -516,6 +519,7 @@
 				66E73317F1198016C144E45B /* ReportSheet.swift in Sources */,
 				2009AC27E2FC13DC4C52C220 /* RootView.swift in Sources */,
 				2419BA1DA1B17C761D9D0036 /* SettingsView.swift in Sources */,
+				8AD778BF9F9D8A593DB6DC77 /* ShareCard.swift in Sources */,
 				4427FE8EDAE09F2B68624303 /* ShareSheet.swift in Sources */,
 				27F83E299CBA8188CF0AA61F /* SharingSection.swift in Sources */,
 				F9804A44218F27F9FAC0B571 /* SpottedCheckInView.swift in Sources */,

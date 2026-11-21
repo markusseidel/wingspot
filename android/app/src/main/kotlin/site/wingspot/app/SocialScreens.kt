@@ -373,7 +373,17 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                     Text(stringResource(R.string.copies_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
-            item { SaluteButton(shown) { model.toggleSalute(id) } }
+            item {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    SaluteButton(shown) { model.toggleSalute(id) }
+                    // Your own flights, visits and sightings can be shared as a picture.
+                    if (shown.userId == me) {
+                        val context = androidx.compose.ui.platform.LocalContext.current
+                        val card = shareCardOf(shown, stringResource(R.string.share_flown), stringResource(R.string.share_airport), stringResource(R.string.share_spotted))
+                        if (card != null) OutlinedButton(onClick = { scope.launch { ShareCards.share(app, context, me, card) } }, modifier = Modifier.testTag("share-card")) { Text(stringResource(R.string.invite_share)) }
+                    }
+                }
+            }
             // A friend's flight or airport visit that you are tagged on can be added to your own logbook, once.
             if (shown.userId != me && tags.any { it.id == me } && (shown.kind == "flown" || shown.kind == "airport")) item {
                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -656,5 +666,21 @@ private fun mentionText(body: String, mentions: List<SocialApi.CommentMention>, 
             at = range.last + 1
         }
         append(body.substring(at))
+    }
+}
+
+
+/** The share card of one of your own check-ins. */
+private fun shareCardOf(item: site.wingspot.core.FeedItem, flown: String, airport: String, spotted: String): ShareCardModel? {
+    val date = runCatching { java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM).format(java.util.Date(OffsetDateTime.parse(item.occurredAt).toInstant().toEpochMilli())) }.getOrDefault("")
+    return when (item.kind) {
+        "flown" -> {
+            val from = item.originCode ?: return null
+            val to = item.destinationCode ?: return null
+            ShareCardModel(flown, "$from → $to", item.distanceKm?.let { java.text.NumberFormat.getIntegerInstance().format(it) + " km" },
+                listOfNotNull(item.flightNumber, item.typeName, date).joinToString(" · "), "$from → $to (Wingspot)")
+        }
+        "airport" -> item.airportCode?.let { ShareCardModel(airport, it, null, date, "$it (Wingspot)") }
+        else -> (item.registration ?: item.typeIcao)?.let { ShareCardModel(spotted, it, item.typeName, date, "$it (Wingspot)") }
     }
 }

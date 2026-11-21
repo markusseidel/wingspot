@@ -9,6 +9,8 @@ struct BadgesScreen: View {
     @Environment(BadgeStore.self) private var badges
     @State private var filter = BadgeFilter.all
 
+    private var myName: String { account.profile?.displayName ?? account.profile?.username ?? "" }
+
     private static let categoryOrder = ["milestones", "airports", "countries", "types", "time", "hidden"]
 
     var body: some View {
@@ -46,6 +48,11 @@ struct BadgesScreen: View {
                 Text("\(progress.earnedCount) of \(progress.badges.count) badges earned")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+                ShareCardButton(model: ShareCardModel(
+                    kicker: String(localized: "Level"), headline: String(localized: "Level \(progress.level)"), figure: String(localized: Rank(level: progress.level).title),
+                    caption: String(localized: "\(progress.xp) XP · \(progress.earnedCount) badges"), name: myName,
+                    message: String(localized: "I reached level \(progress.level) on Wingspot.")
+                ))
                 Picker("Show", selection: $filter) {
                     ForEach(BadgeFilter.allCases, id: \.self) { Text($0.title).tag($0) }
                 }
@@ -53,7 +60,7 @@ struct BadgesScreen: View {
             }
             ForEach(groups(progress), id: \.category) { group in
                 Section {
-                    ForEach(group.badges) { BadgeRow(badge: $0) }
+                    ForEach(group.badges) { BadgeRow(badge: $0, shareName: myName) }
                 } header: {
                     Text(Self.title(for: group.category))
                 } footer: {
@@ -135,6 +142,8 @@ struct LevelHeader: View {
 
 struct BadgeRow: View {
     let badge: BadgeProgress
+    /// Set on your own badges: the name on the card that an earned badge can be shared as.
+    var shareName: String?
 
     var body: some View {
         HStack(spacing: 12) {
@@ -164,5 +173,15 @@ struct BadgeRow: View {
         }
         .padding(.vertical, 4)
         .accessibilityElement(children: .combine)
+        // Only earned badges, and never the hidden ones, so those stay a surprise.
+        .swipeActions(edge: .trailing) {
+            if let shareName, badge.level > 0, !badge.isHidden {
+                ShareCardButton(model: ShareCardModel(
+                    kicker: String(localized: "Badge"), headline: localized(badge.name), figure: badge.isSingle ? nil : String(localized: "Level \(badge.level)"),
+                    caption: nil, name: shareName, message: String(localized: "I earned the badge \(localized(badge.name)) on Wingspot.")
+                ))
+                .tint(.accentColor)
+            }
+        }
     }
 }

@@ -159,6 +159,13 @@ accent, not flight specifics.
 **Privacy:** only offered for check-ins the person owns. Hidden badges can not be shared before they are earned and
 never show their rule text. The card carries the invite link from step 1.
 
+## 2b. How the share card was built
+
+No server part. Each phone draws the card itself (SwiftUI `ImageRenderer`, an Android `Canvas`) as a 1080 x 1350 picture
+and opens the system share sheet with the picture and a short text that carries the invite code and link. The model is
+generic (label, big line, figure, details), so the year in review can use it later. Offered for your own flights, airport
+visits and sightings (check-in page), your level, and your earned badges. **Hidden badges are never offered.**
+
 ## Decisions for the owner
 
 1. **Web links.** The invite link and share cards need an address. Options: (a) a small page on a domain you own

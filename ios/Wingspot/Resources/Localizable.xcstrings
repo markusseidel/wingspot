@@ -239,6 +239,22 @@
         }
       }
     },
+    "%lld XP · %lld badges" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld XP · %2$lld badges"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld XP · %2$lld Badges"
+          }
+        }
+      }
+    },
     "%lld check-ins" : {
       "localizations" : {
         "de" : {
@@ -798,6 +814,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verfügbar, sobald der Check-in hochgeladen ist"
+          }
+        }
+      }
+    },
+    "Badge" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Badge"
           }
         }
       }
@@ -2307,6 +2333,62 @@
         }
       }
     },
+    "I earned the badge %@ on Wingspot." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich habe das Badge %@ bei Wingspot verdient."
+          }
+        }
+      }
+    },
+    "I flew %@ → %@ (Wingspot)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "I flew %1$@ → %2$@ (Wingspot)."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich bin %1$@ → %2$@ geflogen (Wingspot)."
+          }
+        }
+      }
+    },
+    "I reached level %lld on Wingspot." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich habe Level %lld bei Wingspot erreicht."
+          }
+        }
+      }
+    },
+    "I spotted %@ (Wingspot)." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich habe %@ gespottet (Wingspot)."
+          }
+        }
+      }
+    },
+    "I was at %@ (Wingspot)." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich war in %@ (Wingspot)."
+          }
+        }
+      }
+    },
     "Imprint" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2386,16 +2468,16 @@
     },
     "Join me on Wingspot! My invite code is %@, or open %@" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Join me on Wingspot! My invite code is %1$@, or open %2$@"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Komm zu Wingspot! Mein Einladungscode ist %1$@, oder öffne %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Join me on Wingspot! My invite code is %1$@, or open %2$@"
           }
         }
       }
@@ -2462,6 +2544,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Legende"
+          }
+        }
+      }
+    },
+    "Level" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Level"
           }
         }
       }
