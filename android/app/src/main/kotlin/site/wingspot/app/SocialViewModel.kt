@@ -29,6 +29,7 @@ sealed class Route {
     data class ComparePage(val id: String, val name: String) : Route()
     data class AirportPage(val id: Long) : Route()
     data class SpotPage(val id: Long) : Route()
+    object AddSpot : Route()
     data class TypePage(val code: String) : Route()
     data class RegistrationPage(val registration: String) : Route()
     object ExploreMap : Route()
@@ -154,6 +155,12 @@ class SocialViewModel(
             }
         }
     }
+
+    /** Goes up when a place was suggested, so lists of places load again. */
+    var spotsVersion by mutableStateOf(0)
+        private set
+
+    fun spotAdded() { spotsVersion++ }
 
     val inboxHasUnread: Boolean get() = unread > 0 || inbox.any { !it.isRead }
 

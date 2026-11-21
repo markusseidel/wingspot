@@ -104,6 +104,94 @@ public protocol SpotBackend: Sendable {
     func visitSightings(_ visit: UUID) async throws -> [VisitSighting]
     /// `nil` when the check-in is not part of a session or the caller may not see it.
     func checkInSpot(_ checkIn: UUID) async throws -> CheckInSpot?
+    /// Suggests a new place. It waits for approval and is visible only to its author until then.
+    func addSpot(_ request: NewSpot) async throws -> NewSpotAnswer
+}
+
+/// A place the person suggests.
+public struct NewSpot: Encodable, Equatable, Sendable {
+    public var name: String
+    public var latitude: Double
+    public var longitude: Double
+    public var description: String?
+    public var bestTime: String?
+    public var facing: String?
+    public var tips: String?
+    public var legalNotes: String?
+
+    public init(
+        name: String, latitude: Double, longitude: Double, description: String? = nil, bestTime: String? = nil,
+        facing: String? = nil, tips: String? = nil, legalNotes: String? = nil
+    ) {
+        self.name = name
+        self.latitude = latitude
+        self.longitude = longitude
+        self.description = description
+        self.bestTime = bestTime
+        self.facing = facing
+        self.tips = tips
+        self.legalNotes = legalNotes
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case description, facing, tips
+        case name = "p_name"
+        case latitude = "p_latitude"
+        case longitude = "p_longitude"
+        case bestTime = "p_best_time"
+        case legalNotes = "p_legal_notes"
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(name, forKey: .name)
+        try c.encode(latitude, forKey: .latitude)
+        try c.encode(longitude, forKey: .longitude)
+        try c.encodeIfPresent(description, forKey: .description)
+        try c.encodeIfPresent(bestTime, forKey: .bestTime)
+        try c.encodeIfPresent(facing, forKey: .facing)
+        try c.encodeIfPresent(tips, forKey: .tips)
+        try c.encodeIfPresent(legalNotes, forKey: .legalNotes)
+    }
+}
+
+/// What the server answered to a suggested place.
+public struct NewSpotAnswer: Decodable, Equatable, Sendable {
+    /// `pending` (added, waits for approval), `duplicate` (the same place is already there) or `rejected`.
+    public let status: String
+    public let id: Int?
+    /// Why it was rejected: `invalid_name`, `invalid_location`, `no_airport_nearby`, `too_many_pending`, `invalid_request`.
+    public let code: String?
+
+    public init(status: String, id: Int? = nil, code: String? = nil) {
+        self.status = status
+        self.id = id
+        self.code = code
+    }
+}
+
+/// The position in a link or text copied from a maps app. Only links that carry the position are understood.
+public enum MapsLink {
+    public static func coordinate(in text: String) -> (latitude: Double, longitude: Double)? {
+        let number = "(-?\\d{1,3}(?:\\.\\d+)?)"
+        let patterns = [
+            "!3d\(number)!4d\(number)",
+            "@\(number),\(number)",
+            "[?&](?:ll|q|query|center|sll|destination)=\(number)(?:,|%2C)\(number)",
+            "^\\s*\(number)\\s*[,;]\\s*\(number)\\s*$",
+        ]
+        for pattern in patterns {
+            guard let regex = try? NSRegularExpression(pattern: pattern),
+                  let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
+                  match.numberOfRanges == 3,
+                  let latRange = Range(match.range(at: 1), in: text), let lonRange = Range(match.range(at: 2), in: text),
+                  let latitude = Double(text[latRange]), let longitude = Double(text[lonRange]),
+                  abs(latitude) <= 90, abs(longitude) <= 180
+            else { continue }
+            return (latitude, longitude)
+        }
+        return nil
+    }
 }
 
 extension SupabaseAccountBackend: SpotBackend {
@@ -125,6 +213,10 @@ extension SupabaseAccountBackend: SpotBackend {
         return try JSONDecoder().decode(CheckInSpot.self, from: data)
     }
 
+    public func addSpot(_ request: NewSpot) async throws -> NewSpotAnswer {
+        try await mappingErrors { try await client.rpc("add_spotting_location", params: request).execute().value }
+    }
+
     /// The JSON of an answer, or `nil` for a JSON null (an empty answer).
     private func rawOrNil(_ function: String, params: some Encodable & Sendable) async throws -> Data? {
         let data = try await mappingErrors { try await client.rpc(function, params: params).execute().data }
@@ -137,4 +229,5 @@ extension UnconfiguredAccountBackend: SpotBackend {
     public func spotDetail(_ id: Int) async throws -> SpotDetail? { throw AccountError.notConfigured }
     public func visitSightings(_ visit: UUID) async throws -> [VisitSighting] { throw AccountError.notConfigured }
     public func checkInSpot(_ checkIn: UUID) async throws -> CheckInSpot? { throw AccountError.notConfigured }
+    public func addSpot(_ request: NewSpot) async throws -> NewSpotAnswer { throw AccountError.notConfigured }
 }

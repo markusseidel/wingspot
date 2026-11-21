@@ -27,6 +27,7 @@ struct WingspotApp: App {
     @State private var leaderboard: LeaderboardStore
     @State private var invites: InviteStore
     @State private var spots: SpotStore
+    @State private var spotSession = SpotSessionStore()
     @State private var sync: CheckInSyncCoordinator
     @State private var badges: BadgeStore
     @State private var push: PushStore
@@ -117,6 +118,7 @@ struct WingspotApp: App {
                 .environment(leaderboard)
                 .environment(invites)
                 .environment(spots)
+                .environment(spotSession)
                 .environment(sync)
                 .environment(badges)
                 .environment(push)

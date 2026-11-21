@@ -452,4 +452,23 @@
     <string name="spot_good_to_know">Gut zu wissen</string>
     <string name="spot_at">Bei %1$s</string>
     <string name="spot_spotted_at">Gesehen bei %1$s</string>
+    <string name="suggest_place">Ort vorschlagen</string>
+    <string name="suggest_this_place">Diesen Ort vorschlagen</string>
+    <string name="spot_name_label">Name, z. B. Besucherterrasse</string>
+    <string name="spot_link_label">Link oder Koordinaten aus einer Karten-App</string>
+    <string name="spot_position">Position: %1$s</string>
+    <string name="spot_link_unclear">Hier steckt keine Position drin. Öffne den Ort in der Karten-App und kopiere den vollständigen Link oder die Koordinaten.</string>
+    <string name="spot_where_hint">In Google Maps den Ort gedrückt halten, dann die Koordinaten kopieren oder den Link teilen. Der nächste Flughafen wird für dich ergänzt.</string>
+    <string name="spot_review_note">Ein neuer Ort wartet auf Freigabe. Bis dahin siehst nur du ihn und kannst nur du dort einchecken.</string>
+    <string name="spot_send_failed">Das konnte nicht gesendet werden. Prüfe die Verbindung und versuche es noch einmal.</string>
+    <string name="spot_duplicate">Diesen Ort gibt es schon.</string>
+    <string name="spot_no_airport">Im Umkreis von 150 km um diese Position gibt es keinen Flughafen.</string>
+    <string name="spot_too_many">Du hast schon zehn Orte, die auf Freigabe warten. Bitte warte, bis einige freigegeben sind.</string>
+    <string name="spot_bad_name">Der Name braucht 3 bis 80 Zeichen.</string>
+    <string name="spot_not_added">Dieser Ort konnte nicht hinzugefügt werden.</string>
+    <string name="session_at">Session bei %1$s</string>
+    <string name="session_hint">Flugzeuge, die du jetzt siehst, werden ihr hinzugefügt.</string>
+    <string name="end_session">Session beenden</string>
+    <string name="spotting_location_label">Spotting-Ort</string>
+    <string name="spot_none">Keiner</string>
 </resources>

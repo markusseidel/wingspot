@@ -452,4 +452,23 @@
     <string name="spot_good_to_know">Good to know</string>
     <string name="spot_at">At %1$s</string>
     <string name="spot_spotted_at">Spotted at %1$s</string>
+    <string name="suggest_place">Suggest a place</string>
+    <string name="suggest_this_place">Suggest this place</string>
+    <string name="spot_name_label">Name, e.g. Visitor terrace</string>
+    <string name="spot_link_label">Link or coordinates from a maps app</string>
+    <string name="spot_position">Position: %1$s</string>
+    <string name="spot_link_unclear">This doesn\'t contain a position. Open the place in the maps app and copy its full link, or the coordinates.</string>
+    <string name="spot_where_hint">In Google Maps, press and hold the place, then copy the coordinates or share the link. The airport nearest to it is added for you.</string>
+    <string name="spot_review_note">A new place waits for approval. Until then only you can see it and check in there.</string>
+    <string name="spot_send_failed">Couldn\'t send this. Check your connection and try again.</string>
+    <string name="spot_duplicate">This place is already there.</string>
+    <string name="spot_no_airport">There is no airport within 150 km of this position.</string>
+    <string name="spot_too_many">You already have ten places waiting for approval. Please wait until some are approved.</string>
+    <string name="spot_bad_name">The name needs 3 to 80 characters.</string>
+    <string name="spot_not_added">This place couldn\'t be added.</string>
+    <string name="session_at">Session at %1$s</string>
+    <string name="session_hint">Aircraft you spot now are added to it.</string>
+    <string name="end_session">End session</string>
+    <string name="spotting_location_label">Spotting location</string>
+    <string name="spot_none">None</string>
 </resources>

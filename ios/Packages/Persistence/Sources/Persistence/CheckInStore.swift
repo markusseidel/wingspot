@@ -29,11 +29,14 @@ public struct SpottedDraft: Sendable {
     public var place: Place?
     public var position: GeoCoordinate?
     public var photo: PreparedPhoto?
+    /// The airport visit (session) this sighting is made during.
+    public var visitID: UUID?
 
     public init(
         registration: Registration? = nil, type: AircraftTypeChoice? = nil, place: Place? = nil,
-        position: GeoCoordinate? = nil, photo: PreparedPhoto? = nil
+        position: GeoCoordinate? = nil, photo: PreparedPhoto? = nil, visitID: UUID? = nil
     ) {
+        self.visitID = visitID
         self.registration = registration
         self.type = type
         self.place = place
@@ -79,11 +82,16 @@ public struct AirportDraft: Sendable {
     public var tagged: [UUID]
     /// The friend's check-in this one is made from, when it was added from a tag.
     public var sourceID: UUID?
+    /// The spotting location this visit is at, with its name.
+    public var spotID: Int?
+    public var spotName: String?
 
     public init(
         airportID: Int, code: String, context: VisitContext = .spotting, position: GeoCoordinate? = nil,
-        photo: PreparedPhoto? = nil, tagged: [UUID] = [], sourceID: UUID? = nil
+        photo: PreparedPhoto? = nil, tagged: [UUID] = [], sourceID: UUID? = nil, spotID: Int? = nil, spotName: String? = nil
     ) {
+        self.spotID = spotID
+        self.spotName = spotName
         self.tagged = tagged
         self.sourceID = sourceID
         self.airportID = airportID
@@ -211,7 +219,7 @@ public struct CheckInStore {
             typeICAO: draft.type?.icaoCode, typeName: draft.type?.name,
             airportID: draft.place?.airportID, airportCode: draft.place?.code,
             latitude: draft.position?.latitude, longitude: draft.position?.longitude,
-            occurredAt: date, syncState: .pending, ownerID: ownerID
+            occurredAt: date, syncState: .pending, ownerID: ownerID, visitID: draft.visitID
         ))
         insertPhoto(draft.photo, for: id, at: date)
         try context.save()
@@ -235,7 +243,8 @@ public struct CheckInStore {
             airportID: draft.airportID, airportCode: draft.code,
             latitude: draft.position?.latitude, longitude: draft.position?.longitude,
             occurredAt: date, syncState: .pending, ownerID: ownerID, visitContext: draft.context.rawValue,
-            taggedIDs: draft.tagged.isEmpty ? nil : draft.tagged, sourceID: draft.sourceID
+            taggedIDs: draft.tagged.isEmpty ? nil : draft.tagged, sourceID: draft.sourceID,
+            spotID: draft.spotID, spotName: draft.spotName
         ))
         insertPhoto(draft.photo, for: id, at: date)
         try context.save()

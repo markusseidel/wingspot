@@ -22,6 +22,8 @@ import site.wingspot.core.LocalCheckIn
 import site.wingspot.core.Outbox
 import site.wingspot.core.Place
 import site.wingspot.core.Registration
+import site.wingspot.core.SocialApi
+import site.wingspot.core.SpotSession
 import site.wingspot.core.SpottedDraft
 import site.wingspot.core.VisitContext
 
@@ -56,6 +58,8 @@ data class CheckInState(
     val returnStart: ReturnStart? = null,
     /** The flight back for the flight just saved, offered on its result page. */
     val afterFlight: ReturnStart? = null,
+    /** The running spotting session: aircraft spotted now are linked to its visit. */
+    val session: SpotSession? = null,
 )
 
 /** Saves check-ins on the phone first, then asks for an upload. Works fully offline. */
@@ -63,8 +67,10 @@ class CheckInViewModel(
     private val store: CheckInStore,
     private val outbox: Outbox,
     private val requestUpload: () -> Unit,
+    private val loadSession: () -> SpotSession? = { null },
+    private val storeSession: (SpotSession?) -> Unit = {},
 ) : ViewModel() {
-    private val mutable = MutableStateFlow(CheckInState())
+    private val mutable = MutableStateFlow(CheckInState(session = loadSession()?.takeIf { it.isActive(Instant.now()) }))
     val state: StateFlow<CheckInState> = mutable.asStateFlow()
 
     init {
@@ -98,8 +104,20 @@ class CheckInViewModel(
         mutable.value = mutable.value.copy(result = null, returnStart = null)
     }
 
+    /** The running session, unless it ran out. */
+    private fun activeSession(): SpotSession? = mutable.value.session?.takeIf { it.isActive(Instant.now()) }
+
+    fun endSession() {
+        storeSession(null)
+        mutable.value = mutable.value.copy(session = null)
+    }
+
     fun save(registration: Registration?, type: AircraftType?, airport: Airport?, photo: PreparedPhoto?) {
-        val draft = SpottedDraft(registration, type?.icaoCode, airport?.id, airportCode = airport?.code)
+        val session = activeSession()
+        val draft = SpottedDraft(
+            registration, type?.icaoCode, airport?.id ?: session?.airportId, airportCode = airport?.code ?: session?.code,
+            visitId = session?.visitId,
+        )
         if (!draft.hasAircraft) return
         run(photo) {
             val result = store.saveSpotted(draft)
@@ -110,8 +128,18 @@ class CheckInViewModel(
         }
     }
 
-    fun saveAirport(airport: Airport, context: VisitContext, photo: PreparedPhoto?, tagged: List<UUID> = emptyList()) = run(photo) {
-        val result = store.saveAirport(AirportDraft(Place(airport.id, airport.code), context, tagged = tagged))
+    fun saveAirport(
+        airport: Airport, context: VisitContext, photo: PreparedPhoto?, tagged: List<UUID> = emptyList(), spot: SocialApi.SpotLocation? = null,
+    ) = run(photo) {
+        val result = store.saveAirport(
+            AirportDraft(Place(airport.id, airport.code), context, tagged = tagged, spotId = spot?.id, spotName = spot?.name),
+        )
+        // A visit at a spotting location starts a session: the aircraft spotted next are linked to this visit.
+        if (spot != null) {
+            val session = SpotSession(result.id, spot.id, spot.name, airport.id, airport.code, Instant.now())
+            storeSession(session)
+            mutable.value = mutable.value.copy(session = session)
+        }
         result.id to SavedResult(Kind.AIRPORT, result.code, result.visitsHere, null)
     }
 
@@ -231,7 +259,12 @@ class CheckInViewModel(
 
     companion object {
         fun factory(app: WingspotApp): ViewModelProvider.Factory = viewModelFactory {
-            initializer { CheckInViewModel(app.checkIns, app.outbox) { OutboxWorker.schedule(app) } }
+            initializer {
+                CheckInViewModel(
+                    app.checkIns, app.outbox, { OutboxWorker.schedule(app) },
+                    { SpotSession.decode(app.prefs.spotSession) }, { app.prefs.spotSession = it?.encode() },
+                )
+            }
         }
     }
 }

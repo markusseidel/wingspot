@@ -38,6 +38,11 @@ class Prefs(context: Context) {
         prefs.edit().putBoolean("usesLocation", value).apply()
     }
 
+    /** The running spotting session, as [site.wingspot.core.SpotSession.encode] wrote it. */
+    var spotSession: String?
+        get() = prefs.getString("spotSession", null)
+        set(value) { prefs.edit().apply { if (value == null) remove("spotSession") else putString("spotSession", value) }.apply() }
+
     /** This phone's id on the server, made once. */
     fun deviceId(): String = prefs.getString("deviceId", null) ?: java.util.UUID.randomUUID().toString().also { prefs.edit().putString("deviceId", it).apply() }
 

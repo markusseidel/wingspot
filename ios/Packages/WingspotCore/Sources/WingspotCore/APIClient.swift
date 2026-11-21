@@ -69,13 +69,17 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
     public let with: [UUID]?
     /// For a check-in made by adding a friend's flight or visit to your own logbook: the friend's check-in.
     public let sourceCheckInID: UUID?
+    /// For an airport visit: the spotting location it was at.
+    public let spotLocationID: Int?
+    /// For a sighting: the airport visit (session) it was made during. Sent after that visit.
+    public let visitID: UUID?
 
     public init(
         id: UUID, kind: String, occurredAt: Date, registration: String?, typeICAO: String?, airportID: Int?,
         latitude: Double?, longitude: Double?, context: String? = nil,
         originID: Int? = nil, destinationID: Int? = nil, flightNumber: String? = nil, cabin: String? = nil,
         seat: String? = nil, visibility: String? = nil, flightID: UUID? = nil,
-        with: [UUID]? = nil, sourceCheckInID: UUID? = nil
+        with: [UUID]? = nil, sourceCheckInID: UUID? = nil, spotLocationID: Int? = nil, visitID: UUID? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -95,6 +99,8 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
         self.visibility = visibility
         self.with = with
         self.sourceCheckInID = sourceCheckInID
+        self.spotLocationID = spotLocationID
+        self.visitID = visitID
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -110,6 +116,8 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
         case flightNumber = "flight_number"
         case cabin, seat, visibility, with
         case sourceCheckInID = "source_checkin_id"
+        case spotLocationID = "spot_location_id"
+        case visitID = "visit_id"
     }
 }
 

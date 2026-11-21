@@ -88,3 +88,23 @@ sighting (and, for a visit, how many aircraft were linked), only for check-ins t
 - A visit shows "At <place>" and the aircraft seen during it. A sighting shows "Spotted at <place>". Both open the place.
 - On iPhone the places and the session are loaded by the screen that holds the list, because a view with nothing in it
   never runs its own task.
+
+## As built: PR 3 (write side)
+
+No new migration. iPhone and Android, same behaviour:
+- **Suggest a place** (button in the "Spotting locations" section of an airport page): name, optional about, best time,
+  facing and tips, and the position. The position comes from a pasted maps link or typed coordinates (`MapsLink`: Google
+  and Apple links, `@lat,lng`, `!3d..!4d..`, `ll=`, `query=`, or plain "lat, lng"). A "use my location" button was left out
+  on purpose: Android has only approximate location, which is too coarse for a pin. The server answers `pending`,
+  `duplicate`, or a rejection (`no_airport_nearby`, `too_many_pending`, `invalid_name`), each with its own message.
+- **Visit at a place**: the airport check-in offers the places of the chosen airport (approved ones and your own waiting
+  ones). Saving a visit at a place starts a **session**.
+- **Session**: kept on the phone (UserDefaults, SharedPreferences), ends with "End session" or after 12 hours. While it
+  runs, the check-in screen shows it, a new sighting gets `visit_id` of the visit, and defaults to the session's airport.
+- **Upload**: `spot_location_id` on the visit, `visit_id` on sightings (contract updated). Items go up oldest first, so
+  the visit is always sent before its sightings. A link the server cannot keep is dropped without losing the check-in.
+- Tested by clicking through on the iPhone simulator and the Android emulator against the local stack. The Android
+  emulator has no airport data, so there the session was started by writing it into the app's settings and the airport
+  check-in with a place was only covered by unit tests.
+- Open: cover photo upload, the pin on a map instead of a link, and badges (PR 4). A badge named "Busy Day" already
+  exists (many check-ins in one day), so the session badge needs another name.

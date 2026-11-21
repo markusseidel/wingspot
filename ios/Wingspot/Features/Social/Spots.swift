@@ -16,22 +16,26 @@ final class SpotStore {
     func detail(_ id: Int) async -> SpotDetail? { try? await backend.spotDetail(id) }
     func sightings(of visit: UUID) async -> [VisitSighting] { (try? await backend.visitSightings(visit)) ?? [] }
     func spot(of checkIn: UUID) async -> CheckInSpot? { (try? await backend.checkInSpot(checkIn)) ?? nil }
+    func add(_ spot: NewSpot) async throws -> NewSpotAnswer { try await backend.addSpot(spot) }
 }
 
 /// The spotting locations of an airport, as a section of its page. Nothing is shown when there are none.
 /// The parent loads the places, because a view with nothing in it never runs its own task.
 struct AirportSpotsSection: View {
     let locations: [SpotLocation]
+    /// Called after a new place was suggested, so the parent can load the list again.
+    let onAdded: () -> Void
 
     var body: some View {
-        if !locations.isEmpty {
-            Section {
-                ForEach(locations) { place in
-                    NavigationLink { SpotPageView(id: place.id) } label: { SpotRow(place: place) }
-                }
-            } header: {
-                Text("Spotting locations")
+        Section {
+            ForEach(locations) { place in
+                NavigationLink { SpotPageView(id: place.id) } label: { SpotRow(place: place) }
             }
+            NavigationLink { AddSpotView(onAdded: onAdded) } label: {
+                Label("Suggest a place", systemImage: "plus.circle")
+            }
+        } header: {
+            Text("Spotting locations")
         }
     }
 }
