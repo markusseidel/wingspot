@@ -29,10 +29,9 @@ struct AddSpotView: View {
             }
             Section {
                 TextField("Link or coordinates from a maps app", text: $link)
-                    .keyboardType(.URL)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
-                    .onChange(of: link) { _, text in readLink(text) }
+                    .task(id: link) { await readLink(link) }
                 if let position {
                     LabeledContent("Position") {
                         Text(verbatim: String(format: "%.5f, %.5f", position.latitude, position.longitude)).foregroundStyle(.secondary)
@@ -67,12 +66,13 @@ struct AddSpotView: View {
         }
     }
 
-    private func readLink(_ text: String) {
-        guard !text.trimmingCharacters(in: .whitespaces).isEmpty else { linkNotUnderstood = false; return }
-        if let found = MapsLink.coordinate(in: text) {
+    private func readLink(_ text: String) async {
+        guard !text.trimmingCharacters(in: .whitespaces).isEmpty else { position = nil; linkNotUnderstood = false; return }
+        if let found = await MapsLink.resolve(text) {
             position = found
             linkNotUnderstood = false
         } else {
+            position = nil
             linkNotUnderstood = true
         }
     }
