@@ -67,8 +67,12 @@ describe("push texts", () => {
     assert.equal(body.checkin, "c1");
     assert.equal(body.aps.alert.title, "anna");
     assert.equal(body.aps.category, "WINGSPOT_ACTIVITY", "the app shows a neutral text for this category while previews are hidden");
-    assert.equal(body.aps["thread-id"], "salute-c1");
-    assert.equal(payload(row({ kind: "follow", checkin_id: null }), "en").aps["thread-id"], "follow");
+  });
+
+  test("no thread is set, so iOS stacks everything from Wingspot as one group", () => {
+    assert.equal("thread-id" in payload(row(), "en").aps, false);
+    assert.equal("thread-id" in payload(row({ kind: "follow", checkin_id: null }), "en").aps, false);
+    assert.equal("thread-id" in payload(row({ kind: "comment", checkin_id: "c2" }), "en").aps, false);
   });
 
   test("the alert about a new check-in has its own category, which the app gives a Salute action", () => {
