@@ -1,6 +1,6 @@
 # Spotting locations: plan for issue #218
 
-Issue: "Spotting locations as first-class check-in places + spot-session linking and badges" (Jan Jansen). Status: plan only, nothing built. Hidden badges are not part of this plan.
+Issue: "Spotting locations as first-class check-in places + spot-session linking and badges" (Jan Jansen). Status: PR 1 (backend) built, see "As built" at the end. Decisions 1 to 3 were taken as recommended. Hidden badges are not part of this plan.
 
 ## What already exists
 
@@ -56,3 +56,25 @@ Deploy: database first, then the function, then a build.
 ## Not done
 
 - No reply on the issue yet; waiting for decisions 1 to 3.
+
+## As built: PR 1 (backend)
+
+Migration `20261121900000_spotting_locations.sql`, tests in `spotting_locations_test.sql`. Not deployed yet.
+
+- Decisions 1 to 3 as recommended: a place belongs to the nearest airport (within 150 km, else `no_airport_nearby`), new
+  places wait for approval (you approve with a SQL update of `status`, there is no app function for it), and a session is
+  an airport visit.
+- The sightings of a session carry `visit_id`, the id of the visit. The old `sessions` table and `session_id` column from
+  the first schema stay unused. `visit_id` has no foreign key (like `flight_id`): a trigger clears it when the visit is deleted.
+- The upload (`sync_checkins`) takes `spot_location_id` on visits and `visit_id` on sightings. A link that does not hold
+  (place at another airport, not approved and not yours, visit missing or not yours) is dropped and the check-in is
+  stored anyway, so a bad link never blocks sync. Order matters: the app has to send the visit before its sightings
+  in the same or an earlier call.
+- New functions: `add_spotting_location` (name 3 to 80 characters, pin, optional description, best time, facing, tips,
+  legal notes; answers pending, duplicate or a rejection code), `spotting_locations_at(airport)`,
+  `get_spotting_location(id)` (public sessions, public aircraft, your own sessions) and `get_visit_sightings(visit)`
+  (the aircraft of a session, as far as the viewer may see each one).
+- At most 10 of your places can wait for approval at a time (a trigger, so it also holds for direct inserts).
+- Counts use public check-ins only, plus your own, so a private visit never shows up in someone else's numbers.
+- Not in this PR: the cover photo upload (the `photo_path` column exists), `visit_id` and the place in `get_checkin`
+  and the feed (PR 2), and the badges (PR 4).
