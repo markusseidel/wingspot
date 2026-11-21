@@ -392,6 +392,19 @@ components:
             Only for `airport` check-ins that a flight created: the id of that flight. Deleting the flight deletes the
             visit, and changing the flight's day moves it. The flight may arrive in the same or a later request. Visits
             without it are matched to their flight by time and airports.
+        spot_location_id:
+          type: integer
+          description: >-
+            Only for `airport` check-ins: the spotting location the visit was at (a session). It is kept only if the
+            place is at the visit's airport and is approved or your own; otherwise it is dropped and the visit is
+            stored without it.
+        visit_id:
+          type: string
+          format: uuid
+          description: >-
+            Only for `spotted` check-ins: the id of your own `airport` visit this sighting was made during. Send the
+            visit first, in the same or an earlier request. If it does not exist or is not yours, the link is dropped
+            and the sighting is stored without it.
         with:
           type: array
           maxItems: 8

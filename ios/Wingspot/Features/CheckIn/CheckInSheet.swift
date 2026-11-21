@@ -35,17 +35,20 @@ struct CheckInSheet: View {
 
     var body: some View {
         NavigationStack {
-            List(CheckInKind.allCases) { kind in
-                NavigationLink(value: kind) {
-                    Label {
-                        VStack(alignment: .leading) {
-                            Text(kind.title).font(.headline)
-                            Text(kind.subtitle).font(.subheadline).foregroundStyle(.secondary)
+            List {
+                SpotSessionRow()
+                ForEach(CheckInKind.allCases) { kind in
+                    NavigationLink(value: kind) {
+                        Label {
+                            VStack(alignment: .leading) {
+                                Text(kind.title).font(.headline)
+                                Text(kind.subtitle).font(.subheadline).foregroundStyle(.secondary)
+                            }
+                        } icon: {
+                            Image(systemName: kind.systemImage).foregroundStyle(.tint)
                         }
-                    } icon: {
-                        Image(systemName: kind.systemImage).foregroundStyle(.tint)
+                        .padding(.vertical, 6)
                     }
-                    .padding(.vertical, 6)
                 }
             }
             .navigationTitle("Check in")

@@ -25,6 +25,7 @@ struct SpottedCheckInView: View {
     @State private var photo: PreparedPhoto?
     @State private var isPreparingPhoto = false
     @FocusState private var isFocused: Bool
+    @Environment(SpotSessionStore.self) private var sessions
 
     private var registration: Registration? { Registration(input) }
     private var hasInput: Bool { !input.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -41,6 +42,13 @@ struct SpottedCheckInView: View {
         .navigationTitle("Spotted")
         .navigationBarBackButtonHidden(result != nil)
         .task { position = await LocationProvider.currentPosition() }
+        .task {
+            // During a session the airport is the session's.
+            if let session = sessions.session, !airportWasChosen, let database = referenceData.database {
+                airport = try? await database.airport(id: session.airportID)
+                airportWasChosen = true
+            }
+        }
         .task(id: NearestKey(position: position, dataVersion: referenceData.database?.dataVersion)) {
             await suggestAirport()
         }
@@ -53,6 +61,7 @@ struct SpottedCheckInView: View {
 
     private var form: some View {
         Form {
+            SpotSessionRow()
             Section {
                 TextField("Registration, e.g. DAIMA", text: $input)
                     .font(.system(.title2, design: .monospaced))
@@ -119,7 +128,7 @@ struct SpottedCheckInView: View {
             registration: registration,
             type: type.map { .init(icaoCode: $0.icaoCode, name: $0.name) },
             place: airport.map { .init(airportID: $0.id, code: $0.code) },
-            position: position, photo: photo
+            position: position, photo: photo, visitID: sessions.session?.visitID
         )
         do {
             result = try CheckInStore(context: modelContext).saveSpotted(draft, ownerID: account.userID)

@@ -25,7 +25,7 @@ struct AirportPageView: View {
         List {
             header
             yourVisits
-            if account.userID != nil, terms.hasAccepted { AirportSpotsSection(locations: spotPlaces) }
+            if account.userID != nil, terms.hasAccepted { AirportSpotsSection(locations: spotPlaces, onAdded: { Task { spotPlaces = await spots.locations(at: airportID) } }) }
             if account.userID != nil {
                 if terms.hasAccepted {
                     activitySection

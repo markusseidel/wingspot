@@ -129,6 +129,22 @@ class OutboxTests {
     }
 
     @Test
+    fun aVisitAtAPlaceAndItsSightingsAreSentLinkedAndInOrder() = withOutbox { server, store, outbox, _ ->
+        val t0 = Instant.parse("2026-11-01T10:00:00Z")
+        val visit = store.saveAirport(AirportDraft(Place(3, "FRA"), spotId = 42, spotName = "Deck"), t0)
+        val sighting = store.saveSpotted(SpottedDraft(registration = reg("D-AIMA"), airportId = 3, visitId = visit.id), t0.plusSeconds(600))
+        val alone = store.saveSpotted(SpottedDraft(registration = reg("D-AIMB")), t0.plusSeconds(1200))
+        server.enqueue(answer(visit.id to "stored", sighting.id to "stored", alone.id to "stored"))
+        assertEquals(SyncOutcome.Done(3, 0), outbox.sync())
+        val items = Json.parseToJsonElement(server.takeRequest().body!!.utf8()).jsonObject["checkins"]!!.jsonArray.map { it.jsonObject }
+        assertEquals(listOf(visit.id, sighting.id, alone.id).map { it.toString() }, items.map { it["id"]!!.jsonPrimitive.content })
+        assertEquals(42, items[0]["spot_location_id"]!!.jsonPrimitive.content.toInt())
+        assertEquals(visit.id.toString(), items[1]["visit_id"]!!.jsonPrimitive.content)
+        assertTrue("visit_id" !in items[2] && "spot_location_id" !in items[2])
+        assertEquals("Deck", store.all().single { it.id == visit.id }.spotName)
+    }
+
+    @Test
     fun aCheckInAddedFromAFriendGoesUpWithTheFriendsCheckInId() = withOutbox { server, store, outbox, _ ->
         val source = UUID.randomUUID()
         val copy = store.saveFlown(FlownDraft(Place(3, "FRA"), Place(7, "DUS"), sourceId = source))

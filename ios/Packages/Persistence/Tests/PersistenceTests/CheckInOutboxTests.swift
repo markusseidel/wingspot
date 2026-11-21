@@ -98,6 +98,29 @@ private func state(_ context: ModelContext, _ id: UUID) throws -> LocalCheckIn {
         #expect(sent.first { $0.id == own.id }?.sourceCheckInID == nil)
     }
 
+    @Test func aVisitAtAPlaceAndItsSightingsGoUpLinkedAndInOrder() async throws {
+        let context = try makeContext()
+        let store = CheckInStore(context: context)
+        let start = Date(timeIntervalSince1970: 1_700_000_000)
+        let visit = try store.saveAirport(AirportDraft(airportID: 3, code: "FRA", spotID: 42, spotName: "Deck"), ownerID: alice, at: start)
+        let sighting = try store.saveSpotted(
+            SpottedDraft(registration: Registration("DAIMA"), place: .init(airportID: 3, code: "FRA"), visitID: visit.id),
+            ownerID: alice, at: start.addingTimeInterval(600)
+        )
+        let alone = try store.saveSpotted(
+            SpottedDraft(registration: Registration("DAIMB")), ownerID: alice, at: start.addingTimeInterval(1200)
+        )
+        let server = FakeServer()
+        _ = await CheckInOutbox(context: context, uploader: server).sync(userID: alice)
+
+        let sent = await server.sent
+        #expect(sent.map(\.id) == [visit.id, sighting.id, alone.id])
+        #expect(sent.first { $0.id == visit.id }?.spotLocationID == 42)
+        #expect(sent.first { $0.id == sighting.id }?.visitID == visit.id)
+        #expect(sent.first { $0.id == alone.id }?.visitID == nil)
+        #expect(sent.first { $0.id == alone.id }?.spotLocationID == nil)
+    }
+
     @Test func theTaggedFriendsGoUpWithTheCheckIn() async throws {
         let context = try makeContext()
         let anna = UUID()

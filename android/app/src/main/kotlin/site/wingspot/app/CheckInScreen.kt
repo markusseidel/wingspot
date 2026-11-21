@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -50,6 +51,7 @@ import site.wingspot.core.CabinClass
 import site.wingspot.core.LocalCheckIn
 import site.wingspot.core.RecentTypes
 import site.wingspot.core.Registration
+import site.wingspot.core.SocialApi
 import site.wingspot.core.SyncState
 import site.wingspot.core.VisitContext
 
@@ -62,6 +64,15 @@ fun CheckInScreen(state: CheckInState, reference: ReferenceState, model: CheckIn
         return
     }
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        state.session?.takeIf { it.isActive(java.time.Instant.now()) }?.let { session ->
+            Row(Modifier.fillMaxWidth().testTag("spot-session"), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text(stringResource(R.string.session_at, session.spotName), style = MaterialTheme.typography.titleSmall)
+                    Text(stringResource(R.string.session_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                TextButton(onClick = model::endSession) { Text(stringResource(R.string.end_session)) }
+            }
+        }
         Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             for ((kind, label) in listOf(Kind.SPOTTED to R.string.spotted_title, Kind.AIRPORT to R.string.airport_title, Kind.FLOWN to R.string.flown_title)) {
                 FilterChip(selected = state.kind == kind, onClick = { model.chooseKind(kind) }, label = { Text(stringResource(label)) }, modifier = Modifier.testTag("kind-$kind"))
@@ -83,6 +94,11 @@ private fun SpottedForm(state: CheckInState, reference: ReferenceState, model: C
     var photo by remember { mutableStateOf<PreparedPhoto?>(null) }
     val registration = Registration.parse(input)
     val canSave = if (input.isNotBlank()) registration != null else type != null
+    // During a session the airport is the session's.
+    val session = state.session
+    LaunchedEffect(session?.airportId, reference.database) {
+        if (airport == null && session != null) airport = reference.database?.airport(session.airportId)
+    }
 
     Text(stringResource(R.string.spotted_title), style = MaterialTheme.typography.titleLarge)
     OutlinedTextField(
@@ -102,8 +118,22 @@ private fun AirportForm(state: CheckInState, reference: ReferenceState, model: C
     var context by rememberSaveable { mutableStateOf(VisitContext.SPOTTING) }
     var photo by remember { mutableStateOf<PreparedPhoto?>(null) }
     val tags = rememberTagChoice()
+    val app = LocalContext.current.applicationContext as WingspotApp
+    var places by remember { mutableStateOf(emptyList<SocialApi.SpotLocation>()) }
+    var spot by remember { mutableStateOf<SocialApi.SpotLocation?>(null) }
+    LaunchedEffect(airport?.id) {
+        spot = null
+        places = airport?.let { a -> runCatching { app.social.spotLocations(a.id) }.getOrDefault(emptyList()) } ?: emptyList()
+    }
     Text(stringResource(R.string.airport_title), style = MaterialTheme.typography.titleLarge)
     AirportPicker(stringResource(R.string.airport_label), reference, airport) { airport = it }
+    if (places.isNotEmpty()) {
+        Text(stringResource(R.string.spotting_location_label), style = MaterialTheme.typography.labelLarge)
+        Row(Modifier.horizontalScroll(rememberScrollState()).testTag("spot-choices"), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FilterChip(selected = spot == null, onClick = { spot = null }, label = { Text(stringResource(R.string.spot_none)) })
+            for (place in places) FilterChip(selected = spot?.id == place.id, onClick = { spot = place }, label = { Text(place.name) })
+        }
+    }
     Text(stringResource(R.string.why_there), style = MaterialTheme.typography.labelLarge)
     Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         for (option in VisitContext.entries) {
@@ -112,7 +142,7 @@ private fun AirportForm(state: CheckInState, reference: ReferenceState, model: C
     }
     WithFriendsField(tags)
     PhotoField(photo) { photo = it }
-    SaveBar(state, enabled = airport != null, onSave = { model.saveAirport(airport!!, context, photo, tags.all()) }, onCancel = model::close)
+    SaveBar(state, enabled = airport != null, onSave = { model.saveAirport(airport!!, context, photo, tags.all(), spot) }, onCancel = model::close)
 }
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)

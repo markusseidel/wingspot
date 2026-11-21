@@ -358,6 +358,29 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
         return if (body == "null") null else json.decodeFromString(CheckInSpot.serializer(), body)
     }
 
+    /** A place the person suggests. */
+    data class NewSpot(
+        val name: String, val latitude: Double, val longitude: Double, val description: String? = null, val bestTime: String? = null,
+        val facing: String? = null, val tips: String? = null, val legalNotes: String? = null,
+    )
+
+    /** The server's answer to a suggested place: [status] is `pending`, `duplicate` or `rejected`, and [code] says why it was rejected. */
+    @Serializable
+    data class NewSpotAnswer(val status: String, val id: Long? = null, val code: String? = null)
+
+    /** Suggests a new place. It waits for approval and only its author sees it until then. */
+    suspend fun addSpot(spot: NewSpot): NewSpotAnswer {
+        val body = buildJsonObject {
+            put("p_name", spot.name); put("p_latitude", spot.latitude); put("p_longitude", spot.longitude)
+            spot.description?.let { put("p_description", it) }
+            spot.bestTime?.let { put("p_best_time", it) }
+            spot.facing?.let { put("p_facing", it) }
+            spot.tips?.let { put("p_tips", it) }
+            spot.legalNotes?.let { put("p_legal_notes", it) }
+        }.toString()
+        return json.decodeFromString(NewSpotAnswer.serializer(), rest.call("POST", "/rest/v1/rpc/add_spotting_location", body))
+    }
+
     /** Someone with an invite code. */
     @Serializable
     data class InvitePerson(val id: String, val username: String, @SerialName("display_name") val displayName: String? = null) {

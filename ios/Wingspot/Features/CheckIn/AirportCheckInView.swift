@@ -36,6 +36,10 @@ struct AirportCheckInView: View {
     @State private var photo: PreparedPhoto?
     @State private var isPreparingPhoto = false
     @State private var tagged: [PersonTag] = []
+    @Environment(SpotStore.self) private var spots
+    @Environment(SpotSessionStore.self) private var sessions
+    @State private var places: [SpotLocation] = []
+    @State private var spotID: Int?
 
     var body: some View {
         Group {
@@ -48,6 +52,11 @@ struct AirportCheckInView: View {
         .navigationTitle("Airport")
         .navigationBarBackButtonHidden(result != nil)
         .task { position = await LocationProvider.currentPosition() }
+        .task(id: airport?.id) {
+            spotID = nil
+            places = []
+            if let airport, account.userID != nil { places = await spots.locations(at: airport.id) }
+        }
         .task(id: NearestKey(position: position, dataVersion: referenceData.database?.dataVersion)) {
             await suggestAirport()
         }
@@ -71,6 +80,12 @@ struct AirportCheckInView: View {
                 }
                 Picker("Reason", selection: $context) {
                     ForEach(VisitContext.allCases, id: \.self) { Text($0.title).tag($0) }
+                }
+                if !places.isEmpty {
+                    Picker("Spotting location", selection: $spotID) {
+                        Text("None").tag(Int?.none)
+                        ForEach(places) { Text(verbatim: $0.name).tag(Int?.some($0.id)) }
+                    }
                 }
                 WithFriendsRow(selection: $tagged)
             } footer: {
@@ -96,9 +111,18 @@ struct AirportCheckInView: View {
 
     private func save() {
         guard let airport else { return }
-        let draft = AirportDraft(airportID: airport.id, code: airport.code, context: context, position: position, photo: photo, tagged: tagged.map(\.id))
+        let place = places.first { $0.id == spotID }
+        let draft = AirportDraft(
+            airportID: airport.id, code: airport.code, context: context, position: position, photo: photo, tagged: tagged.map(\.id),
+            spotID: place?.id, spotName: place?.name
+        )
         do {
-            result = try CheckInStore(context: modelContext).saveAirport(draft, ownerID: account.userID)
+            let saved = try CheckInStore(context: modelContext).saveAirport(draft, ownerID: account.userID)
+            result = saved
+            // A visit at a spotting location starts a session: the aircraft spotted next are linked to this visit.
+            if let place {
+                sessions.start(.init(visitID: saved.id, spotID: place.id, spotName: place.name, airportID: airport.id, code: airport.code, startedAt: Date()))
+            }
             sync?.requestSync()
         } catch {
             saveFailed = true

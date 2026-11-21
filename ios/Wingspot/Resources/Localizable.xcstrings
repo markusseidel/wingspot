@@ -409,6 +409,16 @@
         }
       }
     },
+    "A new place waits for approval. Until then only you can see it and check in there." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein neuer Ort wartet auf Freigabe. Bis dahin siehst nur du ihn und kannst nur du dort einchecken."
+          }
+        }
+      }
+    },
     "A notification shows a name and the start of a comment, which can be visible on your lock screen." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -463,6 +473,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "About"
+          }
+        }
+      }
+    },
+    "About this place" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Über diesen Ort"
           }
         }
       }
@@ -593,6 +613,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Flugzeugtypen"
+          }
+        }
+      }
+    },
+    "Aircraft you spot now are added to it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flugzeuge, die du jetzt siehst, werden ihr hinzugefügt."
           }
         }
       }
@@ -1562,6 +1592,16 @@
         }
       }
     },
+    "Couldn't send this. Check your connection and try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das konnte nicht gesendet werden. Prüfe die Verbindung und versuche es noch einmal."
+          }
+        }
+      }
+    },
     "Couldn't sign in" : {
       "localizations" : {
         "de" : {
@@ -1933,6 +1973,16 @@
         }
       }
     },
+    "End session" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session beenden"
+          }
+        }
+      }
+    },
     "Enter a registration and see if it's new to you. It works offline too." : {
       "localizations" : {
         "de" : {
@@ -1999,6 +2049,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Blickrichtung"
+          }
+        }
+      }
+    },
+    "Facing, e.g. south-west" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blickrichtung, z. B. Südwest"
           }
         }
       }
@@ -2456,6 +2516,16 @@
         }
       }
     },
+    "In Google Maps, press and hold the place, then copy the coordinates or share the link. The airport nearest to it is added for you." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Google Maps den Ort gedrückt halten, dann die Koordinaten kopieren oder den Link teilen. Der nächste Flughafen wird für dich ergänzt."
+          }
+        }
+      }
+    },
     "In common" : {
       "localizations" : {
         "de" : {
@@ -2630,6 +2700,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Level %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Link or coordinates from a maps app" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link oder Koordinaten aus einer Karten-App"
           }
         }
       }
@@ -2814,6 +2894,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Name"
+          }
+        }
+      }
+    },
+    "Name, e.g. Visitor terrace" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name, z. B. Besucherterrasse"
           }
         }
       }
@@ -3476,6 +3566,16 @@
         }
       }
     },
+    "Position" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Position"
+          }
+        }
+      }
+    },
     "Post only what you may share: no illegal content and no one else's private information." : {
       "localizations" : {
         "de" : {
@@ -4002,12 +4102,32 @@
         }
       }
     },
+    "Session at %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session bei %@"
+          }
+        }
+      }
+    },
     "Sessions" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sessions"
+          }
+        }
+      }
+    },
+    "Sessions: %lld" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sessions: %lld"
           }
         }
       }
@@ -4319,6 +4439,16 @@
         }
       }
     },
+    "Spotting location" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spotting-Ort"
+          }
+        }
+      }
+    },
     "Spotting locations" : {
       "localizations" : {
         "de" : {
@@ -4349,12 +4479,32 @@
         }
       }
     },
+    "Suggest a place" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ort vorschlagen"
+          }
+        }
+      }
+    },
     "Suggest me to others" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mich anderen vorschlagen"
+          }
+        }
+      }
+    },
+    "Suggest this place" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Ort vorschlagen"
           }
         }
       }
@@ -4453,12 +4603,32 @@
         }
       }
     },
+    "The name needs 3 to 80 characters." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Name braucht 3 bis 80 Zeichen."
+          }
+        }
+      }
+    },
     "The old link and code stop working." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Der alte Link und Code funktionieren dann nicht mehr."
+          }
+        }
+      }
+    },
+    "There is no airport within 150 km of this position." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im Umkreis von 150 km um diese Position gibt es keinen Flughafen."
           }
         }
       }
@@ -4499,6 +4669,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dieser Kommentar ist nicht erlaubt. Bitte formuliere ihn um."
+          }
+        }
+      }
+    },
+    "This doesn't contain a position. Open the place in the maps app and copy its full link, or the coordinates." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier steckt keine Position drin. Öffne den Ort in der Karten-App und kopiere den vollständigen Link oder die Koordinaten."
+          }
+        }
+      }
+    },
+    "This place couldn't be added." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Ort konnte nicht hinzugefügt werden."
+          }
+        }
+      }
+    },
+    "This place is already there." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Ort gibt es schon."
           }
         }
       }
@@ -4580,6 +4780,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tipps"
+          }
+        }
+      }
+    },
+    "Tips: facilities, parking, lenses" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tipps: Einrichtungen, Parken, Objektive"
           }
         }
       }
@@ -4851,6 +5061,16 @@
         }
       }
     },
+    "Where is it?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wo ist er?"
+          }
+        }
+      }
+    },
     "Which flight?" : {
       "localizations" : {
         "de" : {
@@ -4947,6 +5167,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Du"
+          }
+        }
+      }
+    },
+    "You already have ten places waiting for approval. Please wait until some are approved." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast schon zehn Orte, die auf Freigabe warten. Bitte warte, bis einige freigegeben sind."
           }
         }
       }
@@ -5251,26 +5481,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "„%@“"
-          }
-        }
-      }
-    },
-    "About this place" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Über diesen Ort"
-          }
-        }
-      }
-    },
-    "Sessions: %lld" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sessions: %lld"
           }
         }
       }

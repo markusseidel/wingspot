@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,6 +28,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import java.time.Instant
+import kotlinx.coroutines.launch
+import site.wingspot.core.MapsLink
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -35,8 +40,7 @@ import site.wingspot.core.SocialApi
 @Composable
 fun AirportSpotsSection(app: WingspotApp, model: SocialViewModel, airportId: Long) {
     var places by remember { mutableStateOf(emptyList<SocialApi.SpotLocation>()) }
-    LaunchedEffect(airportId) { places = try { app.social.spotLocations(airportId) } catch (e: ApiException) { emptyList() } }
-    if (places.isEmpty()) return
+    LaunchedEffect(airportId, model.spotsVersion) { places = try { app.social.spotLocations(airportId) } catch (e: ApiException) { emptyList() } }
     Column(Modifier.testTag("airport-spots"), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         SectionHeader(stringResource(R.string.spotting_locations), Modifier.padding(top = 8.dp))
         places.forEach { place ->
@@ -50,6 +54,64 @@ fun AirportSpotsSection(app: WingspotApp, model: SocialViewModel, airportId: Lon
             }
             HorizontalDivider()
         }
+        TextButton(onClick = { model.open(Route.AddSpot) }, modifier = Modifier.testTag("suggest-spot")) { Text(stringResource(R.string.suggest_place)) }
+    }
+}
+
+/** Suggest a new spotting location. It waits for approval and only its author sees it until then. */
+@Composable
+fun AddSpotPage(app: WingspotApp, model: SocialViewModel) {
+    var name by remember { mutableStateOf("") }
+    var link by remember { mutableStateOf("") }
+    var about by remember { mutableStateOf("") }
+    var bestTime by remember { mutableStateOf("") }
+    var facing by remember { mutableStateOf("") }
+    var tips by remember { mutableStateOf("") }
+    var sending by remember { mutableStateOf(false) }
+    var message by remember { mutableStateOf<Int?>(null) }
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    val position = MapsLink.coordinate(link)
+    val canSend = name.trim().length >= 3 && position != null && !sending
+
+    fun send() {
+        val p = position ?: return
+        sending = true
+        scope.launch {
+            fun optional(text: String) = text.trim().ifEmpty { null }
+            val answer = try {
+                app.social.addSpot(SocialApi.NewSpot(name.trim(), p.first, p.second, optional(about), optional(bestTime), optional(facing), optional(tips)))
+            } catch (e: ApiException) { null }
+            sending = false
+            when {
+                answer == null -> message = R.string.spot_send_failed
+                answer.status == "pending" -> { model.spotAdded(); model.back() }
+                answer.status == "duplicate" -> message = R.string.spot_duplicate
+                else -> message = when (answer.code) {
+                    "no_airport_nearby" -> R.string.spot_no_airport
+                    "too_many_pending" -> R.string.spot_too_many
+                    "invalid_name" -> R.string.spot_bad_name
+                    else -> R.string.spot_not_added
+                }
+            }
+        }
+    }
+
+    Column(Modifier.testTag("add-spot"), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        PageHeader(stringResource(R.string.suggest_place), model::back)
+        OutlinedTextField(name, { name = it }, singleLine = true, label = { Text(stringResource(R.string.spot_name_label)) }, modifier = Modifier.fillMaxWidth().testTag("spot-name"))
+        OutlinedTextField(link, { link = it }, singleLine = true, label = { Text(stringResource(R.string.spot_link_label)) }, modifier = Modifier.fillMaxWidth().testTag("spot-link"))
+        when {
+            position != null -> Text(stringResource(R.string.spot_position, "%.5f, %.5f".format(position.first, position.second)), color = MaterialTheme.colorScheme.onSurfaceVariant)
+            link.isNotBlank() -> Text(stringResource(R.string.spot_link_unclear), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        Text(stringResource(R.string.spot_where_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        OutlinedTextField(about, { about = it }, label = { Text(stringResource(R.string.spot_about)) }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(bestTime, { bestTime = it }, singleLine = true, label = { Text(stringResource(R.string.spot_best_time)) }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(facing, { facing = it }, singleLine = true, label = { Text(stringResource(R.string.spot_facing)) }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(tips, { tips = it }, label = { Text(stringResource(R.string.spot_tips)) }, modifier = Modifier.fillMaxWidth())
+        message?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error) }
+        Button(onClick = ::send, enabled = canSend, modifier = Modifier.fillMaxWidth().testTag("spot-send")) { Text(stringResource(R.string.suggest_this_place)) }
+        Text(stringResource(R.string.spot_review_note), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 

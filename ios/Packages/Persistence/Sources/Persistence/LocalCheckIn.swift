@@ -48,6 +48,12 @@ public final class LocalCheckIn {
     public var taggedIDs: [UUID]?
     /// For a check-in made by adding a friend's flight or visit to your own logbook: the friend's check-in.
     public var sourceID: UUID?
+    /// Airport visits at a spotting location: the place, with its name kept so the list can show it offline.
+    /// Like `ownerID`, it opens an existing store without a migration step.
+    public var spotID: Int?
+    public var spotName: String?
+    /// Sightings made during a session: the airport visit that started it.
+    public var visitID: UUID?
 
     init(
         id: UUID, kind: String, registration: String?, typeICAO: String?, typeName: String?, airportID: Int?,
@@ -55,7 +61,8 @@ public final class LocalCheckIn {
         ownerID: UUID? = nil, visitContext: String? = nil,
         originID: Int? = nil, destinationID: Int? = nil, originCode: String? = nil, destinationCode: String? = nil,
         flightNumber: String? = nil, cabin: String? = nil, seat: String? = nil, flightID: UUID? = nil,
-        taggedIDs: [UUID]? = nil, sourceID: UUID? = nil
+        taggedIDs: [UUID]? = nil, sourceID: UUID? = nil,
+        spotID: Int? = nil, spotName: String? = nil, visitID: UUID? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -80,5 +87,8 @@ public final class LocalCheckIn {
         self.flightID = flightID
         self.taggedIDs = taggedIDs
         self.sourceID = sourceID
+        self.spotID = spotID
+        self.spotName = spotName
+        self.visitID = visitID
     }
 }
