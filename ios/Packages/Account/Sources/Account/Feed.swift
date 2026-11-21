@@ -491,30 +491,45 @@ public final class FeedStore {
         items[index] = items[index].updating(comments: count)
     }
 
-    /// Loads the newest page and replaces the list. Keeps the old list when it fails.
+    /// Loads the newest page and replaces the list. Keeps the old list when it fails. The first load tries a second time
+    /// after a moment, because right after the app starts the network or the sign-in is often not ready yet, and an error
+    /// that goes away by itself should not be shown.
     public func refresh() async {
         generation += 1
         let mine = generation
         isLoading = true
+        // A new attempt is not a failure yet: without this the old error stays on screen while the list loads again.
+        if !hasLoaded { failure = nil }
         defer { if mine == generation { isLoading = false } }
-        do {
-            let page = try await fetch(after: nil)
-            guard mine == generation else { return }
-            items = Self.unique(page)
-            reachedEnd = page.count < Self.pageSize
-            failure = nil
-            hasLoaded = true
-            photos = [:]
-            tags = [:]
-            badges = [:]
-            await loadPhotos(for: items.map(\.id), generation: mine)
-            await loadTags(for: items.map(\.id), generation: mine)
-            await loadBadges(for: items.map(\.id), generation: mine)
-        } catch {
-            guard mine == generation else { return }
-            failure = (error as? AccountError) ?? .unknown
+        for attempt in 1...2 {
+            do {
+                let page = try await fetch(after: nil)
+                guard mine == generation else { return }
+                items = Self.unique(page)
+                reachedEnd = page.count < Self.pageSize
+                failure = nil
+                hasLoaded = true
+                photos = [:]
+                tags = [:]
+                badges = [:]
+                await loadPhotos(for: items.map(\.id), generation: mine)
+                await loadTags(for: items.map(\.id), generation: mine)
+                await loadBadges(for: items.map(\.id), generation: mine)
+                return
+            } catch {
+                guard mine == generation else { return }
+                if attempt == 1, !hasLoaded {
+                    try? await Task.sleep(for: retryDelay)
+                    guard mine == generation else { return }
+                    continue
+                }
+                failure = (error as? AccountError) ?? .unknown
+            }
         }
     }
+
+    /// How long the first load waits before it tries again. Tests make it short.
+    public var retryDelay: Duration = .seconds(1.5)
 
     /// Loads the next older page. Does nothing while loading, at the end, or before the first page.
     public func loadMore() async {
