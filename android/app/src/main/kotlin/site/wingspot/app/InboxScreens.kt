@@ -54,6 +54,7 @@ fun InboxPage(model: SocialViewModel) {
             else -> LazyColumn(Modifier.fillMaxWidth()) {
                 items(model.inbox, key = { it.id }) { row ->
                     InboxRow(row, onClick = {
+                        model.markInboxRowRead(row)
                         when {
                             row.kind == "follow" -> model.openPerson(row.actorId)
                             row.checkInId != null -> model.stack.add(Route.CheckInPage(row.checkInId!!))

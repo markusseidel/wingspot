@@ -458,6 +458,11 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
         rest.call("POST", "/rest/v1/rpc/mark_notifications_read", "{}")
     }
 
+    /** Marks the one row read, when the person opens it. */
+    suspend fun markActivityRead(id: String) {
+        rest.call("POST", "/rest/v1/rpc/mark_notification_read", """{"p_id":"$id"}""")
+    }
+
     /** Someone's level and the badges they earned. Null when their profile can't be seen: private, or blocked. */
     suspend fun personProgress(id: String): UserProgress? {
         val body = rest.call("POST", "/rest/v1/rpc/get_person_progress", """{"target":"$id"}""").trim()

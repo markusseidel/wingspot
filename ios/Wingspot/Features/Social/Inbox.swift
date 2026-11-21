@@ -59,6 +59,20 @@ final class InboxStore {
         }
     }
 
+    /// Opening a row marks it read. The row and the count change at once, and go back if the server says no.
+    func markRead(_ item: ActivityItem) async {
+        guard let index = items.firstIndex(where: { $0.id == item.id }), !items[index].isRead else { return }
+        items[index].isRead = true
+        let wasUnread = unread
+        unread = max(unread - 1, 0)
+        do {
+            try await backend.markActivityRead(id: item.id)
+        } catch {
+            if let back = items.firstIndex(where: { $0.id == item.id }) { items[back].isRead = false }
+            unread = wasUnread
+        }
+    }
+
     func clear() {
         items = []
         unread = 0
@@ -131,6 +145,7 @@ struct InboxView: View {
     }
 
     private func open(_ item: ActivityItem) {
+        Task { await inbox.markRead(item) }
         switch destination(of: item) {
         case .person(let id):
             openedPerson = OpenedPerson(id: id)

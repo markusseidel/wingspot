@@ -165,6 +165,17 @@ class SocialViewModel(
         }
     }
 
+    /** Opening a row marks it read: the row and the count change at once and go back if the server says no. */
+    fun markInboxRowRead(row: SocialApi.ActivityItem) {
+        if (row.isRead || inbox.none { it.id == row.id }) return
+        val before = inbox to unread
+        inbox = inbox.map { if (it.id == row.id) it.copy(isRead = true) else it }
+        unread = maxOf(unread - 1, 0)
+        viewModelScope.launch {
+            try { api.markActivityRead(row.id) } catch (e: ApiException) { inbox = before.first; unread = before.second }
+        }
+    }
+
     fun loadMoreInbox() {
         val last = inbox.lastOrNull() ?: return
         if (!inboxMore) return

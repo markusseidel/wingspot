@@ -56,6 +56,20 @@ select is((select count(*)::int from public.get_notifications(null, 2)), 2, 'a p
 select is((select count(*)::int from public.get_notifications((select max(created_at) from public.get_notifications()), 30)), 2,
   'before returns only older rows');
 
+-- Opening one row marks only that row, and only for its owner
+select pg_temp.reset_role();
+select set_config('test.salute_note', (select id::text from public.notifications where recipient = pg_temp.u(1) and kind = 'salute'), true);
+select pg_temp.as_user(3);
+select public.mark_notification_read(current_setting('test.salute_note')::uuid);
+select pg_temp.reset_role();
+select is((select count(*)::int from public.notifications where recipient = pg_temp.u(1) and kind = 'salute' and read_at is null), 1,
+  'someone else cannot mark my row read');
+select pg_temp.as_user(1);
+select public.mark_notification_read((select id from public.get_notifications() where kind = 'salute'));
+select is(public.unread_notification_count(), 2, 'one row read, two left');
+select is((select is_read from public.get_notifications() where kind = 'salute'), true, 'it is that row');
+select is((select count(*)::int from public.get_notifications() where not is_read), 2, 'the others stay unread');
+
 select public.mark_notifications_read();
 select is(public.unread_notification_count(), 0, 'reading marks everything');
 select is((select count(*)::int from public.get_notifications() where not is_read), 0, 'and the list agrees');
