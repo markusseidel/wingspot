@@ -55,6 +55,8 @@ public protocol ActivityBackend: Sendable {
     /// How many are unread, up to 99.
     func unreadActivityCount() async throws -> Int
     func markActivityRead() async throws
+    /// Marks the one row read, when the person opens it.
+    func markActivityRead(id: UUID) async throws
 }
 
 extension SupabaseAccountBackend: ActivityBackend {
@@ -70,6 +72,10 @@ extension SupabaseAccountBackend: ActivityBackend {
 
     public func markActivityRead() async throws {
         try await mappingErrors { _ = try await client.rpc("mark_notifications_read").execute() }
+    }
+
+    public func markActivityRead(id: UUID) async throws {
+        try await mappingErrors { _ = try await client.rpc("mark_notification_read", params: ["p_id": id]).execute() }
     }
 }
 
@@ -90,4 +96,5 @@ extension UnconfiguredAccountBackend: ActivityBackend {
     public func activity(before: Date?, limit: Int) async throws -> [ActivityItem] { throw AccountError.notConfigured }
     public func unreadActivityCount() async throws -> Int { throw AccountError.notConfigured }
     public func markActivityRead() async throws { throw AccountError.notConfigured }
+    public func markActivityRead(id: UUID) async throws { throw AccountError.notConfigured }
 }

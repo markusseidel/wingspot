@@ -143,6 +143,11 @@ class SocialApiTests {
         server.enqueue(ok("null"))
         api.markActivityRead()
         assertEquals("/rest/v1/rpc/mark_notifications_read", server.takeRequest().url.encodedPath)
+        server.enqueue(ok("null"))
+        api.markActivityRead("n-1")
+        val one = server.takeRequest()
+        assertEquals("/rest/v1/rpc/mark_notification_read", one.url.encodedPath)
+        assertEquals("n-1", Rest(server.url("/").toString(), "k", { "t" }).json.parseToJsonElement(one.body!!.utf8()).jsonObject["p_id"]!!.jsonPrimitive.content)
     }
 
     @Test
