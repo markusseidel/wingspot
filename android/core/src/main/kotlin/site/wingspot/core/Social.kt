@@ -299,6 +299,65 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
     @Serializable
     private data class CopyRow(@SerialName("user_id") val userId: String, val username: String, @SerialName("display_name") val displayName: String? = null)
 
+    /** One spotting location in the list of an airport. [status] is pending for your own place that waits for approval. */
+    @Serializable
+    data class SpotLocation(
+        val id: Long, val name: String, val latitude: Double, val longitude: Double, val description: String? = null,
+        val status: String, val mine: Boolean, val sessions: Int,
+    ) {
+        val isPending: Boolean get() = status == "pending"
+    }
+
+    /** One spotting location with its numbers. */
+    @Serializable
+    data class SpotDetail(
+        val id: Long, @SerialName("airport_id") val airportId: Long, val airport: String, val iata: String? = null, val name: String,
+        val latitude: Double, val longitude: Double, val description: String? = null,
+        @SerialName("best_time") val bestTime: String? = null, val facing: String? = null, val tips: String? = null,
+        @SerialName("legal_notes") val legalNotes: String? = null, val status: String, val mine: Boolean,
+        val sessions: Int, val aircraft: Int, @SerialName("my_sessions") val mySessions: Int,
+    ) {
+        val isPending: Boolean get() = status == "pending"
+    }
+
+    /** One aircraft seen during a session. */
+    @Serializable
+    data class VisitSighting(
+        val id: String, @SerialName("occurred_at") val occurredAt: String, val registration: String? = null,
+        @SerialName("type_icao") val typeIcao: String? = null,
+    )
+
+    /** What a check-in page shows about spotting locations. [sightings] is only set for a visit. */
+    @Serializable
+    data class CheckInSpot(
+        @SerialName("visit_id") val visitId: String, @SerialName("spot_id") val spotId: Long? = null,
+        @SerialName("spot_name") val spotName: String? = null, val sightings: Int? = null,
+    )
+
+    /** The spotting locations of an airport: approved ones and your own waiting ones. */
+    suspend fun spotLocations(airport: Long): List<SpotLocation> {
+        val body = buildJsonObject { put("p_airport", airport) }.toString()
+        return json.decodeFromString(ListSerializer(SpotLocation.serializer()), rest.call("POST", "/rest/v1/rpc/spotting_locations_at", body))
+    }
+
+    /** One place with its numbers, or null when it doesn't exist or isn't visible to you. */
+    suspend fun spotDetail(id: Long): SpotDetail? {
+        val body = rest.call("POST", "/rest/v1/rpc/get_spotting_location", buildJsonObject { put("p_id", id) }.toString()).trim()
+        return if (body == "null") null else json.decodeFromString(SpotDetail.serializer(), body)
+    }
+
+    /** The aircraft seen during a session, as far as you may see each one. */
+    suspend fun visitSightings(visit: String): List<VisitSighting> {
+        val body = buildJsonObject { put("p_visit", visit) }.toString()
+        return json.decodeFromString(ListSerializer(VisitSighting.serializer()), rest.call("POST", "/rest/v1/rpc/get_visit_sightings", body))
+    }
+
+    /** The session a check-in belongs to, or null when it isn't part of one. */
+    suspend fun checkInSpot(checkIn: String): CheckInSpot? {
+        val body = rest.call("POST", "/rest/v1/rpc/get_checkin_spot", buildJsonObject { put("p_id", checkIn) }.toString()).trim()
+        return if (body == "null") null else json.decodeFromString(CheckInSpot.serializer(), body)
+    }
+
     /** Someone with an invite code. */
     @Serializable
     data class InvitePerson(val id: String, val username: String, @SerialName("display_name") val displayName: String? = null) {

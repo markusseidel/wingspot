@@ -353,6 +353,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                     }
                 }
             }
+            if (shown.kind == "airport" || shown.kind == "spotted") item { CheckInSpotSection(app, model, id, shown.kind) }
             if (copies.isNotEmpty()) item {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(stringResource(R.string.copies_label), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)

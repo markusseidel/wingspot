@@ -241,16 +241,16 @@
     },
     "%lld XP · %lld badges" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld XP · %2$lld badges"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld XP · %2$lld Badges"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld XP · %2$lld badges"
           }
         }
       }
@@ -808,6 +808,16 @@
         }
       }
     },
+    "At %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bei %@"
+          }
+        }
+      }
+    },
     "Available once the check-in is uploaded" : {
       "localizations" : {
         "de" : {
@@ -854,6 +864,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sei respektvoll. Keine Belästigung, kein Hass, keine Drohungen."
+          }
+        }
+      }
+    },
+    "Best time" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beste Zeit"
           }
         }
       }
@@ -1592,6 +1612,16 @@
         }
       }
     },
+    "Counts include only public check-ins and your own." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Zahlen zählen nur öffentliche Check-ins und deine eigenen."
+          }
+        }
+      }
+    },
     "Counts include only the check-ins you are allowed to see." : {
       "localizations" : {
         "de" : {
@@ -1963,6 +1993,16 @@
         }
       }
     },
+    "Facing" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blickrichtung"
+          }
+        }
+      }
+    },
     "Feed" : {
       "localizations" : {
         "de" : {
@@ -2273,6 +2313,16 @@
         }
       }
     },
+    "Good to know" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gut zu wissen"
+          }
+        }
+      }
+    },
     "Hidden" : {
       "localizations" : {
         "de" : {
@@ -2345,16 +2395,16 @@
     },
     "I flew %@ → %@ (Wingspot)." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "I flew %1$@ → %2$@ (Wingspot)."
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ich bin %1$@ → %2$@ geflogen (Wingspot)."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "I flew %1$@ → %2$@ (Wingspot)."
           }
         }
       }
@@ -3279,6 +3329,16 @@
         }
       }
     },
+    "Open in Maps" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Karten öffnen"
+          }
+        }
+      }
+    },
     "Open system settings" : {
       "localizations" : {
         "de" : {
@@ -3942,6 +4002,16 @@
         }
       }
     },
+    "Sessions" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sessions"
+          }
+        }
+      }
+    },
     "Set" : {
       "localizations" : {
         "de" : {
@@ -4229,12 +4299,32 @@
         }
       }
     },
+    "Spotted at %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesehen bei %@"
+          }
+        }
+      }
+    },
     "Spotting" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Spotten"
+          }
+        }
+      }
+    },
+    "Spotting locations" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spotting-Orte"
           }
         }
       }
@@ -4413,6 +4503,16 @@
         }
       }
     },
+    "This place isn't available." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Ort ist nicht verfügbar."
+          }
+        }
+      }
+    },
     "This profile is private." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -4470,6 +4570,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tageszeit"
+          }
+        }
+      }
+    },
+    "Tips" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tipps"
           }
         }
       }
@@ -4667,6 +4777,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Besuch Nummer %lld"
+          }
+        }
+      }
+    },
+    "Waiting for approval" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wartet auf Freigabe"
+          }
+        }
+      }
+    },
+    "Waiting for approval. Only you can see this place." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wartet auf Freigabe. Nur du siehst diesen Ort."
           }
         }
       }
@@ -5058,6 +5188,16 @@
         }
       }
     },
+    "Your sessions" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Sessions"
+          }
+        }
+      }
+    },
     "Yours" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5111,6 +5251,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "„%@“"
+          }
+        }
+      }
+    },
+    "About this place" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Über diesen Ort"
+          }
+        }
+      }
+    },
+    "Sessions: %lld" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sessions: %lld"
           }
         }
       }
