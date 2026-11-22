@@ -181,6 +181,10 @@ Source: the [Terms of Service](https://www.flightradar24.com/terms-of-service), 
 - Nothing from FR24 is shown to other users in the first release. The flown distance of an imported flight is shown only to its owner. This also settles decision 1 (the badges and leaderboard stay on the airport-to-airport figure).
 - Whatever is shown gets a credit to Flightradar24 (8.2).
 
+### What three real exports looked like (22 November 2026)
+
+Checked on one machine, with files the author sent; the files are not in the repository. All three were the newer layout. The flight data is in the description of the document. The track is **not** one line: a folder `Route` holds one two-point segment per step (too short to count as a track), and a folder `Trail` holds one timestamped point per position report, with altitude, speed and heading in its description. So the track comes from the timestamped points, sorted by time (793, 389 and 1138 points, flown distances 2 920, 504 and 11 486 km). The Helsinki flight crosses the 180° meridian on its detour around Russia, and its flown distance is far above the direct way. Altitude and speed per point are there if taxi positions should be trimmed later.
+
 ### Test files
 
 This repository is public under the MIT licence, so a committed file is republished to everyone. Real FR24 exports therefore never go into the repository, the issues or the docs, and the same goes for the contents of the real `<description>` HTML. The parser tests use **synthetic** files: invented flights, invented tracks, hand-written from the structure described in the issues. Real files, if the issue author sends them privately, are used on one machine to check that the parser reads them, and are not kept in the working tree that gets committed.
@@ -192,14 +196,14 @@ A question to FR24 has been drafted (not sent). It asks the three levels as sepa
 ## Open questions (for vogtim)
 
 - Please share the prototype script and 3 to 4 real KML files, with the two templates and one date-line flight (Tokyo to Los Angeles), **privately** (by email or a private message), not in a public issue or pull request. They are used only to check the parser on a local machine and are never committed. Without real files the synthetic fixtures could miss how the format really looks.
-- Are the ATD and ETA in the description UTC or local time? (The issue asks to check this.)
+- ~~Are the ATD and ETA in the description UTC or local time?~~ **Answered by three real files (checked on one machine, not committed): UTC.** The file prints "Coordinated Universal Time" next to each time, and the parser reads that into `timesAreUtc`. The author can still confirm that it is always so.
 - Does FR24 offer the KML download in the phone app, or only on the website? This decides whether the file arrives through the share sheet or has to be moved by hand.
-- Does the file always contain the aircraft type? Types missing from the live list stay empty after the import.
+- ~~Does the file contain the aircraft type?~~ **Yes, in three real files**: `Aircraft (A359)` with the name below it. The parser reads it. A type missing from the live list stays empty after the import.
 
 ## Risks
 
 - **The HTML in `<description>` is undocumented and changes.** Mitigation: every field optional, fixtures per template, an "import found these fields" banner so a silent format change is noticed in the beta.
-- **Time zones** of ATD and ETA: stored as UTC only after the question above is answered.
+- **Time zones** of ATD and ETA: UTC in the three real files, flagged by `timesAreUtc`. If a file says nothing, the times stay unconverted.
 - **Map rendering over the date line** on both platforms (see 4).
 - **Android maps key.** The track map needs the Google Maps key like the other maps.
 - **Large files and batches** can be slow on old phones. Parse off the main thread and show progress.

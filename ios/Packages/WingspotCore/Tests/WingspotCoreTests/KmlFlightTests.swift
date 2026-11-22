@@ -21,6 +21,7 @@ struct KmlVector: Decodable, Sendable, CustomTestStringConvertible {
     let departureTime: String?
     let arrivalDate: String?
     let arrivalTime: String?
+    let timesAreUtc: Bool?
     let aircraftTypeCode: String?
     let aircraftTypeName: String?
     let registration: String?
@@ -69,6 +70,7 @@ private func kmlText(_ file: String) -> String {
         #expect(flight.departureTime == vector.departureTime)
         #expect(flight.arrivalDate == vector.arrivalDate)
         #expect(flight.arrivalTime == vector.arrivalTime)
+        #expect(flight.timesAreUtc == (vector.timesAreUtc ?? false))
         #expect(flight.aircraftTypeCode == vector.aircraftTypeCode)
         #expect(flight.aircraftTypeName == vector.aircraftTypeName)
         #expect(flight.registration == vector.registration)

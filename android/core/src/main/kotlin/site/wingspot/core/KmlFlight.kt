@@ -33,6 +33,8 @@ data class KmlFlight(
     /** `yyyy-MM-dd`, when the file says it (a flight can land on the next day). */
     val arrivalDate: String? = null,
     val arrivalTime: String? = null,
+    /** Whether the file says its times are UTC ("Coordinated Universal Time" next to them). */
+    val timesAreUtc: Boolean = false,
     val aircraftTypeCode: String? = null,
     val aircraftTypeName: String? = null,
     val registration: String? = null,
@@ -98,6 +100,7 @@ object KmlFlightParser {
     private val REGISTRATION = Regex("/reg/([A-Za-z0-9-]{2,10})")
     private val AIRLINE = Regex("Airline:\\s*<b>([^<]+)</b>")
     private val AIRLINE_NEW = Regex("</a></span> / [^<]+<br/?>([^<]+)</div>")
+    private val AIRCRAFT_NEW = Regex("Aircraft\\s*<span[^>]*>\\(([A-Za-z0-9]{2,4})\\)</span>\\s*<br\\s*/?>\\s*<span[^>]*>([^<]*)</span>")
     private val AIRCRAFT = Regex("Aircraft:\\s*<b>([^<]*?)\\s*\\(([A-Za-z0-9]{2,4})\\)\\s*</b>")
     private val FROM = Regex("From:\\s*<b>([^<]*?)\\s*\\(([A-Za-z]{3,4})\\)\\s*</b>")
     private val TO = Regex("To:\\s*<b>([^<]*?)\\s*\\(([A-Za-z]{3,4})\\)\\s*</b>")
@@ -119,6 +122,10 @@ object KmlFlightParser {
         }
         if (flight.registration == null) REGISTRATION.find(html)?.let { flight = flight.copy(registration = it.groupValues[1].uppercase()) }
         if (flight.airline == null) (AIRLINE.find(html) ?: AIRLINE_NEW.find(html))?.let { flight = flight.copy(airline = nonEmpty(clean(it.groupValues[1]))) }
+        // Newer layout: "Aircraft<span>(A359)</span><br><span>Airbus A350-941</span>".
+        if (flight.aircraftTypeCode == null) AIRCRAFT_NEW.find(html)?.let {
+            flight = flight.copy(aircraftTypeCode = it.groupValues[1].uppercase(), aircraftTypeName = nonEmpty(clean(it.groupValues[2])))
+        }
         if (flight.aircraftTypeCode == null) AIRCRAFT.find(html)?.let {
             flight = flight.copy(aircraftTypeName = nonEmpty(clean(it.groupValues[1])), aircraftTypeCode = it.groupValues[2].uppercase())
         }
@@ -139,6 +146,7 @@ object KmlFlightParser {
         if (flight.arrivalTime == null) (ARRIVAL.find(html) ?: ETA_TITLE.find(html))?.let {
             flight = flight.copy(arrivalDate = it.groupValues[1], arrivalTime = it.groupValues[2].ifEmpty { null })
         }
+        if (html.contains("Coordinated Universal Time")) flight = flight.copy(timesAreUtc = true)
         // Last resort: the time alone, as in "ATD 10:05".
         if (flight.departureTime == null) ATD.find(html)?.let { flight = flight.copy(departureTime = it.groupValues[1]) }
         if (flight.arrivalTime == null) ETA.find(html)?.let { flight = flight.copy(arrivalTime = it.groupValues[1]) }

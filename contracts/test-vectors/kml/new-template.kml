@@ -1,27 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>XA123 FRA-JFK</name>
-<Placemark><name>XA123</name><description><![CDATA[<div class="fr24"><h2><a href="https://www.flightradar24.com/flight/xa123">XA123</a></h2>
-<div><a title="Example Frankfurt Airport" href="https://www.flightradar24.com/airport/fra/departures" class="dep">Departure</a>
+<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>XA123/XAB12C</name><description><![CDATA[<div style="width:220px;"><div><span><a href="https://www.flightradar24.com/flight/xa123">XA123</a></span> / XAB12C<br/>Example Air</div>
+<div><a title="Example Frankfurt Airport" href="https://www.flightradar24.com/airport/fra/departures" style="color:#fff">Departure</a>
 <h3>FRA</h3>Frankfurt
-<span title="Actual Time of Departure">ATD</span> <span title="2026-11-02 10:05">10:05</span></div>
-<div><a title="Example New York Kennedy Airport" href="https://www.flightradar24.com/airport/jfk/arrivals" class="arr">Arrival</a>
+<div><span title="Scheduled Time of Departure">STD </span> <span title="2026-11-02 10:00">10:00</span> <span title="Coordinated Universal Time">UTC</span></div>
+<div><span title="Actual Time of Departure">ATD </span> <span title="2026-11-02 10:05">10:05</span> <span title="Coordinated Universal Time">UTC</span></div></div>
+<div><a title="Example New York Kennedy Airport" href="https://www.flightradar24.com/airport/jfk/arrivals" style="color:#fff">Arrival</a>
 <h3>JFK</h3>New York
-<span title="Estimated Time of Arrival">ETA</span> <span title="2026-11-02 13:20">13:20</span></div>
-<p>Aircraft: <b>Example Jet 900 (EJ9)</b> <a href="https://www.flightradar24.com/data/aircraft/reg/d-zzzz">D-ZZZZ</a></p>
-<div><span><a href="https://www.flightradar24.com/airline/xa">XA</a></span> / XA 123<br>Example Air</div></div>]]></description><Point><coordinates>8.57000,50.03000,0</coordinates></Point></Placemark>
-<Placemark><name>Route</name><LineString><coordinates>
-8.57000,50.03000,0
-8.20000,50.40000,3000
-6.50000,51.50000,9000
-2.00000,52.50000,10500
--4.00000,54.00000,10700
--15.00000,56.50000,10700
--30.00000,57.50000,10900
--45.00000,55.00000,10900
--60.00000,50.50000,10700
--68.00000,45.50000,9000
--73.00000,41.50000,3000
--73.78000,40.64000,0
-</coordinates></LineString></Placemark>
-<Placemark><TimeStamp><when>2026-11-02T10:05:00Z</when></TimeStamp><Point><coordinates>8.57000,50.03000,0</coordinates></Point></Placemark>
+<div><span title="Estimated Time of Arrival">ETA </span> <span title="2026-11-02 15:20">15:20</span> <span title="Coordinated Universal Time">UTC</span></div></div>
+<table><tr><td> Aircraft<span >(EJ9)</span><br> <span >Example Jet 900</span></td></tr>
+<tr><td> Registration<br> <span><a href="https://www.flightradar24.com/data/aircraft/reg/d-zzzz">D-ZZZZ</a></span></td></tr></table></div>]]></description>
+<Folder><name>Route</name>
+<Placemark><MultiGeometry><LineString><tessellate>1</tessellate><altitudeMode>clampToGround</altitudeMode><coordinates>8.570000,50.030000,0 8.200000,50.400000,3000</coordinates></LineString></MultiGeometry><name>P-1</name><description><![CDATA[<div>Altitude: 0 ft</div>]]></description></Placemark>
+<Placemark><MultiGeometry><LineString><tessellate>1</tessellate><altitudeMode>clampToGround</altitudeMode><coordinates>8.200000,50.400000,3000 6.500000,51.500000,9000</coordinates></LineString></MultiGeometry><name>P-2</name><description><![CDATA[<div>Altitude: 3000 ft</div>]]></description></Placemark>
+<Placemark><MultiGeometry><LineString><tessellate>1</tessellate><altitudeMode>clampToGround</altitudeMode><coordinates>6.500000,51.500000,9000 2.000000,52.500000,10500</coordinates></LineString></MultiGeometry><name>P-3</name><description><![CDATA[<div>Altitude: 9000 ft</div>]]></description></Placemark>
+<Placemark><MultiGeometry><LineString><tessellate>1</tessellate><altitudeMode>clampToGround</altitudeMode><coordinates>2.000000,52.500000,10500 -4.000000,54.000000,10700</coordinates></LineString></MultiGeometry><name>P-4</name><description><![CDATA[<div>Altitude: 10500 ft</div>]]></description></Placemark>
+<Placemark><MultiGeometry><LineString><tessellate>1</tessellate><altitudeMode>clampToGround</altitudeMode><coordinates>-4.000000,54.000000,10700 -15.000000,56.500000,10700</coordinates></LineString></MultiGeometry><name>P-5</name><description><![CDATA[<div>Altitude: 10700 ft</div>]]></description></Placemark>
+<Placemark><MultiGeometry><LineString><tessellate>1</tessellate><altitudeMode>clampToGround</altitudeMode><coordinates>-15.000000,56.500000,10700 -30.000000,57.500000,10900</coordinates></LineString></MultiGeometry><name>P-6</name><description><![CDATA[<div>Altitude: 10700 ft</div>]]></description></Placemark>
+<Placemark><MultiGeometry><LineString><tessellate>1</tessellate><altitudeMode>clampToGround</altitudeMode><coordinates>-30.000000,57.500000,10900 -45.000000,55.000000,10900</coordinates></LineString></MultiGeometry><name>P-7</name><description><![CDATA[<div>Altitude: 10900 ft</div>]]></description></Placemark>
+<Placemark><MultiGeometry><LineString><tessellate>1</tessellate><altitudeMode>clampToGround</altitudeMode><coordinates>-45.000000,55.000000,10900 -60.000000,50.500000,10700</coordinates></LineString></MultiGeometry><name>P-8</name><description><![CDATA[<div>Altitude: 10900 ft</div>]]></description></Placemark>
+<Placemark><MultiGeometry><LineString><tessellate>1</tessellate><altitudeMode>clampToGround</altitudeMode><coordinates>-60.000000,50.500000,10700 -68.000000,45.500000,9000</coordinates></LineString></MultiGeometry><name>P-9</name><description><![CDATA[<div>Altitude: 10700 ft</div>]]></description></Placemark>
+<Placemark><MultiGeometry><LineString><tessellate>1</tessellate><altitudeMode>clampToGround</altitudeMode><coordinates>-68.000000,45.500000,9000 -73.000000,41.500000,3000</coordinates></LineString></MultiGeometry><name>P-10</name><description><![CDATA[<div>Altitude: 9000 ft</div>]]></description></Placemark>
+<Placemark><MultiGeometry><LineString><tessellate>1</tessellate><altitudeMode>clampToGround</altitudeMode><coordinates>-73.000000,41.500000,3000 -73.780000,40.640000,0</coordinates></LineString></MultiGeometry><name>P-11</name><description><![CDATA[<div>Altitude: 3000 ft</div>]]></description></Placemark>
+</Folder>
+<Folder><name>Trail</name>
+<Placemark><name>2026-11-02 10:05:10 UTC</name><description><![CDATA[<div>Altitude: 0 ft, Speed: 400 kt</div>]]></description><TimeStamp><when>2026-11-02T10:05:10+00:00</when></TimeStamp><Point><altitudeMode>absolute</altitudeMode><coordinates>8.570000,50.030000,0</coordinates></Point></Placemark>
+<Placemark><name>2026-11-02 10:12:00 UTC</name><description><![CDATA[<div>Altitude: 3000 ft, Speed: 400 kt</div>]]></description><TimeStamp><when>2026-11-02T10:12:00+00:00</when></TimeStamp><Point><altitudeMode>absolute</altitudeMode><coordinates>8.200000,50.400000,3000</coordinates></Point></Placemark>
+<Placemark><name>2026-11-02 10:28:30 UTC</name><description><![CDATA[<div>Altitude: 9000 ft, Speed: 400 kt</div>]]></description><TimeStamp><when>2026-11-02T10:28:30+00:00</when></TimeStamp><Point><altitudeMode>absolute</altitudeMode><coordinates>6.500000,51.500000,9000</coordinates></Point></Placemark>
+<Placemark><name>2026-11-02 10:50:00 UTC</name><description><![CDATA[<div>Altitude: 10500 ft, Speed: 400 kt</div>]]></description><TimeStamp><when>2026-11-02T10:50:00+00:00</when></TimeStamp><Point><altitudeMode>absolute</altitudeMode><coordinates>2.000000,52.500000,10500</coordinates></Point></Placemark>
+<Placemark><name>2026-11-02 11:30:00 UTC</name><description><![CDATA[<div>Altitude: 10700 ft, Speed: 400 kt</div>]]></description><TimeStamp><when>2026-11-02T11:30:00+00:00</when></TimeStamp><Point><altitudeMode>absolute</altitudeMode><coordinates>-4.000000,54.000000,10700</coordinates></Point></Placemark>
+<Placemark><name>2026-11-02 12:05:00 UTC</name><description><![CDATA[<div>Altitude: 10700 ft, Speed: 400 kt</div>]]></description><TimeStamp><when>2026-11-02T12:05:00+00:00</when></TimeStamp><Point><altitudeMode>absolute</altitudeMode><coordinates>-15.000000,56.500000,10700</coordinates></Point></Placemark>
+<Placemark><name>2026-11-02 12:50:00 UTC</name><description><![CDATA[<div>Altitude: 10900 ft, Speed: 400 kt</div>]]></description><TimeStamp><when>2026-11-02T12:50:00+00:00</when></TimeStamp><Point><altitudeMode>absolute</altitudeMode><coordinates>-30.000000,57.500000,10900</coordinates></Point></Placemark>
+<Placemark><name>2026-11-02 13:35:00 UTC</name><description><![CDATA[<div>Altitude: 10900 ft, Speed: 400 kt</div>]]></description><TimeStamp><when>2026-11-02T13:35:00+00:00</when></TimeStamp><Point><altitudeMode>absolute</altitudeMode><coordinates>-45.000000,55.000000,10900</coordinates></Point></Placemark>
+<Placemark><name>2026-11-02 14:20:00 UTC</name><description><![CDATA[<div>Altitude: 10700 ft, Speed: 400 kt</div>]]></description><TimeStamp><when>2026-11-02T14:20:00+00:00</when></TimeStamp><Point><altitudeMode>absolute</altitudeMode><coordinates>-60.000000,50.500000,10700</coordinates></Point></Placemark>
+<Placemark><name>2026-11-02 14:50:00 UTC</name><description><![CDATA[<div>Altitude: 9000 ft, Speed: 400 kt</div>]]></description><TimeStamp><when>2026-11-02T14:50:00+00:00</when></TimeStamp><Point><altitudeMode>absolute</altitudeMode><coordinates>-68.000000,45.500000,9000</coordinates></Point></Placemark>
+<Placemark><name>2026-11-02 15:08:00 UTC</name><description><![CDATA[<div>Altitude: 3000 ft, Speed: 400 kt</div>]]></description><TimeStamp><when>2026-11-02T15:08:00+00:00</when></TimeStamp><Point><altitudeMode>absolute</altitudeMode><coordinates>-73.000000,41.500000,3000</coordinates></Point></Placemark>
+<Placemark><name>2026-11-02 15:20:40 UTC</name><description><![CDATA[<div>Altitude: 0 ft, Speed: 400 kt</div>]]></description><TimeStamp><when>2026-11-02T15:20:40+00:00</when></TimeStamp><Point><altitudeMode>absolute</altitudeMode><coordinates>-73.780000,40.640000,0</coordinates></Point></Placemark>
+</Folder>
 </Document></kml>

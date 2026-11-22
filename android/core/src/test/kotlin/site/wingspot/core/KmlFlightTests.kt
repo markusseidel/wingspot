@@ -10,6 +10,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.double
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonArray
@@ -46,6 +47,7 @@ class KmlFlightTests {
             assertEquals(case.str("departureTime"), flight.departureTime, file)
             assertEquals(case.str("arrivalDate"), flight.arrivalDate, file)
             assertEquals(case.str("arrivalTime"), flight.arrivalTime, file)
+            assertEquals(case["timesAreUtc"]?.jsonPrimitive?.boolean ?: false, flight.timesAreUtc, file)
             assertEquals(case.str("aircraftTypeCode"), flight.aircraftTypeCode, file)
             assertEquals(case.str("aircraftTypeName"), flight.aircraftTypeName, file)
             assertEquals(case.str("registration"), flight.registration, file)
