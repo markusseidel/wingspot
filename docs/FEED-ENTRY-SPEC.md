@@ -13,8 +13,8 @@ Order of the elements, top to bottom. Every element appears on both platforms.
 | 1 | Header | Avatar (28 pt), name, date, ⋯ menu. The name is **black and bold** (your own entries say "You"). It opens the person's page but is not coloured. The date is small and grey, at the right, before the menu |
 | 2 | Kind | A small icon and the label in small grey text: plane "Flown", building "Airport", binoculars "Spotted" |
 | 3 | Main line | Monospaced, semibold, title size. Flown: `ORIGIN → DESTINATION`. Airport: the code. Spotted: the registration, otherwise the type. It opens the airport, registration or type page, as today |
-| 4 | Detail line | Small grey text, parts joined with " · ". Flown: flight number, registration or type name, distance. Spotted: type name, airport code. Airport: none |
-| 5 | Friends and badges | "With ..." line, then the badge line, as today |
+| 4 | Detail line | Small grey text, parts joined with " · ", always in this order. Flown: flight number, then the registration (the type name when there is no registration), then the distance. Spotted: type name, airport code. Airport: none |
+| 5 | Friends and badges | "With ..." line, then one line per badge: a round 24 pt symbol (a white glyph on a circle whose colour grows with the level, the same glyph per category on both platforms), the badge name in semibold, and "Level n" in grey for a levelled badge. Never an emoji: the glyph is a vector that is part of the app |
 | 6 | Photos | One photo: full width, 200 high, rounded corners 10. Several photos: a **carousel**, one photo per page, swipe sideways, a row of dots below with the current dot in the accent colour. All pages have the same height, so the list does not jump. A tap opens the full-screen viewer at that photo |
 | 7 | Actions | Salute icon and count, comment icon and count, small, in the accent colour, 20 apart. The salute icon is filled once you have saluted. Each has a 44 pt / 48 dp touch area. The comment icon opens the check-in page |
 | 8 | Separator | A thin divider between entries. No card background, no shadow |
@@ -46,6 +46,8 @@ The check-in page keeps its own menu.
 
 Target on both: the carousel in element 6.
 | Date | always relative ("13 years ago") | relative for a week, then a date |
+| Detail line (flown) | flight number, registration or type name, distance | type name, flight number, distance |
+| Badge symbol | SF Symbol per category, white on a coloured circle | emoji per category on a coloured circle |
 
 The date rule above is what Android does already (Android's relative-time helper). iOS changes to match.
 
@@ -56,7 +58,7 @@ Small steps, iOS and Android together as usual, both clicked through. Each step 
 | PR | Content | Size |
 |---|---|---|
 | 1 | This spec, the date helper on iOS, and the photo carousel on iOS (replaces the strip) (one function, with tests for "5 minutes", "3 days", "9 days", a date in this year, a date in an earlier year) | small |
-| 2 | Android card: plain row with divider, black name, kind icon, compact salute and comment icons with counts and 48 dp touch areas, the photo carousel. New vector drawables from Material Symbols (Apache 2.0), not copies of Apple's symbols | medium |
+| 2 | Android card: detail line in the shared order, badge glyphs as vectors instead of emoji, plain row with divider, black name, kind icon, compact salute and comment icons with counts and 48 dp touch areas, the photo carousel. New vector drawables from Material Symbols (Apache 2.0), not copies of Apple's symbols | medium |
 | 3 | Android ⋯ menu on the card. The report dialog, the delete confirmation and the edit start now live in the check-in page; move them into one shared piece that the card and the page both use. Clicked through in all three lists | medium |
 | 4 | Side-by-side screenshots against the acceptance criteria in the issue, and a note on the issue | small |
 
@@ -70,5 +72,6 @@ Small steps, iOS and Android together as usual, both clicked through. Each step 
 
 ## Open
 
+- The glyph for each badge category on Android: one white vector per category that looks like the iOS symbol (own drawing or Material Symbols, not a copy of Apple's symbols). The list of categories is the one in `BadgeStyle.swift`.
 - The exact icon set for salute on Android (there is no clapping-hands symbol in Material Symbols; a hand or a salute drawn as our own vector).
 - Whether the iOS entry should also grow a visible touch area for the name, since it is no longer coloured.
