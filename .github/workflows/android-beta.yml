@@ -50,9 +50,9 @@ jobs:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: |
           if [ -n "$GOOGLE_SERVICES_JSON" ]; then printf '%s' "$GOOGLE_SERVICES_JSON" > app/google-services.json; fi
-      # The version code is the date and the number of this run today, like 202611191 then 202611192, the same as the
-      # iOS build number. It always goes up, which Google Play needs. A tenth run in one day is refused, because
-      # it would be higher than every run of the days after it.
+      # The version code is the date and the number of this run today with two digits, like 2026112210 then 2026112211.
+      # It always goes up, which Google Play needs: from 22 November 2026 it has ten digits, more than the nine of the
+      # earlier ones (the iOS build number is still the date and one digit). A hundredth run in one day is refused.
       - name: Version code
         env:
           GH_TOKEN: ${{ github.token }}
@@ -60,12 +60,13 @@ jobs:
           day=$(TZ=Europe/Berlin date +%Y%m%d)
           since=$(TZ=Europe/Berlin date -d "$day 00:00" -u +%Y-%m-%dT%H:%M:%SZ)
           runs=$(gh api "repos/${{ github.repository }}/actions/workflows/android-beta.yml/runs?created=%3E%3D$since&per_page=1" --jq .total_count)
-          if [ -z "$runs" ] || [ "$runs" -lt 1 ] || [ "$runs" -gt 9 ]; then
-            echo "Can't make a version code: $runs runs of this workflow today (1 to 9 are possible)." >&2
+          if [ -z "$runs" ] || [ "$runs" -lt 1 ] || [ "$runs" -gt 99 ]; then
+            echo "Can't make a version code: $runs runs of this workflow today (1 to 99 are possible)." >&2
             exit 1
           fi
-          echo "WINGSPOT_VERSION_CODE=$day$runs" >> "$GITHUB_ENV"
-          echo "Version code $day$runs"
+          code=$(printf '%s%02d' "$day" "$runs")
+          echo "WINGSPOT_VERSION_CODE=$code" >> "$GITHUB_ENV"
+          echo "Version code $code"
       - name: Shared logic tests
         run: ./gradlew :core:test --no-daemon
       - name: Debug APK
