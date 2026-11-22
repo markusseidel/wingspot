@@ -84,6 +84,7 @@
     <string name="edit_flight">Flug bearbeiten</string>
     <string name="edit_visit">Besuch bearbeiten</string>
     <string name="edit_sighting">Sichtung bearbeiten</string>
+    <string name="more">Mehr</string>
     <string name="edit_details">Details bearbeiten</string>
     <string name="delete">Löschen</string>
     <string name="delete_title">Diesen Check-in löschen?</string>

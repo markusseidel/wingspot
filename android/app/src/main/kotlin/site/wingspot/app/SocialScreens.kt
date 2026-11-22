@@ -101,7 +101,7 @@ fun RemoteImage(photo: FeedPhoto, modifier: Modifier = Modifier) {
 
 /** The Feed tab. */
 @Composable
-fun FeedTab(model: SocialViewModel, me: String, announcements: AnnouncementsViewModel) {
+fun FeedTab(model: SocialViewModel, me: String, announcements: AnnouncementsViewModel, checkIn: CheckInViewModel? = null) {
     val state by model.state.collectAsState()
     LaunchedEffect(me) { announcements.refresh(); if (!state.hasLoaded) model.refresh() }
     // The dot on the bell: when this tab opens, when the app comes back, and when a page above it closes.
@@ -142,7 +142,7 @@ fun FeedTab(model: SocialViewModel, me: String, announcements: AnnouncementsView
         if (state.failed) item { Text(stringResource(R.string.feed_failed), color = MaterialTheme.colorScheme.error) }
         if (state.hasLoaded && state.items.isEmpty() && !state.failed) item { Text(stringResource(R.string.feed_empty)) }
         items(state.items, key = { it.id }) { item ->
-            FeedCard(item, me, state.photos[item.id].orEmpty(), onOpen = { model.open(item) }, onSalute = { model.toggleSalute(item.id) }, onPerson = { model.openPerson(item.userId) }, tags = state.tags[item.id].orEmpty(), badges = state.badges[item.id].orEmpty())
+            FeedCard(item, me, state.photos[item.id].orEmpty(), onOpen = { model.open(item) }, onSalute = { model.toggleSalute(item.id) }, onPerson = { model.openPerson(item.userId) }, tags = state.tags[item.id].orEmpty(), badges = state.badges[item.id].orEmpty(), onEdit = checkIn?.let { vm -> { id -> vm.edit(id) } }, onRemoved = { model.remove(it) })
             if (item.id == state.items.lastOrNull()?.id) LaunchedEffect(item.id) { model.loadMore() }
         }
         item {
@@ -161,7 +161,16 @@ fun FeedCard(
     item: FeedItem, me: String, photos: List<FeedPhoto>, onOpen: () -> Unit, onSalute: () -> Unit, onPerson: () -> Unit,
     tags: List<site.wingspot.core.Person> = emptyList(),
     badges: List<site.wingspot.core.SocialApi.FeedBadge> = emptyList(),
+    /** Starts the edit of one of your own check-ins that is on this phone. Null where the list can't edit. */
+    onEdit: ((UUID) -> Unit)? = null,
+    /** Called after one of your own check-ins was deleted from the menu, so the list can drop it. */
+    onRemoved: (String) -> Unit = {},
 ) {
+    val app = androidx.compose.ui.platform.LocalContext.current.applicationContext as WingspotApp
+    val scope = rememberCoroutineScope()
+    var confirmDelete by remember { mutableStateOf(false) }
+    var reporting by remember { mutableStateOf(false) }
+    var failedDelete by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth().clickable(onClick = onOpen)) {
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -174,6 +183,10 @@ fun FeedCard(
                 }
                 Box(Modifier.weight(1f))
                 Text(relativeTime(item.occurredAt), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                FeedCardMenu(
+                    own = item.userId == me, id = item.id, onEdit = onEdit,
+                    onDelete = { confirmDelete = true }, onReport = { reporting = true },
+                )
             }
             KindAndTitle(item)
             if (tags.isNotEmpty()) Text(stringResource(R.string.with_names, tags.joinToString(", ") { it.who }), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -192,6 +205,60 @@ fun FeedCard(
         }
         HorizontalDivider(Modifier.padding(top = 12.dp))
     }
+    if (confirmDelete) DeleteCheckInDialog(
+        onConfirm = {
+            confirmDelete = false
+            scope.launch {
+                if (app.outbox.delete(UUID.fromString(item.id))) { onRemoved(item.id); app.uploads.tryEmit(Unit) } else failedDelete = true
+            }
+        },
+        onDismiss = { confirmDelete = false },
+    )
+    if (failedDelete) AlertDialog(
+        onDismissRequest = { failedDelete = false },
+        text = { Text(stringResource(R.string.delete_failed)) },
+        confirmButton = { TextButton(onClick = { failedDelete = false }) { Text(stringResource(R.string.ok)) } },
+    )
+    if (reporting) ReportDialog(app, ReportKind.CHECKIN, item.id) { reporting = false }
+}
+
+/**
+ * The ⋯ menu on an entry (docs/FEED-ENTRY-SPEC.md): Edit details and Delete for your own check-ins (Edit only for one
+ * that is on this phone and where the list can edit), Report for other people's.
+ */
+@Composable
+private fun FeedCardMenu(own: Boolean, id: String, onEdit: ((UUID) -> Unit)?, onDelete: () -> Unit, onReport: () -> Unit) {
+    val app = androidx.compose.ui.platform.LocalContext.current.applicationContext as WingspotApp
+    var open by remember { mutableStateOf(false) }
+    // Whether the check-in is on this phone, so it can be edited. Only looked up for your own entries.
+    val onThisPhone by produceState(false, id, own, onEdit) {
+        value = own && onEdit != null && runCatching { app.checkIns.find(UUID.fromString(id)) != null }.getOrDefault(false)
+    }
+    Box {
+        IconButton(onClick = { open = true }, modifier = Modifier.size(48.dp).testTag("entry-more")) {
+            Icon(painterResource(R.drawable.ic_glyph_more), contentDescription = stringResource(R.string.more), tint = MaterialTheme.colorScheme.primary)
+        }
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            if (own) {
+                if (onThisPhone) DropdownMenuItem(text = { Text(stringResource(R.string.edit_details)) }, onClick = { open = false; onEdit?.invoke(UUID.fromString(id)) })
+                DropdownMenuItem(text = { Text(stringResource(R.string.delete)) }, onClick = { open = false; onDelete() })
+            } else {
+                DropdownMenuItem(text = { Text(stringResource(R.string.report)) }, onClick = { open = false; onReport() })
+            }
+        }
+    }
+}
+
+/** Asks before a check-in is deleted. The same dialog on the entry's menu and on the check-in page. */
+@Composable
+fun DeleteCheckInDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.delete_title)) },
+        text = { Text(stringResource(R.string.delete_message)) },
+        confirmButton = { TextButton(onClick = onConfirm) { Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
 }
 
 /** A small icon with a count in the accent colour. The touch area is still 48 dp high. */
@@ -608,22 +675,15 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
         )
     }
 
-    if (confirmDelete) {
-        AlertDialog(
-            onDismissRequest = { confirmDelete = false },
-            title = { Text(stringResource(R.string.delete_title)) },
-            text = { Text(stringResource(R.string.delete_message)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    confirmDelete = false
-                    scope.launch {
-                        if (app.outbox.delete(UUID.fromString(id))) { model.remove(id); checkIn.reload(); model.back() } else problem = R.string.delete_failed
-                    }
-                }) { Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error) }
-            },
-            dismissButton = { TextButton(onClick = { confirmDelete = false }) { Text(stringResource(R.string.cancel)) } },
-        )
-    }
+    if (confirmDelete) DeleteCheckInDialog(
+        onConfirm = {
+            confirmDelete = false
+            scope.launch {
+                if (app.outbox.delete(UUID.fromString(id))) { model.remove(id); checkIn.reload(); model.back() } else problem = R.string.delete_failed
+            }
+        },
+        onDismiss = { confirmDelete = false },
+    )
     reporting?.let { (kind, target) -> ReportDialog(app, kind, target) { reporting = null } }
     viewing?.let { start -> PhotoViewer(photos, start) { viewing = null } }
 }
