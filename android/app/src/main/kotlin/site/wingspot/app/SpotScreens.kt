@@ -213,7 +213,17 @@ fun StaffLabel(app: WingspotApp, user: String) {
         }
     }
     if (label == "founder") {
-        Text(stringResource(R.string.founder_label), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.testTag("staff-label"))
+        // A small pill: the star sits right next to the word, on a soft tint, so it reads as a badge.
+        androidx.compose.material3.Surface(
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(50),
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+            modifier = Modifier.padding(top = 4.dp).testTag("staff-label"),
+        ) {
+            Text(
+                "★ " + stringResource(R.string.founder_label), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+            )
+        }
     }
 }
 
