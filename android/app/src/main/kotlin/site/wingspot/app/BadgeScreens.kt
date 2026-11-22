@@ -181,22 +181,30 @@ private fun badgeColor(level: Int, of: Int): Color {
     }
 }
 
-private fun symbol(category: String) = when (category) {
-    "milestones" -> "🏁"; "airports" -> "🛬"; "countries" -> "🌍"; "types" -> "✈️"; "time" -> "🕐"; "spotting" -> "🔭"; "hidden" -> "✨"; else -> "🎖"
+/** The glyph of a badge category: one white vector per category, the same set as iOS's symbols (never an emoji). */
+private fun glyph(category: String) = when (category) {
+    "milestones" -> R.drawable.ic_glyph_flag
+    "airports" -> R.drawable.ic_glyph_arrival
+    "countries" -> R.drawable.ic_glyph_globe
+    "types" -> R.drawable.ic_glyph_plane
+    "time" -> R.drawable.ic_glyph_clock
+    "spotting" -> R.drawable.ic_glyph_binoculars
+    "hidden" -> R.drawable.ic_glyph_sparkles
+    else -> R.drawable.ic_glyph_rosette
 }
 
 /** The round symbol of a badge, from its category and how far its levels are reached. */
 @Composable
 fun BadgeSymbol(category: String, level: Int, of: Int, size: Int = 44) {
     Box(Modifier.size(size.dp).clip(CircleShape).background(badgeColor(level, of)), contentAlignment = Alignment.Center) {
-        Text(symbol(category), fontSize = (size * 0.45f).sp)
+        Icon(painterResource(glyph(category)), contentDescription = null, tint = Color.White, modifier = Modifier.size((size * 0.55f).dp))
     }
 }
 
 @Composable
 private fun BadgeIcon(badge: BadgeProgress, size: Int = 44) {
     Box(Modifier.size(size.dp).clip(CircleShape).background(badgeColor(badge.level, badge.levels.size)), contentAlignment = Alignment.Center) {
-        Text(symbol(badge.category), style = MaterialTheme.typography.titleMedium)
+        Icon(painterResource(glyph(badge.category)), contentDescription = null, tint = Color.White, modifier = Modifier.size((size * 0.55f).dp))
     }
 }
 
