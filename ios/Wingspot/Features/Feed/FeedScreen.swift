@@ -239,6 +239,7 @@ struct FeedCard: View {
     /// The badges this check-in earned.
     var badges: [FeedBadge] = []
     @State private var viewing: FeedPhoto?
+    @State private var page = 0
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -254,7 +255,7 @@ struct FeedCard: View {
                     }
                 }
                 Spacer()
-                Text(item.occurredAt, format: .relative(presentation: .named))
+                Text(verbatim: FeedDate.text(for: item.occurredAt))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 if !isOwn || onEdit != nil || onDelete != nil {
@@ -313,7 +314,7 @@ struct FeedCard: View {
             }
             if !badges.isEmpty { FeedBadgesLine(badges: badges) }
             if !photos.isEmpty {
-                photoStrip
+                photoCarousel
             }
             HStack(spacing: 20) {
                 Button(action: onSalute) {
@@ -335,36 +336,60 @@ struct FeedCard: View {
         .fullScreenCover(item: $viewing) { PhotoViewer(photos: photos, start: $0) }
     }
 
-    private var photoStrip: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(photos) { photo in
-                    AsyncImage(url: photo.url) { phase in
-                        switch phase {
-                        case .success(let image):
-                            image.resizable().scaledToFill()
-                        case .failure:
-                            Image(systemName: "photo").foregroundStyle(.secondary)
-                        default:
-                            ProgressView()
-                        }
-                    }
-                    .frame(width: photos.count == 1 ? 300 : 240, height: 200)
-                    .background(.quaternary)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .accessibilityLabel("Photo")
-                    .accessibilityAddTraits(.isButton)
-                    .contentShape(RoundedRectangle(cornerRadius: 10))
-                    .onTapGesture { viewing = photo }
-                    .contextMenu {
-                        if !isOwn {
-                            Button("Report photo", systemImage: "flag") { onReportPhoto(photo) }
-                        }
+    /// One photo is shown full width. Several are a carousel: one per page, swipe sideways, dots below. Every page has
+    /// the same height, so the list does not jump (docs/FEED-ENTRY-SPEC.md).
+    private var photoCarousel: some View {
+        VStack(spacing: 6) {
+            if photos.count == 1, let photo = photos.first {
+                photoPage(photo)
+            } else {
+                TabView(selection: $page) {
+                    ForEach(Array(photos.enumerated()), id: \.element.id) { index, photo in
+                        photoPage(photo).tag(index)
                     }
                 }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .frame(height: 200)
+                HStack(spacing: 6) {
+                    ForEach(photos.indices, id: \.self) { index in
+                        Circle()
+                            .fill(index == page ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary.opacity(0.4)))
+                            .frame(width: 6, height: 6)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Photo \(page + 1) of \(photos.count)")
             }
         }
         .padding(.top, 2)
+        .onChange(of: photos.count) { _, count in page = min(page, max(count - 1, 0)) }
+    }
+
+    private func photoPage(_ photo: FeedPhoto) -> some View {
+        AsyncImage(url: photo.url) { phase in
+            switch phase {
+            case .success(let image):
+                image.resizable().scaledToFill()
+            case .failure:
+                Image(systemName: "photo").foregroundStyle(.secondary)
+            default:
+                ProgressView()
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 200)
+        .background(.quaternary)
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .accessibilityLabel("Photo")
+        .accessibilityAddTraits(.isButton)
+        .contentShape(RoundedRectangle(cornerRadius: 10))
+        .onTapGesture { viewing = photo }
+        .contextMenu {
+            if !isOwn {
+                Button("Report photo", systemImage: "flag") { onReportPhoto(photo) }
+            }
+        }
     }
 
     private var kindTitle: LocalizedStringKey {
