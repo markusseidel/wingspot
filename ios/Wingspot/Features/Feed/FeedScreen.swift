@@ -182,7 +182,7 @@ struct FeedScreen: View {
     }
 
     private var list: some View {
-        let visible = feed.items.withoutAirportsOfListedFlights()
+        let visible = feed.items
         let editable = Set(localCheckIns.map(\.id))
         return List {
             AnnouncementCards(store: announcements)
