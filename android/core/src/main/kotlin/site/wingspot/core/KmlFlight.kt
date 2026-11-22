@@ -30,6 +30,8 @@ data class KmlFlight(
     val departureDate: String? = null,
     /** `HH:mm` as written in the file. */
     val departureTime: String? = null,
+    /** `yyyy-MM-dd`, when the file says it (a flight can land on the next day). */
+    val arrivalDate: String? = null,
     val arrivalTime: String? = null,
     val aircraftTypeCode: String? = null,
     val aircraftTypeName: String? = null,
@@ -95,15 +97,19 @@ object KmlFlightParser {
     private val FLIGHT_LINK = Regex("(https?://(?:www\\.)?flightradar24\\.com/([A-Za-z0-9]{2,3}\\d{1,4}[A-Za-z]?)/[0-9a-fA-F]{6,})")
     private val REGISTRATION = Regex("/reg/([A-Za-z0-9-]{2,10})")
     private val AIRLINE = Regex("Airline:\\s*<b>([^<]+)</b>")
+    private val AIRLINE_NEW = Regex("</a></span> / [^<]+<br/?>([^<]+)</div>")
     private val AIRCRAFT = Regex("Aircraft:\\s*<b>([^<]*?)\\s*\\(([A-Za-z0-9]{2,4})\\)\\s*</b>")
     private val FROM = Regex("From:\\s*<b>([^<]*?)\\s*\\(([A-Za-z]{3,4})\\)\\s*</b>")
     private val TO = Regex("To:\\s*<b>([^<]*?)\\s*\\(([A-Za-z]{3,4})\\)\\s*</b>")
     private val DEPARTURE = Regex("Departure:\\s*<b>\\s*(\\d{4}-\\d{2}-\\d{2})(?:[ T]+(\\d{1,2}:\\d{2}))?")
+    private val ATD_TITLE = Regex("Actual Time of Departure\"[^>]*>ATD\\s*</span>\\s*<span title=\"(\\d{4}-\\d{2}-\\d{2})\\s+(\\d{1,2}:\\d{2})\"")
+    private val ARRIVAL = Regex("Arrival:\\s*<b>\\s*(\\d{4}-\\d{2}-\\d{2})(?:[ T]+(\\d{1,2}:\\d{2}))?")
+    private val ETA_TITLE = Regex("Estimated Time of Arrival\"[^>]*>ETA\\s*</span>\\s*<span title=\"(\\d{4}-\\d{2}-\\d{2})\\s+(\\d{1,2}:\\d{2})\"")
     private val ATD = Regex("ATD\\s+(\\d{1,2}:\\d{2})")
     private val ETA = Regex("ETA\\s+(\\d{1,2}:\\d{2})")
     private val TITLE_ATTRIBUTE = Regex("title=\"([^\"]*)\"")
-    private val IATA_HEADING = Regex("<h3>\\s*([A-Za-z]{3})\\s*</h3>")
-    private val CITY_AFTER_HEADING = Regex("</h3>\\s*<[A-Za-z]+[^>]*>([^<]+)<")
+    private val HEADING = Regex("<h3[^>]*>\\s*([A-Za-z0-9]{3,4})\\s*</h3>")
+    private val CITY_AFTER_HEADING = Regex("</h3>\\s*(?:<[A-Za-z]+[^>]*>)?\\s*([^<]+)")
 
     private fun read(html: String, start: KmlFlight): KmlFlight {
         var flight = start
@@ -112,7 +118,7 @@ object KmlFlightParser {
             if (match != null) flight = flight.copy(flightLink = match.groupValues[1], flightNumber = flight.flightNumber ?: flightNumber(match.groupValues[2]))
         }
         if (flight.registration == null) REGISTRATION.find(html)?.let { flight = flight.copy(registration = it.groupValues[1].uppercase()) }
-        if (flight.airline == null) AIRLINE.find(html)?.let { flight = flight.copy(airline = clean(it.groupValues[1])) }
+        if (flight.airline == null) (AIRLINE.find(html) ?: AIRLINE_NEW.find(html))?.let { flight = flight.copy(airline = nonEmpty(clean(it.groupValues[1]))) }
         if (flight.aircraftTypeCode == null) AIRCRAFT.find(html)?.let {
             flight = flight.copy(aircraftTypeName = nonEmpty(clean(it.groupValues[1])), aircraftTypeCode = it.groupValues[2].uppercase())
         }
@@ -127,6 +133,13 @@ object KmlFlightParser {
         // The newer layout: airport links with the name in `title`, then `<h3>IATA</h3>` and the city.
         if (flight.origin == null) flight = flight.copy(origin = linkedAirport("departures", html))
         if (flight.destination == null) flight = flight.copy(destination = linkedAirport("arrivals", html))
+        if (flight.departureDate == null) ATD_TITLE.find(html)?.let {
+            flight = flight.copy(departureDate = it.groupValues[1], departureTime = flight.departureTime ?: it.groupValues[2])
+        }
+        if (flight.arrivalTime == null) (ARRIVAL.find(html) ?: ETA_TITLE.find(html))?.let {
+            flight = flight.copy(arrivalDate = it.groupValues[1], arrivalTime = it.groupValues[2].ifEmpty { null })
+        }
+        // Last resort: the time alone, as in "ATD 10:05".
         if (flight.departureTime == null) ATD.find(html)?.let { flight = flight.copy(departureTime = it.groupValues[1]) }
         if (flight.arrivalTime == null) ETA.find(html)?.let { flight = flight.copy(arrivalTime = it.groupValues[1]) }
         return flight
@@ -148,9 +161,11 @@ object KmlFlightParser {
         var result = KmlAirport(icao = if (code.length == 4) code.uppercase() else null)
         TITLE_ATTRIBUTE.find(tag.value)?.let { result = result.copy(name = nonEmpty(clean(it.groupValues[1]))) }
         val rest = html.substring(tag.range.last + 1).take(600)
-        val iata = IATA_HEADING.find(rest)
-        if (iata != null) {
-            result = result.copy(iata = iata.groupValues[1].uppercase())
+        // The heading holds the airport code (three letters IATA or four ICAO) and the city follows it, as plain text or in an element.
+        val heading = HEADING.find(rest)
+        if (heading != null) {
+            val value = heading.groupValues[1].uppercase()
+            result = if (value.length == 3) result.copy(iata = value) else result.copy(icao = result.icao ?: value)
             CITY_AFTER_HEADING.find(rest)?.let { result = result.copy(city = nonEmpty(clean(it.groupValues[1]))) }
         } else if (code.length == 3) {
             result = result.copy(iata = code.uppercase())
