@@ -52,6 +52,11 @@ class Prefs(context: Context) {
         get() = prefs.getString("spotSession", null)
         set(value) { prefs.edit().apply { if (value == null) remove("spotSession") else putString("spotSession", value) }.apply() }
 
+    /** True once the phone was asked for permission to show notifications, so it is asked once and not at every start. */
+    var askedForNotifications: Boolean
+        get() = prefs.getBoolean("askedForNotifications", false)
+        set(value) { prefs.edit().putBoolean("askedForNotifications", value).apply() }
+
     /** This phone's id on the server, made once. */
     fun deviceId(): String = prefs.getString("deviceId", null) ?: java.util.UUID.randomUUID().toString().also { prefs.edit().putString("deviceId", it).apply() }
 
