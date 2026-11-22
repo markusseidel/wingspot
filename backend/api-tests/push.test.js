@@ -35,6 +35,8 @@ describe("push texts", () => {
     assert.equal(render(row({ kind: "comment_like" }), "en").body, "saluted your comment.");
     assert.equal(render(row({ kind: "tag_copy", subject: "FRA → JFK" }), "en").body, "added your flight FRA → JFK to their logbook.");
     assert.equal(render(row({ kind: "tag_copy", subject: null }), "de").body, "hat deinen Check-in zu seinem Logbuch hinzugefügt.");
+    assert.deepEqual(render(row({ kind: "spot_proposed", snippet: "Terrace", actor_name: "Anna" }), "en"), { title: "Terrace", body: "Anna suggested this place. Tap to review." });
+    assert.equal(render(row({ kind: "spot_proposed", snippet: "Terrasse\nweiter", actor_name: "Anna" }), "de").body, "Anna hat diesen Ort vorgeschlagen. Zum Prüfen tippen.");
     assert.deepEqual(render(row({ kind: "spot_approved", snippet: "Terrace" }), "en"), { title: "Terrace", body: "is approved. Everyone can see the place now." });
     assert.deepEqual(render(row({ kind: "spot_rejected", snippet: "Terrace\nInside the fence" }), "en"), { title: "Terrace", body: "was not accepted. Inside the fence" });
     assert.equal(render(row({ kind: "spot_rejected", snippet: "Terrace" }), "de").body, "wurde nicht übernommen.");

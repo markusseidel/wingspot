@@ -145,6 +145,22 @@
         }
       }
     },
+    "%@ suggested a place: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ hat einen Ort vorgeschlagen: %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ suggested a place: %2$@"
+          }
+        }
+      }
+    },
     "%@ tagged you on %@" : {
       "localizations" : {
         "de" : {

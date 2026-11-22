@@ -10,6 +10,8 @@ private let logger = Logger(subsystem: "site.wingspot.ios", category: "push")
 enum PushDestination: Equatable {
     case person(UUID)
     case checkIn(UUID)
+    /// The list of places that wait for a decision, for people who review them.
+    case reviewPlaces
 }
 
 /// Remembers where a tapped notification points, until a screen has opened it. A tap can arrive before any
@@ -21,7 +23,9 @@ final class PushRouter {
 
     /// Reads what the server put into the notification.
     func open(type: String?, checkIn: String?, actor: String?) {
-        if type == "follow", let actor, let id = UUID(uuidString: actor) {
+        if type == "spot_proposed" {
+            destination = .reviewPlaces
+        } else if type == "follow", let actor, let id = UUID(uuidString: actor) {
             destination = .person(id)
         } else if let checkIn, let id = UUID(uuidString: checkIn) {
             destination = .checkIn(id)

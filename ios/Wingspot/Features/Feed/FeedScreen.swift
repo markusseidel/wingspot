@@ -18,6 +18,8 @@ struct FeedScreen: View {
     @Environment(TermsStore.self) private var terms
     @Environment(PushRouter.self) private var router
     @State private var personToOpen: OpenPerson?
+    /// The list of suggested places, opened from a notification for people who review them.
+    @State private var showPlaceReview = false
     @Environment(CheckInSyncCoordinator.self) private var sync: CheckInSyncCoordinator?
     /// The check-ins saved on this device. Only these can be edited, because the details are sent from here.
     @Query private var localCheckIns: [LocalCheckIn]
@@ -60,6 +62,7 @@ struct FeedScreen: View {
             }
             .navigationDestination(item: $commentsFor) { CheckInDetailView(item: $0) }
             .navigationDestination(item: $personToOpen) { PersonLoaderView(id: $0.id) }
+            .navigationDestination(isPresented: $showPlaceReview) { SpotReviewView() }
             .sheet(item: $report) { ReportSheet(target: $0) }
             .confirmationDialog("Delete this check-in?", isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }), titleVisibility: .visible) {
                 Button("Delete", role: .destructive) {
@@ -178,6 +181,8 @@ struct FeedScreen: View {
             } else {
                 commentsFor = await feed.checkIn(id)
             }
+        case .reviewPlaces:
+            showPlaceReview = true
         }
     }
 

@@ -43,7 +43,11 @@ class MainActivity : ComponentActivity() {
         val extras = listOf("type", "checkin", "actor").associateWith { intent?.getStringExtra(it) }
         Push.destination(extras)?.let { (kind, id) ->
             social.tab = Tab.FEED
-            if (kind == "person") social.openPerson(id) else social.stack.add(Route.CheckInPage(id))
+            when (kind) {
+                "person" -> social.openPerson(id)
+                "review" -> social.stack.add(Route.ReviewSpots)
+                else -> social.stack.add(Route.CheckInPage(id))
+            }
         }
         val link = intent?.data?.toString() ?: return
         if (link.startsWith("wingspot://auth-callback")) model.completeSignIn(link)
