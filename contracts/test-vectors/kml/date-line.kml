@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>XB777 HND-LAX</name>
+<Placemark><description>&lt;p&gt;From: &lt;b&gt;Example Tokyo Haneda Airport (HND)&lt;/b&gt;&lt;br&gt;To: &lt;b&gt;Example Los Angeles Airport (LAX)&lt;/b&gt;&lt;br&gt;Departure: &lt;b&gt;2026-11-05 22:40&lt;/b&gt;&lt;br&gt;Airline: &lt;b&gt;Example Air&lt;/b&gt;&lt;br&gt;Aircraft: &lt;b&gt;Example Jet 900 (EJ9)&lt;/b&gt;&lt;br&gt;&lt;a href="https://www.flightradar24.com/XB777/00aa11bb"&gt;XB777&lt;/a&gt; &lt;a href="https://www.flightradar24.com/data/aircraft/reg/d-zzzz"&gt;D-ZZZZ&lt;/a&gt;&lt;/p&gt;</description></Placemark>
+<Placemark><LineString><coordinates>
+139.78000,35.55000,0
+142.00000,36.50000,6000
+150.00000,38.00000,10500
+165.00000,42.00000,10700
+179.00000,45.00000,10900
+-175.00000,46.00000,10900
+-160.00000,44.00000,10700
+-140.00000,40.00000,10700
+-120.00000,36.00000,9000
+-118.90000,34.40000,3000
+-118.41000,33.94000,0
+</coordinates></LineString></Placemark>
+</Document></kml>

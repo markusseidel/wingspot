@@ -1,0 +1,51 @@
+{
+  "description": "What the KML parser must find in the made-up files in kml/. The files describe invented flights and are written by hand from the structure in the issue, not copied from any service. Absent means the parser leaves the field empty. trackFirst and trackLast are [longitude, latitude]. Times are the text of the file.",
+  "cases": [
+    {
+      "file": "new-template.kml",
+      "title": "XA123 FRA-JFK", "flightNumber": "XA123", "airline": "Example Air",
+      "origin": {"iata": "FRA", "name": "Example Frankfurt Airport", "city": "Frankfurt"},
+      "destination": {"iata": "JFK", "name": "Example New York Kennedy Airport", "city": "New York"},
+      "departureDate": "2026-11-02", "departureTime": "10:05", "arrivalTime": "13:20",
+      "aircraftTypeCode": "EJ9", "aircraftTypeName": "Example Jet 900", "registration": "D-ZZZZ",
+      "flightLink": "https://www.flightradar24.com/flight/xa123",
+      "trackSource": "line", "trackPoints": 12, "trackFirst": [8.57, 50.03], "trackLast": [-73.78, 40.64]
+    },
+    {
+      "file": "old-template.kml",
+      "title": "XA123", "flightNumber": "XA123", "airline": "Example Air",
+      "origin": {"iata": "FRA", "name": "Example Frankfurt Airport"},
+      "destination": {"iata": "JFK", "name": "Example New York Kennedy Airport"},
+      "departureDate": "2026-11-02", "departureTime": "10:05",
+      "aircraftTypeCode": "EJ9", "aircraftTypeName": "Example Jet 900", "registration": "D-ZZZZ",
+      "flightLink": "https://www.flightradar24.com/XA123/3f2a1b9c",
+      "trackSource": "line", "trackPoints": 12, "trackFirst": [8.57, 50.03], "trackLast": [-73.78, 40.64]
+    },
+    {
+      "file": "date-line.kml",
+      "title": "XB777 HND-LAX", "flightNumber": "XB777", "airline": "Example Air",
+      "origin": {"iata": "HND", "name": "Example Tokyo Haneda Airport"},
+      "destination": {"iata": "LAX", "name": "Example Los Angeles Airport"},
+      "departureDate": "2026-11-05", "departureTime": "22:40",
+      "aircraftTypeCode": "EJ9", "aircraftTypeName": "Example Jet 900", "registration": "D-ZZZZ",
+      "flightLink": "https://www.flightradar24.com/XB777/00aa11bb",
+      "trackSource": "line", "trackPoints": 11, "trackFirst": [139.78, 35.55], "trackLast": [-118.41, 33.94]
+    },
+    {
+      "file": "placemarks-only.kml",
+      "title": "FRA-KEF",
+      "origin": {"iata": "FRA"}, "destination": {"iata": "KEF"},
+      "departureDate": "2026-11-09",
+      "trackSource": "placemarks", "trackPoints": 4, "trackFirst": [8.57, 50.03], "trackLast": [-4.0, 54.0]
+    },
+    {
+      "file": "only-a-straight-line.kml",
+      "title": "Some flight",
+      "trackSource": "none", "trackPoints": 0
+    },
+    {
+      "file": "not-a-kml.txt",
+      "error": "notKml"
+    }
+  ]
+}

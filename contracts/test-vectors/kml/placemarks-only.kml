@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>FRA-KEF</name>
+<Placemark><TimeStamp><when>2026-11-09T07:40:00Z</when></TimeStamp><Point><coordinates>2.00000,52.50000,9000</coordinates></Point></Placemark>
+<Placemark><TimeStamp><when>2026-11-09T07:00:00Z</when></TimeStamp><Point><coordinates>8.57000,50.03000,9000</coordinates></Point></Placemark>
+<Placemark><TimeStamp><when>2026-11-09T08:10:00Z</when></TimeStamp><Point><coordinates>-4.00000,54.00000,9000</coordinates></Point></Placemark>
+<Placemark><TimeStamp><when>2026-11-09T07:20:00Z</when></TimeStamp><Point><coordinates>6.50000,51.50000,9000</coordinates></Point></Placemark>
+</Document></kml>

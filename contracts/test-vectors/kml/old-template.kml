@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>XA123</name>
+<Placemark><description>&lt;p&gt;From: &lt;b&gt;Example Frankfurt Airport (FRA)&lt;/b&gt;&lt;br&gt;To: &lt;b&gt;Example New York Kennedy Airport (JFK)&lt;/b&gt;&lt;br&gt;Departure: &lt;b&gt;2026-11-02 10:05&lt;/b&gt;&lt;br&gt;Airline: &lt;b&gt;Example Air&lt;/b&gt;&lt;br&gt;Aircraft: &lt;b&gt;Example Jet 900 (EJ9)&lt;/b&gt;&lt;br&gt;&lt;a href="https://www.flightradar24.com/XA123/3f2a1b9c"&gt;XA123&lt;/a&gt; &lt;a href="https://www.flightradar24.com/data/aircraft/reg/d-zzzz"&gt;D-ZZZZ&lt;/a&gt;&lt;/p&gt;</description><Point><coordinates>8.57000,50.03000,0</coordinates></Point></Placemark>
+<Placemark><LineString><coordinates>8.57000,50.03000,0 -73.78000,40.64000,0</coordinates></LineString></Placemark>
+<Placemark><LineString><coordinates>
+8.57000,50.03000,0
+8.20000,50.40000,3000
+6.50000,51.50000,9000
+2.00000,52.50000,10500
+-4.00000,54.00000,10700
+-15.00000,56.50000,10700
+-30.00000,57.50000,10900
+-45.00000,55.00000,10900
+-60.00000,50.50000,10700
+-68.00000,45.50000,9000
+-73.00000,41.50000,3000
+-73.78000,40.64000,0
+</coordinates></LineString></Placemark>
+</Document></kml>
