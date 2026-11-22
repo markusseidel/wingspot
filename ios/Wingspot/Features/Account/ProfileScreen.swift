@@ -294,6 +294,7 @@ private struct ProfileStatsRows: View {
     @AppStorage(DistanceUnit.storageKey) private var unit = DistanceUnit.kilometres
     @Environment(ReferenceDataStore.self) private var referenceData
     @State private var kilometres: Int?
+    @State private var routeStats: FlownRouteStats?
 
     private struct Key: Hashable {
         let routes: [CheckInStats.Route: Int]
@@ -310,6 +311,18 @@ private struct ProfileStatsRows: View {
         if let kilometres, kilometres > 0 {
             LabeledContent("Distance flown") { Text(verbatim: unit.format(km: kilometres)) }
         }
+        // The real routes of imported flights. They stay on this iPhone, so only these flights count.
+        if let routeStats {
+            LabeledContent("Real distance flown") { Text(verbatim: unit.format(km: routeStats.totalKm)) }
+            LabeledContent("Flights with a route") { Text(routeStats.routes, format: .number) }
+            LabeledContent("Longest flown route") { Text(verbatim: unit.format(km: routeStats.longestKm)) }
+            if routeStats.biggestDetourKm > 0 {
+                LabeledContent("Biggest detour") { Text(verbatim: "+\(unit.format(km: routeStats.biggestDetourKm))") }
+            }
+            Text("From your imported Flightradar24 routes. They stay on this iPhone.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
     }
 
     /// The airports of the flights come from the reference data on this iPhone, so it works offline.
@@ -320,5 +333,16 @@ private struct ProfileStatsRows: View {
             if let airport = try? await database.airport(id: id) { places[id] = airport.coordinate }
         }
         kilometres = stats.kilometres { places[$0] }
+        let flights = stats.flightList, coordinates = places
+        let measured: [(flownKm: Double, greatCircleKm: Double?)] = await Task.detached {
+            flights.compactMap { flight in
+                guard let track = FlightTrackFiles.standard.load(id: flight.id), track.count >= 2 else { return nil }
+                let circle = coordinates[flight.origin].flatMap { from in
+                    coordinates[flight.destination].map { GreatCircle.distanceKm(from: from, to: $0) }
+                }
+                return (FlightTrack.lengthKm(track), circle)
+            }
+        }.value
+        routeStats = FlownRouteStats.of(measured)
     }
 }

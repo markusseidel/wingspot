@@ -60,6 +60,9 @@ import site.wingspot.core.CollectionEntry
 import site.wingspot.core.Collections
 import site.wingspot.core.DistanceUnit
 import site.wingspot.core.GeoCoordinate
+import site.wingspot.core.GreatCircle
+import site.wingspot.core.FlightTrack
+import site.wingspot.core.FlownRouteStats
 import site.wingspot.core.ReferenceDatabase
 import site.wingspot.core.LocalCheckIn
 import site.wingspot.core.SocialApi
@@ -222,12 +225,36 @@ private fun StatsCard(stats: CheckInStats, database: ReferenceDatabase?) {
         }
         value = stats.kilometres { places[it] }
     }
+    // The real routes of imported flights. They stay on this phone, so only these flights count.
+    val app = LocalContext.current.applicationContext as WingspotApp
+    val routeStats by produceState<FlownRouteStats?>(null, stats.flightList, database) {
+        value = withContext(Dispatchers.IO) {
+            val places = mutableMapOf<Long, GeoCoordinate>()
+            val db = database
+            if (db != null) for (id in stats.flightList.flatMap { listOf(it.origin, it.destination) }.toSet()) {
+                db.airport(id)?.let { places[id] = GeoCoordinate(it.latitude, it.longitude) }
+            }
+            FlownRouteStats.of(stats.flightList.mapNotNull { flight ->
+                val track = app.tracks.load(flight.id)?.takeIf { it.size >= 2 } ?: return@mapNotNull null
+                val from = places[flight.origin]
+                val to = places[flight.destination]
+                FlightTrack.lengthKm(track) to if (from != null && to != null) GreatCircle.distanceKm(from, to) else null
+            })
+        }
+    }
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Detail(stringResource(R.string.stat_check_ins), stats.checkIns.toString())
             Detail(stringResource(R.string.stat_sightings), stats.sightings.toString())
             Detail(stringResource(R.string.stat_flights), stats.flights.toString())
             if (kilometres > 0) Detail(stringResource(R.string.stat_distance_flown), unit.format(kilometres))
+            routeStats?.let { r ->
+                Detail(stringResource(R.string.stat_real_distance), unit.format(r.totalKm))
+                Detail(stringResource(R.string.stat_routes), r.routes.toString())
+                Detail(stringResource(R.string.stat_longest_route), unit.format(r.longestKm))
+                if (r.biggestDetourKm > 0) Detail(stringResource(R.string.stat_biggest_detour), "+" + unit.format(r.biggestDetourKm))
+                Text(stringResource(R.string.stat_routes_note), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
             Detail(stringResource(R.string.stat_airport_visits), stats.airportVisits.toString())
             Detail(stringResource(R.string.stat_aircraft), stats.aircraft.toString())
             Detail(stringResource(R.string.stat_types), stats.types.toString())

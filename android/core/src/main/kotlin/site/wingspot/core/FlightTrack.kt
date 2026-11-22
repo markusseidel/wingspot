@@ -14,6 +14,26 @@ data class TrackBox(val minLatitude: Double, val minLongitude: Double, val maxLa
 /** How much longer the flown way was than the great circle. */
 data class Detour(val extraKm: Double, val percent: Double)
 
+/**
+ * What the profile says about the flights that have a flown route: how many, the real distance flown, the longest route
+ * and the biggest detour compared with the airport-to-airport distance (0 when no route is clearly longer).
+ */
+data class FlownRouteStats(val routes: Int, val totalKm: Int, val longestKm: Int, val biggestDetourKm: Int) {
+    companion object {
+        /** [flights]: for each flight with a route, its flown length and, when known, the great-circle distance between its airports. Null for none. */
+        fun of(flights: List<Pair<Double, Double?>>): FlownRouteStats? {
+            if (flights.isEmpty()) return null
+            val detour = flights.mapNotNull { (flown, circle) -> circle?.let { flown - it } }.maxOrNull() ?: 0.0
+            return FlownRouteStats(
+                routes = flights.size,
+                totalKm = Math.round(flights.sumOf { it.first }).toInt(),
+                longestKm = Math.round(flights.maxOf { it.first }).toInt(),
+                biggestDetourKm = if (detour >= 1) Math.round(detour).toInt() else 0,
+            )
+        }
+    }
+}
+
 /** A flown route as the flight page shows it. [extraKm] and [percent] are 0 when there is no clear detour. */
 data class FlownRoute(val flownKm: Int, val extraKm: Int, val percent: Int)
 

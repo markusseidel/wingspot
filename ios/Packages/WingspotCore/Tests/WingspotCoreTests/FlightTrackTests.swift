@@ -106,3 +106,14 @@ struct TrackVectors: Decodable {
     #expect(FlightTrack.flownRoute([], greatCircleKm: 100) == nil)
     #expect(FlightTrack.flownRoute([GeoCoordinate(latitude: 1, longitude: 1)], greatCircleKm: 100) == nil)
 }
+
+@Test func routeStatsSummariseTheFlightsWithARoute() {
+    let stats = FlownRouteStats.of([(flownKm: 2102, greatCircleKm: 2004), (flownKm: 504.4, greatCircleKm: 500), (flownKm: 11_486, greatCircleKm: 9_900)])
+    #expect(stats == FlownRouteStats(routes: 3, totalKm: 14_092, longestKm: 11_486, biggestDetourKm: 1_586))
+}
+
+@Test func routeStatsWithoutAClearDetourOrAirportsHaveNoDetour() {
+    #expect(FlownRouteStats.of([(flownKm: 100, greatCircleKm: 120)])?.biggestDetourKm == 0)
+    #expect(FlownRouteStats.of([(flownKm: 100, greatCircleKm: nil)])?.biggestDetourKm == 0)
+    #expect(FlownRouteStats.of([]) == nil)
+}

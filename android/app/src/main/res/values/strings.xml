@@ -222,6 +222,11 @@
     <string name="recent_types">Recent on this flight number</string>
     <string name="recent_types_overall">Recent aircraft types</string>
     <string name="recent_airports">Recent airports</string>
+    <string name="stat_real_distance">Real distance flown</string>
+    <string name="stat_routes">Flights with a route</string>
+    <string name="stat_longest_route">Longest flown route</string>
+    <string name="stat_biggest_detour">Biggest detour</string>
+    <string name="stat_routes_note">From your imported Flightradar24 routes. They stay on this phone.</string>
     <string name="stat_distance_flown">Distance flown</string>
     <string name="export_data">Export my data</string>
     <string name="export_hint">A file with your profile, check-ins and everything else we store about you. Photos are listed, not included.</string>
