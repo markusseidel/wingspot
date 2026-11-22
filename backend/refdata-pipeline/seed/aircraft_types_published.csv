@@ -16,6 +16,9 @@ B744,Boeing,747-400,747,jet,4,H
 B748,Boeing,747-8,747,jet,4,H
 B752,Boeing,757-200,757,jet,2,M
 B753,Boeing,757-300,757,jet,2,M
+B762,Boeing,767-200,767,jet,2,H
+B763,Boeing,767-300,767,jet,2,H
+B764,Boeing,767-400ER,767,jet,2,H
 B772,Boeing,777-200,777,jet,2,H
 B77W,Boeing,777-300ER,777,jet,2,H
 B788,Boeing,787-8,787,jet,2,H
