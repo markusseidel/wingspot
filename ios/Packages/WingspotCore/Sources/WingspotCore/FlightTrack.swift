@@ -128,3 +128,33 @@ public struct FlownRoute: Equatable, Sendable {
         self.percent = percent
     }
 }
+
+/// What the profile says about the flights that have a flown route: how many, the real distance flown, the longest
+/// route and the biggest detour compared with the airport-to-airport distance.
+public struct FlownRouteStats: Equatable, Sendable {
+    public let routes: Int
+    public let totalKm: Int
+    public let longestKm: Int
+    /// 0 when no route is clearly longer than its airport-to-airport distance.
+    public let biggestDetourKm: Int
+
+    public init(routes: Int, totalKm: Int, longestKm: Int, biggestDetourKm: Int) {
+        self.routes = routes
+        self.totalKm = totalKm
+        self.longestKm = longestKm
+        self.biggestDetourKm = biggestDetourKm
+    }
+
+    /// - Parameter flights: for each flight with a route, its flown length and, when known, the great-circle distance
+    ///   between its airports. Nil for no flights.
+    public static func of(_ flights: [(flownKm: Double, greatCircleKm: Double?)]) -> FlownRouteStats? {
+        guard !flights.isEmpty else { return nil }
+        let detour = flights.compactMap { flight in flight.greatCircleKm.map { flight.flownKm - $0 } }.max() ?? 0
+        return FlownRouteStats(
+            routes: flights.count,
+            totalKm: Int(flights.reduce(0) { $0 + $1.flownKm }.rounded()),
+            longestKm: Int((flights.map(\.flownKm).max() ?? 0).rounded()),
+            biggestDetourKm: detour >= 1 ? Int(detour.rounded()) : 0
+        )
+    }
+}

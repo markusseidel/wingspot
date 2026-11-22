@@ -20,7 +20,12 @@ data class CheckInStats(
     val airports: Int = 0,
     /** How many flights were flown between each pair of airports (origin id, destination id). */
     val routes: Map<Pair<Long, Long>, Int> = emptyMap(),
+    /** Every flight with its two airports, to look for its saved route. */
+    val flightList: List<FlightRef> = emptyList(),
 ) {
+    /** A flight and its airports. */
+    data class FlightRef(val id: java.util.UUID, val origin: Long, val destination: Long)
+
     /**
      * The kilometres flown: the great-circle distance of each flight, rounded as the server does.
      * Flights whose airports are not known are left out.
@@ -42,6 +47,7 @@ data class CheckInStats(
             var visits = 0
             var flights = 0
             val routes = mutableMapOf<Pair<Long, Long>, Int>()
+            val flightList = mutableListOf<FlightRef>()
             val counted = counted(all)
             for (c in counted) {
                 when (c.kind) {
@@ -51,13 +57,16 @@ data class CheckInStats(
                         flights++
                         val origin = c.originId
                         val destination = c.destinationId
-                        if (origin != null && destination != null) routes.merge(origin to destination, 1, Int::plus)
+                        if (origin != null && destination != null) {
+                            routes.merge(origin to destination, 1, Int::plus)
+                            flightList.add(FlightRef(c.id, origin, destination))
+                        }
                     }
                 }
                 c.registration?.let(registrations::add)
                 c.typeIcao?.let(types::add)
             }
-            return CheckInStats(counted.size, sightings, visits, flights, registrations.size, types.size, airports.size, routes)
+            return CheckInStats(counted.size, sightings, visits, flights, registrations.size, types.size, airports.size, routes, flightList)
         }
     }
 }

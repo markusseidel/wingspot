@@ -125,3 +125,18 @@ class FlownRouteTests {
         assertEquals(null, FlightTrack.flownRoute(equator(1), 100))
     }
 }
+
+class FlownRouteStatsTests {
+    @Test
+    fun summarisesTheFlightsWithARoute() {
+        val stats = FlownRouteStats.of(listOf(2102.0 to 2004.0, 504.4 to 500.0, 11_486.0 to 9_900.0))
+        assertEquals(FlownRouteStats(3, 14_092, 11_486, 1_586), stats)
+    }
+
+    @Test
+    fun noClearDetourOrNoAirportsMeansNoDetour() {
+        assertEquals(0, FlownRouteStats.of(listOf(100.0 to 120.0))?.biggestDetourKm)
+        assertEquals(0, FlownRouteStats.of(listOf(100.0 to null))?.biggestDetourKm)
+        assertEquals(null, FlownRouteStats.of(emptyList()))
+    }
+}

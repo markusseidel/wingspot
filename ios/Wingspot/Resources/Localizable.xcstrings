@@ -928,6 +928,22 @@
         }
       }
     },
+    "Biggest detour" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Größter Umweg"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Biggest detour"
+          }
+        }
+      }
+    },
     "Block" : {
       "localizations" : {
         "de" : {
@@ -2273,6 +2289,22 @@
         }
       }
     },
+    "Flights with a route" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flüge mit Strecke"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Flights with a route"
+          }
+        }
+      }
+    },
     "Flown" : {
       "localizations" : {
         "de" : {
@@ -2471,6 +2503,22 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "From your Flightradar24 file. The route stays on this iPhone."
+          }
+        }
+      }
+    },
+    "From your imported Flightradar24 routes. They stay on this iPhone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aus deinen importierten Flightradar24-Strecken. Sie bleiben auf diesem iPhone."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "From your imported Flightradar24 routes. They stay on this iPhone."
           }
         }
       }
@@ -2862,6 +2910,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Halte jedes Flugzeug fest"
+          }
+        }
+      }
+    },
+    "Longest flown route" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Längste geflogene Strecke"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Longest flown route"
           }
         }
       }
@@ -3923,6 +3987,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lese …"
+          }
+        }
+      }
+    },
+    "Real distance flown" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tatsächlich geflogene Strecke"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Real distance flown"
           }
         }
       }

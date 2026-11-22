@@ -24,6 +24,15 @@ public struct CheckInStats: Equatable, Sendable {
     /// How many flights were flown on each route.
     public var routes = [Route: Int]()
 
+    /// A flight and its airports, to look for its saved route.
+    public struct Flight: Hashable, Sendable {
+        public let id: UUID
+        public let origin: Int
+        public let destination: Int
+    }
+    /// Every flight with its two airports.
+    public var flightList = [Flight]()
+
     public init() {}
 
     /// The check-ins that count: not refused by the server, and this account's or made signed out.
@@ -52,6 +61,7 @@ public struct CheckInStats: Equatable, Sendable {
                 flights += 1
                 if let origin = checkIn.originID, let destination = checkIn.destinationID {
                     routes[Route(origin: origin, destination: destination), default: 0] += 1
+                    flightList.append(Flight(id: checkIn.id, origin: origin, destination: destination))
                 }
             default:
                 break
