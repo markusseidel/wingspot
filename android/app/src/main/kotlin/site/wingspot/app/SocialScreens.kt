@@ -82,6 +82,22 @@ import site.wingspot.core.Flightradar24
 import site.wingspot.core.ReportKind
 
 /** "2 hours ago", from the time the server sent. */
+/**
+ * The date on a feed entry: relative for the last 7 days, then a short date with the month abbreviated, with the year
+ * only when it isn't the current one ([site.wingspot.core.FeedDateRule]). The same rule as iOS.
+ */
+fun feedDate(iso: String): String = try {
+    val then = OffsetDateTime.parse(iso).toInstant()
+    val now = java.time.Instant.now()
+    when (site.wingspot.core.FeedDateRule.style(then, now)) {
+        site.wingspot.core.FeedDateStyle.RELATIVE -> relativeTime(iso)
+        site.wingspot.core.FeedDateStyle.DATE -> android.icu.text.DateFormat.getInstanceForSkeleton("dMMM").format(java.util.Date.from(then))
+        site.wingspot.core.FeedDateStyle.DATE_WITH_YEAR -> android.icu.text.DateFormat.getInstanceForSkeleton("dMMMy").format(java.util.Date.from(then))
+    }
+} catch (e: Exception) {
+    ""
+}
+
 fun relativeTime(iso: String): String = try {
     DateUtils.getRelativeTimeSpanString(OffsetDateTime.parse(iso).toInstant().toEpochMilli(), System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS).toString()
 } catch (e: Exception) {
@@ -182,7 +198,7 @@ fun FeedCard(
                     Text(item.who, fontWeight = FontWeight.Bold, modifier = Modifier.clickable(onClick = onPerson).padding(vertical = 8.dp))
                 }
                 Box(Modifier.weight(1f))
-                Text(relativeTime(item.occurredAt), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(feedDate(item.occurredAt), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 FeedCardMenu(
                     own = item.userId == me, id = item.id, onEdit = onEdit,
                     onDelete = { confirmDelete = true }, onReport = { reporting = true },
