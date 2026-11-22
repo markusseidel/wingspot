@@ -476,7 +476,8 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                         shown.seat?.let { InfoRow(stringResource(R.string.seat_row_label), it) }
                         shown.distanceKm?.let { InfoRow(stringResource(R.string.distance_label), unit.format(it)) }
                         // The route from an imported KML file stays on this phone, so only your own flights have one.
-                        val flown by produceState<FlownTrack?>(null, shown.id, shown.distanceKm, me) {
+                        var routeVersion by remember { mutableStateOf(0) }
+                        val flown by produceState<FlownTrack?>(null, shown.id, shown.distanceKm, me, routeVersion) {
                             value = if (shown.userId == me) withContext(Dispatchers.Default) {
                                 app.tracks.load(UUID.fromString(shown.id))?.let { points ->
                                     site.wingspot.core.FlightTrack.flownRoute(points, shown.distanceKm)?.let {
@@ -491,6 +492,11 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                             if (r.extraKm > 0) InfoRow(stringResource(R.string.detour_label), "+" + unit.format(r.extraKm) + " (+" + r.percent + " %)")
                             TrackMap(f.line, Modifier.fillMaxWidth().height(220.dp).clip(MaterialTheme.shapes.medium))
                             Text(stringResource(R.string.route_note), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        // Adds the route of a KML file to this flight, for flights saved without one.
+                        if (shown.userId == me && app.prefs.kmlImportOn) {
+                            RouteFromFile(app, UUID.fromString(shown.id), shown.originCode, shown.destinationCode, shown.occurredAt, flown != null) { routeVersion++ }
+                            if (flown == null) Text(stringResource(R.string.import_footer), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }

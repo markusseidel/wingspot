@@ -6002,6 +6002,106 @@
           }
         }
       }
+    },
+    "Add a route from a KML file" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strecke aus einer KML-Datei hinzufügen"
+          }
+        }
+      }
+    },
+    "Replace the route from a file" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strecke aus einer Datei ersetzen"
+          }
+        }
+      }
+    },
+    "Save the route?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strecke speichern?"
+          }
+        }
+      }
+    },
+    "Replace the route?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strecke ersetzen?"
+          }
+        }
+      }
+    },
+    "Save route" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strecke speichern"
+          }
+        }
+      }
+    },
+    "Replace route" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strecke ersetzen"
+          }
+        }
+      }
+    },
+    "This file has no route" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Datei enthält keine Strecke"
+          }
+        }
+      }
+    },
+    "The file is for %1$@ → %2$@, but this flight is %3$@ → %4$@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Datei gehört zu %1$@ → %2$@, dieser Flug ist aber %3$@ → %4$@."
+          }
+        }
+      }
+    },
+    "The file is for a different day than this flight." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Datei gehört zu einem anderen Tag als dieser Flug."
+          }
+        }
+      }
+    },
+    "This flight already has a route. It is replaced." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Flug hat schon eine Strecke. Sie wird ersetzt."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

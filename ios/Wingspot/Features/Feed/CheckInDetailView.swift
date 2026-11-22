@@ -44,6 +44,9 @@ struct CheckInDetailView: View {
     @State private var flownRoute: FlownRoute?
     /// The same route, simplified, for the map.
     @State private var routeLine: [GeoCoordinate] = []
+    /// Counts up when a route was saved from a file, so the page reads it again.
+    @State private var routeVersion = 0
+    @AppStorage(KmlSwitches.importKey) private var kmlImportOn = true
     @Environment(SpotStore.self) private var spots
     @State private var spot: CheckInSpot?
     @State private var spotSightings: [VisitSighting] = []
@@ -67,7 +70,7 @@ struct CheckInDetailView: View {
             mentionedPerson = MentionedPerson(id: id)
             return .handled
         })
-        .task(id: "\(item.id)-\(shown.distanceKm ?? 0)") {
+        .task(id: "\(item.id)-\(shown.distanceKm ?? 0)-\(routeVersion)") {
             guard isOwn, item.kind == "flown" else { flownRoute = nil; return }
             let id = item.id, distance = shown.distanceKm
             let found: (route: FlownRoute, line: [GeoCoordinate])? = await Task.detached {
@@ -260,6 +263,18 @@ struct CheckInDetailView: View {
                     Text("From your Flightradar24 file. The route stays on this iPhone.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
+                }
+                // Adds the route of a KML file to this flight, for flights saved without one.
+                if isOwn, kmlImportOn {
+                    RouteFromFileButton(
+                        flightID: item.id, originCode: shown.originCode, destinationCode: shown.destinationCode,
+                        occurredAt: shown.occurredAt, hasRoute: flownRoute != nil, onSaved: { routeVersion += 1 }
+                    )
+                    if flownRoute == nil {
+                        Text("A KML file of a flight is read on this iPhone. The file and its route are never uploaded.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
             if let registration = shown.registration {
