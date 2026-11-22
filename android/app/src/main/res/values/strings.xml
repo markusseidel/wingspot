@@ -84,6 +84,7 @@
     <string name="edit_flight">Edit flight</string>
     <string name="edit_visit">Edit visit</string>
     <string name="edit_sighting">Edit sighting</string>
+    <string name="route_map_description">Map of the flown route</string>
     <string name="flown_distance_label">Flown distance</string>
     <string name="detour_label">More than the direct way</string>
     <string name="route_note">From your Flightradar24 file. The route stays on this phone.</string>

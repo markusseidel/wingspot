@@ -3004,6 +3004,22 @@
         }
       }
     },
+    "Map of the flown route" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karte der geflogenen Strecke"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Map of the flown route"
+          }
+        }
+      }
+    },
     "Mark all read" : {
       "localizations" : {
         "de" : {

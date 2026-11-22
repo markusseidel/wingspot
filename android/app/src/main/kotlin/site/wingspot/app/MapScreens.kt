@@ -9,6 +9,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import site.wingspot.core.GeoCoordinate
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.foundation.Canvas
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +39,7 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import site.wingspot.core.Airport
@@ -139,5 +148,61 @@ private fun androidx.compose.foundation.layout.ColumnScope.MapOrNote(markers: Li
             Text(stringResource(if (reference.database == null) R.string.map_needs_data else emptyText), modifier = Modifier.padding(24.dp), color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         else -> AirportMap(markers, Modifier.fillMaxWidth().weight(1f), onOpen = onOpen)
+    }
+}
+
+/**
+ * The flown route of an imported flight: the simplified line with a start and an end marker, zoomed to fit. With a
+ * Google Maps key it is a map; without one the route is drawn by itself on a plain background, so it still shows.
+ */
+@Composable
+fun TrackMap(line: List<GeoCoordinate>, modifier: Modifier = Modifier) {
+    val description = stringResource(R.string.route_map_description)
+    if (line.size < 2) return
+    if (!BuildConfig.MAPS_KEY_SET) {
+        RouteSketch(line, modifier.semantics { contentDescription = description })
+        return
+    }
+    val camera = rememberCameraPositionState { position = CameraPosition.fromLatLngZoom(LatLng(line.first().latitude, line.first().longitude), 4f) }
+    val points = remember(line) { line.map { LatLng(it.latitude.coerceIn(-85.0, 85.0), it.longitude) } }
+    LaunchedEffect(points) {
+        val bounds = LatLngBounds.builder().apply { points.forEach { include(it) } }.build()
+        try { camera.move(CameraUpdateFactory.newLatLngBounds(bounds, 64)) } catch (e: Exception) { /* the map isn't laid out yet: the first position stays */ }
+    }
+    val color = MaterialTheme.colorScheme.primary
+    GoogleMap(
+        modifier = modifier.semantics { contentDescription = description }, cameraPositionState = camera, properties = MapProperties(),
+        uiSettings = MapUiSettings(zoomControlsEnabled = false, scrollGesturesEnabled = false, zoomGesturesEnabled = false, rotationGesturesEnabled = false, tiltGesturesEnabled = false, mapToolbarEnabled = false),
+    ) {
+        Polyline(points = points, color = color, width = 8f)
+        Marker(state = MarkerState(points.first()), icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+        Marker(state = MarkerState(points.last()), icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+    }
+}
+
+/** The route drawn on a plain background: longitudes are unwrapped, so a flight over the date line is one line. */
+@Composable
+private fun RouteSketch(line: List<GeoCoordinate>, modifier: Modifier = Modifier) {
+    val track = remember(line) { site.wingspot.core.FlightTrack.unwrapped(line) }
+    val color = MaterialTheme.colorScheme.primary
+    val background = MaterialTheme.colorScheme.surfaceVariant
+    Canvas(modifier.clip(MaterialTheme.shapes.medium)) {
+        drawRect(background)
+        val minLon = track.minOf { it.longitude }
+        val maxLon = track.maxOf { it.longitude }
+        val minLat = track.minOf { it.latitude }
+        val maxLat = track.maxOf { it.latitude }
+        val squeeze = kotlin.math.cos(Math.toRadians((minLat + maxLat) / 2)).coerceAtLeast(0.2)
+        val width = ((maxLon - minLon) * squeeze).coerceAtLeast(0.01)
+        val height = (maxLat - minLat).coerceAtLeast(0.01)
+        val pad = 24.dp.toPx()
+        val scale = minOf((size.width - 2 * pad) / width, (size.height - 2 * pad) / height).toFloat()
+        val left = (size.width - (width * scale).toFloat()) / 2
+        val top = (size.height - (height * scale).toFloat()) / 2
+        fun at(p: GeoCoordinate) = Offset(left + ((p.longitude - minLon) * squeeze * scale).toFloat(), top + ((maxLat - p.latitude) * scale).toFloat())
+        val path = Path().apply { track.forEachIndexed { i, p -> val o = at(p); if (i == 0) moveTo(o.x, o.y) else lineTo(o.x, o.y) } }
+        drawPath(path, color, style = Stroke(width = 3.dp.toPx()))
+        drawCircle(Color(0xFF2E7D32), radius = 6.dp.toPx(), center = at(track.first()))
+        drawCircle(Color(0xFFC62828), radius = 6.dp.toPx(), center = at(track.last()))
     }
 }
