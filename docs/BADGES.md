@@ -9,6 +9,7 @@ The 36 launch badges for Milestone 4 (see [PHASE1.md](PHASE1.md) and concept §5
 - At launch only **Spotted** check-ins exist, so every rule counts spotted check-ins. Flown and airport check-ins come with Milestone 5 and will count where it makes sense.
 - Distinct counts ignore repeats: the same registration, type or airport counts once.
 - "Local time" is estimated from the airport's longitude (UTC plus longitude divided by 15, rounded), because the airport data has no time zones.
+- **Time-of-day badges** (Night Owl, Early Bird, and any badge that uses the hour of the day) count only check-ins where the person was at the airport: spotting and standalone airport check-ins. A **flight and the two airport visits it creates do not count**, because a flight is logged at some moment (often now, or midday of an earlier day) and the estimated hour at a faraway airport would be made up (issue #277).
 - Level unlocks give bonus XP, 50 times the level (concept §5.3).
 - A level never goes down when badges are evaluated after an upload or when the badges page opens, even if a rule changes later. Deleting a check-in is the exception: it re-evaluates your badges, so levels, progress and XP follow the check-ins that are left. A badge that falls back to level 0 loses its unlock date, and earning it again is celebrated again.
 - Art for now: a symbol and a color per level. You can replace it with drawn art later without changing the rules.
