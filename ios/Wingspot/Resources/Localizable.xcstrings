@@ -5051,23 +5051,18 @@
         }
       }
     },
-    "The file is for %1$@ → %2$@, but this flight is %3$@ → %4$@." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Datei gehört zu %1$@ → %2$@, dieser Flug ist aber %3$@ → %4$@."
-          }
-        }
-      }
-    },
     "The file is for %@ → %@, but this flight is %@ → %@." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "The file is for %1$@ → %2$@, but this flight is %3$@ → %4$@."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Datei gehört zu %1$@ → %2$@, dieser Flug ist aber %3$@ → %4$@."
           }
         }
       }
