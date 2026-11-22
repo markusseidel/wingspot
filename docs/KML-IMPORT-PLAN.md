@@ -181,6 +181,17 @@ Source: the [Terms of Service](https://www.flightradar24.com/terms-of-service), 
 - Nothing from FR24 is shown to other users in the first release. The flown distance of an imported flight is shown only to its owner. This also settles decision 1 (the badges and leaderboard stay on the airport-to-airport figure).
 - Whatever is shown gets a credit to Flightradar24 (8.2).
 
+### A switch to turn the import off without an app update
+
+The test builds already contain the import, and a "no" from FR24 should not need a new app version to take effect. `/v1/config` already returns `feature_flags` (a JSON object in the `app_config` table, one row). Plan:
+
+- Add a flag `kml_import`. It is **on** when the key is missing, so offline and old behaviour do not change.
+- Both apps read it when they read the config, remember the last value on the device, and hide the "Import a KML file" button when it is off. If the config can't be read, the last known value is used.
+- **A build that was made before the flag exists cannot be switched off**, because it never reads it. The first build with the flag is therefore the one to hand to testers; the two builds from 22 November are the exception and are replaced by the next upload.
+- A second flag `kml_tracks_keep` decides whether saved routes stay on the phones. When it is off, the apps delete the route files they hold, at the next start. Flights themselves stay.
+- Switching it is a one-row update in the hosted database. That is a production change, so it needs the owner's explicit word, as usual.
+- Tim's remark (issue 236) that the original path is not needed also helps: if FR24 allows personal use only, the track can be reduced to the thinned-out line, or dropped, and only the facts the user confirms (flight number, date, airports, aircraft type) stay.
+
 ### What three real exports looked like (22 November 2026)
 
 Checked on one machine, with files the author sent; the files are not in the repository. All three were the newer layout. The flight data is in the description of the document. The track is **not** one line: a folder `Route` holds one two-point segment per step (too short to count as a track), and a folder `Trail` holds one timestamped point per position report, with altitude, speed and heading in its description. So the track comes from the timestamped points, sorted by time (793, 389 and 1138 points, flown distances 2 920, 504 and 11 486 km). The Helsinki flight crosses the 180° meridian on its detour around Russia, and its flown distance is far above the direct way. Altitude and speed per point are there if taxi positions should be trimmed later.
@@ -188,6 +199,10 @@ Checked on one machine, with files the author sent; the files are not in the rep
 ### Test files
 
 This repository is public under the MIT licence, so a committed file is republished to everyone. Real FR24 exports therefore never go into the repository, the issues or the docs, and the same goes for the contents of the real `<description>` HTML. The parser tests use **synthetic** files: invented flights, invented tracks, hand-written from the structure described in the issues. Real files, if the issue author sends them privately, are used on one machine to check that the parser reads them, and are not kept in the working tree that gets committed.
+
+### If FR24 says no
+
+Switch `kml_import` off (see above), publish a build without the button, and remove the saved routes from the phones. Server upload and sharing were never switched on, so nothing needs to be deleted on the server. Tell the testers in German and English.
 
 ### Next step
 
