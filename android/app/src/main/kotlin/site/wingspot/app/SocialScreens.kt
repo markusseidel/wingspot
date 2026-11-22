@@ -11,6 +11,12 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -146,21 +152,25 @@ fun FeedTab(model: SocialViewModel, me: String, announcements: AnnouncementsView
     }
 }
 
-/** One check-in in a list: who, what, the first photo, and salute and comments. The whole card opens the check-in page. */
+/**
+ * One check-in in a list, as a plain row with a divider (docs/FEED-ENTRY-SPEC.md): who and when, what kind, the main
+ * line, details, badges, photos, and salute and comments as small icons with counts. The whole entry opens the check-in page.
+ */
 @Composable
 fun FeedCard(
     item: FeedItem, me: String, photos: List<FeedPhoto>, onOpen: () -> Unit, onSalute: () -> Unit, onPerson: () -> Unit,
     tags: List<site.wingspot.core.Person> = emptyList(),
     badges: List<site.wingspot.core.SocialApi.FeedBadge> = emptyList(),
 ) {
-    Card(Modifier.fillMaxWidth().clickable(onClick = onOpen)) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    Column(Modifier.fillMaxWidth().clickable(onClick = onOpen)) {
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Avatar(item.userId, item.who, 28.dp)
+                // Names are plain text; the accent colour is only for actions.
                 if (item.userId == me) {
                     Text(stringResource(R.string.you), fontWeight = FontWeight.Bold)
                 } else {
-                    Text(item.who, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.clickable(onClick = onPerson).padding(vertical = 8.dp))
+                    Text(item.who, fontWeight = FontWeight.Bold, modifier = Modifier.clickable(onClick = onPerson).padding(vertical = 8.dp))
                 }
                 Box(Modifier.weight(1f))
                 Text(relativeTime(item.occurredAt), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -168,21 +178,71 @@ fun FeedCard(
             KindAndTitle(item)
             if (tags.isNotEmpty()) Text(stringResource(R.string.with_names, tags.joinToString(", ") { it.who }), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             if (badges.isNotEmpty()) FeedBadgesLine(badges)
-            photos.firstOrNull()?.let { RemoteImage(it, Modifier.fillMaxWidth().height(200.dp).clip(MaterialTheme.shapes.medium)) }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                SaluteButton(item, onSalute)
-                TextButton(onClick = onOpen) { Text(stringResource(R.string.comments_count, item.comments)) }
+            if (photos.isNotEmpty()) PhotoCarousel(photos)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                CountAction(
+                    icon = if (item.saluted) R.drawable.ic_glyph_salute_filled else R.drawable.ic_glyph_salute,
+                    count = item.salutes, description = stringResource(R.string.salute_count, item.salutes), tag = "salute", onClick = onSalute,
+                )
+                CountAction(
+                    icon = R.drawable.ic_comments, count = item.comments, description = stringResource(R.string.comments_count, item.comments),
+                    tag = "comments", onClick = onOpen,
+                )
             }
+        }
+        HorizontalDivider(Modifier.padding(top = 12.dp))
+    }
+}
+
+/** A small icon with a count in the accent colour. The touch area is still 48 dp high. */
+@Composable
+private fun CountAction(icon: Int, count: Int, description: String, tag: String, onClick: () -> Unit) {
+    Row(
+        Modifier.defaultMinSize(minWidth = 48.dp, minHeight = 48.dp).clip(MaterialTheme.shapes.small).clickable(onClick = onClick).padding(horizontal = 8.dp).testTag(tag).semantics { contentDescription = description },
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Icon(painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+        Text(count.toString(), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
+    }
+}
+
+/**
+ * One photo is shown full width. Several are a carousel: one per page, swipe sideways, a row of dots below. Every page
+ * has the same height, so the list does not jump.
+ */
+@Composable
+private fun PhotoCarousel(photos: List<FeedPhoto>) {
+    val shape = RoundedCornerShape(10.dp)
+    if (photos.size == 1) {
+        RemoteImage(photos.first(), Modifier.fillMaxWidth().height(200.dp).clip(shape))
+        return
+    }
+    val pager = rememberPagerState { photos.size }
+    HorizontalPager(pager, Modifier.fillMaxWidth().height(200.dp).testTag("photo-carousel"), pageSpacing = 8.dp) { page ->
+        RemoteImage(photos[page], Modifier.fillMaxSize().clip(shape))
+    }
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        repeat(photos.size) { index ->
+            Box(
+                Modifier.padding(horizontal = 3.dp).size(6.dp).clip(CircleShape)
+                    .background(if (index == pager.currentPage) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)),
+            )
         }
     }
 }
 
 @Composable
 fun KindAndTitle(item: FeedItem, model: SocialViewModel? = null) {
-    Text(
-        stringResource(when (item.kind) { "flown" -> R.string.flown_title; "airport" -> R.string.airport_title; else -> R.string.spotted_title }),
-        style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        Icon(
+            painterResource(when (item.kind) { "flown" -> R.drawable.ic_glyph_plane; "airport" -> R.drawable.ic_glyph_building; else -> R.drawable.ic_glyph_binoculars }),
+            contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp),
+        )
+        Text(
+            stringResource(when (item.kind) { "flown" -> R.string.flown_title; "airport" -> R.string.airport_title; else -> R.string.spotted_title }),
+            style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
     // The title opens the page of the registration, the type or the airport.
     val target: Route? = when {
         item.kind == "airport" && item.airportId != null -> Route.AirportPage(item.airportId!!)
@@ -196,7 +256,12 @@ fun KindAndTitle(item: FeedItem, model: SocialViewModel? = null) {
         modifier = if (target != null && model != null) Modifier.clickable { model.open(target) }.padding(vertical = 4.dp) else Modifier,
     )
     val unit = (androidx.compose.ui.platform.LocalContext.current.applicationContext as WingspotApp).prefs.unit
-    val details = listOfNotNull(item.typeName, item.flightNumber, item.distanceKm?.let { unit.format(it) }).joinToString(" · ")
+    // The same order as on iOS: a flight shows its number, then the registration (the type name without one), then the distance.
+    val details = when (item.kind) {
+        "airport" -> emptyList()
+        "flown" -> listOfNotNull(item.flightNumber, item.registration ?: item.typeName, item.distanceKm?.let { unit.format(it) })
+        else -> listOfNotNull(item.typeName ?: item.registration?.let { item.typeIcao }, item.airportCode)
+    }.joinToString(" · ")
     if (details.isNotBlank()) Text(details, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
