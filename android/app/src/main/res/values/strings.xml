@@ -343,6 +343,16 @@
     <string name="kml_unreadable_title">Couldn\'t read the file</string>
     <string name="kml_unreadable_message">Please try again, or choose another file.</string>
     <string name="kml_large_title">The file is too large</string>
+    <string name="route_add">Add a route from a KML file</string>
+    <string name="route_replace">Replace the route from a file</string>
+    <string name="route_save_title">Save the route?</string>
+    <string name="route_replace_title">Replace the route?</string>
+    <string name="route_save">Save route</string>
+    <string name="route_replace_button">Replace route</string>
+    <string name="kml_noroute_title">This file has no route</string>
+    <string name="route_mismatch">The file is for %1$s → %2$s, but this flight is %3$s → %4$s.</string>
+    <string name="route_other_day">The file is for a different day than this flight.</string>
+    <string name="route_has_route">This flight already has a route. It is replaced.</string>
     <string name="kml_large_message">Files above 50 MB are not read.</string>
     <string name="date_label">Date</string>
     <string name="which_flight">Which flight?</string>

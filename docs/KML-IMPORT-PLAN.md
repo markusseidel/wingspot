@@ -109,6 +109,19 @@ Notes and risks:
 
 **Which number counts for badges and the leaderboard** is the biggest side effect (see "Decisions needed"). `distance_km` feeds distance badges, the friends leaderboard and compare. The plan keeps all of those on the airport-to-airport figure until the owner decides, so nobody's badges or ranking change by importing a file.
 
+### 5a. Add a route to an existing flight (request by farodin91 on #236)
+
+People log a flight first and export the file later, and Tim's flight in the beta showed that a flight saved without a file can never get a route. So the page of **your own flight** gets one more action, on both apps, device-only like the rest:
+
+- **Where:** the flown flight page, under the flight details. "Add a route from a KML file" when the flight has no route, "Replace the route from a file" when it has one. Only for your own flights and only while the server switch `kml_import` is on.
+- **Flow:** pick a file, read and parse it on the device (same parser as the import), then a confirmation that says what was found (positions, flown distance, and the detour as on the import form). Nothing is saved before the person confirms.
+- **Never overwrites anything but the route.** Airports, date, flight number, registration and type of the flight stay as they are. The file's other fields are ignored.
+- **Warnings, not blocks:** the file's airports differ from the flight's (compared by IATA code), or the file's day is more than 36 hours from the flight. The text says so and the person can still save, because airport codes in old files can differ and a wrong day is the person's call.
+- **Replace:** when the flight already has a route, the confirmation says it will be replaced.
+- **A file without a route** (no track, or only a straight line) says so and saves nothing.
+- **Storage:** the same one file per check-in on the device (`FlightTrackFiles`), so the page, the stats and the map pick it up at once. Nothing goes to the server.
+- **Not in this step:** attaching a route from the form of an already saved flight in the edit view, and a share-sheet entry. The batch import stays in step 6.
+
 ## Steps and size
 
 | PR | Content | Size | Depends on |
