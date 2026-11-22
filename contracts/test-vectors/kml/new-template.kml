@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>XA123 FRA-JFK</name>
 <Placemark><name>XA123</name><description><![CDATA[<div class="fr24"><h2><a href="https://www.flightradar24.com/flight/xa123">XA123</a></h2>
-<div><a href="https://www.flightradar24.com/airport/fra/departures" title="Example Frankfurt Airport">Departure</a>
-<h3>FRA</h3><span>Frankfurt</span> <span title="ATD 10:05 UTC">10:05</span></div>
-<div><a href="https://www.flightradar24.com/airport/jfk/arrivals" title="Example New York Kennedy Airport">Arrival</a>
-<h3>JFK</h3><span>New York</span> <span title="ETA 13:20 UTC">13:20</span></div>
+<div><a title="Example Frankfurt Airport" href="https://www.flightradar24.com/airport/fra/departures" class="dep">Departure</a>
+<h3>FRA</h3>Frankfurt
+<span title="Actual Time of Departure">ATD</span> <span title="2026-11-02 10:05">10:05</span></div>
+<div><a title="Example New York Kennedy Airport" href="https://www.flightradar24.com/airport/jfk/arrivals" class="arr">Arrival</a>
+<h3>JFK</h3>New York
+<span title="Estimated Time of Arrival">ETA</span> <span title="2026-11-02 13:20">13:20</span></div>
 <p>Aircraft: <b>Example Jet 900 (EJ9)</b> <a href="https://www.flightradar24.com/data/aircraft/reg/d-zzzz">D-ZZZZ</a></p>
-<p>Airline: <b>Example Air</b></p></div>]]></description><Point><coordinates>8.57000,50.03000,0</coordinates></Point></Placemark>
+<div><span><a href="https://www.flightradar24.com/airline/xa">XA</a></span> / XA 123<br>Example Air</div></div>]]></description><Point><coordinates>8.57000,50.03000,0</coordinates></Point></Placemark>
 <Placemark><name>Route</name><LineString><coordinates>
 8.57000,50.03000,0
 8.20000,50.40000,3000

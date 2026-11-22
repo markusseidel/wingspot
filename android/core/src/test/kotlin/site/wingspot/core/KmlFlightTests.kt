@@ -44,6 +44,7 @@ class KmlFlightTests {
             assertEquals(airport(case["destination"]), flight.destination, "$file destination")
             assertEquals(case.str("departureDate"), flight.departureDate, file)
             assertEquals(case.str("departureTime"), flight.departureTime, file)
+            assertEquals(case.str("arrivalDate"), flight.arrivalDate, file)
             assertEquals(case.str("arrivalTime"), flight.arrivalTime, file)
             assertEquals(case.str("aircraftTypeCode"), flight.aircraftTypeCode, file)
             assertEquals(case.str("aircraftTypeName"), flight.aircraftTypeName, file)

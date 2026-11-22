@@ -40,6 +40,8 @@ public struct KmlFlight: Sendable {
     public var departureDate: String?
     /// `HH:mm` as written in the file.
     public var departureTime: String?
+    /// `yyyy-MM-dd`, when the file says it (a flight can land on the next day).
+    public var arrivalDate: String?
     public var arrivalTime: String?
     public var aircraftTypeCode: String?
     public var aircraftTypeName: String?
@@ -120,7 +122,9 @@ public enum KmlFlightParser {
         if flight.registration == nil, let match = firstMatch("/reg/([A-Za-z0-9-]{2,10})", in: html) {
             flight.registration = match[1].uppercased()
         }
-        if flight.airline == nil, let match = firstMatch("Airline:\\s*<b>([^<]+)</b>", in: html) { flight.airline = clean(match[1]) }
+        if flight.airline == nil, let match = firstMatch("Airline:\\s*<b>([^<]+)</b>", in: html) ?? firstMatch("</a></span> / [^<]+<br/?>([^<]+)</div>", in: html) {
+            flight.airline = nonEmpty(clean(match[1]))
+        }
         if flight.aircraftTypeCode == nil, let match = firstMatch("Aircraft:\\s*<b>([^<]*?)\\s*\\(([A-Za-z0-9]{2,4})\\)\\s*</b>", in: html) {
             flight.aircraftTypeName = nonEmpty(clean(match[1]))
             flight.aircraftTypeCode = match[2].uppercased()
@@ -141,6 +145,17 @@ public enum KmlFlightParser {
         // The newer layout: airport links with the name in `title`, then `<h3>IATA</h3>` and the city.
         if flight.origin == nil { flight.origin = linkedAirport("departures", in: html) }
         if flight.destination == nil { flight.destination = linkedAirport("arrivals", in: html) }
+        if flight.departureDate == nil, let match = firstMatch("Actual Time of Departure\"[^>]*>ATD\\s*</span>\\s*<span title=\"(\\d{4}-\\d{2}-\\d{2})\\s+(\\d{1,2}:\\d{2})\"", in: html) {
+            flight.departureDate = match[1]
+            flight.departureTime = flight.departureTime ?? match[2]
+        }
+        if flight.arrivalTime == nil {
+            if let match = firstMatch("Arrival:\\s*<b>\\s*(\\d{4}-\\d{2}-\\d{2})(?:[ T]+(\\d{1,2}:\\d{2}))?", in: html) ?? firstMatch("Estimated Time of Arrival\"[^>]*>ETA\\s*</span>\\s*<span title=\"(\\d{4}-\\d{2}-\\d{2})\\s+(\\d{1,2}:\\d{2})\"", in: html) {
+                flight.arrivalDate = match[1]
+                flight.arrivalTime = nonEmpty(match[2])
+            }
+        }
+        // Last resort: the time alone, as in "ATD 10:05".
         if flight.departureTime == nil, let match = firstMatch("ATD\\s+(\\d{1,2}:\\d{2})", in: html) { flight.departureTime = match[1] }
         if flight.arrivalTime == nil, let match = firstMatch("ETA\\s+(\\d{1,2}:\\d{2})", in: html) { flight.arrivalTime = match[1] }
     }
@@ -165,9 +180,10 @@ public enum KmlFlightParser {
         if code.count == 4 { result.icao = code.uppercased() }
         if let title = firstMatch("title=\"([^\"]*)\"", in: tag[0]) { result.name = nonEmpty(clean(title[1])) }
         let rest = String(html[html.range(of: tag[0])!.upperBound...].prefix(600))
-        if let iata = firstMatch("<h3>\\s*([A-Za-z]{3})\\s*</h3>", in: rest) {
-            result.iata = iata[1].uppercased()
-            if let city = firstMatch("</h3>\\s*<[A-Za-z]+[^>]*>([^<]+)<", in: rest) { result.city = nonEmpty(clean(city[1])) }
+        // The heading holds the airport code (three letters IATA or four ICAO) and the city follows it, as plain text or in an element.
+        if let heading = firstMatch("<h3[^>]*>\\s*([A-Za-z0-9]{3,4})\\s*</h3>", in: rest) {
+            if heading[1].count == 3 { result.iata = heading[1].uppercased() } else { result.icao = result.icao ?? heading[1].uppercased() }
+            if let city = firstMatch("</h3>\\s*(?:<[A-Za-z]+[^>]*>)?\\s*([^<]+)", in: rest) { result.city = nonEmpty(clean(city[1])) }
         } else if code.count == 3 {
             result.iata = code.uppercased()
         }
