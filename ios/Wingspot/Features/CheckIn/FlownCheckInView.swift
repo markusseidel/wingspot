@@ -73,6 +73,12 @@ struct FlownCheckInView: View {
     @State private var isReadingImage = false
     @State private var scanProblem: ScanProblem?
     @State private var legChoices: [BoardingPass.Leg] = []
+    @State private var showFileImporter = false
+    @State private var isImportingFile = false
+    @State private var importProblem: KmlImportProblem?
+    @State private var importNotice: ImportNotice?
+    /// The positions of an imported flight. They are kept on this iPhone only and never uploaded.
+    @State private var importedTrack: [GeoCoordinate] = []
 
     private enum ScanProblem: Identifiable {
         case noBoardingPass, needsData
@@ -96,7 +102,7 @@ struct FlownCheckInView: View {
     var body: some View {
         Group {
             if let result {
-                FlownResultView(result: result, onReturn: startReturn, onAnother: reset, onDone: onDone)
+                FlownResultView(result: result, trackNote: savedTrackNote, onReturn: startReturn, onAnother: reset, onDone: onDone)
             } else {
                 form
             }
@@ -116,6 +122,17 @@ struct FlownCheckInView: View {
             ForEach(Array(legChoices.enumerated()), id: \.offset) { _, leg in
                 Button("\(leg.from) → \(leg.to) · \(leg.carrier)\(leg.flightNumber)") { apply(leg) }
             }
+        }
+        .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.data]) { picked in
+            guard case .success(let url) = picked else { return }
+            Task { await importFile(url) }
+        }
+        .alert(importProblem.map { String(localized: $0.title) } ?? "", isPresented: Binding(
+            get: { importProblem != nil }, set: { if !$0 { importProblem = nil } }
+        )) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(importProblem.map { String(localized: $0.message) } ?? "")
         }
         .alert(scanProblemTitle, isPresented: Binding(
             get: { scanProblem != nil }, set: { if !$0 { scanProblem = nil } }
@@ -143,8 +160,36 @@ struct FlownCheckInView: View {
                     Label { Text(pickerTitle) } icon: { Image(systemName: "photo") }
                 }
                 .disabled(isReadingImage)
+                let importTitle: LocalizedStringResource = isImportingFile ? "Reading…" : "Import a KML file"
+                Button { showFileImporter = true } label: {
+                    Label { Text(importTitle) } icon: { Image(systemName: "doc.badge.arrow.up") }
+                }
+                .disabled(isImportingFile)
             } footer: {
-                Text("Fills in the route, date, flight number and seat. Your name and booking code are never read or saved.")
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Fills in the route, date, flight number and seat. Your name and booking code are never read or saved.")
+                    Text("A KML file of a flight is read on this iPhone. The file and its route are never uploaded.")
+                }
+            }
+
+            if let importNotice {
+                Section {
+                    if !importNotice.found.isEmpty {
+                        Text("Filled in from the file: \(ImportNotice.list(importNotice.found)).")
+                    }
+                    if !importNotice.missing.isEmpty {
+                        Text("Not found in the file: \(ImportNotice.list(importNotice.missing)). Please add them by hand.")
+                    }
+                    if let trackSummary { Text(trackSummary) }
+                    if hasDuplicate {
+                        Label("You already have a flight \(normalizedFlightNumber) on this day. Save it only if it is another flight.", systemImage: "exclamationmark.triangle")
+                            .foregroundStyle(.orange)
+                    }
+                } header: {
+                    Text("Imported flight")
+                } footer: {
+                    Text("Please check everything before you save.")
+                }
             }
 
             Section {
@@ -229,6 +274,77 @@ struct FlownCheckInView: View {
         }
     }
 
+    private var normalizedFlightNumber: String { flightNumber.filter { !$0.isWhitespace }.uppercased() }
+
+    /// Another flight of yours with the same flight number on the same day, saved on this iPhone.
+    private var hasDuplicate: Bool {
+        guard !normalizedFlightNumber.isEmpty else { return false }
+        let owner = account.userID
+        let found = (try? modelContext.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate {
+            $0.kind == "flown" && $0.flightNumber != nil && $0.ownerID == owner
+        }))) ?? []
+        return found.contains { $0.flightNumber == normalizedFlightNumber && Calendar.current.isDate($0.occurredAt, inSameDayAs: date) }
+    }
+
+    private var trackSummary: String? {
+        guard importedTrack.count >= 2, let detour = KmlImport.detour(track: importedTrack, origin: origin, destination: destination) else { return nil }
+        let flown = DistanceUnit.preferred.format(km: detour.flownKm)
+        if detour.extraKm > 0 {
+            return String(localized: "Route found: \(importedTrack.count) positions, \(flown) flown, \(DistanceUnit.preferred.format(km: detour.extraKm)) (\(String(detour.percent) + " %")) more than the direct way. The route stays on this iPhone.")
+        }
+        return String(localized: "Route found: \(importedTrack.count) positions, \(flown) flown. The route stays on this iPhone.")
+    }
+
+    /// What the result page says about the route that was saved with the flight.
+    private var savedTrackNote: LocalizedStringResource? {
+        importedTrack.count >= 2 ? "The flown route (\(importedTrack.count) positions) is saved on this iPhone." : nil
+    }
+
+    /// Fills the form from a KML file. A field the file doesn't have stays as it is, and the notice says which.
+    private func importFile(_ url: URL) async {
+        isImportingFile = true
+        defer { isImportingFile = false }
+        switch await KmlImport.read(url) {
+        case .failure(let problem):
+            importProblem = problem
+        case .success(let flight):
+            await apply(flight)
+        }
+    }
+
+    private func apply(_ flight: KmlFlight) async {
+        var found: [ImportedField] = []
+        if let database = referenceData.database {
+            var from: Airport?, to: Airport?
+            if let code = flight.origin?.iata { from = try? await database.airport(iata: code) }
+            if let code = flight.destination?.iata { to = try? await database.airport(iata: code) }
+            if let from, let to, from.id != to.id {
+                origin = from
+                destination = to
+                found.append(.route)
+            }
+            if let code = flight.aircraftTypeCode, let known = try? await database.aircraftType(icao: code) {
+                type = known
+                found.append(.aircraftType)
+            }
+        }
+        if let day = flight.departureDay() {
+            date = day
+            assumedYear = nil
+            found.append(.date)
+        }
+        if let number = flight.flightNumber {
+            flightNumber = number
+            found.append(.flightNumber)
+        }
+        if let registration = flight.registration, Registration(registration) != nil {
+            registrationInput = registration
+            found.append(.registration)
+        }
+        importedTrack = flight.track.count >= 2 ? flight.track : []
+        importNotice = ImportNotice(found: found, missing: ImportedField.allCases.filter { !found.contains($0) })
+    }
+
     private func readImage(_ item: PhotosPickerItem) async {
         isReadingImage = true
         defer { isReadingImage = false; photo = nil }
@@ -286,7 +402,9 @@ struct FlownCheckInView: View {
             photo: tripPhoto, tagged: tagged.map(\.id)
         )
         do {
-            result = try CheckInStore(context: modelContext).saveFlown(draft, ownerID: account.userID, at: FlightDay.moment(of: date))
+            let saved = try CheckInStore(context: modelContext).saveFlown(draft, ownerID: account.userID, at: FlightDay.moment(of: date))
+            if importedTrack.count >= 2 { try? FlightTrackFiles.standard.save(importedTrack, for: saved.id) }
+            result = saved
             sync?.requestSync()
         } catch {
             saveFailed = true
@@ -304,6 +422,7 @@ struct FlownCheckInView: View {
         seat = ""
         tripPhoto = nil
         assumedYear = nil
+        clearImport()
         result = nil
     }
 
@@ -318,12 +437,19 @@ struct FlownCheckInView: View {
         seat = ""
         tagged = []
         tripPhoto = nil
+        clearImport()
         result = nil
+    }
+
+    private func clearImport() {
+        importedTrack = []
+        importNotice = nil
     }
 }
 
 private struct FlownResultView: View {
     let result: FlownResult
+    let trackNote: LocalizedStringResource?
     let onReturn: () -> Void
     let onAnother: () -> Void
     let onDone: () -> Void
@@ -344,6 +470,12 @@ private struct FlownResultView: View {
                 if let km = result.distanceKm {
                     Text(verbatim: DistanceUnit.preferred.format(km: km))
                         .foregroundStyle(.secondary)
+                }
+                if let trackNote {
+                    Text(trackNote)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
                 }
             }
             Spacer()

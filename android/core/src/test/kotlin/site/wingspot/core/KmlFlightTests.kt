@@ -96,4 +96,21 @@ class KmlFlightTests {
         val flight = KmlFlightParser.parse("<kml><Document><Placemark><LineString><coordinates>$line</coordinates></LineString></Placemark></Document></kml>")
         assertEquals(50_000, flight.track.size)
     }
+
+    @Test
+    fun aLinkWithAnIdIsNotAFlightNumber() {
+        val kml = "<kml><Document><Placemark><description>&lt;a href=\"https://www.flightradar24.com/flight/3f2a1b9c4d\"&gt;x&lt;/a&gt;</description></Placemark></Document></kml>"
+        val flight = KmlFlightParser.parse(kml)
+        assertNull(flight.flightNumber)
+        assertEquals("https://www.flightradar24.com/flight/3f2a1b9c4d", flight.flightLink)
+    }
+
+    @Test
+    fun theDepartureDayIsNeverInTheFuture() {
+        val today = java.time.LocalDate.of(2026, 11, 22)
+        assertNull(KmlFlight().departureDay(today))
+        assertEquals(java.time.LocalDate.of(2026, 11, 2), KmlFlight(departureDate = "2026-11-02").departureDay(today))
+        assertEquals(today, KmlFlight(departureDate = "2027-01-05").departureDay(today))
+        assertNull(KmlFlight(departureDate = "not a date").departureDay(today))
+    }
 }

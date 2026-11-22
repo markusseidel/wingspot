@@ -49,6 +49,18 @@ public struct KmlFlight: Sendable {
     /// The positions in the order they were flown, as in the file.
     public var track: [GeoCoordinate] = []
     public var trackSource: KmlTrackSource = .none
+
+    public init() {}
+}
+
+extension KmlFlight {
+    /// The day of the flight as a date on the calendar of the person, never after today, or nil if the file had no day.
+    public func departureDay(today: Date = Date(), calendar: Calendar = .current) -> Date? {
+        guard let text = departureDate else { return nil }
+        let parts = text.split(separator: "-").compactMap { Int($0) }
+        guard parts.count == 3, let date = calendar.date(from: DateComponents(year: parts[0], month: parts[1], day: parts[2])) else { return nil }
+        return min(date, today)
+    }
 }
 
 public enum KmlFlightError: Error, Equatable, Sendable {
@@ -99,10 +111,10 @@ public enum KmlFlightParser {
         if flight.flightLink == nil {
             if let match = firstMatch("(https?://(?:www\\.)?flightradar24\\.com/(?:data/)?flights?/([A-Za-z0-9]+))", in: html) {
                 flight.flightLink = match[1]
-                flight.flightNumber = flight.flightNumber ?? match[2].uppercased()
+                flight.flightNumber = flight.flightNumber ?? flightNumber(match[2])
             } else if let match = firstMatch("(https?://(?:www\\.)?flightradar24\\.com/([A-Za-z0-9]{2,3}\\d{1,4}[A-Za-z]?)/[0-9a-fA-F]{6,})", in: html) {
                 flight.flightLink = match[1]
-                flight.flightNumber = flight.flightNumber ?? match[2].uppercased()
+                flight.flightNumber = flight.flightNumber ?? flightNumber(match[2])
             }
         }
         if flight.registration == nil, let match = firstMatch("/reg/([A-Za-z0-9-]{2,10})", in: html) {
@@ -131,6 +143,13 @@ public enum KmlFlightParser {
         if flight.destination == nil { flight.destination = linkedAirport("arrivals", in: html) }
         if flight.departureTime == nil, let match = firstMatch("ATD\\s+(\\d{1,2}:\\d{2})", in: html) { flight.departureTime = match[1] }
         if flight.arrivalTime == nil, let match = firstMatch("ETA\\s+(\\d{1,2}:\\d{2})", in: html) { flight.arrivalTime = match[1] }
+    }
+
+    /// A flight number the server accepts (two letters or digits for the airline, then 1 to 4 digits and maybe a letter), or
+    /// nil: the part of a link that is not one, such as an id, is not a flight number.
+    private static func flightNumber(_ candidate: String) -> String? {
+        let upper = candidate.uppercased()
+        return firstMatch("^[A-Z0-9]{2}[0-9]{1,4}[A-Z]?$", in: upper) == nil ? nil : upper
     }
 
     private static func airport(name: String, code: String) -> KmlAirport {

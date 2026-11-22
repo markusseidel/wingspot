@@ -108,4 +108,24 @@ private func kmlText(_ file: String) -> String {
         let flight = try KmlFlightParser.parse("<kml><Document><Placemark><LineString><coordinates>\(line)</coordinates></LineString></Placemark></Document></kml>")
         #expect(flight.track.count == 50_000)
     }
+
+    @Test func aLinkWithAnIdIsNotAFlightNumber() throws {
+        let kml = "<kml><Document><Placemark><description>&lt;a href=\"https://www.flightradar24.com/flight/3f2a1b9c4d\"&gt;x&lt;/a&gt;</description></Placemark></Document></kml>"
+        let flight = try KmlFlightParser.parse(kml)
+        #expect(flight.flightNumber == nil)
+        #expect(flight.flightLink == "https://www.flightradar24.com/flight/3f2a1b9c4d")
+    }
+
+    @Test func theDepartureDayIsADateOnTheCalendarAndNeverInTheFuture() throws {
+        let calendar = Calendar(identifier: .gregorian)
+        let today = calendar.date(from: DateComponents(year: 2026, month: 11, day: 22))!
+        var flight = KmlFlight()
+        #expect(flight.departureDay(today: today, calendar: calendar) == nil)
+        flight.departureDate = "2026-11-02"
+        #expect(flight.departureDay(today: today, calendar: calendar) == calendar.date(from: DateComponents(year: 2026, month: 11, day: 2)))
+        flight.departureDate = "2027-01-05"
+        #expect(flight.departureDay(today: today, calendar: calendar) == today)
+        flight.departureDate = "not a date"
+        #expect(flight.departureDay(today: today, calendar: calendar) == nil)
+    }
 }

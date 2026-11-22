@@ -6,6 +6,7 @@ import site.wingspot.core.ApiClient
 import site.wingspot.core.ApiException
 import site.wingspot.core.AuthException
 import site.wingspot.core.CheckInStore
+import site.wingspot.core.FlightTrackFiles
 import site.wingspot.core.Outbox
 import site.wingspot.core.ReferenceDataInstaller
 import site.wingspot.core.Rest
@@ -23,7 +24,9 @@ class WingspotApp : Application() {
 
     val sessions by lazy { SessionStore(this) }
     val auth by lazy { SupabaseAuth(BuildConfig.SUPABASE_URL, BuildConfig.PUBLISHABLE_KEY) }
-    val checkIns by lazy { CheckInStore.open(File(filesDir, "checkins.sqlite").path) }
+    /** The tracks of imported flights. They stay on this phone and are never uploaded. */
+    val tracks by lazy { FlightTrackFiles(File(filesDir, "flight-tracks")) }
+    val checkIns by lazy { CheckInStore.open(File(filesDir, "checkins.sqlite").path, tracks) }
     val referenceInstaller by lazy { ReferenceDataInstaller(File(filesDir, "refdata"), BuildConfig.SUPABASE_URL + "/functions") }
     val prefs by lazy { Prefs(this) }
     val terms by lazy { TermsStore(this) }

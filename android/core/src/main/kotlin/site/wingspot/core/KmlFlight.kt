@@ -41,6 +41,12 @@ data class KmlFlight(
     val trackSource: KmlTrackSource = KmlTrackSource.NONE,
 )
 
+/** The day of the flight, never after [today], or null if the file had no day. */
+fun KmlFlight.departureDay(today: java.time.LocalDate = java.time.LocalDate.now()): java.time.LocalDate? {
+    val day = departureDate?.let { runCatching { java.time.LocalDate.parse(it) }.getOrNull() } ?: return null
+    return if (day.isAfter(today)) today else day
+}
+
 /** The text is not a KML file. */
 class KmlFlightException : Exception("not a KML file")
 
@@ -103,7 +109,7 @@ object KmlFlightParser {
         var flight = start
         if (flight.flightLink == null) {
             val match = FLIGHT_PAGE.find(html) ?: FLIGHT_LINK.find(html)
-            if (match != null) flight = flight.copy(flightLink = match.groupValues[1], flightNumber = flight.flightNumber ?: match.groupValues[2].uppercase())
+            if (match != null) flight = flight.copy(flightLink = match.groupValues[1], flightNumber = flight.flightNumber ?: flightNumber(match.groupValues[2]))
         }
         if (flight.registration == null) REGISTRATION.find(html)?.let { flight = flight.copy(registration = it.groupValues[1].uppercase()) }
         if (flight.airline == null) AIRLINE.find(html)?.let { flight = flight.copy(airline = clean(it.groupValues[1])) }
@@ -125,6 +131,12 @@ object KmlFlightParser {
         if (flight.arrivalTime == null) ETA.find(html)?.let { flight = flight.copy(arrivalTime = it.groupValues[1]) }
         return flight
     }
+
+    private val FLIGHT_NUMBER = Regex("^[A-Z0-9]{2}[0-9]{1,4}[A-Z]?$")
+
+    /** A flight number the server accepts (two letters or digits for the airline, then 1 to 4 digits and maybe a letter), or
+     *  null: the part of a link that is not one, such as an id, is not a flight number. */
+    private fun flightNumber(candidate: String): String? = candidate.uppercase().takeIf { FLIGHT_NUMBER.matches(it) }
 
     private fun airport(name: String, code: String): KmlAirport =
         if (code.length == 3) KmlAirport(iata = code.uppercase(), name = nonEmpty(clean(name)))

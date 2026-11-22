@@ -193,9 +193,11 @@ public enum FlightDay {
 @MainActor
 public struct CheckInStore {
     private let context: ModelContext
+    private let tracks: FlightTrackFiles
 
-    public init(context: ModelContext) {
+    public init(context: ModelContext, tracks: FlightTrackFiles = .standard) {
         self.context = context
+        self.tracks = tracks
     }
 
     /// Saves locally and reports how often this aircraft was seen before.
@@ -390,6 +392,7 @@ public struct CheckInStore {
             }
         }
         removed.append(contentsOf: found.map(\.id))
+        tracks.delete(ids: removed)
         for gone in removed {
             for checkIn in try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == gone })) {
                 context.delete(checkIn)
