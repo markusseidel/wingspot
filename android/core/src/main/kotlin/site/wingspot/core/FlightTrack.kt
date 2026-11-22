@@ -14,6 +14,9 @@ data class TrackBox(val minLatitude: Double, val minLongitude: Double, val maxLa
 /** How much longer the flown way was than the great circle. */
 data class Detour(val extraKm: Double, val percent: Double)
 
+/** A flown route as the flight page shows it. [extraKm] and [percent] are 0 when there is no clear detour. */
+data class FlownRoute(val flownKm: Int, val extraKm: Int, val percent: Int)
+
 /**
  * Maths for a flown track: a list of positions in the order they were flown. It knows nothing about where the positions
  * came from, so any source can use it. Shared with the iPhone app and checked against `contracts/test-vectors/tracks.json`.
@@ -92,6 +95,19 @@ object FlightTrack {
         if (greatCircleKm <= 0) return null
         val extra = flownKm - greatCircleKm
         return Detour(extra, extra / greatCircleKm * 100)
+    }
+
+    /**
+     * What a flight page shows about a flown route: its length in whole kilometres and, when it is clearly longer than the
+     * airport-to-airport distance, how much more that is. Null for fewer than two positions.
+     */
+    fun flownRoute(points: List<GeoCoordinate>, greatCircleKm: Int?): FlownRoute? {
+        if (points.size < 2) return null
+        val flown = lengthKm(points)
+        val flownKm = flown.roundHalfUp().toInt()
+        val detour = greatCircleKm?.let { detour(flown, it.toDouble()) }
+        if (detour == null || detour.extraKm < 1) return FlownRoute(flownKm, 0, 0)
+        return FlownRoute(flownKm, detour.extraKm.roundHalfUp().toInt(), detour.percent.roundHalfUp().toInt())
     }
 
     /** Rounds .5 away from zero, as the iPhone app does, so both apps shift a point at exactly 180° the same way. */

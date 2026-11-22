@@ -39,6 +39,8 @@ struct CheckInDetailView: View {
     @State private var mentionedPerson: MentionedPerson?
     /// Friends who added this check-in to their own logbook. Only filled for your own check-ins.
     @State private var copies: [PersonTag] = []
+    /// The route of an imported KML file, for your own flights. It stays on this iPhone.
+    @State private var flownRoute: FlownRoute?
     @Environment(SpotStore.self) private var spots
     @State private var spot: CheckInSpot?
     @State private var spotSightings: [VisitSighting] = []
@@ -62,6 +64,13 @@ struct CheckInDetailView: View {
             mentionedPerson = MentionedPerson(id: id)
             return .handled
         })
+        .task(id: "\(item.id)-\(shown.distanceKm ?? 0)") {
+            guard isOwn, item.kind == "flown" else { flownRoute = nil; return }
+            let id = item.id, distance = shown.distanceKm
+            flownRoute = await Task.detached {
+                FlightTrackFiles.standard.load(id: id).flatMap { FlightTrack.flownRoute($0, greatCircleKm: distance) }
+            }.value
+        }
         .task {
             let created = (source ?? feed).commentStore(for: item.id)
             store = created
@@ -234,6 +243,16 @@ struct CheckInDetailView: View {
                 if let cabin = shown.cabin.flatMap(CabinClass.init(rawValue:)) { LabeledContent("Cabin", value: String(localized: cabin.title)) }
                 if let seat = shown.seat { LabeledContent("Seat", value: seat) }
                 if let km = shown.distanceKm { LabeledContent("Distance", value: unit.format(km: km)) }
+                // The route from an imported KML file stays on this iPhone, so only your own flights have one.
+                if let route = flownRoute {
+                    LabeledContent("Flown distance", value: unit.format(km: route.flownKm))
+                    if route.extraKm > 0 {
+                        LabeledContent("More than the direct way", value: "+\(unit.format(km: route.extraKm)) (+\(route.percent) %)")
+                    }
+                    Text("From your Flightradar24 file. The route stays on this iPhone.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
             }
             if let registration = shown.registration {
                 NavigationLink { RegistrationPageView(registration: registration) } label: {

@@ -2283,6 +2283,22 @@
         }
       }
     },
+    "Flown distance" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geflogene Strecke"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Flown distance"
+          }
+        }
+      }
+    },
     "Follow" : {
       "localizations" : {
         "de" : {
@@ -2439,6 +2455,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Von"
+          }
+        }
+      }
+    },
+    "From your Flightradar24 file. The route stays on this iPhone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aus deiner Flightradar24-Datei. Die Strecke bleibt auf diesem iPhone."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "From your Flightradar24 file. The route stays on this iPhone."
           }
         }
       }
@@ -2944,6 +2976,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mehr"
+          }
+        }
+      }
+    },
+    "More than the direct way" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mehr als der direkte Weg"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "More than the direct way"
           }
         }
       }

@@ -84,3 +84,25 @@ struct TrackVectors: Decodable {
         #expect(FlightTrack.simplified([], toleranceMeters: 100).isEmpty)
     }
 }
+
+@Test func aFlownRouteIsSummarisedForTheFlightPage() {
+    // A made-up route that goes from 0° to 10° east on the equator, then back 5° to the west: 15° of arc.
+    let there = (0...10).map { GeoCoordinate(latitude: 0, longitude: Double($0)) }
+    let back = (1...5).map { GeoCoordinate(latitude: 0, longitude: 10 - Double($0)) }
+    let route = FlightTrack.flownRoute(there + back, greatCircleKm: 556)
+    #expect(route?.flownKm == 1668)
+    #expect(route?.extraKm == 1112)
+    #expect(route?.percent == 200)
+}
+
+@Test func aRouteWithoutAClearDetourHasNoExtra() {
+    let straight = (0...10).map { GeoCoordinate(latitude: 0, longitude: Double($0)) }
+    #expect(FlightTrack.flownRoute(straight, greatCircleKm: 1112) == FlownRoute(flownKm: 1112, extraKm: 0, percent: 0))
+    #expect(FlightTrack.flownRoute(straight, greatCircleKm: 1500) == FlownRoute(flownKm: 1112, extraKm: 0, percent: 0), "shorter than the airport figure is not a detour")
+    #expect(FlightTrack.flownRoute(straight, greatCircleKm: nil)?.flownKm == 1112)
+}
+
+@Test func tooFewPositionsAreNoRoute() {
+    #expect(FlightTrack.flownRoute([], greatCircleKm: 100) == nil)
+    #expect(FlightTrack.flownRoute([GeoCoordinate(latitude: 1, longitude: 1)], greatCircleKm: 100) == nil)
+}

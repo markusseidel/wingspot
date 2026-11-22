@@ -86,6 +86,18 @@ public enum FlightTrack {
         return (extra, extra / greatCircleKm * 100)
     }
 
+    /// What a flight page shows about a flown route: its length in whole kilometres and, when it is clearly longer than the
+    /// airport-to-airport distance, how much more that is (kilometres and percent). Nil for fewer than two positions.
+    public static func flownRoute(_ points: [GeoCoordinate], greatCircleKm: Int?) -> FlownRoute? {
+        guard points.count >= 2 else { return nil }
+        let flown = lengthKm(points)
+        let flownKm = Int(flown.rounded())
+        guard let greatCircleKm, let detour = detour(flownKm: flown, greatCircleKm: Double(greatCircleKm)), detour.extraKm >= 1 else {
+            return FlownRoute(flownKm: flownKm, extraKm: 0, percent: 0)
+        }
+        return FlownRoute(flownKm: flownKm, extraKm: Int(detour.extraKm.rounded()), percent: Int(detour.percent.rounded()))
+    }
+
     private static func clampedLatitude(_ latitude: Double) -> Double {
         min(mercatorLimit, max(-mercatorLimit, latitude))
     }
@@ -101,5 +113,18 @@ public enum FlightTrack {
         guard lengthSquared > 0 else { return hypot(p.x - a.x, p.y - a.y) }
         let t = max(0, min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / lengthSquared))
         return hypot(p.x - a.x - t * dx, p.y - a.y - t * dy)
+    }
+}
+
+/// A flown route as the flight page shows it. `extraKm` and `percent` are 0 when there is no clear detour.
+public struct FlownRoute: Equatable, Sendable {
+    public let flownKm: Int
+    public let extraKm: Int
+    public let percent: Int
+
+    public init(flownKm: Int, extraKm: Int, percent: Int) {
+        self.flownKm = flownKm
+        self.extraKm = extraKm
+        self.percent = percent
     }
 }

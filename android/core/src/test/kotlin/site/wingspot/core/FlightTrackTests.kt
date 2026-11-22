@@ -100,3 +100,28 @@ class FlightTrackTests {
         assertTrue(FlightTrack.simplified(emptyList(), 100.0).isEmpty())
     }
 }
+
+class FlownRouteTests {
+    private fun equator(vararg longitudes: Int) = longitudes.map { GeoCoordinate(0.0, it.toDouble()) }
+
+    @Test
+    fun aFlownRouteIsSummarisedForTheFlightPage() {
+        // A made-up route that goes from 0° to 10° east on the equator, then back 5° to the west: 15° of arc.
+        val route = FlightTrack.flownRoute(equator(*(0..10).toList().toIntArray()) + equator(*(9 downTo 5).toList().toIntArray()), 556)
+        assertEquals(FlownRoute(1668, 1112, 200), route)
+    }
+
+    @Test
+    fun aRouteWithoutAClearDetourHasNoExtra() {
+        val straight = equator(*(0..10).toList().toIntArray())
+        assertEquals(FlownRoute(1112, 0, 0), FlightTrack.flownRoute(straight, 1112))
+        assertEquals(FlownRoute(1112, 0, 0), FlightTrack.flownRoute(straight, 1500), "shorter than the airport figure is not a detour")
+        assertEquals(1112, FlightTrack.flownRoute(straight, null)?.flownKm)
+    }
+
+    @Test
+    fun tooFewPositionsAreNoRoute() {
+        assertEquals(null, FlightTrack.flownRoute(emptyList(), 100))
+        assertEquals(null, FlightTrack.flownRoute(equator(1), 100))
+    }
+}

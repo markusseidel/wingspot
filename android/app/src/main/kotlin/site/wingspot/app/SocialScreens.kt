@@ -472,6 +472,17 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                         shown.cabin?.let { c -> CabinClass.fromWire(c)?.let { InfoRow(stringResource(R.string.cabin_label), stringResource(cabinTitle(it))) } }
                         shown.seat?.let { InfoRow(stringResource(R.string.seat_row_label), it) }
                         shown.distanceKm?.let { InfoRow(stringResource(R.string.distance_label), unit.format(it)) }
+                        // The route from an imported KML file stays on this phone, so only your own flights have one.
+                        val route by produceState<site.wingspot.core.FlownRoute?>(null, shown.id, shown.distanceKm, me) {
+                            value = if (shown.userId == me) withContext(Dispatchers.Default) {
+                                app.tracks.load(UUID.fromString(shown.id))?.let { site.wingspot.core.FlightTrack.flownRoute(it, shown.distanceKm) }
+                            } else null
+                        }
+                        route?.let { r ->
+                            InfoRow(stringResource(R.string.flown_distance_label), unit.format(r.flownKm))
+                            if (r.extraKm > 0) InfoRow(stringResource(R.string.detour_label), "+" + unit.format(r.extraKm) + " (+" + r.percent + " %)")
+                            Text(stringResource(R.string.route_note), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
                     }
                 }
             }
