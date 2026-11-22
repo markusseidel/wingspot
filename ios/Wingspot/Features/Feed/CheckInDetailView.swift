@@ -1,4 +1,5 @@
 import Account
+import MapKit
 import Persistence
 import ReferenceData
 import SwiftData
@@ -41,6 +42,8 @@ struct CheckInDetailView: View {
     @State private var copies: [PersonTag] = []
     /// The route of an imported KML file, for your own flights. It stays on this iPhone.
     @State private var flownRoute: FlownRoute?
+    /// The same route, simplified, for the map.
+    @State private var routeLine: [GeoCoordinate] = []
     @Environment(SpotStore.self) private var spots
     @State private var spot: CheckInSpot?
     @State private var spotSightings: [VisitSighting] = []
@@ -67,9 +70,13 @@ struct CheckInDetailView: View {
         .task(id: "\(item.id)-\(shown.distanceKm ?? 0)") {
             guard isOwn, item.kind == "flown" else { flownRoute = nil; return }
             let id = item.id, distance = shown.distanceKm
-            flownRoute = await Task.detached {
-                FlightTrackFiles.standard.load(id: id).flatMap { FlightTrack.flownRoute($0, greatCircleKm: distance) }
+            let found: (route: FlownRoute, line: [GeoCoordinate])? = await Task.detached {
+                guard let points = FlightTrackFiles.standard.load(id: id),
+                      let route = FlightTrack.flownRoute(points, greatCircleKm: distance) else { return nil }
+                return (route, FlightTrack.simplified(points, toleranceMeters: 300))
             }.value
+            flownRoute = found?.route
+            routeLine = found?.line ?? []
         }
         .task {
             let created = (source ?? feed).commentStore(for: item.id)
@@ -249,6 +256,7 @@ struct CheckInDetailView: View {
                     if route.extraKm > 0 {
                         LabeledContent("More than the direct way", value: "+\(unit.format(km: route.extraKm)) (+\(route.percent) %)")
                     }
+                    if routeLine.count >= 2 { FlownRouteMap(line: routeLine) }
                     Text("From your Flightradar24 file. The route stays on this iPhone.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
@@ -656,5 +664,89 @@ struct CheckInDetailView: View {
                 problem = (error as? AccountError) ?? .unknown
             }
         }
+    }
+}
+
+/// The flown route of an imported flight: the simplified line with a start and an end marker, zoomed to fit the route.
+/// It only shows; it does not move, so it does not fight the page's scrolling.
+private struct FlownRouteMap: View {
+    /// The simplified route with unwrapped longitudes, so a flight over the date line is one continuous line.
+    let line: [GeoCoordinate]
+    /// The markers have no label of their own. A `String` keeps the empty text out of the string catalog.
+    private let noTitle: String = ""
+
+    var body: some View {
+        let first = line.first.map(Self.coordinate), last = line.last.map(Self.coordinate)
+        Map(initialPosition: .rect(Self.rect(for: line)), interactionModes: []) {
+            ForEach(Array(Self.segments(of: line).enumerated()), id: \.offset) { _, segment in
+                MapPolyline(coordinates: segment)
+                    .stroke(.tint, lineWidth: 3)
+            }
+            if let first {
+                Marker(noTitle, systemImage: "airplane.departure", coordinate: first).tint(.green)
+            }
+            if let last {
+                Marker(noTitle, systemImage: "airplane.arrival", coordinate: last).tint(.red)
+            }
+        }
+        .frame(height: 220)
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .accessibilityLabel(Text("Map of the flown route"))
+    }
+
+    /// A position with its longitude brought back into -180...180.
+    private static func coordinate(_ point: GeoCoordinate) -> CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: point.latitude, longitude: wrapped(point.longitude))
+    }
+
+    private static func wrapped(_ longitude: Double) -> Double {
+        var value = longitude
+        while value > 180 { value -= 360 }
+        while value < -180 { value += 360 }
+        return value
+    }
+
+    /// The line cut at the 180° meridian, each piece in -180...180, so MapKit draws a flight over the date line the
+    /// short way instead of one straight line around the world.
+    static func segments(of line: [GeoCoordinate]) -> [[CLLocationCoordinate2D]] {
+        guard var previous = line.first else { return [] }
+        var pieces = [[Self.coordinate(previous)]]
+        func world(_ longitude: Double) -> Int { Int(((longitude + 180) / 360).rounded(.down)) }
+        for point in line.dropFirst() {
+            var from = previous
+            // Each time the line enters another copy of the world, end the piece at the meridian and start the next there.
+            while world(from.longitude) != world(point.longitude) {
+                let rising = world(point.longitude) > world(from.longitude)
+                let edge = Double(world(from.longitude) + (rising ? 1 : 0)) * 360 - 180
+                let share = (edge - from.longitude) / (point.longitude - from.longitude)
+                let latitude = from.latitude + (point.latitude - from.latitude) * share
+                pieces[pieces.count - 1].append(CLLocationCoordinate2D(latitude: latitude, longitude: rising ? 180 : -180))
+                pieces.append([CLLocationCoordinate2D(latitude: latitude, longitude: rising ? -180 : 180)])
+                from = GeoCoordinate(latitude: latitude, longitude: edge + (rising ? 1e-9 : -1e-9))
+            }
+            pieces[pieces.count - 1].append(Self.coordinate(point))
+            previous = point
+        }
+        return pieces
+    }
+
+    /// The box around the route with some room. It is worked out from the unwrapped longitudes, so a route over the date
+    /// line gets a box that spans the meridian instead of one that covers the whole world.
+    private static func rect(for line: [GeoCoordinate]) -> MKMapRect {
+        guard let minLongitude = line.map(\.longitude).min(), let maxLongitude = line.map(\.longitude).max(),
+              let minLatitude = line.map(\.latitude).min(), let maxLatitude = line.map(\.latitude).max() else { return .world }
+        let size = MKMapSize.world
+        func x(_ longitude: Double) -> Double { (longitude + 180) / 360 * size.width }
+        let top = MKMapPoint(CLLocationCoordinate2D(latitude: min(maxLatitude, 85), longitude: 0)).y
+        let bottom = MKMapPoint(CLLocationCoordinate2D(latitude: max(minLatitude, -85), longitude: 0)).y
+        var left = x(minLongitude)
+        let width = x(maxLongitude) - left
+        while left >= size.width { left -= size.width }
+        while left < 0 { left += size.width }
+        let rect = MKMapRect(x: left, y: top, width: max(width, 1), height: max(bottom - top, 1))
+        let room = max(rect.width, rect.height) * 0.2 + 2_000
+        var origin = rect.origin.x - room
+        while origin < 0 { origin += size.width }
+        return MKMapRect(x: origin, y: max(0, rect.origin.y - room), width: min(rect.width + 2 * room, size.width), height: rect.height + 2 * room)
     }
 }
