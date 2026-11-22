@@ -136,7 +136,7 @@ data class SpottedResult(val id: UUID, val subject: String, val history: History
  * works offline, and the rows that are still [SyncState.PENDING] are what gets uploaded.
  * [path] may be ":memory:" in tests.
  */
-class CheckInStore private constructor(private val connection: SQLiteConnection) {
+class CheckInStore private constructor(private val connection: SQLiteConnection, private val tracks: FlightTrackFiles? = null) {
     private val lock = Mutex()
 
     /**
@@ -339,6 +339,7 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
         for (sql in listOf("DELETE FROM photos WHERE checkin_id = ?", "DELETE FROM checkins WHERE id = ?")) {
             connection.prepare(sql).use { it.bindText(1, id.toString()); it.step() }
         }
+        tracks?.delete(id)
     }
 
     /** One check-in by id, or null. */
@@ -460,6 +461,7 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
         connection.execSQL("DELETE FROM photos")
         connection.execSQL("DELETE FROM checkins")
         connection.execSQL("DELETE FROM restored")
+        tracks?.deleteAll()
     }
 
     /** Newest first. */
@@ -536,7 +538,8 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
         /** The server takes at most four photos on one check-in. */
         const val MAX_PHOTOS = 4
 
-        fun open(path: String): CheckInStore {
+        /** [tracks] is where the tracks of imported flights are kept on this phone; a check-in takes its track with it when it is deleted. */
+        fun open(path: String, tracks: FlightTrackFiles? = null): CheckInStore {
             val connection = BundledSQLiteDriver().open(path)
             connection.execSQL("PRAGMA journal_mode = WAL")
             connection.execSQL(
@@ -577,7 +580,7 @@ class CheckInStore private constructor(private val connection: SQLiteConnection)
                    )""",
             )
             connection.execSQL("CREATE TABLE IF NOT EXISTS restored (user_id TEXT PRIMARY KEY)")
-            return CheckInStore(connection)
+            return CheckInStore(connection, tracks)
         }
     }
 }

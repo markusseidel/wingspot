@@ -30,7 +30,7 @@ import site.wingspot.core.VisitContext
 enum class Kind { SPOTTED, AIRPORT, FLOWN }
 
 /** What the result page says after a save. [count] includes the check-in just saved; [lastSeen] is for spotted ones seen before. */
-data class SavedResult(val kind: Kind, val title: String, val count: Int, val lastSeen: Instant?)
+data class SavedResult(val kind: Kind, val title: String, val count: Int, val lastSeen: Instant?, val trackPositions: Int = 0)
 
 /**
  * The first values of the flight form for a return flight: the route the other way round, the same day, and the cabin
@@ -69,6 +69,8 @@ class CheckInViewModel(
     private val requestUpload: () -> Unit,
     private val loadSession: () -> SpotSession? = { null },
     private val storeSession: (SpotSession?) -> Unit = {},
+    /** Where the tracks of imported flights are kept on this phone. */
+    private val tracks: site.wingspot.core.FlightTrackFiles? = null,
 ) : ViewModel() {
     private val mutable = MutableStateFlow(CheckInState(session = loadSession()?.takeIf { it.isActive(Instant.now()) }))
     val state: StateFlow<CheckInState> = mutable.asStateFlow()
@@ -146,7 +148,7 @@ class CheckInViewModel(
     fun saveFlight(
         origin: Airport, destination: Airport, flightNumber: String, registration: Registration?, type: AircraftType?,
         cabin: CabinClass?, seat: String, photo: PreparedPhoto?, at: Instant = Instant.now(), tagged: List<UUID> = emptyList(),
-        returnTo: ReturnStart? = null,
+        returnTo: ReturnStart? = null, track: List<site.wingspot.core.GeoCoordinate> = emptyList(),
     ) = run(photo, onSaved = { it.copy(afterFlight = returnTo) }) {
         val result = store.saveFlown(
             FlownDraft(
@@ -155,7 +157,9 @@ class CheckInViewModel(
             ),
             at,
         )
-        result.id to SavedResult(Kind.FLOWN, result.route, result.timesOnRoute, null)
+        // The route of an imported flight stays on this phone and is never uploaded.
+        val keepTrack = track.size >= 2 && runCatching { tracks?.save(track, result.id) }.isSuccess && tracks != null
+        result.id to SavedResult(Kind.FLOWN, result.route, result.timesOnRoute, null, trackPositions = if (keepTrack) track.size else 0)
     }
 
     private fun run(photo: PreparedPhoto?, onSaved: (CheckInState) -> CheckInState = { it }, save: suspend () -> Pair<UUID, SavedResult>) {
@@ -263,6 +267,7 @@ class CheckInViewModel(
                 CheckInViewModel(
                     app.checkIns, app.outbox, { OutboxWorker.schedule(app) },
                     { SpotSession.decode(app.prefs.spotSession) }, { app.prefs.spotSession = it?.encode() },
+                    tracks = app.tracks,
                 )
             }
         }

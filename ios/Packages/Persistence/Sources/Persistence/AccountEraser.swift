@@ -6,14 +6,17 @@ import SwiftData
 @MainActor
 public struct AccountEraser {
     private let context: ModelContext
+    private let tracks: FlightTrackFiles
 
-    public init(context: ModelContext) {
+    public init(context: ModelContext, tracks: FlightTrackFiles = .standard) {
         self.context = context
+        self.tracks = tracks
     }
 
     public func erase(userID: UUID) throws {
         let checkIns = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.ownerID == userID }))
         let ids = Set(checkIns.map(\.id))
+        tracks.delete(ids: ids)
         if !ids.isEmpty {
             // Pictures wait here for their upload and aren't linked to the check-in by a relationship.
             for photo in try context.fetch(FetchDescriptor<LocalPhoto>()) where ids.contains(photo.checkInID) {

@@ -352,6 +352,16 @@
         }
       }
     },
+    "A KML file of a flight is read on this iPhone. The file and its route are never uploaded." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine KML-Datei eines Flugs wird auf diesem iPhone gelesen. Die Datei und ihre Strecke werden nie hochgeladen."
+          }
+        }
+      }
+    },
     "A boarding pass has the day but not the year, so Wingspot used %@. If the flight was in an earlier year, change the date." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1213,6 +1223,16 @@
         }
       }
     },
+    "Choose a KML file of one flight." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle eine KML-Datei eines Flugs."
+          }
+        }
+      }
+    },
     "Choose photo" : {
       "localizations" : {
         "de" : {
@@ -1578,6 +1598,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Profil konnte nicht geladen werden"
+          }
+        }
+      }
+    },
+    "Couldn't read the file" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Datei konnte nicht gelesen werden"
           }
         }
       }
@@ -2093,6 +2123,26 @@
         }
       }
     },
+    "Files above 50 MB are not read." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dateien über 50 MB werden nicht gelesen."
+          }
+        }
+      }
+    },
+    "Filled in from the file: %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aus der Datei übernommen: %@."
+          }
+        }
+      }
+    },
     "Fills in the route, date, flight number and seat. Your name and booking code are never read or saved." : {
       "localizations" : {
         "de" : {
@@ -2525,6 +2575,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ich war in %@ (Wingspot)."
+          }
+        }
+      }
+    },
+    "Import a KML file" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "KML-Datei importieren"
+          }
+        }
+      }
+    },
+    "Imported flight" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importierter Flug"
           }
         }
       }
@@ -3215,6 +3285,16 @@
         }
       }
     },
+    "Not found in the file: %@. Please add them by hand." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In der Datei nicht gefunden: %@. Bitte trag sie von Hand ein."
+          }
+        }
+      }
+    },
     "Not now" : {
       "localizations" : {
         "de" : {
@@ -3576,6 +3656,16 @@
         }
       }
     },
+    "Please check everything before you save." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte prüfe alles, bevor du speicherst."
+          }
+        }
+      }
+    },
     "Please check your connection and try again." : {
       "localizations" : {
         "de" : {
@@ -3592,6 +3682,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bitte gib eine gültige E-Mail-Adresse ein."
+          }
+        }
+      }
+    },
+    "Please try again, or choose another file." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versuch es noch einmal oder wähle eine andere Datei."
           }
         }
       }
@@ -3969,6 +4069,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Orte prüfen"
+          }
+        }
+      }
+    },
+    "Route found: %lld positions, %@ flown, %@ (%@) more than the direct way. The route stays on this iPhone." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Route found: %1$lld positions, %2$@ flown, %3$@ (%4$@) more than the direct way. The route stays on this iPhone."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strecke gefunden: %lld Positionen, %@ geflogen, %@ (%@) mehr als der direkte Weg. Die Strecke bleibt auf diesem iPhone."
+          }
+        }
+      }
+    },
+    "Route found: %lld positions, %@ flown. The route stays on this iPhone." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Route found: %1$lld positions, %2$@ flown. The route stays on this iPhone."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strecke gefunden: %lld Positionen, %@ geflogen. Die Strecke bleibt auf diesem iPhone."
           }
         }
       }
@@ -4683,6 +4815,26 @@
         }
       }
     },
+    "The file is too large" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Datei ist zu groß"
+          }
+        }
+      }
+    },
+    "The flown route (%lld positions) is saved on this iPhone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die geflogene Strecke (%lld Positionen) ist auf diesem iPhone gespeichert."
+          }
+        }
+      }
+    },
     "The friends you choose will see this check-in. Up to %lld." : {
       "localizations" : {
         "de" : {
@@ -4779,6 +4931,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hier steckt keine Position drin. Öffne den Ort in der Karten-App und kopiere den vollständigen Link oder die Koordinaten."
+          }
+        }
+      }
+    },
+    "This is not a KML file" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das ist keine KML-Datei"
           }
         }
       }
@@ -5271,6 +5433,16 @@
         }
       }
     },
+    "You already have a flight %@ on this day. Save it only if it is another flight." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast an diesem Tag schon einen Flug %@. Speichere ihn nur, wenn es ein anderer Flug ist."
+          }
+        }
+      }
+    },
     "You already have ten places waiting for approval. Please wait until some are approved." : {
       "localizations" : {
         "de" : {
@@ -5561,6 +5733,56 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yours"
+          }
+        }
+      }
+    },
+    "aircraft type" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flugzeugtyp"
+          }
+        }
+      }
+    },
+    "date" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datum"
+          }
+        }
+      }
+    },
+    "flight number" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flugnummer"
+          }
+        }
+      }
+    },
+    "registration" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kennzeichen"
+          }
+        }
+      }
+    },
+    "route" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strecke"
           }
         }
       }

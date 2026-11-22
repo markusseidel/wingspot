@@ -48,6 +48,11 @@ import site.wingspot.core.AircraftType
 import site.wingspot.core.BoardingPass
 import site.wingspot.core.Airport
 import site.wingspot.core.CabinClass
+import site.wingspot.core.FlightTrack
+import site.wingspot.core.GeoCoordinate
+import site.wingspot.core.GreatCircle
+import site.wingspot.core.KmlFlight
+import site.wingspot.core.departureDay
 import site.wingspot.core.LocalCheckIn
 import site.wingspot.core.RecentTypes
 import site.wingspot.core.Registration
@@ -169,10 +174,20 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
     var choices by remember { mutableStateOf(emptyList<BoardingPass.Leg>()) }
     var problem by remember { mutableStateOf<Int?>(null) }
     var missing by remember { mutableStateOf("") }
+    // A KML file of a flight: what it filled in, which fields it did not have, and the route, which stays on this phone.
+    var importing by remember { mutableStateOf(false) }
+    var importedTrack by remember(start) { mutableStateOf(emptyList<GeoCoordinate>()) }
+    var notice by remember(start) { mutableStateOf<Pair<List<Int>, List<Int>>?>(null) }
+    var kmlProblem by remember { mutableStateOf<KmlRead.Problem?>(null) }
+    val unit = (context.applicationContext as WingspotApp).prefs.unit
     val registration = Registration.parse(input)
     val sameAirport = origin != null && origin?.id == destination?.id
     val canSave = origin != null && destination != null && !sameAirport && (input.isBlank() || registration != null)
     val day = LocalDate.parse(date)
+    val normalizedNumber = flightNumber.filterNot { it.isWhitespace() }.uppercase()
+    val duplicate = normalizedNumber.isNotEmpty() && state.all.any {
+        it.kind == "flown" && it.flightNumber == normalizedNumber && it.occurredAt.atZone(ZoneId.systemDefault()).toLocalDate() == day
+    }
 
     /** Fills the form from one flight on the pass. The cabin stays as it is, because the booking class letter means different things at different airlines. */
     fun apply(leg: BoardingPass.Leg) {
@@ -196,6 +211,26 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
         if (pass.legs.size == 1) apply(pass.legs.first()) else choices = pass.legs
     }
 
+    /** Fills the form from a KML file. A field the file doesn't have stays as it is, and the notice says which. */
+    fun applyImport(flight: KmlFlight) {
+        scope.launch {
+            val found = mutableListOf<Int>()
+            val db = reference.database
+            if (db != null) {
+                val from = flight.origin?.iata?.let { db.airport(it) }
+                val to = flight.destination?.iata?.let { db.airport(it) }
+                if (from != null && to != null && from.id != to.id) { origin = from; destination = to; found += R.string.field_route }
+                flight.aircraftTypeCode?.let { db.aircraftType(it) }?.let { type = it; found += R.string.field_type }
+            }
+            flight.departureDay()?.let { date = it.toString(); found += R.string.field_date }
+            flight.flightNumber?.let { flightNumber = it; found += R.string.field_flight_number }
+            flight.registration?.takeIf { Registration.parse(it) != null }?.let { input = it; found += R.string.field_registration }
+            importedTrack = if (flight.track.size >= 2) flight.track else emptyList()
+            val all = listOf(R.string.field_route, R.string.field_date, R.string.field_flight_number, R.string.field_registration, R.string.field_type)
+            notice = found to all.filterNot { it in found }
+        }
+    }
+
     if (scanning) {
         BoardingPassScanner(onPass = { scanning = false; handle(it) }, onClose = { scanning = false })
         return
@@ -209,13 +244,53 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
         }
     }
 
+    val importPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) scope.launch {
+            importing = true
+            when (val read = KmlImport.read(context, uri)) {
+                is KmlRead.Problem -> kmlProblem = read
+                is KmlRead.Done -> applyImport(read.flight)
+            }
+            importing = false
+        }
+    }
+
     Text(stringResource(R.string.flown_title), style = MaterialTheme.typography.titleLarge)
     OutlinedButton(onClick = { scanning = true }, modifier = Modifier.fillMaxWidth().testTag("scan-pass")) { Text(stringResource(R.string.scan_boarding_pass)) }
     OutlinedButton(
         onClick = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }, enabled = !reading,
         modifier = Modifier.fillMaxWidth(),
     ) { Text(stringResource(if (reading) R.string.reading else R.string.read_from_picture)) }
+    OutlinedButton(
+        onClick = { importPicker.launch(arrayOf("*/*")) }, enabled = !importing,
+        modifier = Modifier.fillMaxWidth().testTag("import-kml"),
+    ) { Text(stringResource(if (importing) R.string.reading else R.string.import_kml)) }
     Text(stringResource(R.string.scan_footer), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text(stringResource(R.string.import_footer), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    notice?.let { (found, missing) ->
+        HorizontalDivider()
+        Text(stringResource(R.string.imported_title), style = MaterialTheme.typography.titleMedium)
+        if (found.isNotEmpty()) Text(stringResource(R.string.imported_found, found.map { stringResource(it) }.joinToString(", ")), modifier = Modifier.testTag("import-found"))
+        if (missing.isNotEmpty()) Text(stringResource(R.string.imported_missing, missing.map { stringResource(it) }.joinToString(", ")))
+        if (importedTrack.size >= 2) {
+            val flown = FlightTrack.lengthKm(importedTrack)
+            val direct = if (origin != null && destination != null && !sameAirport) {
+                GreatCircle.distanceKm(site.wingspot.core.GeoCoordinate(origin!!.latitude, origin!!.longitude), site.wingspot.core.GeoCoordinate(destination!!.latitude, destination!!.longitude))
+            } else null
+            val detour = direct?.let { FlightTrack.detour(flown, it) }
+            Text(
+                if (detour != null && detour.extraKm >= 1) {
+                    stringResource(R.string.track_summary_detour, importedTrack.size, unit.format(Math.round(flown).toInt()), unit.format(Math.round(detour.extraKm).toInt()), Math.round(detour.percent).toInt())
+                } else {
+                    stringResource(R.string.track_summary, importedTrack.size, unit.format(Math.round(flown).toInt()))
+                },
+                modifier = Modifier.testTag("import-track"),
+            )
+        }
+        if (duplicate) Text(stringResource(R.string.imported_duplicate, normalizedNumber), color = MaterialTheme.colorScheme.error, modifier = Modifier.testTag("import-duplicate"))
+        Text(stringResource(R.string.imported_check), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        HorizontalDivider()
+    }
     AirportPicker(stringResource(R.string.from_label), reference, origin) { origin = it }
     AirportPicker(stringResource(R.string.to_label), reference, destination) { destination = it }
     if (sameAirport) Text(stringResource(R.string.same_airport), color = MaterialTheme.colorScheme.error)
@@ -236,7 +311,7 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
             val at = if (day == LocalDate.now()) java.time.Instant.now() else day.atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant()
             model.saveFlight(
                 origin!!, destination!!, flightNumber, registration, type, cabin, seat, photo, at, tags.all(),
-                returnTo = ReturnStart(destination!!, origin!!, day, cabin, tags.chosen),
+                returnTo = ReturnStart(destination!!, origin!!, day, cabin, tags.chosen), track = importedTrack,
             )
         },
         onCancel = model::close,
@@ -256,6 +331,14 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
             },
             confirmButton = {},
             dismissButton = { TextButton(onClick = { choices = emptyList() }) { Text(stringResource(R.string.cancel)) } },
+        )
+    }
+    kmlProblem?.let { read ->
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { kmlProblem = null },
+            title = { Text(stringResource(read.title)) },
+            text = { Text(stringResource(read.message)) },
+            confirmButton = { TextButton(onClick = { kmlProblem = null }) { Text(stringResource(R.string.ok)) } },
         )
     }
     problem?.let { res ->
@@ -560,10 +643,15 @@ private fun ResultView(result: SavedResult, onReturn: (() -> Unit)?, onAnother: 
                 stringResource(if (result.count <= 1) R.string.airport_first else R.string.airport_again, result.count),
                 style = MaterialTheme.typography.titleLarge,
             )
-            Kind.FLOWN -> Text(
-                stringResource(if (result.count <= 1) R.string.route_first else R.string.route_again, result.count),
-                style = MaterialTheme.typography.titleLarge,
-            )
+            Kind.FLOWN -> {
+                Text(
+                    stringResource(if (result.count <= 1) R.string.route_first else R.string.route_again, result.count),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                if (result.trackPositions > 0) {
+                    Text(stringResource(R.string.track_saved, result.trackPositions), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
         }
         if (onReturn != null && result.kind == Kind.FLOWN) {
             Button(onClick = onReturn, modifier = Modifier.fillMaxWidth().testTag("return-flight")) { Text(stringResource(R.string.return_flight)) }
