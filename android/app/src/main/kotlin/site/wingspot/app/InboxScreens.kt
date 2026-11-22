@@ -57,6 +57,7 @@ fun InboxPage(model: SocialViewModel) {
                         model.markInboxRowRead(row)
                         when {
                             row.kind == "follow" -> model.openPerson(row.actorId)
+                            row.kind == "spot_proposed" -> model.open(Route.ReviewSpots)
                             row.checkInId != null -> model.stack.add(Route.CheckInPage(row.checkInId!!))
                         }
                     })
@@ -70,7 +71,7 @@ fun InboxPage(model: SocialViewModel) {
 
 @Composable
 private fun InboxRow(row: SocialApi.ActivityItem, onClick: () -> Unit) {
-    val tappable = row.kind == "follow" || row.checkInId != null
+    val tappable = row.kind == "follow" || row.kind == "spot_proposed" || row.checkInId != null
     val unreadTint = if (row.isRead) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
     Row(
         Modifier.fillMaxWidth().background(unreadTint).then(if (tappable) Modifier.clickable(onClick = onClick) else Modifier).padding(vertical = 10.dp, horizontal = 4.dp),
@@ -97,6 +98,7 @@ private fun sentence(row: SocialApi.ActivityItem): AnnotatedString {
     val name = if (spotKind) row.snippet.orEmpty().lineSequence().first() else row.who
     val subject = row.subject
     val text = when (row.kind) {
+        "spot_proposed" -> stringResource(R.string.activity_spot_proposed, name, row.snippet.orEmpty().lineSequence().first())
         "spot_approved" -> stringResource(R.string.activity_spot_approved, name)
         "spot_rejected" -> stringResource(R.string.activity_spot_rejected, name)
         "follow" -> stringResource(R.string.activity_follow, name)

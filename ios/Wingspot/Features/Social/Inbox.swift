@@ -88,6 +88,7 @@ struct InboxView: View {
     /// What was tapped opens from this screen, so Back comes back here and not to the feed.
     @State private var openedCheckIn: FeedItem?
     @State private var openedPerson: OpenedPerson?
+    @State private var showPlaceReview = false
 
     private struct OpenedPerson: Identifiable, Hashable { let id: UUID }
 
@@ -134,12 +135,14 @@ struct InboxView: View {
         }
         .navigationDestination(item: $openedCheckIn) { CheckInDetailView(item: $0) }
         .navigationDestination(item: $openedPerson) { PersonLoaderView(id: $0.id) }
+        .navigationDestination(isPresented: $showPlaceReview) { SpotReviewView() }
         .task { await inbox.load() }
         .refreshable { await inbox.load() }
     }
 
     private func destination(of item: ActivityItem) -> PushDestination? {
         if item.kind == "follow" { return .person(item.actorID) }
+        if item.kind == "spot_proposed" { return .reviewPlaces }
         if let id = item.checkInID { return .checkIn(id) }
         return nil
     }
@@ -158,6 +161,8 @@ struct InboxView: View {
                     openedCheckIn = await feed.checkIn(id)
                 }
             }
+        case .reviewPlaces:
+            showPlaceReview = true
         case nil:
             break
         }
@@ -219,6 +224,9 @@ private struct InboxRow: View {
             return bold(String(localized: "\(name) mentioned you in a comment"), name)
         case "comment_like":
             return bold(String(localized: "\(name) saluted your comment"), name)
+        case "spot_proposed":
+            let place = place
+            return bold(String(localized: "\(name) suggested a place: \(place)"), name)
         case "spot_approved":
             let place = place
             return bold(String(localized: "Your place \(place) is now live"), place)

@@ -13,7 +13,7 @@ export interface PushDevice {
 /** One row from `claim_notifications`. */
 export interface PushRow {
   id: string;
-  kind: "follow" | "salute" | "comment" | "checkin" | "tagged" | "mention" | "comment_like" | "tag_copy" | "spot_approved" | "spot_rejected";
+  kind: "follow" | "salute" | "comment" | "checkin" | "tagged" | "mention" | "comment_like" | "tag_copy" | "spot_approved" | "spot_rejected" | "spot_proposed";
   actor_id: string;
   actor_username: string;
   actor_name: string | null;
@@ -79,6 +79,11 @@ export function render(row: PushRow, locale: string | null): Rendered {
       const what = row.subject ?? "";
       if (what) return { title: name, body: german ? `hat deinen Flug ${what} zu seinem Logbuch hinzugefügt.` : `added your flight ${what} to their logbook.` };
       return { title: name, body: german ? "hat deinen Check-in zu seinem Logbuch hinzugefügt." : "added your check-in to their logbook." };
+    }
+    case "spot_proposed": {
+      // Sent to the people who review places. The snippet is the name of the place; the tap opens the review list.
+      const place = (row.snippet ?? "").split("\n")[0].trim();
+      return { title: place || "Wingspot", body: german ? `${name} hat diesen Ort vorgeschlagen. Zum Prüfen tippen.` : `${name} suggested this place. Tap to review.` };
     }
     case "spot_approved": {
       const place = (row.snippet ?? "").split("\n")[0].trim();

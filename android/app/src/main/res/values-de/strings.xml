@@ -519,6 +519,7 @@
     <string name="review_suggested_by">Vorgeschlagen von %1$s</string>
     <string name="review_failed">Die Entscheidung konnte nicht gespeichert werden. Versuch es noch einmal.</string>
     <string name="review_taken">Jemand anderes hat über diesen Ort schon entschieden.</string>
+    <string name="activity_spot_proposed">%1$s hat einen Ort vorgeschlagen: %2$s</string>
     <string name="activity_spot_approved">Dein Ort %1$s ist jetzt freigegeben</string>
     <string name="activity_spot_rejected">Dein Ort %1$s wurde nicht übernommen</string>
 </resources>

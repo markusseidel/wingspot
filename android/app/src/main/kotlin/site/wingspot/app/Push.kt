@@ -73,6 +73,8 @@ object Push {
         val type = extras["type"] ?: return null
         return when (type) {
             "follow" -> extras["actor"]?.takeIf { it.isNotBlank() }?.let { "person" to it }
+            // A place was suggested: the list of places that wait for review.
+            "spot_proposed" -> "review" to "places"
             else -> extras["checkin"]?.takeIf { it.isNotBlank() }?.let { "checkin" to it }
         }
     }
