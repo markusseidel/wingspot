@@ -84,6 +84,9 @@
     <string name="edit_flight">Flug bearbeiten</string>
     <string name="edit_visit">Besuch bearbeiten</string>
     <string name="edit_sighting">Sichtung bearbeiten</string>
+    <string name="flown_distance_label">Geflogene Strecke</string>
+    <string name="detour_label">Mehr als der direkte Weg</string>
+    <string name="route_note">Aus deiner Flightradar24-Datei. Die Strecke bleibt auf diesem Handy.</string>
     <string name="more">Mehr</string>
     <string name="edit_details">Details bearbeiten</string>
     <string name="delete">Löschen</string>
