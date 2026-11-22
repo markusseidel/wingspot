@@ -151,8 +151,39 @@ Production steps (migration push, function deploy, store builds) happen only on 
 
 1. **Which distance counts for badges, the leaderboard and the stats card?** (a) keep the airport-to-airport figure for those and show the real figure next to it (recommended, nothing changes retroactively); (b) switch to the real figure where a track exists (more honest, but badge levels and rankings move, and importing a file becomes a way to gain km); (c) a setting.
 2. **Is KML import a Pro feature?** It fits the extended-stats idea of a Pro depth ([EXTENDED-STATS.md](EXTENDED-STATS.md)). Recommendation: free for the flight and the map, Pro only for the "real distance" statistics, if billing exists by then.
-3. **Is using FR24 files allowed?** We read a file the user supplies and never contact FR24, but the terms for storing and showing track data derived from FR24 need checking, in the same way as the aircraft type list licensing. Until then the feature stays in beta groups. This is the one item that could stop the project.
+3. **Is using FR24 files allowed?** Not settled, see "FR24 terms of service" below. Until FR24 answers, the feature stays in beta groups and the plan's step 3 builds only the private, on-device path first. This is the one item that could stop the project.
 4. **Privacy text.** A stored track says exactly when and where an aircraft flew with the user aboard. The privacy draft needs a line, and raw tracks stay owner-only (above).
+
+## FR24 terms of service (read 22 November 2026)
+
+Source: the [Terms of Service](https://www.flightradar24.com/terms-of-service), last updated 23 June 2026 (Flightradar24 AB, Sweden, Swedish law). This is a reading of the text, not legal advice. The terms do not mention KML files or third-party apps, so only FR24 can answer the open points. The page about the KML export tools could not be read, so who may export (Premium tiers) is from a search result and still to be confirmed.
+
+| Clause | What it says | What it means here |
+|---|---|---|
+| 2.1 | The right to use is non-transferable and for personal, non-commercial use | The user's own use of their own file is the safe core |
+| 5.3.1 | Commercial use, and any "public display (commercial or non-commercial)", needs the Business subscription | Showing a track to others in a product with a planned Pro tier may count |
+| 2.3, 10.3 | Only human-operated browser or app; no robots, no scraping | No problem: Wingspot never contacts FR24, the user downloads the file |
+| 8.2 | Published material that uses the content must credit Flightradar24 | A credit line would be needed wherever a derived line or distance is shown |
+| 8.3, 10.2 | Do not let others access or reproduce information for unpermitted uses; no transfer or sublicensing of content to third parties | Uploading the raw track to our server, and showing it to friends, are the unclear parts |
+| 2.5 | If the right to use ends, downloaded information must be destroyed | Another reason to keep the raw track deletable with the flight |
+| 6.3.1 | The API allows commercial use but forbids persistent local copies and redistribution of raw data | The API is not a way to store tracks, so it is no alternative |
+
+### Three levels, from safest to riskiest
+
+1. **Private, on the device only.** The file is read on the phone, the track and distance stay in the app on that phone, nothing is uploaded or shown to anyone. Closest to "personal use".
+2. **Private, stored in the user's account.** The track is uploaded to our server so it follows the user to other devices, owner-only (as in this plan). A transfer to a third party (us) is involved, which 2.1 and 10.2 do not clearly allow.
+3. **Shared with friends.** The simplified line or the real distance shows in the feed or on a friend's view. This is where "public display" in 5.3.1 and clause 8.3 are most likely to apply.
+
+### Effect on the steps
+
+- Build the parser and the on-device import (PR 2, and the on-device part of PR 3) first. They are level 1 and do not depend on FR24's answer.
+- Design PR 1 (server storage) so that levels 2 and 3 are switches: the table exists, but the upload and the sharing are turned on only after FR24 has answered. For level 3 the track's visibility is forced to "private" until then, even if the flight is public.
+- Nothing from FR24 is shown to other users in the first release. The flown distance of an imported flight is shown only to its owner. This also settles decision 1 (the badges and leaderboard stay on the airport-to-airport figure).
+- Whatever is shown gets a credit to Flightradar24 (8.2).
+
+### Next step
+
+A question to FR24 has been drafted (not sent). It asks the three levels as separate questions, asks whether a licence is needed, and how to credit. FR24 publishes no email address for this on its own pages: the official routes are the help center at support.fr24.com and the business inquiry form on the data-for-business page. `business@fr24.com` appears only in a LinkedIn post by their sales staff and must be verified before use.
 
 ## Open questions (for vogtim)
 
