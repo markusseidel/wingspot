@@ -351,7 +351,16 @@ fun KindAndTitle(item: FeedItem, model: SocialViewModel? = null) {
 @Composable
 private fun SaluteButton(item: FeedItem, onSalute: () -> Unit) {
     val label = stringResource(R.string.salute_count, item.salutes)
-    if (item.saluted) FilledTonalButton(onClick = onSalute) { Text(label) } else OutlinedButton(onClick = onSalute) { Text(label) }
+    // The hand with the count, as on iOS; filled once you saluted.
+    val content: @Composable () -> Unit = {
+        Icon(
+            painterResource(if (item.saluted) R.drawable.ic_glyph_salute_filled else R.drawable.ic_glyph_salute),
+            contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp),
+        )
+        Text(item.salutes.toString(), Modifier.padding(start = 8.dp), color = MaterialTheme.colorScheme.primary)
+    }
+    val modifier = Modifier.testTag("salute-page").semantics { contentDescription = label }
+    if (item.saluted) FilledTonalButton(onClick = onSalute, modifier = modifier) { content() } else OutlinedButton(onClick = onSalute, modifier = modifier) { content() }
 }
 
 /** One check-in on its own page: who, when and what, the photos, salute, and the comments with a field to write a new one. */
@@ -585,6 +594,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                                 if (comment.userId != me) TextButton(onClick = {
                                     text = CommentText.replying(comment.profiles?.username ?: "", text)
                                 }, modifier = Modifier.testTag("reply")) { Text(stringResource(R.string.reply)) }
+                                val saluteLabel = stringResource(if (extra?.saluted == true) R.string.salute_comment_on else R.string.salute_comment) + (extra?.salutes?.takeIf { it > 0 }?.let { " $it" } ?: "")
                                 TextButton(onClick = {
                                     val before = extra ?: SocialApi.CommentExtra(comment.id)
                                     val now = !before.saluted
@@ -592,8 +602,15 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                                     scope.launch {
                                         try { app.social.setCommentSalute(comment.id, now) } catch (e: ApiException) { extras = extras + (comment.id to before) }
                                     }
-                                }, modifier = Modifier.testTag("salute-comment")) {
-                                    Text(stringResource(if (extra?.saluted == true) R.string.salute_comment_on else R.string.salute_comment) + (extra?.salutes?.takeIf { it > 0 }?.let { " $it" } ?: ""))
+                                }, modifier = Modifier.testTag("salute-comment").semantics {
+                                    contentDescription = saluteLabel
+                                }) {
+                                    // The hand with the count, as on iOS; filled once you saluted.
+                                    Icon(
+                                        painterResource(if (extra?.saluted == true) R.drawable.ic_glyph_salute_filled else R.drawable.ic_glyph_salute),
+                                        contentDescription = null, modifier = Modifier.size(18.dp),
+                                    )
+                                    extra?.salutes?.takeIf { it > 0 }?.let { Text(it.toString(), Modifier.padding(start = 6.dp)) }
                                 }
                             }
                         }
