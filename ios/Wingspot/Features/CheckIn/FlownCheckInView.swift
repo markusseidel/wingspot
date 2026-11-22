@@ -76,6 +76,8 @@ struct FlownCheckInView: View {
     @State private var showFileImporter = false
     @State private var isImportingFile = false
     @State private var importProblem: KmlImportProblem?
+    /// False when the server switched the KML import off. On until the server says otherwise.
+    @AppStorage(KmlSwitches.importKey) private var kmlImportOn = true
     @State private var importNotice: ImportNotice?
     /// The positions of an imported flight. They are kept on this iPhone only and never uploaded.
     @State private var importedTrack: [GeoCoordinate] = []
@@ -160,15 +162,19 @@ struct FlownCheckInView: View {
                     Label { Text(pickerTitle) } icon: { Image(systemName: "photo") }
                 }
                 .disabled(isReadingImage)
-                let importTitle: LocalizedStringResource = isImportingFile ? "Reading…" : "Import a KML file"
-                Button { showFileImporter = true } label: {
-                    Label { Text(importTitle) } icon: { Image(systemName: "doc.badge.arrow.up") }
+                if kmlImportOn {
+                    let importTitle: LocalizedStringResource = isImportingFile ? "Reading…" : "Import a KML file"
+                    Button { showFileImporter = true } label: {
+                        Label { Text(importTitle) } icon: { Image(systemName: "doc.badge.arrow.up") }
+                    }
+                    .disabled(isImportingFile)
                 }
-                .disabled(isImportingFile)
             } footer: {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Fills in the route, date, flight number and seat. Your name and booking code are never read or saved.")
-                    Text("A KML file of a flight is read on this iPhone. The file and its route are never uploaded.")
+                    if kmlImportOn {
+                        Text("A KML file of a flight is read on this iPhone. The file and its route are never uploaded.")
+                    }
                 }
             }
 

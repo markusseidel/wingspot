@@ -36,6 +36,17 @@ class WingspotApp : Application() {
     val api by lazy {
         ApiClient(BuildConfig.SUPABASE_URL + "/functions", restUrl = BuildConfig.SUPABASE_URL + "/rest/v1", apiKey = BuildConfig.PUBLISHABLE_KEY)
     }
+    /**
+     * Reads the KML switches from the server (docs/KML-IMPORT-PLAN.md). The last answer is kept, so nothing changes
+     * when the server can't be reached. Turning the routes off deletes the ones saved on this phone.
+     */
+    suspend fun refreshKmlSwitches() {
+        val flags = try { api.featureFlags() } catch (e: ApiException) { return }
+        val kml = site.wingspot.core.KmlSwitches.from(flags)
+        prefs.rememberKmlImport(kml.importOn)
+        if (!kml.keepRoutes) tracks.deleteAll()
+    }
+
     val outbox by lazy { Outbox(checkIns, api, ::accessToken).also { it.userId = { sessions.load()?.user?.id } } }
 
     /** Emits when check-ins or photos went up, so the Feed and the lists can refresh by themselves. */

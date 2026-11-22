@@ -246,3 +246,17 @@ private func photoClient(status: Int, body: String = "") -> APIClient {
         await #expect(throws: APIError.unexpectedStatus(status)) { _ = try await outcome(status) }
     }
 }
+
+@Test func kmlSwitchesAreOnWhenTheServerSaysNothing() {
+    let none = KmlSwitches(flags: [:])
+    #expect(none.importOn && none.keepRoutes)
+    let other = KmlSwitches(flags: ["feed": false])
+    #expect(other.importOn && other.keepRoutes)
+}
+
+@Test func kmlSwitchesFollowTheServer() {
+    let off = KmlSwitches(flags: ["kml_import": false, "kml_tracks_keep": false])
+    #expect(!off.importOn && !off.keepRoutes)
+    let importOnly = KmlSwitches(flags: ["kml_import": false])
+    #expect(!importOnly.importOn && importOnly.keepRoutes)
+}

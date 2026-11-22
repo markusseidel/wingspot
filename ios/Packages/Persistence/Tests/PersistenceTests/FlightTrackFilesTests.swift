@@ -73,3 +73,12 @@ private let sample = [
     #expect(files.load(id: second.id) == nil, "the erased account's track is gone")
     #expect(files.load(id: third.id) == sample, "another account's track stays")
 }
+
+@Test func deleteAllRemovesEveryRoute() throws {
+    let files = temporaryFiles(), a = UUID(), b = UUID()
+    try files.save(sample, for: a)
+    try files.save(sample, for: b)
+    files.deleteAll()
+    #expect(!files.has(id: a) && !files.has(id: b))
+    files.deleteAll() // nothing left, and no folder problem
+}

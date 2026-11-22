@@ -215,6 +215,11 @@ struct WingspotApp: App {
         do {
             let config = try await client.config()
             logger.info("Remote config loaded, minimum iOS version \(config.minimumVersion.ios, privacy: .public)")
+            // The KML import can be switched off from the server (docs/KML-IMPORT-PLAN.md). The last answer is
+            // kept, so the button stays hidden when the config can't be read.
+            let kml = KmlSwitches(flags: config.featureFlags)
+            UserDefaults.standard.set(kml.importOn, forKey: KmlSwitches.importKey)
+            if !kml.keepRoutes { FlightTrackFiles.standard.deleteAll() }
         } catch {
             logger.error("Remote config failed: \(String(describing: error), privacy: .public)")
         }

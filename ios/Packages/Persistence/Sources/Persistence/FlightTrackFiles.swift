@@ -56,6 +56,14 @@ public struct FlightTrackFiles: Sendable {
 
     public func has(id: UUID) -> Bool { FileManager.default.fileExists(atPath: url(id).path) }
 
+    /// Removes every saved route. Flights themselves are not touched.
+    public func deleteAll() {
+        let names = (try? FileManager.default.contentsOfDirectory(atPath: directory.path)) ?? []
+        for name in names where name.hasSuffix(".trk") || name.hasSuffix(".tmp") {
+            try? FileManager.default.removeItem(at: directory.appending(path: name, directoryHint: .notDirectory))
+        }
+    }
+
     public func delete(id: UUID) {
         try? FileManager.default.removeItem(at: url(id))
     }

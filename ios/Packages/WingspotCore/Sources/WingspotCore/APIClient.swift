@@ -17,6 +17,20 @@ public struct RemoteConfig: Decodable, Equatable, Sendable {
     }
 }
 
+/// The KML import switches in `feature_flags`. Unlike other flags, a missing one counts as **on**, so a server
+/// that does not list them leaves the import as it is. See docs/KML-IMPORT-PLAN.md.
+public struct KmlSwitches: Equatable, Sendable {
+    /// Where the apps remember the last answer (UserDefaults).
+    public static let importKey = "kmlImportOn"
+    public let importOn: Bool
+    public let keepRoutes: Bool
+
+    public init(flags: [String: Bool]) {
+        importOn = flags["kml_import"] ?? true
+        keepRoutes = flags["kml_tracks_keep"] ?? true
+    }
+}
+
 /// The `RefdataManifest` schema in contracts/openapi.yaml.
 public struct RefdataManifest: Decodable, Equatable, Sendable {
     public let schemaVersion: Int
