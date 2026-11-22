@@ -115,8 +115,7 @@ struct InboxView: View {
                     ForEach(inbox.items) { item in
                         Button { open(item) } label: { InboxRow(item: item) }
                             .buttonStyle(.plain)
-                            .disabled(destination(of: item) == nil)
-                            .listRowBackground(item.isRead ? nil : Color.accentColor.opacity(0.08))
+                            .listRowBackground(item.isRead ? nil : Color.accentColor.opacity(0.2))
                             .onAppear {
                                 if item.id == inbox.items.last?.id { Task { await inbox.loadMore() } }
                             }
@@ -174,6 +173,12 @@ private struct InboxRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
+            // A dot for what is unread: a tint alone is hard to see in dark mode.
+            Circle()
+                .fill(item.isRead ? Color.clear : Color.accentColor)
+                .frame(width: 8, height: 8)
+                .padding(.top, 16)
+                .accessibilityHidden(true)
             AvatarView(id: item.actorID, name: item.who, size: 40)
             VStack(alignment: .leading, spacing: 2) {
                 Text(text)
