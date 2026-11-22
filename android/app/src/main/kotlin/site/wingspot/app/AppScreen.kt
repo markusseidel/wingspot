@@ -4,6 +4,8 @@ import kotlinx.coroutines.launch
 
 import androidx.compose.material3.IconButton
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Column
@@ -60,7 +62,19 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
     val page = social.stack.lastOrNull()
     // Badges follow the signed-in person and are refreshed when check-ins reach the server.
     val synced = checkInState.recent.count { it.syncState == site.wingspot.core.SyncState.SYNCED }
-    LaunchedEffect(me) { badges.begin(me); if (me != null) Push.register(app) }
+    // On Android 13 and newer notifications need the person's yes. Asked once after signing in, so pushes can arrive
+    // without a trip into the settings; Push.register runs when it is given.
+    val askForNotifications = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted -> if (granted) Push.register(app) }
+    LaunchedEffect(me) {
+        badges.begin(me)
+        if (me != null) {
+            Push.register(app)
+            if (Push.isAvailable(app) && !Push.isAllowed(app) && !app.prefs.askedForNotifications) {
+                app.prefs.askedForNotifications = true
+                askForNotifications.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
     // Also when it goes down: deleting a check-in can take a badge back.
     LaunchedEffect(synced) { if (me != null) badges.refresh() }
     // After a check-in, a flight or an edit went up, the lists show it without a pull to refresh.
