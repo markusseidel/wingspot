@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -71,12 +73,13 @@ fun InboxPage(model: SocialViewModel) {
 
 @Composable
 private fun InboxRow(row: SocialApi.ActivityItem, onClick: () -> Unit) {
-    val tappable = row.kind == "follow" || row.kind == "spot_proposed" || row.checkInId != null
-    val unreadTint = if (row.isRead) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
+    val unreadTint = if (row.isRead) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
     Row(
-        Modifier.fillMaxWidth().background(unreadTint).then(if (tappable) Modifier.clickable(onClick = onClick) else Modifier).padding(vertical = 10.dp, horizontal = 4.dp),
+        Modifier.fillMaxWidth().background(unreadTint).clickable(onClick = onClick).padding(vertical = 10.dp, horizontal = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        // A dot for what is unread: a tint alone is hard to see in dark mode.
+        Box(Modifier.padding(top = 16.dp).size(8.dp).background(if (row.isRead) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.primary, CircleShape))
         Avatar(row.actorId, row.who, 40.dp)
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(sentence(row), style = MaterialTheme.typography.bodyMedium)
