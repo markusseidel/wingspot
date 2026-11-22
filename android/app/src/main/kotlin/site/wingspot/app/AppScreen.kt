@@ -121,7 +121,7 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
                     page is Route.Settings -> SettingsPage(app, me, social)
                     page is Route.EditProfile && me != null -> EditProfilePage(app, me, refState, social)
                     else -> when (social.tab) {
-                        Tab.FEED -> SocialGate(app, me, announcements, onSignIn = { social.tab = Tab.PROFILE }) { FeedTab(social, it, announcements) }
+                        Tab.FEED -> SocialGate(app, me, announcements, onSignIn = { social.tab = Tab.PROFILE }) { FeedTab(social, it, announcements, checkIn) }
                         Tab.EXPLORE -> Scrolling { ExploreTab(app, social, me, refState, checkInState.all) }
                         Tab.CHECK_IN -> Scrolling {
                             Spacer(Modifier.height(16.dp))
