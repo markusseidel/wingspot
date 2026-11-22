@@ -318,6 +318,7 @@ fun SettingsPage(app: WingspotApp, me: String?, social: SocialViewModel) {
                 Text(stringResource(unitTitle(unit)), Modifier.padding(start = 8.dp))
             }
         }
+        LegalLinksSection()
     }
 }
 

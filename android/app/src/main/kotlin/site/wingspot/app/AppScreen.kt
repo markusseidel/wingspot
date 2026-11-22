@@ -215,6 +215,7 @@ internal fun SignInForm(isWorking: Boolean, onSend: (String) -> Unit, onPassword
         }
         TextButton(onClick = { withPassword = true }, modifier = Modifier.testTag("use-password")) { Text(stringResource(R.string.use_password_instead)) }
     }
+    LegalLinksSection(compact = true)
 }
 
 @Composable

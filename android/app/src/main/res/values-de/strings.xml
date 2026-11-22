@@ -198,6 +198,12 @@
     <string name="profile_signed_out">Melde dich an, um deine Check-ins zu sichern und anderen Spottern zu folgen. Bis dahin bleiben deine Check-ins auf diesem Telefon.</string>
     <string name="collections">Sammlungen</string>
     <string name="edit_profile">Profil bearbeiten</string>
+    <string name="legal_about">Über Wingspot</string>
+    <string name="legal_privacy">Datenschutzerklärung</string>
+    <string name="legal_terms">Nutzungsbedingungen</string>
+    <string name="legal_imprint">Impressum</string>
+    <string name="legal_contact">Kontakt</string>
+    <string name="legal_sign_in_accept">Mit der Anmeldung akzeptierst du die Nutzungsbedingungen und die Datenschutzerklärung.</string>
     <string name="settings">Einstellungen</string>
     <string name="name_label">Name</string>
     <string name="home_airport">Heimatflughafen</string>
