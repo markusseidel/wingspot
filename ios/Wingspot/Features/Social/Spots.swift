@@ -48,7 +48,19 @@ struct StaffLabelView: View {
 
     var body: some View {
         if spots.label(of: user) == "founder" {
-            Label("Founder", systemImage: "star.fill").font(.caption.bold()).foregroundStyle(.tint)
+            // A small pill: the star sits right next to the word, on a soft tint, so it reads as a badge and not as a list row.
+            HStack(spacing: 4) {
+                Image(systemName: "star.fill").imageScale(.small)
+                Text("Founder")
+            }
+            .font(.caption.bold())
+            .foregroundStyle(.tint)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 4)
+            .background(.tint.opacity(0.15), in: Capsule())
+            .fixedSize()
+            .padding(.top, 4)
+            .accessibilityElement(children: .combine)
         }
     }
 }
