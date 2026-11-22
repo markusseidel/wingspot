@@ -10,7 +10,7 @@ What the parser must find in each file is in [`../kml-flights.json`](../kml-flig
 
 | File | What it tests |
 |---|---|
-| `new-template.kml` | The newer description layout (airport link with the name in `title` before the `href`, `<h3>` code with the city as plain text after it, ATD and ETA in `title` attributes with date and time, the airline after the flight link), a CDATA description, a one-point placemark next to the line |
+| `new-template.kml` | The structure of a real export (route as two-point segments, track as timestamped points, times in UTC) with the newer description layout (airport link with the name in `title` before the `href`, `<h3>` code with the city as plain text after it, ATD and ETA in `title` attributes with date and time, the airline after the flight link), a CDATA description, a one-point placemark next to the line |
 | `old-template.kml` | The older layout ("From:", "To:", "Departure:", "Arrival:"), an entity-escaped description, a straight two-point line next to the real track |
 | `date-line.kml` | A track across the 180° meridian, with raw longitudes kept |
 | `placemarks-only.kml` | No line: the track comes from single position reports, given out of order, and the route from the title |

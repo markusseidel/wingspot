@@ -43,6 +43,8 @@ public struct KmlFlight: Sendable {
     /// `yyyy-MM-dd`, when the file says it (a flight can land on the next day).
     public var arrivalDate: String?
     public var arrivalTime: String?
+    /// Whether the file says its times are UTC ("Coordinated Universal Time" next to them).
+    public var timesAreUtc = false
     public var aircraftTypeCode: String?
     public var aircraftTypeName: String?
     public var registration: String?
@@ -125,6 +127,11 @@ public enum KmlFlightParser {
         if flight.airline == nil, let match = firstMatch("Airline:\\s*<b>([^<]+)</b>", in: html) ?? firstMatch("</a></span> / [^<]+<br/?>([^<]+)</div>", in: html) {
             flight.airline = nonEmpty(clean(match[1]))
         }
+        // Newer layout: "Aircraft<span>(A359)</span><br><span>Airbus A350-941</span>".
+        if flight.aircraftTypeCode == nil, let match = firstMatch("Aircraft\\s*<span[^>]*>\\(([A-Za-z0-9]{2,4})\\)</span>\\s*<br\\s*/?>\\s*<span[^>]*>([^<]*)</span>", in: html) {
+            flight.aircraftTypeCode = match[1].uppercased()
+            flight.aircraftTypeName = nonEmpty(clean(match[2]))
+        }
         if flight.aircraftTypeCode == nil, let match = firstMatch("Aircraft:\\s*<b>([^<]*?)\\s*\\(([A-Za-z0-9]{2,4})\\)\\s*</b>", in: html) {
             flight.aircraftTypeName = nonEmpty(clean(match[1]))
             flight.aircraftTypeCode = match[2].uppercased()
@@ -155,6 +162,7 @@ public enum KmlFlightParser {
                 flight.arrivalTime = nonEmpty(match[2])
             }
         }
+        if html.contains("Coordinated Universal Time") { flight.timesAreUtc = true }
         // Last resort: the time alone, as in "ATD 10:05".
         if flight.departureTime == nil, let match = firstMatch("ATD\\s+(\\d{1,2}:\\d{2})", in: html) { flight.departureTime = match[1] }
         if flight.arrivalTime == nil, let match = firstMatch("ETA\\s+(\\d{1,2}:\\d{2})", in: html) { flight.arrivalTime = match[1] }

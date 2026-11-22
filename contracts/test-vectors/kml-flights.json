@@ -1,9 +1,9 @@
 {
-  "description": "What the KML parser must find in the made-up files in kml/. The files describe invented flights and are written by hand from the structure in the issue, not copied from any service. Absent means the parser leaves the field empty. trackFirst and trackLast are [longitude, latitude]. Times are the text of the file.",
+  "description": "What the KML parser must find in the made-up files in kml/. The files describe invented flights and are written by hand from the structure in the issue, not copied from any service. Absent means the parser leaves the field empty. trackFirst and trackLast are [longitude, latitude]. Times are the text of the file. new-template.kml has the structure of a real export: the route as 2-point segments (ignored, they are too short to be a track) and the timestamped position reports (the track), with all times in UTC.",
   "cases": [
     {
       "file": "new-template.kml",
-      "title": "XA123 FRA-JFK",
+      "title": "XA123/XAB12C",
       "flightNumber": "XA123",
       "airline": "Example Air",
       "origin": {
@@ -18,12 +18,12 @@
       },
       "departureDate": "2026-11-02",
       "departureTime": "10:05",
-      "arrivalTime": "13:20",
+      "arrivalTime": "15:20",
       "aircraftTypeCode": "EJ9",
       "aircraftTypeName": "Example Jet 900",
       "registration": "D-ZZZZ",
       "flightLink": "https://www.flightradar24.com/flight/xa123",
-      "trackSource": "line",
+      "trackSource": "placemarks",
       "trackPoints": 12,
       "trackFirst": [
         8.57,
@@ -33,7 +33,8 @@
         -73.78,
         40.64
       ],
-      "arrivalDate": "2026-11-02"
+      "arrivalDate": "2026-11-02",
+      "timesAreUtc": true
     },
     {
       "file": "old-template.kml",
