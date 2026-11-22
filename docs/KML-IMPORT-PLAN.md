@@ -113,9 +113,9 @@ Notes and risks:
 
 | PR | Content | Size | Depends on |
 |---|---|---|---|
-| 0 | Real FR24 KML samples as fixtures (both templates, plus Tokyo to Los Angeles). Needs files from vogtim; see "Open questions" | small, blocked on input | none |
+| 0 | **Synthetic** KML fixtures written by hand from the documented structure: both description templates, a flight with a missing field, a placemark-only file, and a made-up Tokyo to Los Angeles track across the date line. Real FR24 files are used only locally for checking and are never committed (see "Test files") | small | none |
 | 1 | Backend: migration (`flight_tracks`, new `checkins` columns), `save_flight_track` function (decode, unwrap, simplify, bbox, flown km), RLS, `get_checkin` and the feed reads return `flown_km` and the simplified line, pgTAP tests (RLS, delete cascade, date line, duplicate key), api-test, `access_test` function list, contract test vectors for track distance | medium | none |
-| 2 | Parsers `KmlFlight` (Swift package and Kotlin core) with the shared fixtures, unit tests | medium | PR 0 |
+| 2 | Parsers `KmlFlight` (Swift package and Kotlin core) with the shared synthetic fixtures, unit tests | medium | PR 0 |
 | 3 | Import UI on iOS and Android: file picker, review on the flown form, duplicate warning, track outbox step, strings (German and English), both platforms clicked through | large | PR 1, 2 |
 | 4 | Track on the flight page, both platforms (#238) | medium | PR 1, 3 |
 | 5 | Distance on the flight page and the stats (#239) | medium | PR 1, 3 (independent of PR 4) |
@@ -181,13 +181,17 @@ Source: the [Terms of Service](https://www.flightradar24.com/terms-of-service), 
 - Nothing from FR24 is shown to other users in the first release. The flown distance of an imported flight is shown only to its owner. This also settles decision 1 (the badges and leaderboard stay on the airport-to-airport figure).
 - Whatever is shown gets a credit to Flightradar24 (8.2).
 
+### Test files
+
+This repository is public under the MIT licence, so a committed file is republished to everyone. Real FR24 exports therefore never go into the repository, the issues or the docs, and the same goes for the contents of the real `<description>` HTML. The parser tests use **synthetic** files: invented flights, invented tracks, hand-written from the structure described in the issues. Real files, if the issue author sends them privately, are used on one machine to check that the parser reads them, and are not kept in the working tree that gets committed.
+
 ### Next step
 
 A question to FR24 has been drafted (not sent). It asks the three levels as separate questions, asks whether a licence is needed, and how to credit. FR24 publishes no email address for this on its own pages: the official routes are the help center at support.fr24.com and the business inquiry form on the data-for-business page. `business@fr24.com` appears only in a LinkedIn post by their sales staff and must be verified before use.
 
 ## Open questions (for vogtim)
 
-- Please share the prototype script and 3 to 4 real KML files, with the two templates and one date-line flight (Tokyo to Los Angeles). Without real files the parser would be guessed.
+- Please share the prototype script and 3 to 4 real KML files, with the two templates and one date-line flight (Tokyo to Los Angeles), **privately** (by email or a private message), not in a public issue or pull request. They are used only to check the parser on a local machine and are never committed. Without real files the synthetic fixtures could miss how the format really looks.
 - Are the ATD and ETA in the description UTC or local time? (The issue asks to check this.)
 - Does FR24 offer the KML download in the phone app, or only on the website? This decides whether the file arrives through the share sheet or has to be moved by hand.
 - Does the file always contain the aircraft type? Types missing from the live list stay empty after the import.
