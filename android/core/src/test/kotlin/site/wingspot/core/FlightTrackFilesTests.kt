@@ -82,3 +82,32 @@ class FlightTrackFilesTests {
         assertNull(files.load(second.id))
     }
 }
+
+class KmlSwitchesTests {
+    @Test
+    fun switchesAreOnWhenTheServerSaysNothing() {
+        assertEquals(KmlSwitches(importOn = true, keepRoutes = true), KmlSwitches.from(emptyMap()))
+        assertEquals(KmlSwitches(importOn = true, keepRoutes = true), KmlSwitches.from(mapOf("feed" to false)))
+    }
+
+    @Test
+    fun switchesFollowTheServer() {
+        assertEquals(KmlSwitches(false, false), KmlSwitches.from(mapOf("kml_import" to false, "kml_tracks_keep" to false)))
+        assertEquals(KmlSwitches(false, true), KmlSwitches.from(mapOf("kml_import" to false)))
+    }
+
+    @Test
+    fun theConfigCallReadsTheFlagsAndIgnoresOtherValues() {
+        mockwebserver3.MockWebServer().use { server ->
+            server.start()
+            server.enqueue(mockwebserver3.MockResponse.Builder().code(200).body(
+                """{"min_version":{"ios":"0.1.0","android":"0.1.0"},"feature_flags":{"kml_import":false,"other":"text"}}""",
+            ).build())
+            val flags: Map<String, Boolean> = kotlinx.coroutines.runBlocking { ApiClient(server.url("/functions").toString()).featureFlags() }
+            assertEquals(mapOf("kml_import" to false), flags)
+            server.enqueue(mockwebserver3.MockResponse.Builder().code(500).body("{}").build())
+            kotlin.test.assertFailsWith<ApiException.Retry> { kotlinx.coroutines.runBlocking { ApiClient(server.url("/functions").toString()).featureFlags() } }
+            Unit
+        }
+    }
+}

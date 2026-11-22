@@ -11,6 +11,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import okhttp3.MediaType.Companion.toMediaType
@@ -43,6 +44,22 @@ class ApiClient(
     private val rest = restUrl?.trimEnd('/')
     private val base = functionsUrl.trimEnd('/')
     private val json = Json { ignoreUnknownKeys = true }
+
+    /** `GET /v1/config`, the feature flags only. Public. Throws [ApiException.Retry] when the server can't be reached or answers badly. */
+    suspend fun featureFlags(): Map<String, Boolean> = withContext(Dispatchers.IO) {
+        val request = Request.Builder().url("$base/v1/config").get().build()
+        try {
+            client.newCall(request).execute().use { response ->
+                if (response.code != 200) throw ApiException.Retry
+                val flags = json.parseToJsonElement(response.body.string()).jsonObject["feature_flags"]?.jsonObject ?: return@use emptyMap()
+                flags.mapNotNull { (key, value) -> value.jsonPrimitive.booleanOrNull?.let { key to it } }.toMap()
+            }
+        } catch (e: IOException) {
+            throw ApiException.Retry
+        } catch (e: kotlinx.serialization.SerializationException) {
+            throw ApiException.Retry
+        }
+    }
 
     /** `POST /v1/checkins`. Safe to repeat: the server answers `stored` again for an id it already has. */
     suspend fun uploadCheckins(items: List<LocalCheckIn>, accessToken: String): List<UploadResult> = withContext(Dispatchers.IO) {

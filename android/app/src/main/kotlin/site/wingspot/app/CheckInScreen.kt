@@ -261,12 +261,14 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
         onClick = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }, enabled = !reading,
         modifier = Modifier.fillMaxWidth(),
     ) { Text(stringResource(if (reading) R.string.reading else R.string.read_from_picture)) }
-    OutlinedButton(
+    // The server can switch the import off (docs/KML-IMPORT-PLAN.md).
+    val kmlImportOn = (context.applicationContext as WingspotApp).prefs.kmlImportOn
+    if (kmlImportOn) OutlinedButton(
         onClick = { importPicker.launch(arrayOf("*/*")) }, enabled = !importing,
         modifier = Modifier.fillMaxWidth().testTag("import-kml"),
     ) { Text(stringResource(if (importing) R.string.reading else R.string.import_kml)) }
     Text(stringResource(R.string.scan_footer), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-    Text(stringResource(R.string.import_footer), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    if (kmlImportOn) Text(stringResource(R.string.import_footer), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     notice?.let { (found, missing) ->
         HorizontalDivider()
         Text(stringResource(R.string.imported_title), style = MaterialTheme.typography.titleMedium)

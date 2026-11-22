@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.compose.setContent
+import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
 import androidx.activity.viewModels
 import androidx.compose.material3.Surface
 
@@ -22,6 +24,7 @@ class MainActivity : ComponentActivity() {
         handle(intent)
         OutboxWorker.schedule(applicationContext) // sends whatever was left from last time
         Push.register(application as WingspotApp)
+        lifecycleScope.launch { (application as WingspotApp).refreshKmlSwitches() }
         setContent {
             WingspotTheme {
                 Surface { AppScreen(application as WingspotApp, model, reference, checkIn, social, badges, announcements) }

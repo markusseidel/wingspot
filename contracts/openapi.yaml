@@ -613,7 +613,10 @@ components:
           type: object
           description: |
             Feature flags and kill switches for this platform set. Open key set:
-            treat a missing flag as disabled.
+            treat a missing flag as disabled, except the flags below that say otherwise.
+            `kml_import` (missing counts as on): off hides "Import a KML file".
+            `kml_tracks_keep` (missing counts as on): off makes the apps delete the flown routes
+            they keep on the phone.
           additionalProperties:
             type: boolean
     DeviceRegistration:

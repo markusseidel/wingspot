@@ -20,6 +20,15 @@ class Prefs(context: Context) {
         prefs.edit().putString("unit", value.name).apply()
     }
 
+    /** False when the server switched the KML import off. On until the server says otherwise. Compose reads it. */
+    var kmlImportOn: Boolean by mutableStateOf(prefs.getBoolean("kmlImportOn", true))
+        private set
+
+    fun rememberKmlImport(value: Boolean) {
+        kmlImportOn = value
+        prefs.edit().putBoolean("kmlImportOn", value).apply()
+    }
+
     /** How the Feed tab is sorted. */
     var feedSort: FeedSort = FeedSort.entries.firstOrNull { it.name == prefs.getString("feedSort", null) } ?: FeedSort.CREATED
         private set
