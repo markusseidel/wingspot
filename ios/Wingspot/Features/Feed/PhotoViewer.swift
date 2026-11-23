@@ -2,7 +2,7 @@ import Account
 import SwiftUI
 
 /// A photo shown big on a dark background. Swipe sideways for the other photos of the check-in, pinch to zoom,
-/// double-tap to zoom in or out, and swipe down or tap the close button to leave.
+/// double-tap to zoom in or out, and tap the close button to leave. A zoomed photo is moved with one finger.
 struct PhotoViewer: View {
     let photos: [FeedPhoto]
     @State private var selection: UUID
@@ -17,7 +17,7 @@ struct PhotoViewer: View {
         ZStack(alignment: .topTrailing) {
             TabView(selection: $selection) {
                 ForEach(photos) { photo in
-                    ZoomablePhoto(url: photo.url, onSwipeDown: { dismiss() })
+                    ZoomablePhoto(url: photo.url)
                         .tag(photo.id)
                 }
             }
@@ -37,7 +37,6 @@ struct PhotoViewer: View {
 
 private struct ZoomablePhoto: View {
     let url: URL
-    let onSwipeDown: () -> Void
 
     @State private var scale: CGFloat = 1
     @State private var baseScale: CGFloat = 1
@@ -54,7 +53,9 @@ private struct ZoomablePhoto: View {
                     .scaleEffect(scale)
                     .offset(offset)
                     .gesture(zoom)
-                    .simultaneousGesture(drag)
+                    // A one-finger drag only moves a zoomed photo. Not zoomed, it must stay free for the page view around
+                    // the photos: a drag gesture here would take the sideways swipe to the next photo.
+                    .simultaneousGesture(drag, including: scale > 1 ? .all : .none)
                     .onTapGesture(count: 2) { toggleZoom() }
                     .accessibilityLabel("Photo")
             case .failure:
@@ -78,23 +79,10 @@ private struct ZoomablePhoto: View {
     private var drag: some Gesture {
         DragGesture()
             .onChanged { value in
-                // Zoomed in, the picture moves. Otherwise a drag down is the way out.
-                if scale > 1 {
-                    offset = CGSize(width: baseOffset.width + value.translation.width,
-                                    height: baseOffset.height + value.translation.height)
-                } else {
-                    offset = CGSize(width: 0, height: max(0, value.translation.height))
-                }
+                offset = CGSize(width: baseOffset.width + value.translation.width,
+                                height: baseOffset.height + value.translation.height)
             }
-            .onEnded { value in
-                if scale > 1 {
-                    baseOffset = offset
-                } else if value.translation.height > 120 {
-                    onSwipeDown()
-                } else {
-                    withAnimation { offset = .zero }
-                }
-            }
+            .onEnded { _ in baseOffset = offset }
     }
 
     private func toggleZoom() {
