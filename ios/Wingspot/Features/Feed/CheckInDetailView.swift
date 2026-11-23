@@ -206,9 +206,9 @@ struct CheckInDetailView: View {
                 }
             }
             if item.kind == "flown" {
-                FlownEditView(flightID: item.id, tags: tags, onSaved: saved)
+                FlownEditView(flightID: item.id, tags: tags, existingPhotos: photos, onDeletePhoto: { await delete($0) }, onSaved: saved)
             } else {
-                CheckInEditView(checkInID: item.id, tags: tags, onSaved: saved)
+                CheckInEditView(checkInID: item.id, tags: tags, existingPhotos: photos, onDeletePhoto: { await delete($0) }, onSaved: saved)
             }
         }
         .scrollDismissesKeyboard(.interactively)
@@ -340,13 +340,15 @@ struct CheckInDetailView: View {
 
     /// Deletes one photo on the server, then takes it out of the lists and out of this device's copy, so the room for photos is
     /// counted right and nothing is uploaded again. The check-in stays, also when it was the last photo.
-    private func delete(_ photo: FeedPhoto) async {
+    @discardableResult
+    private func delete(_ photo: FeedPhoto) async -> Bool {
         if await list.deletePhoto(photo) {
             if source != nil { feed.forget(photo) }
             try? CheckInStore(context: modelContext).removePhoto(id: photo.id)
-        } else {
-            problem = list.failure ?? .unknown
+            return true
         }
+        problem = list.failure ?? .unknown
+        return false
     }
 
     private var photoSection: some View {

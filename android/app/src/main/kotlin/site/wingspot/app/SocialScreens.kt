@@ -755,7 +755,11 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                 TextButton(onClick = {
                     photoToDelete = null
                     scope.launch {
-                        if (model.deletePhoto(photo)) runCatching { app.checkIns.removePhoto(UUID.fromString(photo.id)) } else problem = R.string.delete_photo_failed
+                        if (model.deletePhoto(photo)) {
+                            // The page keeps its own copy of the list, so the photo leaves it here too.
+                            photos = photos.filterNot { it.id == photo.id }
+                            runCatching { app.checkIns.removePhoto(UUID.fromString(photo.id)) }
+                        } else problem = R.string.delete_photo_failed
                     }
                 }) { Text(stringResource(R.string.delete)) }
             },

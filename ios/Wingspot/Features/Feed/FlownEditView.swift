@@ -24,6 +24,9 @@ struct FlownEditView: View {
     let flightID: UUID
     /// The friends tagged on the flight now.
     let tags: [PersonTag]
+    /// The photos the check-in already has on the server, each of which can be deleted here.
+    var existingPhotos: [FeedPhoto] = []
+    var onDeletePhoto: ((FeedPhoto) async -> Bool)?
     let onSaved: () -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -101,7 +104,9 @@ struct FlownEditView: View {
                         Text("Not a valid registration yet")
                     }
                 }
-                if roomForPhotos > 0 { PhotoSection(photos: $photos, isPreparing: $isPreparingPhoto, limit: roomForPhotos) }
+                if roomForPhotos > 0 || !existingPhotos.isEmpty {
+                    PhotoSection(photos: $photos, isPreparing: $isPreparingPhoto, limit: roomForPhotos, existing: existingPhotos, onDeleteExisting: onDeletePhoto)
+                }
                 Section { CheckInVisibilityPicker(checkInID: flightID) }
                 lookup
             }
@@ -155,7 +160,8 @@ struct FlownEditView: View {
         date = min(flight.occurredAt, Date())
         originalDate = date
         tagged = tags
-        roomForPhotos = max(0, CheckInStore.maxPhotos - ((try? CheckInStore(context: modelContext).photoCount(for: id)) ?? 0))
+        // The server's photos count too: a check-in restored on a new phone has none of its own copies here.
+        roomForPhotos = max(0, CheckInStore.maxPhotos - max((try? CheckInStore(context: modelContext).photoCount(for: id)) ?? 0, existingPhotos.count))
         loaded = true
     }
 
