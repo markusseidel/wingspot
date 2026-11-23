@@ -414,7 +414,7 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
             keptType = keptType, recentTypes = RecentTypes.forFlight(state.all, flightNumber, flight.id),
         )
         WithFriendsField(tags)
-        if (state.roomForPhoto) PhotoField(photos) { photos = it }
+        if (state.roomForPhotos > 0) PhotoField(photos, state.roomForPhotos) { photos = it }
         VisibilityRow(androidx.compose.ui.platform.LocalContext.current.applicationContext as WingspotApp, flight.id.toString())
         SaveBar(
             state, enabled = input.isBlank() || registration != null,
@@ -462,7 +462,7 @@ fun SimpleEditScreen(app: WingspotApp, checkIn: LocalCheckIn, state: CheckInStat
             TypePicker(reference, type) { type = it }
         }
         if (isVisit) WithFriendsField(tags)
-        if (state.roomForPhoto) PhotoField(photos) { photos = it }
+        if (state.roomForPhotos > 0) PhotoField(photos, state.roomForPhotos) { photos = it }
         VisibilityRow(app, checkIn.id.toString())
         SaveBar(
             state, enabled = isVisit || (hasAircraft && (input.isBlank() || registration != null)),
