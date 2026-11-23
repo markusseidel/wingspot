@@ -5,6 +5,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.AlertDialog
@@ -598,9 +601,14 @@ private fun PhotoField(photos: List<PreparedPhoto>, limit: Int = CheckInStore.MA
                 val bitmap = remember(photo) { BitmapFactory.decodeByteArray(photo.jpeg, 0, photo.jpeg.size)?.asImageBitmap() }
                 Box(Modifier.size(96.dp).clip(MaterialTheme.shapes.small)) {
                     if (bitmap != null) Image(bitmap, contentDescription = stringResource(R.string.photo_of_check_in), contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
-                    TextButton(
-                        onClick = { onPhotos(photos.filterIndexed { i, _ -> i != index }) },
-                        modifier = Modifier.align(Alignment.TopEnd).semantics { contentDescription = context.getString(R.string.remove_photo) },
+                    // A dark disc under the cross, so it shows on light pictures too.
+                    Box(
+                        Modifier.align(Alignment.TopEnd).padding(4.dp).size(28.dp)
+                            .clip(androidx.compose.foundation.shape.CircleShape)
+                            .background(androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.6f))
+                            .clickable { onPhotos(photos.filterIndexed { i, _ -> i != index }) }
+                            .semantics { contentDescription = context.getString(R.string.remove_photo) },
+                        contentAlignment = Alignment.Center,
                     ) { Text("\u2715", color = androidx.compose.ui.graphics.Color.White) }
                 }
             }
