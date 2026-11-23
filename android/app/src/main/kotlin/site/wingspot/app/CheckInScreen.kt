@@ -60,6 +60,7 @@ import site.wingspot.core.Airport
 import site.wingspot.core.BoardingPass
 import site.wingspot.core.CabinClass
 import site.wingspot.core.CheckInStore
+import site.wingspot.core.FeedPhoto
 import site.wingspot.core.FlightTrack
 import site.wingspot.core.GeoCoordinate
 import site.wingspot.core.GreatCircle
@@ -388,7 +389,10 @@ internal fun FlightDatePicker(day: LocalDate, onPick: (LocalDate) -> Unit, onDis
 
 /** Fills in or corrects the details of a saved flight. The route and the photos stay as they were. */
 @Composable
-fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: ReferenceState, model: CheckInViewModel) {
+fun FlownEditScreen(
+    flight: LocalCheckIn, state: CheckInState, reference: ReferenceState, model: CheckInViewModel,
+    existing: List<FeedPhoto> = emptyList(), onDeletePhoto: (FeedPhoto) -> Unit = {},
+) {
     var flightNumber by rememberSaveable { mutableStateOf(flight.flightNumber.orEmpty()) }
     var input by rememberSaveable { mutableStateOf(flight.registration.orEmpty()) }
     var type by remember { mutableStateOf<AircraftType?>(null) }
@@ -417,7 +421,9 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
             keptType = keptType, recentTypes = RecentTypes.forFlight(state.all, flightNumber, flight.id),
         )
         WithFriendsField(tags)
-        if (state.roomForPhotos > 0) PhotoField(photos, state.roomForPhotos) { photos = it }
+        // The server's photos count too: a check-in restored on a new phone has none of its own copies here.
+        val room = minOf(state.roomForPhotos, CheckInStore.MAX_PHOTOS - existing.size).coerceAtLeast(0)
+        if (room > 0 || existing.isNotEmpty()) PhotoField(photos, room, existing, onDeletePhoto) { photos = it }
         VisibilityRow(androidx.compose.ui.platform.LocalContext.current.applicationContext as WingspotApp, flight.id.toString())
         SaveBar(
             state, enabled = input.isBlank() || registration != null,
@@ -435,7 +441,10 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
 
 /** Corrects a sighting (the aircraft) or an airport visit (the reason), adds a photo, and says who can see it. Flights have [FlownEditScreen]. */
 @Composable
-fun SimpleEditScreen(app: WingspotApp, checkIn: LocalCheckIn, state: CheckInState, reference: ReferenceState, model: CheckInViewModel) {
+fun SimpleEditScreen(
+    app: WingspotApp, checkIn: LocalCheckIn, state: CheckInState, reference: ReferenceState, model: CheckInViewModel,
+    existing: List<FeedPhoto> = emptyList(), onDeletePhoto: (FeedPhoto) -> Unit = {},
+) {
     val isVisit = checkIn.kind == "airport"
     var input by rememberSaveable { mutableStateOf(checkIn.registration.orEmpty()) }
     var type by remember { mutableStateOf<AircraftType?>(null) }
@@ -465,7 +474,9 @@ fun SimpleEditScreen(app: WingspotApp, checkIn: LocalCheckIn, state: CheckInStat
             TypePicker(reference, type) { type = it }
         }
         if (isVisit) WithFriendsField(tags)
-        if (state.roomForPhotos > 0) PhotoField(photos, state.roomForPhotos) { photos = it }
+        // The server's photos count too: a check-in restored on a new phone has none of its own copies here.
+        val room = minOf(state.roomForPhotos, CheckInStore.MAX_PHOTOS - existing.size).coerceAtLeast(0)
+        if (room > 0 || existing.isNotEmpty()) PhotoField(photos, room, existing, onDeletePhoto) { photos = it }
         VisibilityRow(app, checkIn.id.toString())
         SaveBar(
             state, enabled = isVisit || (hasAircraft && (input.isBlank() || registration != null)),
@@ -568,7 +579,22 @@ val LocalCheckIns = androidx.compose.runtime.compositionLocalOf<List<LocalCheckI
  * all use this.
  */
 @Composable
-private fun PhotoField(photos: List<PreparedPhoto>, limit: Int = CheckInStore.MAX_PHOTOS, onPhotos: (List<PreparedPhoto>) -> Unit) {
+private fun PhotoField(
+    photos: List<PreparedPhoto>, limit: Int = CheckInStore.MAX_PHOTOS,
+    /** The photos the check-in already has on the server, for the edit screens. Each can be deleted, after asking. */
+    existing: List<FeedPhoto> = emptyList(), onDeleteExisting: ((FeedPhoto) -> Unit)? = null,
+    onPhotos: (List<PreparedPhoto>) -> Unit,
+) {
+    var toDelete by remember { mutableStateOf<FeedPhoto?>(null) }
+    toDelete?.let { photo ->
+        AlertDialog(
+            onDismissRequest = { toDelete = null },
+            title = { Text(stringResource(R.string.delete_photo_title)) },
+            text = { Text(stringResource(R.string.delete_photo_message)) },
+            confirmButton = { TextButton(onClick = { toDelete = null; onDeleteExisting?.invoke(photo) }) { Text(stringResource(R.string.delete)) } },
+            dismissButton = { TextButton(onClick = { toDelete = null }) { Text(stringResource(R.string.cancel)) } },
+        )
+    }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var failed by remember { mutableStateOf(false) }
@@ -595,8 +621,21 @@ private fun PhotoField(photos: List<PreparedPhoto>, limit: Int = CheckInStore.MA
     // The multiple picker needs a maximum of at least 2, so the last free place uses the single picker.
     val pickMany = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(maxOf(2, room))) { uris -> prepare(uris) }
     val pickOne = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri -> if (uri != null) prepare(listOf(uri)) }
-    if (photos.isNotEmpty()) {
+    if (photos.isNotEmpty() || existing.isNotEmpty()) {
         Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            existing.forEach { photo ->
+                Box(Modifier.size(96.dp).clip(MaterialTheme.shapes.small)) {
+                    RemoteImage(photo, Modifier.fillMaxSize())
+                    if (onDeleteExisting != null) Box(
+                        Modifier.align(Alignment.TopEnd).padding(4.dp).size(28.dp)
+                            .clip(androidx.compose.foundation.shape.CircleShape)
+                            .background(androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.6f))
+                            .clickable { toDelete = photo }
+                            .semantics { contentDescription = context.getString(R.string.delete_photo) },
+                        contentAlignment = Alignment.Center,
+                    ) { Text("\u2715", color = androidx.compose.ui.graphics.Color.White) }
+                }
+            }
             photos.forEachIndexed { index, photo ->
                 val bitmap = remember(photo) { BitmapFactory.decodeByteArray(photo.jpeg, 0, photo.jpeg.size)?.asImageBitmap() }
                 Box(Modifier.size(96.dp).clip(MaterialTheme.shapes.small)) {

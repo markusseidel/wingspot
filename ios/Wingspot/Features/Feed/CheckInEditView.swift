@@ -11,6 +11,9 @@ struct CheckInEditView: View {
     let checkInID: UUID
     /// The friends tagged on the visit now.
     let tags: [PersonTag]
+    /// The photos the check-in already has on the server, each of which can be deleted here.
+    var existingPhotos: [FeedPhoto] = []
+    var onDeletePhoto: ((FeedPhoto) async -> Bool)?
     let onSaved: () -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -79,7 +82,9 @@ struct CheckInEditView: View {
                         WithFriendsRow(selection: $tagged)
                     }
                 }
-                if roomForPhotos > 0 { PhotoSection(photos: $photos, isPreparing: $isPreparingPhoto, limit: roomForPhotos) }
+                if roomForPhotos > 0 || !existingPhotos.isEmpty {
+                    PhotoSection(photos: $photos, isPreparing: $isPreparingPhoto, limit: roomForPhotos, existing: existingPhotos, onDeleteExisting: onDeletePhoto)
+                }
                 Section { CheckInVisibilityPicker(checkInID: checkInID) }
             }
             .navigationTitle(kind == "airport" ? "Edit visit" : "Edit sighting")
@@ -117,7 +122,8 @@ struct CheckInEditView: View {
         default:
             break
         }
-        roomForPhotos = max(0, CheckInStore.maxPhotos - ((try? CheckInStore(context: modelContext).photoCount(for: id)) ?? 0))
+        // The server's photos count too: a check-in restored on a new phone has none of its own copies here.
+        roomForPhotos = max(0, CheckInStore.maxPhotos - max((try? CheckInStore(context: modelContext).photoCount(for: id)) ?? 0, existingPhotos.count))
         tagged = tags
         loaded = true
     }

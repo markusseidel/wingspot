@@ -182,6 +182,13 @@ class CheckInViewModel(
         }
     }
 
+    /** Counts the room for photos again, after one was deleted while the edit screen is open. */
+    fun refreshPhotoRoom(id: UUID) {
+        viewModelScope.launch {
+            mutable.value = mutable.value.copy(roomForPhotos = maxOf(0, CheckInStore.MAX_PHOTOS - store.photoCount(id)))
+        }
+    }
+
     fun edit(id: UUID) {
         viewModelScope.launch {
             val room = maxOf(0, CheckInStore.MAX_PHOTOS - store.photoCount(id))

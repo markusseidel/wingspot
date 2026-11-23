@@ -325,6 +325,13 @@ class SocialViewModel(
         false
     }
 
+    /** Loads the photos of a check-in into the state when they are not there yet, for the edit screens. Nothing changes if that fails. */
+    suspend fun ensurePhotos(id: String) {
+        if (mutable.value.photos.containsKey(id)) return
+        val found = try { api.photos(listOf(id)) } catch (e: ApiException) { return }
+        mutable.value = mutable.value.copy(photos = mutable.value.photos + (id to found))
+    }
+
     fun remove(id: String) {
         mutable.value = mutable.value.copy(items = mutable.value.items.filterNot { it.id == id }, photos = mutable.value.photos - id, tags = mutable.value.tags - id, badges = mutable.value.badges - id)
     }

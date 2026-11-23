@@ -65,3 +65,13 @@ Decisions as recommended (online only, the check-in page only, old orphan files 
 - **Apps:** a delete action on your own photos on the check-in page (context menu on iPhone, a button on Android) with a confirmation, an error message if it fails, the photo gone from the page and the feed at once, this device's copy removed so the room for photos is right. Deleting a check-in now asks the server to remove its files too.
 - **Tests:** pgTAP (owner only, the queue, a returning photo, positions, cascade from a deleted check-in, who may call what), API tests (the row, the file really gone from storage, someone else's delete does nothing, sign-in needed, the clean-up after a deleted check-in), the iPhone and Android stores, and the local copy of a photo.
 - **Not done:** deleting while offline, and removing existing photos in the edit screens (both listed as later).
+
+## Second step: delete in the edit screens (requested by the owner after the first test)
+
+The first version put "Delete photo" only in the long-press menu on iPhone (nothing on the screen hints at it) and in a button on Android. The edit screens were left out on purpose; now they have it too, on both apps.
+
+- **What it looks like:** in the edit screen of a sighting, an airport visit or a flight, the photos section shows the photos the check-in already has (from the server) as thumbnails, each with a cross, in front of the thumbnails of photos you just picked. The cross asks "Delete this photo? It is removed for good. The check-in, its other photos, salutes and comments stay." and deletes at once when you confirm. It does not wait for Save and Cancel does not bring it back, because the file is gone for good and the dialog says so.
+- **Room for new photos:** counted from the server's photos too (a check-in restored on a new phone has no copies of its own here), and every deleted photo makes room for one more at once.
+- **Same delete as the check-in page:** the same server call, the same removal of this phone's copy, the same update of the page and the feed.
+- **Android loads the photos** of the check-in being edited when they are not in the list yet (editing from the "Recent check-ins" list), and the check-in page now takes a deleted photo out of its own copy of the list. Before, a photo deleted on the check-in page stayed visible there until the page was opened again.
+- **Not changed:** the long-press menu and the Android button on the check-in page stay.

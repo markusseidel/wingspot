@@ -1,14 +1,11 @@
 package site.wingspot.app
 
-import kotlinx.coroutines.launch
-
-import androidx.compose.material3.IconButton
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,20 +15,20 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import kotlinx.coroutines.delay
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,14 +42,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import site.wingspot.core.BoardingPass
+import java.util.UUID
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import site.wingspot.core.ApiException
+import site.wingspot.core.BoardingPass
+import site.wingspot.core.FeedPhoto
 import site.wingspot.core.Registration
 import site.wingspot.core.Username
 
 @Composable
 fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewModel, checkIn: CheckInViewModel, social: SocialViewModel, badges: BadgesViewModel, announcements: AnnouncementsViewModel) {
     val state by model.state.collectAsState()
+    val socialState by social.state.collectAsState()
+    val appScope = androidx.compose.runtime.rememberCoroutineScope()
     val refState by reference.state.collectAsState()
     val checkInState by checkIn.state.collectAsState()
     val session = state.session
@@ -75,6 +78,8 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
             }
         }
     }
+    // The photos of the check-in being edited, so the edit screen can show them.
+    LaunchedEffect(checkInState.editing?.id, me) { checkInState.editing?.let { if (me != null) social.ensurePhotos(it.id.toString()) } }
     // Also when it goes down: deleting a check-in can take a badge back.
     LaunchedEffect(synced) { if (me != null) badges.refresh() }
     // After a check-in, a flight or an edit went up, the lists show it without a pull to refresh.
@@ -115,7 +120,20 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
         ) {
             androidx.compose.runtime.CompositionLocalProvider(LocalCheckIns provides checkInState.all) {
                 when {
-                    editing != null -> Scrolling { if (editing.kind == "flown") FlownEditScreen(editing, checkInState, refState, checkIn) else SimpleEditScreen(app, editing, checkInState, refState, checkIn) }
+                    editing != null -> Scrolling {
+                        // The photos the check-in has on the server can be deleted here.
+                        val existing = socialState.photos[editing.id.toString()].orEmpty()
+                        val deletePhoto: (FeedPhoto) -> Unit = { photo ->
+                            appScope.launch {
+                                if (social.deletePhoto(photo)) {
+                                    runCatching { app.checkIns.removePhoto(UUID.fromString(photo.id)) }
+                                    checkIn.refreshPhotoRoom(editing.id)
+                                }
+                            }
+                        }
+                        if (editing.kind == "flown") FlownEditScreen(editing, checkInState, refState, checkIn, existing, deletePhoto)
+                        else SimpleEditScreen(app, editing, checkInState, refState, checkIn, existing, deletePhoto)
+                    }
                     checkInState.isOpen -> Scrolling { CheckInScreen(checkInState, refState, checkIn) }
                     page is Route.CheckInPage && me != null -> CheckInPage(app, social, checkIn, page.id, me, refState)
                     page is Route.PersonPage && me != null -> PersonPage(app, social, page.id, me)
