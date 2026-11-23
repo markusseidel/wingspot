@@ -11,20 +11,20 @@ struct PhotoSection: View {
     @Binding var isPreparing: Bool
     /// How many photos the check-in can still take in all: the most there are, less the ones it already has.
     var limit = CheckInStore.maxPhotos
-    /// The photos the check-in already has on the server, for the edit screens. Each can be deleted, after asking.
+    /// The photos the check-in already has on the server, for the edit screens.
     var existing: [FeedPhoto] = []
-    /// Deletes one of the existing photos for good. Returns whether it worked.
-    var onDeleteExisting: ((FeedPhoto) async -> Bool)?
+    /// The existing photos the person removed with the cross. They are only marked: the edit screen deletes them when it is
+    /// saved, and cancelling it leaves everything as it was.
+    var removedExisting: Binding<Set<UUID>> = .constant([])
+    /// Whether the existing photos show a cross.
+    var removable = false
 
     @State private var items: [PhotosPickerItem] = []
     @State private var failedCount = 0
-    @State private var deleted: Set<UUID> = []
-    @State private var photoToDelete: FeedPhoto?
-    @State private var deleteFailed = false
 
-    /// Every photo that was deleted here makes room for one more.
-    private var capacity: Int { limit + deleted.count }
-    private var shownExisting: [FeedPhoto] { existing.filter { !deleted.contains($0.id) } }
+    /// Every existing photo that was removed makes room for one more.
+    private var capacity: Int { limit + removedExisting.wrappedValue.count }
+    private var shownExisting: [FeedPhoto] { existing.filter { !removedExisting.wrappedValue.contains($0.id) } }
 
     var body: some View {
         Section {
@@ -52,28 +52,18 @@ struct PhotoSection: View {
         } header: {
             Text("Photos")
         } footer: {
-            Text("Location and other details are removed from the photos before they are saved. They go up with your check-in when you are signed in.")
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Location and other details are removed from the photos before they are saved. They go up with your check-in when you are signed in.")
+                if !removedExisting.wrappedValue.isEmpty {
+                    Text("Removed photos are deleted when you save.")
+                }
+            }
         }
         .onChange(of: items) { _, picked in
             guard !picked.isEmpty else { return }
             Task { await choose(picked) }
         }
         .alert("Couldn't use this picture", isPresented: Binding(get: { failedCount > 0 }, set: { if !$0 { failedCount = 0 } })) {
-            Button("OK", role: .cancel) {}
-        }
-        .confirmationDialog(
-            "Delete this photo?", isPresented: Binding(get: { photoToDelete != nil }, set: { if !$0 { photoToDelete = nil } }),
-            titleVisibility: .visible, presenting: photoToDelete
-        ) { photo in
-            Button("Delete photo", role: .destructive) {
-                Task {
-                    if await onDeleteExisting?(photo) == true { deleted.insert(photo.id) } else { deleteFailed = true }
-                }
-            }
-        } message: { _ in
-            Text("It is removed for good. The check-in, its other photos, salutes and comments stay.")
-        }
-        .alert("Couldn't complete this", isPresented: $deleteFailed) {
             Button("OK", role: .cancel) {}
         }
     }
@@ -91,8 +81,8 @@ struct PhotoSection: View {
             .frame(width: 96, height: 96)
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .accessibilityLabel("Photo")
-            if onDeleteExisting != nil {
-                Button { photoToDelete = photo } label: {
+            if removable {
+                Button { removedExisting.wrappedValue.insert(photo.id) } label: {
                     Image(systemName: "xmark.circle.fill")
                         .symbolRenderingMode(.palette)
                         .foregroundStyle(.white, .black.opacity(0.6))
@@ -100,7 +90,7 @@ struct PhotoSection: View {
                         .padding(4)
                 }
                 .buttonStyle(.borderless)
-                .accessibilityLabel("Delete photo")
+                .accessibilityLabel("Remove photo")
             }
         }
     }

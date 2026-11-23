@@ -4371,6 +4371,16 @@
         }
       }
     },
+    "Removed photos are deleted when you save." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entfernte Fotos werden beim Sichern gelöscht."
+          }
+        }
+      }
+    },
     "Replace route" : {
       "localizations" : {
         "de" : {

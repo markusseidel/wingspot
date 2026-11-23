@@ -55,7 +55,6 @@ import site.wingspot.core.Username
 fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewModel, checkIn: CheckInViewModel, social: SocialViewModel, badges: BadgesViewModel, announcements: AnnouncementsViewModel) {
     val state by model.state.collectAsState()
     val socialState by social.state.collectAsState()
-    val appScope = androidx.compose.runtime.rememberCoroutineScope()
     val refState by reference.state.collectAsState()
     val checkInState by checkIn.state.collectAsState()
     val session = state.session
@@ -123,13 +122,8 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
                     editing != null -> Scrolling {
                         // The photos the check-in has on the server can be deleted here.
                         val existing = socialState.photos[editing.id.toString()].orEmpty()
-                        val deletePhoto: (FeedPhoto) -> Unit = { photo ->
-                            appScope.launch {
-                                if (social.deletePhoto(photo)) {
-                                    runCatching { app.checkIns.removePhoto(UUID.fromString(photo.id)) }
-                                    checkIn.refreshPhotoRoom(editing.id)
-                                }
-                            }
+                        val deletePhoto: suspend (FeedPhoto) -> Boolean = { photo ->
+                            social.deletePhoto(photo).also { if (it) runCatching { app.checkIns.removePhoto(UUID.fromString(photo.id)) } }
                         }
                         if (editing.kind == "flown") FlownEditScreen(editing, checkInState, refState, checkIn, existing, deletePhoto)
                         else SimpleEditScreen(app, editing, checkInState, refState, checkIn, existing, deletePhoto)

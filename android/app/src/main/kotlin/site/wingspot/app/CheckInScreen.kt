@@ -391,8 +391,12 @@ internal fun FlightDatePicker(day: LocalDate, onPick: (LocalDate) -> Unit, onDis
 @Composable
 fun FlownEditScreen(
     flight: LocalCheckIn, state: CheckInState, reference: ReferenceState, model: CheckInViewModel,
-    existing: List<FeedPhoto> = emptyList(), onDeletePhoto: (FeedPhoto) -> Unit = {},
+    existing: List<FeedPhoto> = emptyList(), onDeletePhoto: suspend (FeedPhoto) -> Boolean = { true },
 ) {
+    // Photos the check-in already has that were marked as removed: they are deleted when this screen is saved, and Cancel keeps them.
+    var removed by remember { mutableStateOf(emptySet<String>()) }
+    var deleteFailed by remember { mutableStateOf(false) }
+    val saveScope = rememberCoroutineScope()
     var flightNumber by rememberSaveable { mutableStateOf(flight.flightNumber.orEmpty()) }
     var input by rememberSaveable { mutableStateOf(flight.registration.orEmpty()) }
     var type by remember { mutableStateOf<AircraftType?>(null) }
@@ -421,9 +425,11 @@ fun FlownEditScreen(
             keptType = keptType, recentTypes = RecentTypes.forFlight(state.all, flightNumber, flight.id),
         )
         WithFriendsField(tags)
-        // The server's photos count too: a check-in restored on a new phone has none of its own copies here.
-        val room = minOf(state.roomForPhotos, CheckInStore.MAX_PHOTOS - existing.size).coerceAtLeast(0)
-        if (room > 0 || existing.isNotEmpty()) PhotoField(photos, room, existing, onDeletePhoto) { photos = it }
+        // The server's photos count too: a check-in restored on a new phone has none of its own copies here. A photo marked as
+        // removed makes room for one more.
+        val room = minOf(state.roomForPhotos, CheckInStore.MAX_PHOTOS - existing.size).coerceAtLeast(0) + removed.size
+        if (room > 0 || existing.isNotEmpty()) PhotoField(photos, room, existing, removed, { removed = removed + it.id }) { photos = it }
+        if (deleteFailed) Text(stringResource(R.string.delete_photo_failed), color = MaterialTheme.colorScheme.error)
         VisibilityRow(androidx.compose.ui.platform.LocalContext.current.applicationContext as WingspotApp, flight.id.toString())
         SaveBar(
             state, enabled = input.isBlank() || registration != null,
@@ -432,7 +438,10 @@ fun FlownEditScreen(
                 val at = if (chosenDay == originalDay) null
                 else if (chosenDay == LocalDate.now()) java.time.Instant.now()
                 else chosenDay.atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant()
-                model.saveEdit(flight.id, registration, type, keptType, flightNumber, cabin, seat, at, photos, tags.ifChanged())
+                saveScope.launch {
+                    deleteFailed = !deleteRemoved(existing, removed, onDeletePhoto) { removed = it }
+                    if (!deleteFailed) model.saveEdit(flight.id, registration, type, keptType, flightNumber, cabin, seat, at, photos, tags.ifChanged())
+                }
             },
             onCancel = model::cancelEdit,
         )
@@ -443,9 +452,12 @@ fun FlownEditScreen(
 @Composable
 fun SimpleEditScreen(
     app: WingspotApp, checkIn: LocalCheckIn, state: CheckInState, reference: ReferenceState, model: CheckInViewModel,
-    existing: List<FeedPhoto> = emptyList(), onDeletePhoto: (FeedPhoto) -> Unit = {},
+    existing: List<FeedPhoto> = emptyList(), onDeletePhoto: suspend (FeedPhoto) -> Boolean = { true },
 ) {
     val isVisit = checkIn.kind == "airport"
+    var removed by remember { mutableStateOf(emptySet<String>()) }
+    var deleteFailed by remember { mutableStateOf(false) }
+    val saveScope = rememberCoroutineScope()
     var input by rememberSaveable { mutableStateOf(checkIn.registration.orEmpty()) }
     var type by remember { mutableStateOf<AircraftType?>(null) }
     var reason by rememberSaveable { mutableStateOf(VisitContext.entries.firstOrNull { it.wire == checkIn.visitContext } ?: VisitContext.SPOTTING) }
@@ -474,16 +486,37 @@ fun SimpleEditScreen(
             TypePicker(reference, type) { type = it }
         }
         if (isVisit) WithFriendsField(tags)
-        // The server's photos count too: a check-in restored on a new phone has none of its own copies here.
-        val room = minOf(state.roomForPhotos, CheckInStore.MAX_PHOTOS - existing.size).coerceAtLeast(0)
-        if (room > 0 || existing.isNotEmpty()) PhotoField(photos, room, existing, onDeletePhoto) { photos = it }
+        // The server's photos count too: a check-in restored on a new phone has none of its own copies here. A photo marked as
+        // removed makes room for one more.
+        val room = minOf(state.roomForPhotos, CheckInStore.MAX_PHOTOS - existing.size).coerceAtLeast(0) + removed.size
+        if (room > 0 || existing.isNotEmpty()) PhotoField(photos, room, existing, removed, { removed = removed + it.id }) { photos = it }
+        if (deleteFailed) Text(stringResource(R.string.delete_photo_failed), color = MaterialTheme.colorScheme.error)
         VisibilityRow(app, checkIn.id.toString())
         SaveBar(
             state, enabled = isVisit || (hasAircraft && (input.isBlank() || registration != null)),
-            onSave = { model.saveSimpleEdit(checkIn.id, registration, type?.icaoCode ?: keptType, if (isVisit) reason else null, photos, if (isVisit) tags.ifChanged() else null) },
+            onSave = {
+                saveScope.launch {
+                    deleteFailed = !deleteRemoved(existing, removed, onDeletePhoto) { removed = it }
+                    if (!deleteFailed) model.saveSimpleEdit(checkIn.id, registration, type?.icaoCode ?: keptType, if (isVisit) reason else null, photos, if (isVisit) tags.ifChanged() else null)
+                }
+            },
             onCancel = model::cancelEdit,
         )
     }
+}
+
+/**
+ * Deletes the photos that were marked as removed in an edit screen, one after the other. Returns false at the first one that fails,
+ * and nothing else is saved then, so the person can try again or cancel. [onLeft] gets the ids still marked.
+ */
+private suspend fun deleteRemoved(existing: List<FeedPhoto>, removed: Set<String>, delete: suspend (FeedPhoto) -> Boolean, onLeft: (Set<String>) -> Unit): Boolean {
+    var left = removed
+    for (photo in existing.filter { it.id in removed }) {
+        if (!delete(photo)) { onLeft(left); return false }
+        left = left - photo.id
+    }
+    onLeft(left)
+    return true
 }
 
 @Composable
@@ -581,20 +614,12 @@ val LocalCheckIns = androidx.compose.runtime.compositionLocalOf<List<LocalCheckI
 @Composable
 private fun PhotoField(
     photos: List<PreparedPhoto>, limit: Int = CheckInStore.MAX_PHOTOS,
-    /** The photos the check-in already has on the server, for the edit screens. Each can be deleted, after asking. */
-    existing: List<FeedPhoto> = emptyList(), onDeleteExisting: ((FeedPhoto) -> Unit)? = null,
+    /** The photos the check-in already has on the server, for the edit screens. */
+    existing: List<FeedPhoto> = emptyList(),
+    /** The existing photos marked as removed with the cross. The edit screen deletes them when it is saved. */
+    removedIds: Set<String> = emptySet(), onRemoveExisting: ((FeedPhoto) -> Unit)? = null,
     onPhotos: (List<PreparedPhoto>) -> Unit,
 ) {
-    var toDelete by remember { mutableStateOf<FeedPhoto?>(null) }
-    toDelete?.let { photo ->
-        AlertDialog(
-            onDismissRequest = { toDelete = null },
-            title = { Text(stringResource(R.string.delete_photo_title)) },
-            text = { Text(stringResource(R.string.delete_photo_message)) },
-            confirmButton = { TextButton(onClick = { toDelete = null; onDeleteExisting?.invoke(photo) }) { Text(stringResource(R.string.delete)) } },
-            dismissButton = { TextButton(onClick = { toDelete = null }) { Text(stringResource(R.string.cancel)) } },
-        )
-    }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var failed by remember { mutableStateOf(false) }
@@ -621,17 +646,18 @@ private fun PhotoField(
     // The multiple picker needs a maximum of at least 2, so the last free place uses the single picker.
     val pickMany = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(maxOf(2, room))) { uris -> prepare(uris) }
     val pickOne = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri -> if (uri != null) prepare(listOf(uri)) }
-    if (photos.isNotEmpty() || existing.isNotEmpty()) {
+    val shownExisting = existing.filterNot { it.id in removedIds }
+    if (photos.isNotEmpty() || shownExisting.isNotEmpty()) {
         Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            existing.forEach { photo ->
+            shownExisting.forEach { photo ->
                 Box(Modifier.size(96.dp).clip(MaterialTheme.shapes.small)) {
                     RemoteImage(photo, Modifier.fillMaxSize())
-                    if (onDeleteExisting != null) Box(
+                    if (onRemoveExisting != null) Box(
                         Modifier.align(Alignment.TopEnd).padding(4.dp).size(28.dp)
                             .clip(androidx.compose.foundation.shape.CircleShape)
                             .background(androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.6f))
-                            .clickable { toDelete = photo }
-                            .semantics { contentDescription = context.getString(R.string.delete_photo) },
+                            .clickable { onRemoveExisting(photo) }
+                            .semantics { contentDescription = context.getString(R.string.remove_photo) },
                         contentAlignment = Alignment.Center,
                     ) { Text("\u2715", color = androidx.compose.ui.graphics.Color.White) }
                 }
@@ -664,6 +690,7 @@ private fun PhotoField(
         ) { Text(stringResource(if (preparing) R.string.reading else if (room > 1) R.string.add_photos else R.string.add_photo)) }
         Text(stringResource(R.string.photo_hint), style = MaterialTheme.typography.bodySmall)
     }
+    if (removedIds.isNotEmpty()) Text(stringResource(R.string.removed_photos_note), style = MaterialTheme.typography.bodySmall)
     if (failed) Text(stringResource(R.string.photo_failed), color = MaterialTheme.colorScheme.error)
 }
 
