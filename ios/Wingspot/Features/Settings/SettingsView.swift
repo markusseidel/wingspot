@@ -56,6 +56,7 @@ struct SettingsView: View {
                 }
             }
             LegalLinksSection()
+            AboutSection()
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)

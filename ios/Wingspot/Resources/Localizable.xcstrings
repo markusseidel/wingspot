@@ -964,6 +964,17 @@
         }
       }
     },
+    "Beta" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beta"
+          }
+        }
+      }
+    },
     "Biggest detour" : {
       "localizations" : {
         "de" : {
@@ -1580,6 +1591,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vergleich konnte nicht geladen werden"
+          }
+        }
+      }
+    },
+    "Couldn't load the latest notes. Showing what was loaded before." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die neuesten Notizen konnten nicht geladen werden. Es wird gezeigt, was vorher geladen wurde."
           }
         }
       }
@@ -2862,6 +2883,17 @@
         }
       }
     },
+    "Installed" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installiert"
+          }
+        }
+      }
+    },
     "Invite friends" : {
       "localizations" : {
         "de" : {
@@ -3354,6 +3386,16 @@
         }
       }
     },
+    "Newer than your version" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neuer als deine Version"
+          }
+        }
+      }
+    },
     "Newest first" : {
       "localizations" : {
         "de" : {
@@ -3507,6 +3549,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Niemand gefunden"
+          }
+        }
+      }
+    },
+    "No release notes yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine Neuigkeiten"
           }
         }
       }
@@ -5727,6 +5779,16 @@
         }
       }
     },
+    "Version" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version"
+          }
+        }
+      }
+    },
     "Visit number %lld" : {
       "localizations" : {
         "de" : {
@@ -5803,6 +5865,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Was ist passiert?"
+          }
+        }
+      }
+    },
+    "What's new" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neuigkeiten"
           }
         }
       }

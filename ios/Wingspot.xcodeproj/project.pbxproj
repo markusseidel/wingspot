@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		000638736A7D21777E5468DC /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 181278D0BAEE1C7A36510BCE /* Localizable.xcstrings */; };
+		00B055B01FD55725A55DDCBC /* ReleaseNotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55470F216CED22B3357AF0C9 /* ReleaseNotesView.swift */; };
 		03BF1BA5490802BB7BBE7871 /* PasswordSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0A9822D906C56C092225ED /* PasswordSignInView.swift */; };
 		0937BA0BF1EBF4732DA23138 /* ProfileEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E6559EBEC52E59BEEFE94D /* ProfileEditorView.swift */; };
 		0938348D4F0B21A4B41F7D9E /* CollectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA1AD56080AB71FB2708191 /* CollectionsView.swift */; };
@@ -112,6 +113,7 @@
 		48B545FD209FC2942BD45E71 /* CheckInResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInResultView.swift; sourceTree = "<group>"; };
 		4ACF37D630CFB0FFE9E1E133 /* Wingspot.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Wingspot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		534BE6354EF9EC7D6EA1DA13 /* AccountCheckInSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCheckInSource.swift; sourceTree = "<group>"; };
+		55470F216CED22B3357AF0C9 /* ReleaseNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseNotesView.swift; sourceTree = "<group>"; };
 		578259FF97F6C378ABA27E94 /* PushSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSupport.swift; sourceTree = "<group>"; };
 		5CABAD3AAA0CB6C6317A73DE /* PersonDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonDetailView.swift; sourceTree = "<group>"; };
 		5D8FB2291C9A4A75529A9461 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -331,6 +333,7 @@
 			children = (
 				04D41472169C437C8D788A92 /* DistanceUnitSetting.swift */,
 				B34AD8F064D9FF554BEEE6EF /* LegalLinks.swift */,
+				55470F216CED22B3357AF0C9 /* ReleaseNotesView.swift */,
 				A62A4921DD7585EFD9F3F97A /* SettingsView.swift */,
 				818E551A57D62222FBB1E0EA /* TaggingSection.swift */,
 			);
@@ -533,6 +536,7 @@
 				D85287110D33AEDB2AE2653E /* PushSupport.swift in Sources */,
 				39383DB2983A80C96D05EA39 /* ReferenceSearchViews.swift in Sources */,
 				34EDCAD11D0A2B6F135DD128 /* RegistrationPageView.swift in Sources */,
+				00B055B01FD55725A55DDCBC /* ReleaseNotesView.swift in Sources */,
 				66E73317F1198016C144E45B /* ReportSheet.swift in Sources */,
 				2009AC27E2FC13DC4C52C220 /* RootView.swift in Sources */,
 				2419BA1DA1B17C761D9D0036 /* SettingsView.swift in Sources */,
