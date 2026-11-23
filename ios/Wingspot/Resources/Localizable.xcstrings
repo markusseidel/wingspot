@@ -1594,6 +1594,16 @@
         }
       }
     },
+    "Couldn't load this check-in" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Check-in konnte nicht geladen werden"
+          }
+        }
+      }
+    },
     "Couldn't load this profile" : {
       "localizations" : {
         "de" : {
@@ -1790,6 +1800,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Datum"
+          }
+        }
+      }
+    },
+    "Date of the flight or sighting" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datum des Flugs oder der Sichtung"
           }
         }
       }
@@ -2135,6 +2155,36 @@
         }
       }
     },
+    "Everyone's check-ins at this airport" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check-ins aller an diesem Flughafen"
+          }
+        }
+      }
+    },
+    "Everyone's check-ins of this aircraft" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check-ins aller von diesem Flugzeug"
+          }
+        }
+      }
+    },
+    "Everyone's check-ins of this type" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check-ins aller von diesem Typ"
+          }
+        }
+      }
+    },
     "Explore" : {
       "localizations" : {
         "de" : {
@@ -2251,6 +2301,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Erster Offizier"
+          }
+        }
+      }
+    },
+    "First date" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erstes Datum"
           }
         }
       }
@@ -2858,6 +2918,27 @@
         }
       }
     },
+    "Last" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zuletzt"
+          }
+        }
+      }
+    },
+    "Last date" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letztes Datum"
+          }
+        }
+      }
+    },
     "Last time" : {
       "localizations" : {
         "de" : {
@@ -3273,6 +3354,16 @@
         }
       }
     },
+    "Newest first" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neueste zuerst"
+          }
+        }
+      }
+    },
     "Nice!" : {
       "localizations" : {
         "de" : {
@@ -3650,6 +3741,16 @@
         }
       }
     },
+    "Oldest first" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Älteste zuerst"
+          }
+        }
+      }
+    },
     "Only %@" : {
       "localizations" : {
         "de" : {
@@ -3790,6 +3891,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Optional. Wird in deinem Profil angezeigt."
+          }
+        }
+      }
+    },
+    "Order" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reihenfolge"
           }
         }
       }

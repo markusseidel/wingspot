@@ -246,6 +246,17 @@
     <string name="delete_account_for_good">Konto endgültig löschen?</string>
     <string name="delete_account_no_undo">Dein Konto lässt sich nicht wiederherstellen.</string>
     <string name="delete_account_failed">Dein Konto konnte nicht gelöscht werden. Bitte prüfe deine Verbindung und versuche es erneut.</string>
+    <string name="tab_flights">Flüge</string>
+    <string name="sort_label">Sortieren</string>
+    <string name="collection_sort_flight">Datum des Flugs oder der Sichtung</string>
+    <string name="sort_checkin_date">Check-in-Datum</string>
+    <string name="sort_newest">Neueste zuerst</string>
+    <string name="sort_oldest">Älteste zuerst</string>
+    <string name="first_label">Zuerst</string>
+    <string name="last_label">Zuletzt</string>
+    <string name="public_page_aircraft">Check-ins aller von diesem Flugzeug</string>
+    <string name="public_page_type">Check-ins aller von diesem Typ</string>
+    <string name="public_page_airport">Check-ins aller an diesem Flughafen</string>
     <string name="tab_aircraft">Flugzeuge</string>
     <string name="tab_types">Typen</string>
     <string name="nothing_here_yet">Hier ist noch nichts</string>

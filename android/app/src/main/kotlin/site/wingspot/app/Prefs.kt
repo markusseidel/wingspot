@@ -20,6 +20,20 @@ class Prefs(context: Context) {
         prefs.edit().putString("unit", value.name).apply()
     }
 
+    /** How the lists of check-ins in the collections are sorted: by which date, and in which direction. Compose reads them. */
+    var collectionDate: site.wingspot.core.CollectionDateKind by mutableStateOf(
+        site.wingspot.core.CollectionDateKind.entries.firstOrNull { it.name == prefs.getString("collectionDate", null) } ?: site.wingspot.core.CollectionDateKind.FLIGHT,
+    )
+        private set
+    var collectionAscending: Boolean by mutableStateOf(prefs.getBoolean("collectionAscending", false))
+        private set
+
+    fun chooseCollectionSort(date: site.wingspot.core.CollectionDateKind, ascending: Boolean) {
+        collectionDate = date
+        collectionAscending = ascending
+        prefs.edit().putString("collectionDate", date.name).putBoolean("collectionAscending", ascending).apply()
+    }
+
     /** False when the server switched the KML import off. On until the server says otherwise. Compose reads it. */
     var kmlImportOn: Boolean by mutableStateOf(prefs.getBoolean("kmlImportOn", true))
         private set

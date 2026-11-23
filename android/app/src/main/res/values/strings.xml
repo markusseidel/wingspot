@@ -246,6 +246,17 @@
     <string name="delete_account_for_good">Delete account for good?</string>
     <string name="delete_account_no_undo">There is no way to get your account back.</string>
     <string name="delete_account_failed">Couldn\'t delete your account. Please check your connection and try again.</string>
+    <string name="tab_flights">Flights</string>
+    <string name="sort_label">Sort</string>
+    <string name="collection_sort_flight">Date of the flight or sighting</string>
+    <string name="sort_checkin_date">Check-in date</string>
+    <string name="sort_newest">Newest first</string>
+    <string name="sort_oldest">Oldest first</string>
+    <string name="first_label">First</string>
+    <string name="last_label">Last</string>
+    <string name="public_page_aircraft">Everyone\'s check-ins of this aircraft</string>
+    <string name="public_page_type">Everyone\'s check-ins of this type</string>
+    <string name="public_page_airport">Everyone\'s check-ins at this airport</string>
     <string name="tab_aircraft">Aircraft</string>
     <string name="tab_types">Types</string>
     <string name="nothing_here_yet">Nothing here yet</string>

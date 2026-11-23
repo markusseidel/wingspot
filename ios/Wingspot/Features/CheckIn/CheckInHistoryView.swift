@@ -40,7 +40,7 @@ struct CheckInHistoryView: View {
     }
 }
 
-private struct CheckInRow: View {
+struct CheckInRow: View {
     let checkIn: LocalCheckIn
 
     var body: some View {
