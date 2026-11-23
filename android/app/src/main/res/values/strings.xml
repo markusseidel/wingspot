@@ -94,6 +94,10 @@
     <string name="delete">Delete</string>
     <string name="delete_title">Delete this check-in?</string>
     <string name="delete_message">It is removed for good, with its photos, salutes and comments.</string>
+    <string name="delete_photo">Delete photo</string>
+    <string name="delete_photo_title">Delete this photo?</string>
+    <string name="delete_photo_message">It is removed for good. The check-in, its other photos, salutes and comments stay.</string>
+    <string name="delete_photo_failed">Couldn\'t delete the photo. Please check your connection and try again.</string>
     <string name="delete_failed">Couldn\'t delete this check-in. Please check your connection and try again.</string>
     <string name="tab_feed">Feed</string>
     <string name="tab_check_in">Check in</string>

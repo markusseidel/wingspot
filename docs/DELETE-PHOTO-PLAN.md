@@ -55,3 +55,13 @@ Delete single photos from your own check-in; the check-in, its other photos, sal
 1. Online only for the first version (recommended)?
 2. Delete on the check-in page only (recommended), or also in the edit screens?
 3. Include the old orphan files in the clean-up (recommended)?
+
+## As built
+
+Decisions as recommended (online only, the check-in page only, old orphan files included).
+
+- **Migration `20261123100000_delete_photo.sql`:** `private.photo_files_to_remove` (the queue), a trigger on `checkin_photos` that queues the path of every deleted row (a deleted photo or a deleted check-in), `delete_photo(photo)` for signed-in people (owner only), `queued_photo_files()` and `photo_files_removed(paths)` for the service role only (the first drops a path whose photo row is back, so a live file is never removed), the `register_photo` position fix (highest position plus one), and the one-time queueing of stored files without a photo row that are older than an hour.
+- **`checkins` function:** `DELETE /v1/checkins/{id}/photos/{photo id}` (204, also when the photo is gone or isn't yours) and `POST /v1/checkins/cleanup-photos`. Both empty the queue through the Storage API, best effort and in batches of 100; a failure leaves the paths queued. No wake-up call from the database and no schedule: the queue is emptied by every photo delete and by every check-in delete from an updated app, and old apps' check-in deletes are picked up by the next one.
+- **Apps:** a delete action on your own photos on the check-in page (context menu on iPhone, a button on Android) with a confirmation, an error message if it fails, the photo gone from the page and the feed at once, this device's copy removed so the room for photos is right. Deleting a check-in now asks the server to remove its files too.
+- **Tests:** pgTAP (owner only, the queue, a returning photo, positions, cascade from a deleted check-in, who may call what), API tests (the row, the file really gone from storage, someone else's delete does nothing, sign-in needed, the clean-up after a deleted check-in), the iPhone and Android stores, and the local copy of a photo.
+- **Not done:** deleting while offline, and removing existing photos in the edit screens (both listed as later).

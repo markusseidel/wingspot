@@ -357,6 +357,14 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
 
     // Photos ----------------------------------------------------------------------------------------------------------
 
+    /**
+     * Removes this phone's copy of a photo (its id is the one the server knows), for a photo that was deleted from the
+     * check-in. The room for photos is counted from these copies, and a photo that is still waiting is never uploaded.
+     */
+    suspend fun removePhoto(id: UUID) = db {
+        connection.prepare("DELETE FROM photos WHERE id = ?").use { it.bindText(1, id.toString()); it.step() }
+    }
+
     /** Keeps a photo with its check-in. Up to four go on one check-in; more are ignored. */
     suspend fun addPhoto(checkInId: UUID, jpeg: ByteArray, width: Int, height: Int, now: Instant = Instant.now()): UUID? = db {
         if (count("checkin_id = ?", table = "photos") { it.bindText(1, checkInId.toString()) } >= MAX_PHOTOS) return@db null

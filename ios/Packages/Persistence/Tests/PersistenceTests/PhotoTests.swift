@@ -192,6 +192,21 @@ private actor FakePhotoServer: PhotoUploader {
         #expect(try store.addPhotos([photo], to: UUID()) == 0)
     }
 
+    @Test func aPhotoCanBeRemovedAndTheRoomComesBack() throws {
+        let context = try makeContext()
+        let store = CheckInStore(context: context)
+        _ = try store.saveSpotted(SpottedDraft(registration: Registration("DAIMA"), photos: Array(repeating: photo, count: CheckInStore.maxPhotos)))
+        let id = try #require(try context.fetch(FetchDescriptor<LocalCheckIn>()).first).id
+        #expect(try store.photoCount(for: id) == CheckInStore.maxPhotos)
+        let gone = try #require(try context.fetch(FetchDescriptor<LocalPhoto>()).first).id
+        try store.removePhoto(id: gone)
+        #expect(try store.photoCount(for: id) == CheckInStore.maxPhotos - 1)
+        #expect(try context.fetch(FetchDescriptor<LocalPhoto>()).allSatisfy { $0.id != gone })
+        // A photo this device doesn't have is fine
+        try store.removePhoto(id: UUID())
+        #expect(try store.addPhoto(photo, to: id))
+    }
+
     @Test func aCheckInWithoutAPhotoSavesNone() throws {
         let context = try makeContext()
         _ = try CheckInStore(context: context).saveSpotted(SpottedDraft(registration: Registration("DAIMA")))

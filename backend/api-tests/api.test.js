@@ -326,6 +326,69 @@ describe("PUT /v1/checkins/{id}/photos/{id}", () => {
     assert.equal(fifth.status, 409);
     assert.equal(fifth.body.code, "too_many_photos");
   });
+
+  const remove = async (user, checkinId, photoId) => {
+    const response = await fetch(`${API}/functions/v1/checkins/${checkinId}/photos/${photoId}`, {
+      method: "DELETE",
+      headers: user ? { Authorization: `Bearer ${user.token}` } : {},
+    });
+    return response.status;
+  };
+  /** Whether the file is still in storage, read as the service role. */
+  const fileExists = async (path) => {
+    const response = await fetch(`${API}/storage/v1/object/photos/${path}`, {
+      headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` },
+    });
+    await response.arrayBuffer();
+    return response.status === 200;
+  };
+
+  test("deletes one photo for good: the row, the file, and the check-in stays", async () => {
+    const photo = randomUUID();
+    const path = `${alice.id}/${checkin}/${photo}.jpg`;
+    assert.equal((await put(alice, checkin, photo, jpeg(JFIF, SOF))).status, 200);
+    assert.equal(await fileExists(path), true);
+    assert.equal(await remove(alice, checkin, photo), 204);
+    assert.equal((await service(`checkin_photos?id=eq.${photo}&select=id`)).length, 0);
+    assert.equal(await fileExists(path), false, "the file is removed from storage");
+    assert.equal((await service(`checkins?id=eq.${checkin}&select=id`)).length, 1);
+    // Repeating it is harmless
+    assert.equal(await remove(alice, checkin, photo), 204);
+  });
+
+  test("only the owner can delete a photo, and it needs a signed-in person", async () => {
+    const photo = randomUUID();
+    assert.equal((await put(alice, checkin, photo, jpeg(JFIF, SOF))).status, 200);
+    assert.equal(await remove(bob, checkin, photo), 204);
+    assert.equal((await service(`checkin_photos?id=eq.${photo}&select=id`)).length, 1, "someone else's delete does nothing");
+    assert.equal(await remove(null, checkin, photo), 401);
+    assert.equal(await remove(alice, "not-a-uuid", photo), 400);
+    assert.equal(await remove(alice, checkin, photo), 204);
+  });
+
+  test("the files of a deleted check-in are removed by the clean-up", async () => {
+    const doomed = randomUUID();
+    await call("/v1/checkins", {
+      method: "POST", token: alice.token,
+      body: { checkins: [{ id: doomed, kind: "spotted", occurred_at: new Date(Date.now() - 3600_000).toISOString(), registration: "D-PHTO" }] },
+    });
+    const photo = randomUUID();
+    const path = `${alice.id}/${doomed}/${photo}.jpg`;
+    assert.equal((await put(alice, doomed, photo, jpeg(JFIF, SOF))).status, 200);
+    const deleted = await fetch(`${API}/rest/v1/rpc/delete_checkin`, {
+      method: "POST",
+      headers: { apikey: ANON_KEY, Authorization: `Bearer ${alice.token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ target: doomed }),
+    });
+    assert.equal(deleted.status, 204);
+    // Deleting the check-in leaves the file until the clean-up runs
+    assert.equal(await fileExists(path), true);
+    const cleanup = await fetch(`${API}/functions/v1/checkins/cleanup-photos`, { method: "POST", headers: { Authorization: `Bearer ${alice.token}` } });
+    assert.equal(cleanup.status, 204);
+    assert.equal(await fileExists(path), false);
+    const noToken = await fetch(`${API}/functions/v1/checkins/cleanup-photos`, { method: "POST" });
+    assert.equal(noToken.status, 401);
+  });
 });
 
 describe("POST /v1/checkins", () => {

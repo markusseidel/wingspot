@@ -302,6 +302,19 @@ class SocialViewModel(
         mutable.value = mutable.value.copy(items = mutable.value.items.map { if (it.id == item.id) item else it })
     }
 
+    /**
+     * Deletes one photo of your own check-in on the server and takes it out of the lists. Returns false if that failed, in
+     * which case the photo stays. The check-in stays either way, also when it was the last photo.
+     */
+    suspend fun deletePhoto(photo: FeedPhoto): Boolean = try {
+        api.deletePhoto(photo.checkInId, photo.id)
+        val photos = mutable.value.photos
+        mutable.value = mutable.value.copy(photos = photos + (photo.checkInId to photos[photo.checkInId].orEmpty().filterNot { it.id == photo.id }))
+        true
+    } catch (e: ApiException) {
+        false
+    }
+
     fun remove(id: String) {
         mutable.value = mutable.value.copy(items = mutable.value.items.filterNot { it.id == id }, photos = mutable.value.photos - id, tags = mutable.value.tags - id, badges = mutable.value.badges - id)
     }

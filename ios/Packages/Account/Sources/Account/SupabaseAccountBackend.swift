@@ -495,6 +495,18 @@ extension SupabaseAccountBackend: FeedBackend {
         try await socialErrors {
             _ = try await client.rpc("delete_checkin", params: CheckInParams(target: id)).execute()
         }
+        // The check-in is gone; now its photo files are removed from storage. If this fails, they stay queued on the
+        // server and go with the next clean-up, so it is not worth failing the delete for.
+        _ = try? await client.functions.invoke("checkins/cleanup-photos", options: FunctionInvokeOptions(method: .post))
+    }
+
+    public func deletePhoto(checkIn: UUID, photo: UUID) async throws {
+        try await socialErrors {
+            try await client.functions.invoke(
+                "checkins/\(checkIn.uuidString.lowercased())/photos/\(photo.uuidString.lowercased())",
+                options: FunctionInvokeOptions(method: .delete)
+            )
+        }
     }
 
     public func personCheckIns(of person: UUID, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem] {

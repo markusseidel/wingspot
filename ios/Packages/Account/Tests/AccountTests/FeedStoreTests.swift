@@ -29,6 +29,12 @@ private actor FakeFeed: FeedBackend, ReactionBackend {
         deleted.append(id)
         items.removeAll { $0.id == id }
     }
+    var deletedPhotos: [UUID] = []
+    func deletePhoto(checkIn: UUID, photo: UUID) throws {
+        if let error { throw error }
+        deletedPhotos.append(photo)
+        photoRows.removeAll { $0.id == photo }
+    }
     func failReactions(_ error: AccountError?) { reactionError = error }
 
     func setSalute(_ on: Bool, checkIn: UUID, as me: UUID) throws {
@@ -571,4 +577,31 @@ private func item(_ n: Int) -> FeedItem {
     await backend.fail(nil)
     #expect(await store.deleteCheckIn(item(2).id))
     #expect(store.items.map(\.id) == [item(1).id, item(3).id])
+}
+
+@MainActor @Test func deletingAPhotoRemovesOnlyThatPhotoAndKeepsTheCheckIn() async throws {
+    let backend = FakeFeed(items: (1...2).map(item))
+    let first = item(1).id
+    let url = try #require(URL(string: "https://example.test/a.jpg"))
+    let keep = FeedPhoto(id: UUID(), checkInID: first, url: url)
+    let drop = FeedPhoto(id: UUID(), checkInID: first, url: url)
+    await backend.setPhotos([keep, drop])
+    let store = makeStore(backend)
+    await store.refresh()
+    #expect(store.photos[first]?.count == 2)
+
+    // A failed delete leaves the photo
+    await backend.fail(.unknown)
+    #expect(await store.deletePhoto(drop) == false)
+    #expect(store.photos[first]?.count == 2)
+
+    await backend.fail(nil)
+    #expect(await store.deletePhoto(drop))
+    #expect(store.photos[first]?.map(\.id) == [keep.id])
+    #expect(await backend.deletedPhotos == [drop.id])
+    // The check-in and the other photo stay, and so does the check-in when it was the last photo
+    #expect(store.items.count == 2)
+    #expect(await store.deletePhoto(keep))
+    #expect(store.photos[first]?.isEmpty == true)
+    #expect(store.items.count == 2)
 }

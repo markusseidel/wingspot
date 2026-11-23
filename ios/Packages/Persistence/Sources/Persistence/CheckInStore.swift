@@ -499,6 +499,14 @@ public struct CheckInStore {
         return added.count
     }
 
+    /// Removes this device's copy of a photo (its id is the one the server knows), for a photo that was deleted from the
+    /// check-in. The room for photos is counted from these copies, and a photo that is still waiting is never uploaded.
+    public func removePhoto(id: UUID) throws {
+        let found = try context.fetch(FetchDescriptor<LocalPhoto>(predicate: #Predicate { $0.id == id }))
+        for photo in found { context.delete(photo) }
+        try context.save()
+    }
+
     /// Saved together with the check-in, so a photo never exists without it. Each photo is one millisecond later than the one
     /// before, so the photos keep the order they were given in (the id is made from the time, and the photos are sorted by it).
     private func insertPhotos(_ photos: [PreparedPhoto], for checkInID: UUID, at date: Date) {

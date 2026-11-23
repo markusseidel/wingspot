@@ -153,6 +153,14 @@ class ApiClient(
         } catch (e: IOException) {
             throw ApiException.Retry
         }
+        // The check-in is gone; now its photo files are removed from storage. If this fails they stay queued on the
+        // server for the next clean-up, so it is not worth failing the delete for.
+        try {
+            val cleanup = Request.Builder().url("$base/v1/checkins/cleanup-photos").header("Authorization", "Bearer $accessToken")
+                .post(ByteArray(0).toRequestBody(null)).build()
+            client.newCall(cleanup).execute().close()
+        } catch (e: IOException) {
+        }
     }
 
     /**

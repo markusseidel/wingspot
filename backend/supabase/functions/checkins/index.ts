@@ -1,4 +1,4 @@
-import { authenticate, error, json, methodNotAllowed, notFound, serverError, subpath } from "../_shared/http.ts";
+import { authenticate, error, json, methodNotAllowed, notFound, serverError, serviceClient, subpath } from "../_shared/http.ts";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const MAX_ITEMS = 50;
@@ -126,11 +126,56 @@ async function putPhoto(request: Request, checkinId: string, photoId: string): P
   return serverError(`register_photo said ${status}`);
 }
 
+/**
+ * Removes the files of deleted photos from storage. The database queues a path when a photo row goes (a deleted photo, or a
+ * deleted check-in), and only the Storage API can remove the file itself. A file that can't be removed stays in the queue
+ * for the next run. Never throws: it runs after the answer that matters has been decided.
+ */
+async function removeQueuedPhotoFiles(): Promise<void> {
+  try {
+    const admin = serviceClient();
+    const { data, error: queueFailure } = await admin.rpc("queued_photo_files", { max_files: 100 });
+    if (queueFailure) throw queueFailure;
+    const paths = (data ?? []) as string[];
+    if (paths.length === 0) return;
+    const { error: removeFailure } = await admin.storage.from("photos").remove(paths);
+    if (removeFailure) throw removeFailure;
+    const { error: doneFailure } = await admin.rpc("photo_files_removed", { paths });
+    if (doneFailure) throw doneFailure;
+  } catch (cause) {
+    console.error("removing photo files failed", cause);
+  }
+}
+
+/** DELETE /v1/checkins/{checkin_id}/photos/{photo_id}: deletes one photo of your own check-in. Repeating it is harmless. */
+async function deletePhoto(request: Request, checkinId: string, photoId: string): Promise<Response> {
+  if (!UUID.test(checkinId) || !UUID.test(photoId)) return invalid("The ids must be UUIDs.");
+  const auth = await authenticate(request);
+  if (auth instanceof Response) return auth;
+  const { error: failure } = await auth.db.rpc("delete_photo", { photo: photoId.toLowerCase() });
+  if (failure) return serverError(failure);
+  await removeQueuedPhotoFiles();
+  return new Response(null, { status: 204 });
+}
+
+/** POST /v1/checkins/cleanup-photos: removes the files of photos and check-ins that were deleted. Any signed-in person may ask. */
+async function cleanupPhotos(request: Request): Promise<Response> {
+  const auth = await authenticate(request);
+  if (auth instanceof Response) return auth;
+  await removeQueuedPhotoFiles();
+  return new Response(null, { status: 204 });
+}
+
 Deno.serve((request) => {
   const path = subpath(request);
   if (path.length === 0) return request.method === "POST" ? upload(request) : methodNotAllowed();
+  if (path.length === 1 && path[0] === "cleanup-photos") {
+    return request.method === "POST" ? cleanupPhotos(request) : methodNotAllowed();
+  }
   if (path.length === 3 && path[1] === "photos") {
-    return request.method === "PUT" ? putPhoto(request, path[0], path[2]) : methodNotAllowed();
+    if (request.method === "PUT") return putPhoto(request, path[0], path[2]);
+    if (request.method === "DELETE") return deletePhoto(request, path[0], path[2]);
+    return methodNotAllowed();
   }
   return notFound();
 });
