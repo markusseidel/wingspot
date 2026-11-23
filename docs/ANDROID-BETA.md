@@ -42,7 +42,7 @@ One-time setup (you):
 7. Play Console > Testing > Internal testing > Create release > upload the `.aab` > Save and roll out. The application id is `site.wingspot.android` and cannot be changed after the first upload.
 8. Testers > create an email list and add your friends' Google accounts (the Gmail address they use on the phone). Copy the **opt-in link** and send it. Each friend opens the link on their phone, accepts, and installs Wingspot from the Play Store.
 
-Every later version: run the workflow, upload the new `.aab` as a new internal release. The version code goes up by itself: the date and the day's run number with two digits, like `2026112301` and then `2026112302`. Until 22 November 2026 it was one digit (like `202611221`), so every code since is higher. At most 99 runs a day. The iOS build number is still the date and one digit.
+Every later version: run the workflow, upload the new `.aab` as a new internal release. The version code goes up by itself: the date and the day's run number with two digits, like `2026112301` and then `2026112302`. Until 22 November 2026 it was one digit (like `202611221`), so every code since is higher. At most 99 runs a day. The iOS build number is the same: the date and two digits.
 
 Later, for a wider test or the public release: Closed testing needs a review by Google. For a personal developer account created recently, Google asks for a closed test with at least 12 testers over 14 days in a row before the app may go to production. Plan for that early, because it adds two weeks.
 
