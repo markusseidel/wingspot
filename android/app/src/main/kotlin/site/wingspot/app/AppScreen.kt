@@ -146,6 +146,7 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
                     page is Route.Invite && me != null -> InvitePage(app, social, me)
                     page is Route.Inbox && me != null -> InboxPage(social)
                     page is Route.Settings -> SettingsPage(app, me, social)
+                    page is Route.ReleaseNotes -> ReleaseNotesPage(app, social)
                     page is Route.EditProfile && me != null -> EditProfilePage(app, me, refState, social)
                     else -> when (social.tab) {
                         Tab.FEED -> SocialGate(app, me, announcements, onSignIn = { social.tab = Tab.PROFILE }) { FeedTab(social, it, announcements, checkIn) }
