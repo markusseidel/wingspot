@@ -94,6 +94,7 @@
     <string name="delete">Delete</string>
     <string name="delete_title">Delete this check-in?</string>
     <string name="delete_message">It is removed for good, with its photos, salutes and comments.</string>
+    <string name="removed_photos_note">Removed photos are deleted when you save.</string>
     <string name="delete_photo">Delete photo</string>
     <string name="delete_photo_title">Delete this photo?</string>
     <string name="delete_photo_message">It is removed for good. The check-in, its other photos, salutes and comments stay.</string>

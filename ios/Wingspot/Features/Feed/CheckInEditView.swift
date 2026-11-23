@@ -33,6 +33,9 @@ struct CheckInEditView: View {
     /// How many more photos the check-in can take.
     @State private var roomForPhotos = 0
     @State private var tagged: [PersonTag] = []
+    /// Existing photos marked as removed. They are deleted when the screen is saved.
+    @State private var removedPhotos: Set<UUID> = []
+    @State private var isSaving = false
 
     private var registration: Registration? { Registration(registrationInput) }
     private var hasRegistrationInput: Bool { !registrationInput.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -83,7 +86,7 @@ struct CheckInEditView: View {
                     }
                 }
                 if roomForPhotos > 0 || !existingPhotos.isEmpty {
-                    PhotoSection(photos: $photos, isPreparing: $isPreparingPhoto, limit: roomForPhotos, existing: existingPhotos, onDeleteExisting: onDeletePhoto)
+                    PhotoSection(photos: $photos, isPreparing: $isPreparingPhoto, limit: roomForPhotos, existing: existingPhotos, removedExisting: $removedPhotos, removable: onDeletePhoto != nil)
                 }
                 Section { CheckInVisibilityPicker(checkInID: checkInID) }
             }
@@ -92,7 +95,7 @@ struct CheckInEditView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", action: save).disabled(!canSave)
+                    Button("Save") { Task { await save() } }.disabled(!canSave || isSaving)
                 }
             }
             .alert("Couldn't save this check-in", isPresented: $failed) {
@@ -128,7 +131,22 @@ struct CheckInEditView: View {
         loaded = true
     }
 
-    private func save() {
+    /// Deletes the photos that were marked as removed, then saves the details. If a photo can't be deleted nothing else is saved and
+    /// the screen stays open, so the person can try again or cancel.
+    private func save() async {
+        isSaving = true
+        defer { isSaving = false }
+        for photo in existingPhotos where removedPhotos.contains(photo.id) {
+            if await onDeletePhoto?(photo) != true {
+                failed = true
+                return
+            }
+            removedPhotos.remove(photo.id)
+        }
+        saveDetails()
+    }
+
+    private func saveDetails() {
         do {
             let store = CheckInStore(context: modelContext)
             if kind == "spotted" {

@@ -94,6 +94,7 @@
     <string name="delete">Löschen</string>
     <string name="delete_title">Diesen Check-in löschen?</string>
     <string name="delete_message">Er wird endgültig gelöscht, mit Fotos, Salutes und Kommentaren.</string>
+    <string name="removed_photos_note">Entfernte Fotos werden beim Sichern gelöscht.</string>
     <string name="delete_photo">Foto löschen</string>
     <string name="delete_photo_title">Dieses Foto löschen?</string>
     <string name="delete_photo_message">Es wird endgültig entfernt. Der Check-in, seine anderen Fotos, Salutes und Kommentare bleiben.</string>
