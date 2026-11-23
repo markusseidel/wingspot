@@ -812,6 +812,14 @@ extension SupabaseAccountBackend: AnnouncementBackend {
     }
 }
 
+extension SupabaseAccountBackend: ReleaseNotesBackend {
+    public func releaseNotes(platform: String) async throws -> [ReleaseNote] {
+        try await socialErrors {
+            try await client.rpc("get_release_notes", params: ["p_platform": platform]).execute().value
+        }
+    }
+}
+
 extension SupabaseAccountBackend: MyCheckInsBackend {
     public func myCheckIns(after cursor: FeedCursor?, pageSize: Int) async throws -> [MyCheckIn] {
         try await socialErrors {
