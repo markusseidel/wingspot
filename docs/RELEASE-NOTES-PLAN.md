@@ -1,6 +1,6 @@
 # Release notes in the app: plan
 
-Idea from the owner: a "What's new" entry under Profile > Settings, where every version or build that went out can be read, each with a short summary of the tester notes (later the release notes). Status: plan only, nothing built.
+Idea from the owner: a "What's new" entry under Profile > Settings, where every version or build that went out can be read, each with a short summary of the tester notes (later the release notes). Issue #315. Status: plan only, nothing built.
 
 ## Goal
 
