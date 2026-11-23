@@ -550,4 +550,12 @@
     <string name="activity_spot_proposed">%1$s hat einen Ort vorgeschlagen: %2$s</string>
     <string name="activity_spot_approved">Dein Ort %1$s ist jetzt freigegeben</string>
     <string name="activity_spot_rejected">Dein Ort %1$s wurde nicht übernommen</string>
+    <string name="about_title">Info</string>
+    <string name="version_label">Version</string>
+    <string name="whats_new">Neuigkeiten</string>
+    <string name="release_notes_newer">Neuer als deine Version</string>
+    <string name="tag_beta">Beta</string>
+    <string name="tag_installed">Installiert</string>
+    <string name="release_notes_empty">Noch keine Neuigkeiten</string>
+    <string name="release_notes_failed">Die neuesten Notizen konnten nicht geladen werden. Es wird gezeigt, was vorher geladen wurde.</string>
 </resources>

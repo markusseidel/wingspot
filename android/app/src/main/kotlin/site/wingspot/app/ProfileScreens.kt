@@ -49,6 +49,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.draw.clip
+import site.wingspot.core.groupReleaseNotes
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.unit.dp
 import java.time.LocalDate
 import java.time.ZoneId
@@ -495,7 +500,73 @@ fun SettingsPage(app: WingspotApp, me: String?, social: SocialViewModel) {
             }
         }
         LegalLinksSection()
+        HorizontalDivider()
+        Text(stringResource(R.string.about_title), style = MaterialTheme.typography.titleMedium)
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.version_label), Modifier.weight(1f))
+            Text("${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.testTag("version-line"))
+        }
+        TextButton(onClick = { social.open(Route.ReleaseNotes) }, modifier = Modifier.testTag("release-notes")) { Text(stringResource(R.string.whats_new)) }
     }
+}
+
+/**
+ * What changed in each build, newest first, with the installed build marked. Builds newer than the installed one come first, under
+ * their own heading: they show what the next update brings. The last list is kept on the phone, so the page opens offline.
+ */
+@Composable
+fun ReleaseNotesPage(app: WingspotApp, social: SocialViewModel) {
+    var notes by remember { mutableStateOf(app.prefs.releaseNotesCache?.let(app.releaseNotes::decode).orEmpty()) }
+    var loading by remember { mutableStateOf(true) }
+    var failed by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        try {
+            notes = app.releaseNotes.fetch().sortedByDescending { it.build }
+            app.prefs.releaseNotesCache = app.releaseNotes.encode(notes)
+        } catch (e: Exception) { failed = true }
+        loading = false
+    }
+    val installed = BuildConfig.VERSION_CODE.toLong()
+    val groups = groupReleaseNotes(notes, installed)
+    val language = java.util.Locale.getDefault().language
+    Column(Modifier.fillMaxWidth().verticalScrollState(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        PageHeader(stringResource(R.string.whats_new), social::back)
+        if (failed) Text(stringResource(R.string.release_notes_failed), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        if (groups.newer.isNotEmpty()) {
+            Text(stringResource(R.string.release_notes_newer), style = MaterialTheme.typography.titleMedium)
+            groups.newer.forEach { ReleaseNoteCard(it, language, installed) }
+        }
+        groups.installedAndOlder.forEach { ReleaseNoteCard(it, language, installed) }
+        if (notes.isEmpty()) {
+            if (loading) CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+            else Text(stringResource(R.string.release_notes_empty), color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    }
+}
+
+@Composable
+private fun ReleaseNoteCard(note: site.wingspot.core.ReleaseNote, language: String, installed: Long) {
+    val (title, lines) = note.text(language)
+    Column(Modifier.fillMaxWidth().testTag("release-note-${note.build}"), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text("${note.version} (${note.build})", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            if (note.isBeta) ReleaseTag(stringResource(R.string.tag_beta))
+            if (note.build == installed) ReleaseTag(stringResource(R.string.tag_installed))
+            Box(Modifier.weight(1f))
+            note.day?.let { Text(it, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+        }
+        Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+        lines.forEach { Text("•  $it", style = MaterialTheme.typography.bodyMedium) }
+        HorizontalDivider(Modifier.padding(top = 8.dp))
+    }
+}
+
+@Composable
+private fun ReleaseTag(text: String) {
+    Text(
+        text, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)).padding(horizontal = 6.dp, vertical = 2.dp),
+    )
 }
 
 @Composable

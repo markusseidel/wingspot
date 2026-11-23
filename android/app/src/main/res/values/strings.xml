@@ -550,4 +550,12 @@
     <string name="activity_spot_proposed">%1$s suggested a place: %2$s</string>
     <string name="activity_spot_approved">Your place %1$s is now live</string>
     <string name="activity_spot_rejected">Your place %1$s was not accepted</string>
+    <string name="about_title">About</string>
+    <string name="version_label">Version</string>
+    <string name="whats_new">What\'s new</string>
+    <string name="release_notes_newer">Newer than your version</string>
+    <string name="tag_beta">Beta</string>
+    <string name="tag_installed">Installed</string>
+    <string name="release_notes_empty">No release notes yet</string>
+    <string name="release_notes_failed">Couldn\'t load the latest notes. Showing what was loaded before.</string>
 </resources>

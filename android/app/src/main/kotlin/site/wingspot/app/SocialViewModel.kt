@@ -41,6 +41,7 @@ sealed class Route {
     object Leaderboard : Route()
     object Invite : Route()
     object Settings : Route()
+    object ReleaseNotes : Route()
     object Inbox : Route()
     object EditProfile : Route()
 }

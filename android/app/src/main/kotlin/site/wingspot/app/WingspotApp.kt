@@ -32,6 +32,7 @@ class WingspotApp : Application() {
     val terms by lazy { TermsStore(this) }
     val rest by lazy { Rest(BuildConfig.SUPABASE_URL, BuildConfig.PUBLISHABLE_KEY, ::accessToken) }
     val announcements by lazy { AnnouncementsApi(rest) }
+    val releaseNotes by lazy { site.wingspot.core.ReleaseNotesApi(rest) }
     val social by lazy { SocialApi(rest, BuildConfig.SUPABASE_URL + "/storage/v1") }
     val api by lazy {
         ApiClient(BuildConfig.SUPABASE_URL + "/functions", restUrl = BuildConfig.SUPABASE_URL + "/rest/v1", apiKey = BuildConfig.PUBLISHABLE_KEY)

@@ -106,6 +106,11 @@ class Prefs(context: Context) {
 
     fun cacheProgress(user: String, json: String) = prefs.edit().putString("progress.$user", json).apply()
 
+    /** The release notes the server sent last time, as JSON, so the screen opens offline. */
+    var releaseNotesCache: String?
+        get() = prefs.getString("releaseNotes", null)
+        set(value) = prefs.edit().putString("releaseNotes", value).apply()
+
     /** The announcements the server sent last time, as JSON, so the card shows offline. */
     var announcementsCache: String?
         get() = prefs.getString("announcements", null)
