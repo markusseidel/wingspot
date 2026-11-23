@@ -224,7 +224,7 @@ public struct CheckInStore {
             typeICAO: draft.type?.icaoCode, typeName: draft.type?.name,
             airportID: draft.place?.airportID, airportCode: draft.place?.code,
             latitude: draft.position?.latitude, longitude: draft.position?.longitude,
-            occurredAt: date, syncState: .pending, ownerID: ownerID, visitID: draft.visitID
+            occurredAt: date, syncState: .pending, ownerID: ownerID, visitID: draft.visitID, savedAt: Date()
         ))
         insertPhotos(draft.photos, for: id, at: date)
         try context.save()
@@ -249,7 +249,7 @@ public struct CheckInStore {
             latitude: draft.position?.latitude, longitude: draft.position?.longitude,
             occurredAt: date, syncState: .pending, ownerID: ownerID, visitContext: draft.context.rawValue,
             taggedIDs: draft.tagged.isEmpty ? nil : draft.tagged, sourceID: draft.sourceID,
-            spotID: draft.spotID, spotName: draft.spotName
+            spotID: draft.spotID, spotName: draft.spotName, savedAt: Date()
         ))
         insertPhotos(draft.photos, for: id, at: date)
         try context.save()
@@ -278,7 +278,7 @@ public struct CheckInStore {
             originID: from, destinationID: to, originCode: draft.origin.code, destinationCode: draft.destination.code,
             flightNumber: (flight?.isEmpty ?? true) ? nil : flight, cabin: draft.cabin?.rawValue,
             seat: draft.seat?.isEmpty ?? true ? nil : draft.seat?.uppercased(),
-            taggedIDs: draft.tagged.isEmpty ? nil : draft.tagged, sourceID: draft.sourceID
+            taggedIDs: draft.tagged.isEmpty ? nil : draft.tagged, sourceID: draft.sourceID, savedAt: Date()
         ))
         insertPhotos(draft.photos, for: id, at: date)
         // The airports are checked in too, so they count as visited and show on the airport pages.
@@ -286,7 +286,7 @@ public struct CheckInStore {
             context.insert(LocalCheckIn(
                 id: UUID.v7(at: date), kind: "airport", registration: nil, typeICAO: nil, typeName: nil,
                 airportID: airport.airportID, airportCode: airport.code, latitude: nil, longitude: nil,
-                occurredAt: date, syncState: .pending, ownerID: ownerID, visitContext: visit.rawValue, flightID: id
+                occurredAt: date, syncState: .pending, ownerID: ownerID, visitContext: visit.rawValue, flightID: id, savedAt: Date()
             ))
         }
         try context.save()

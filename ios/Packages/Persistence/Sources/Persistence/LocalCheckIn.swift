@@ -54,6 +54,12 @@ public final class LocalCheckIn {
     public var spotName: String?
     /// Sightings made during a session: the airport visit that started it.
     public var visitID: UUID?
+    /// When it was saved on this device: the check-in date. Nil for check-ins made before this was kept and for ones restored from
+    /// the server, which then use `syncedAt` and last the flight date (`enteredAt`). Like `ownerID`, it opens an existing store without a migration step.
+    public var savedAt: Date?
+
+    /// The check-in date: when it was saved here, else when it reached the server, else the date of the flight or sighting.
+    public var enteredAt: Date { savedAt ?? syncedAt ?? occurredAt }
 
     init(
         id: UUID, kind: String, registration: String?, typeICAO: String?, typeName: String?, airportID: Int?,
@@ -62,7 +68,7 @@ public final class LocalCheckIn {
         originID: Int? = nil, destinationID: Int? = nil, originCode: String? = nil, destinationCode: String? = nil,
         flightNumber: String? = nil, cabin: String? = nil, seat: String? = nil, flightID: UUID? = nil,
         taggedIDs: [UUID]? = nil, sourceID: UUID? = nil,
-        spotID: Int? = nil, spotName: String? = nil, visitID: UUID? = nil
+        spotID: Int? = nil, spotName: String? = nil, visitID: UUID? = nil, savedAt: Date? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -90,5 +96,6 @@ public final class LocalCheckIn {
         self.spotID = spotID
         self.spotName = spotName
         self.visitID = visitID
+        self.savedAt = savedAt
     }
 }

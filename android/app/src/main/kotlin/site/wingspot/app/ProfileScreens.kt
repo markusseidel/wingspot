@@ -1,14 +1,14 @@
 package site.wingspot.app
 
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.ui.res.painterResource
 import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,15 +20,18 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -56,16 +60,19 @@ import kotlinx.coroutines.withContext
 import site.wingspot.core.Airport
 import site.wingspot.core.ApiException
 import site.wingspot.core.CheckInStats
+import site.wingspot.core.CollectionDateKind
 import site.wingspot.core.CollectionEntry
+import site.wingspot.core.CollectionKind
 import site.wingspot.core.Collections
 import site.wingspot.core.DistanceUnit
-import site.wingspot.core.GeoCoordinate
-import site.wingspot.core.GreatCircle
 import site.wingspot.core.FlightTrack
 import site.wingspot.core.FlownRouteStats
-import site.wingspot.core.ReferenceDatabase
+import site.wingspot.core.GeoCoordinate
+import site.wingspot.core.GreatCircle
 import site.wingspot.core.LocalCheckIn
+import site.wingspot.core.ReferenceDatabase
 import site.wingspot.core.SocialApi
+import site.wingspot.core.SyncState
 import site.wingspot.core.Username
 
 /** The Profile tab: level, numbers, your details, and the account actions. */
@@ -263,35 +270,177 @@ private fun StatsCard(stats: CheckInStats, database: ReferenceDatabase?) {
     }
 }
 
-/** What has been seen: aircraft, types and airports, from the check-ins on this phone. */
+/** What has been seen: aircraft, types and airports, and the flights, from the check-ins on this phone. */
 @Composable
-fun CollectionsPage(local: List<LocalCheckIn>, social: SocialViewModel) {
-    var tab by remember { mutableStateOf(0) }
+fun CollectionsPage(app: WingspotApp, local: List<LocalCheckIn>, social: SocialViewModel, reference: ReferenceState) {
+    val tab = social.collectionsTab
     val lists = Collections.of(local)
-    val entries: List<CollectionEntry> = when (tab) { 0 -> lists.aircraft; 1 -> lists.types; else -> lists.airports }
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    val flights = Collections.ordered(Collections.flights(local), app.prefs.collectionDate, app.prefs.collectionAscending)
+    val places = airportPlaces(flights.flatMap { listOfNotNull(it.originId, it.destinationId) }.toSet(), reference.database)
+    val entries: List<CollectionEntry> = when (tab) { 0 -> lists.aircraft; 1 -> lists.types; 2 -> lists.airports; else -> emptyList() }
+    val kind = when (tab) { 0 -> CollectionKind.AIRCRAFT; 1 -> CollectionKind.TYPE; else -> CollectionKind.AIRPORT }
+    LazyColumn(state = social.collectionsList, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         item { PageHeader(stringResource(R.string.collections), social::back) }
         item { OutlinedButton(onClick = { social.open(Route.AirportsMap) }, modifier = Modifier.fillMaxWidth().testTag("airports-map")) { Text(stringResource(R.string.airports_map)) } }
         item {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                for ((i, label) in listOf(R.string.tab_aircraft, R.string.tab_types, R.string.airports).withIndex()) {
-                    FilterChip(selected = tab == i, onClick = { tab = i }, label = { Text(stringResource(label)) })
+            // The tabs scroll sideways, so they stay usable on small screens and with large text.
+            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                for ((i, label) in listOf(R.string.tab_aircraft, R.string.tab_types, R.string.airports, R.string.tab_flights).withIndex()) {
+                    FilterChip(selected = tab == i, onClick = { social.collectionsTab = i }, label = { Text(stringResource(label)) })
                 }
             }
         }
-        if (entries.isEmpty()) item { Text(stringResource(R.string.nothing_here_yet), color = MaterialTheme.colorScheme.onSurfaceVariant) }
-        items(entries, key = { it.id }) { entry ->
-            Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Text(entry.title, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.titleMedium)
-                    Text(
-                        stringResource(R.string.last_seen, DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(entry.lastSeen.atZone(ZoneId.systemDefault()))),
-                        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+        if (tab == 3) {
+            item { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { CollectionSortMenu(app) } }
+            if (flights.isEmpty()) item { Text(stringResource(R.string.nothing_here_yet), color = MaterialTheme.colorScheme.onSurfaceVariant) }
+            items(flights, key = { it.id }) { flight -> FlightRow(app, flight, places) { social.open(Route.CheckInPage(flight.id.toString())) } }
+        } else {
+            if (entries.isEmpty()) item { Text(stringResource(R.string.nothing_here_yet), color = MaterialTheme.colorScheme.onSurfaceVariant) }
+            items(entries, key = { it.id }) { entry ->
+                Row(
+                    Modifier.fillMaxWidth().clickable { social.open(Route.CollectionDetail(kind, entry.id)) }.padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(Modifier.weight(1f)) {
+                        Text(entry.title, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.titleMedium)
+                        Text(
+                            stringResource(R.string.last_seen, DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(entry.lastSeen.atZone(ZoneId.systemDefault()))),
+                            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Text("\u00d7${entry.count}", style = MaterialTheme.typography.titleMedium)
                 }
-                Text("×${entry.count}", style = MaterialTheme.typography.titleMedium)
             }
         }
+    }
+}
+
+/** The airports of these ids from the reference data on this phone, so it works offline. */
+@Composable
+private fun airportPlaces(ids: Set<Long>, database: ReferenceDatabase?): Map<Long, GeoCoordinate> {
+    val places by produceState(emptyMap<Long, GeoCoordinate>(), ids, database) {
+        val db = database ?: return@produceState
+        value = withContext(Dispatchers.IO) {
+            buildMap { for (id in ids) db.airport(id)?.let { put(id, GeoCoordinate(it.latitude, it.longitude)) } }
+        }
+    }
+    return places
+}
+
+private fun shortDate(at: java.time.Instant): String =
+    DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(at.atZone(ZoneId.systemDefault()))
+
+/** The sort menu: the date to sort by, and newest or oldest first. Remembered between visits. */
+@Composable
+fun CollectionSortMenu(app: WingspotApp) {
+    var open by remember { mutableStateOf(false) }
+    val date = app.prefs.collectionDate
+    val ascending = app.prefs.collectionAscending
+    Box {
+        TextButton(onClick = { open = true }, modifier = Modifier.testTag("collection-sort")) { Text(stringResource(R.string.sort_label)) }
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            for ((kind, label) in listOf(CollectionDateKind.FLIGHT to R.string.collection_sort_flight, CollectionDateKind.CHECK_IN to R.string.sort_checkin_date)) {
+                DropdownMenuItem(
+                    text = { Text((if (date == kind) "\u2713 " else "") + stringResource(label)) },
+                    onClick = { app.prefs.chooseCollectionSort(kind, ascending); open = false },
+                )
+            }
+            HorizontalDivider()
+            for ((up, label) in listOf(false to R.string.sort_newest, true to R.string.sort_oldest)) {
+                DropdownMenuItem(
+                    text = { Text((if (ascending == up) "\u2713 " else "") + stringResource(label)) },
+                    onClick = { app.prefs.chooseCollectionSort(date, up); open = false },
+                )
+            }
+        }
+    }
+}
+
+/** A flight in the flights tab: the route, the flight number and aircraft, the date and the distance. Opens when the server has it. */
+@Composable
+private fun FlightRow(app: WingspotApp, flight: LocalCheckIn, places: Map<Long, GeoCoordinate>, onOpen: () -> Unit) {
+    val from = flight.originId?.let { places[it] }
+    val to = flight.destinationId?.let { places[it] }
+    val km = if (from != null && to != null) Math.round(GreatCircle.distanceKm(from, to)).toInt() else null
+    val opens = flight.syncState == SyncState.SYNCED
+    Row(
+        Modifier.fillMaxWidth().then(if (opens) Modifier.clickable(onClick = onOpen) else Modifier).padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(flight.title, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.titleMedium)
+            listOfNotNull(flight.flightNumber, flight.registration ?: flight.typeIcao).joinToString(" \u00b7 ").takeIf { it.isNotEmpty() }?.let {
+                Text(it, style = MaterialTheme.typography.bodyMedium)
+            }
+            Text(shortDate(flight.occurredAt), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        Column(horizontalAlignment = Alignment.End) {
+            km?.let { Text(app.prefs.unit.format(it), style = MaterialTheme.typography.bodyMedium) }
+            if (!opens) Text(stringResource(syncStateText(flight.syncState)), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    }
+}
+
+private fun syncStateText(state: SyncState) = when (state) {
+    SyncState.PENDING -> R.string.state_pending
+    SyncState.SYNCED -> R.string.state_synced
+    SyncState.REJECTED -> R.string.state_rejected
+}
+
+/** One check-in in a list of an entry: what it is, when, and its state when it is only on this phone. Opens when the server has it. */
+@Composable
+private fun EntryCheckInRow(checkIn: LocalCheckIn, onOpen: () -> Unit) {
+    val opens = checkIn.syncState == SyncState.SYNCED
+    val detail = when (checkIn.kind) {
+        "flown" -> listOfNotNull(checkIn.flightNumber, checkIn.registration ?: checkIn.typeIcao).joinToString(" \u00b7 ")
+        "airport" -> checkIn.airportCode.orEmpty()
+        else -> listOfNotNull(checkIn.typeIcao.takeIf { checkIn.registration != null }, checkIn.airportCode).joinToString(" \u00b7 ")
+    }
+    Row(
+        Modifier.fillMaxWidth().then(if (opens) Modifier.clickable(onClick = onOpen) else Modifier).padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(checkIn.title, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.titleMedium)
+            if (detail.isNotEmpty()) Text(detail, style = MaterialTheme.typography.bodyMedium)
+            Text(shortDate(checkIn.occurredAt), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        if (!opens) Text(stringResource(syncStateText(checkIn.syncState)), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+}
+
+/**
+ * The check-ins behind one entry of the collections. The number of check-ins here is the count in the list, because both
+ * come from the same rule.
+ */
+@Composable
+fun CollectionDetailPage(app: WingspotApp, kind: CollectionKind, key: String, local: List<LocalCheckIn>, social: SocialViewModel, reference: ReferenceState) {
+    val checkIns = Collections.checkIns(kind, key, local)
+    val shown = Collections.ordered(checkIns, app.prefs.collectionDate, app.prefs.collectionAscending)
+    val airportId = checkIns.firstNotNullOfOrNull { it.airportId }
+    val airportName by produceState<String?>(null, kind, airportId, reference.database) {
+        val db = reference.database
+        if (kind == CollectionKind.AIRPORT && airportId != null && db != null) value = withContext(Dispatchers.IO) { db.airport(airportId)?.name }
+    }
+    val subtitle = airportName ?: checkIns.firstNotNullOfOrNull { it.typeIcao }.takeIf { kind == CollectionKind.AIRCRAFT }
+    LazyColumn(state = social.detailList("$kind:$key"), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        item { PageHeader(key, social::back) }
+        item {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                subtitle?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                Detail(stringResource(R.string.stat_check_ins), checkIns.size.toString())
+                checkIns.minOfOrNull { it.occurredAt }?.let { Detail(stringResource(R.string.first_label), shortDate(it)) }
+                checkIns.maxOfOrNull { it.occurredAt }?.let { Detail(stringResource(R.string.last_label), shortDate(it)) }
+                // The page everybody sees for this aircraft, type or airport.
+                when (kind) {
+                    CollectionKind.AIRCRAFT -> TextButton(onClick = { social.open(Route.RegistrationPage(key)) }) { Text(stringResource(R.string.public_page_aircraft)) }
+                    CollectionKind.TYPE -> TextButton(onClick = { social.open(Route.TypePage(key)) }) { Text(stringResource(R.string.public_page_type)) }
+                    CollectionKind.AIRPORT -> airportId?.let { id -> TextButton(onClick = { social.open(Route.AirportPage(id)) }) { Text(stringResource(R.string.public_page_airport)) } }
+                }
+            }
+        }
+        item { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { CollectionSortMenu(app) } }
+        items(shown, key = { it.id }) { checkIn -> EntryCheckInRow(checkIn) { social.open(Route.CheckInPage(checkIn.id.toString())) } }
     }
 }
 

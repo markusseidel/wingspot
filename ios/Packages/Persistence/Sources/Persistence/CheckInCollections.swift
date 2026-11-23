@@ -37,14 +37,14 @@ public struct CheckInCollections: Equatable, Sendable {
         }
 
         for checkIn in CheckInStats.counted(all, userID: userID) {
-            if let registration = checkIn.registration {
+            let keys = Self.keys(of: checkIn)
+            if let registration = keys.aircraft {
                 add(registration, title: registration, subtitle: checkIn.typeName, at: checkIn.occurredAt, to: &aircraft)
             }
-            if let code = checkIn.typeICAO {
+            if let code = keys.type {
                 add(code, title: code, subtitle: checkIn.typeName, at: checkIn.occurredAt, to: &types)
             }
-            // A flight has no airport of its own. Its two airports are check-ins of their own.
-            if checkIn.kind != "flown", let code = checkIn.airportCode {
+            if let code = keys.airport {
                 add(code, title: code, subtitle: nil, at: checkIn.occurredAt, to: &airports)
             }
         }
@@ -54,5 +54,44 @@ public struct CheckInCollections: Equatable, Sendable {
         self.aircraft = aircraft.values.sorted(by: order)
         self.types = types.values.sorted(by: order)
         self.airports = airports.values.sorted(by: order)
+    }
+
+    /// Which entries a check-in belongs to. The counts above and `checkIns(of:key:in:userID:)` both use this, so the number
+    /// of listed check-ins always matches the count of the entry.
+    private static func keys(of checkIn: LocalCheckIn) -> (aircraft: String?, type: String?, airport: String?) {
+        // A flight has no airport of its own. Its two airports are check-ins of their own.
+        (checkIn.registration, checkIn.typeICAO, checkIn.kind != "flown" ? checkIn.airportCode : nil)
+    }
+
+    public enum Kind: Sendable { case aircraft, type, airport }
+
+    /// The check-ins behind one entry of a list: all that count towards it, in no particular order (see `ordered`).
+    public static func checkIns(of kind: Kind, key: String, in all: [LocalCheckIn], userID: UUID?) -> [LocalCheckIn] {
+        CheckInStats.counted(all, userID: userID).filter { checkIn in
+            let keys = keys(of: checkIn)
+            switch kind {
+            case .aircraft: return keys.aircraft == key
+            case .type: return keys.type == key
+            case .airport: return keys.airport == key
+            }
+        }
+    }
+
+    /// All flights, for the flights tab.
+    public static func flights(in all: [LocalCheckIn], userID: UUID?) -> [LocalCheckIn] {
+        CheckInStats.counted(all, userID: userID).filter { $0.kind == "flown" }
+    }
+
+    /// Which date a list is sorted by: the date of the flight or sighting, or the check-in date (`enteredAt`).
+    public enum DateKind: String, Sendable, CaseIterable { case flight, checkIn }
+
+    /// Sorted by the chosen date, then the other one and the id, so the order never flickers between equal dates.
+    public static func ordered(_ list: [LocalCheckIn], by kind: DateKind, ascending: Bool) -> [LocalCheckIn] {
+        func date(_ checkIn: LocalCheckIn) -> Date { kind == .flight ? checkIn.occurredAt : checkIn.enteredAt }
+        func other(_ checkIn: LocalCheckIn) -> Date { kind == .flight ? checkIn.enteredAt : checkIn.occurredAt }
+        return list.sorted { a, b in
+            let left = (date(a), other(a), a.id.uuidString), right = (date(b), other(b), b.id.uuidString)
+            return ascending ? left < right : left > right
+        }
     }
 }

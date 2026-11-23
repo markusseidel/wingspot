@@ -44,3 +44,13 @@ No backend change, no deploy. Strings in German and English. A click-through on 
 2. **Check-ins only on the phone** are shown but do not open (recommended)?
 3. **Keep a link to the public page** in the drill-down header (recommended), so the page everybody sees stays reachable?
 4. **Remember the sort** between visits (recommended), or start on the default every time?
+
+## As built
+
+Decisions as recommended (check-in date = saved on this phone, phone-only rows shown but not opened, link to the public page kept, sort remembered). No backend change.
+
+- **Shared logic** (`CheckInCollections` in Persistence, `Collections` in Android core): one private rule says which entries a check-in belongs to, used by the counts, by `checkIns(of:key:)` and by the tests that compare the list with the count of every entry; `flights`, `DateKind` and `ordered` (the chosen date, then the other date, then the id, so equal dates never flicker). `LocalCheckIn.savedAt` is set when a check-in is created (spotted, airport visit, flight and the visits it creates); `enteredAt` is saved here, else uploaded, else the flight date. A new nullable `savedAt` (SwiftData) / `saved_at` (SQLite, added to old databases) column.
+- **iPhone:** the collections screen has four chips (Aircraft, Types, Airports, Flights) that scroll sideways, entries open `CollectionDetailView` (header with the count, first and last date and a link to the public page; the list of check-ins; the sort menu), the flights tab lists all flights with the distance from the airports on the phone. A row opens the check-in page when the server has the check-in (`CheckInLoaderView` fetches it by id); one that is only on the phone shows its sync state.
+- **Android:** the same, with the tab, the place in the list and the place in each detail list kept in the view model (going back from a detail page or a check-in shows the same tab and position), the sort kept in the preferences.
+- **Tests:** Persistence and Android core tests for the list matching the count of every entry, the airport list with the visits a flight created and without refused check-ins, the flights list, both sorts in both directions, the check-in date fallbacks.
+- **Checked on the Android emulator and the iPhone simulator** with the local test check-ins: tabs, the detail page, the flights tab and the sort menu. Not tried: a long list scrolling back to the same place, and opening a check-in that is on the server (the test check-ins are all waiting to upload).

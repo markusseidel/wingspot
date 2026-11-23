@@ -98,10 +98,41 @@ object RecentTypes {
 }
 
 /** What has been seen, how often and when last. */
+/** The kind of entry in the collections. */
+enum class CollectionKind { AIRCRAFT, TYPE, AIRPORT }
+
+/** Which date a list is sorted by: the date of the flight or sighting, or the check-in date ([LocalCheckIn.enteredAt]). */
+enum class CollectionDateKind { FLIGHT, CHECK_IN }
+
 data class CollectionEntry(val id: String, val title: String, val count: Int, val lastSeen: Instant)
 
 data class Collections(val aircraft: List<CollectionEntry>, val types: List<CollectionEntry>, val airports: List<CollectionEntry>) {
     companion object {
+        private data class Keys(val aircraft: String?, val type: String?, val airport: String?)
+
+        /**
+         * Which entries a check-in belongs to. The counts and [checkIns] both use this, so the number of listed check-ins
+         * always matches the count of the entry. A flight has no airport of its own; its two airports are check-ins of their own.
+         */
+        private fun keysOf(c: LocalCheckIn) = Keys(c.registration, c.typeIcao, if (c.kind != "flown") c.airportCode else null)
+
+        /** The check-ins behind one entry of a list: all that count towards it, in no particular order (see [ordered]). */
+        fun checkIns(kind: CollectionKind, key: String, all: List<LocalCheckIn>): List<LocalCheckIn> = CheckInStats.counted(all).filter {
+            val keys = keysOf(it)
+            when (kind) { CollectionKind.AIRCRAFT -> keys.aircraft == key; CollectionKind.TYPE -> keys.type == key; CollectionKind.AIRPORT -> keys.airport == key }
+        }
+
+        /** All flights, for the flights tab. */
+        fun flights(all: List<LocalCheckIn>): List<LocalCheckIn> = CheckInStats.counted(all).filter { it.kind == "flown" }
+
+        /** Sorted by the chosen date, then the other one and the id, so the order never flickers between equal dates. */
+        fun ordered(list: List<LocalCheckIn>, by: CollectionDateKind, ascending: Boolean): List<LocalCheckIn> {
+            fun date(c: LocalCheckIn) = if (by == CollectionDateKind.FLIGHT) c.occurredAt else c.enteredAt
+            fun other(c: LocalCheckIn) = if (by == CollectionDateKind.FLIGHT) c.enteredAt else c.occurredAt
+            val order = compareBy<LocalCheckIn>({ date(it) }, { other(it) }, { it.id.toString() })
+            return list.sortedWith(if (ascending) order else order.reversed())
+        }
+
         /** Each list is sorted by the number of check-ins, then by the most recent first. */
         fun of(all: List<LocalCheckIn>): Collections {
             val aircraft = mutableMapOf<String, CollectionEntry>()
@@ -112,10 +143,9 @@ data class Collections(val aircraft: List<CollectionEntry>, val types: List<Coll
                 into[key] = if (old == null) CollectionEntry(key, key, 1, at) else old.copy(count = old.count + 1, lastSeen = maxOf(old.lastSeen, at))
             }
             for (c in CheckInStats.counted(all)) {
-                c.registration?.let { add(it, c.occurredAt, aircraft) }
-                c.typeIcao?.let { add(it, c.occurredAt, types) }
-                // A flight has no airport of its own. Its two airports are check-ins of their own.
-                if (c.kind != "flown") c.airportCode?.let { add(it, c.occurredAt, airports) }
+                keysOf(c).aircraft?.let { add(it, c.occurredAt, aircraft) }
+                keysOf(c).type?.let { add(it, c.occurredAt, types) }
+                keysOf(c).airport?.let { add(it, c.occurredAt, airports) }
             }
             val order = compareByDescending<CollectionEntry> { it.count }.thenByDescending { it.lastSeen }.thenBy { it.title }
             return Collections(aircraft.values.sortedWith(order), types.values.sortedWith(order), airports.values.sortedWith(order))

@@ -36,6 +36,8 @@ sealed class Route {
     object ExploreMap : Route()
     object AirportsMap : Route()
     object Collections : Route()
+    /** The check-ins behind one entry of the collections: an aircraft, a type or an airport. */
+    data class CollectionDetail(val kind: site.wingspot.core.CollectionKind, val key: String) : Route()
     object Leaderboard : Route()
     object Invite : Route()
     object Settings : Route()
@@ -63,6 +65,14 @@ class SocialViewModel(
 ) : ViewModel() {
     private val mutable = MutableStateFlow(FeedState())
     val state: StateFlow<FeedState> = mutable.asStateFlow()
+
+    /** The tab and the place in the lists of the collections, kept here so going back to them shows the same tab and place. */
+    var collectionsTab by androidx.compose.runtime.mutableIntStateOf(0)
+    val collectionsList = androidx.compose.foundation.lazy.LazyListState()
+    private val detailLists = mutableMapOf<String, androidx.compose.foundation.lazy.LazyListState>()
+
+    /** Where the list of one entry was left, so coming back to it from a check-in shows the same place. */
+    fun detailList(key: String) = detailLists.getOrPut(key) { androidx.compose.foundation.lazy.LazyListState() }
 
     /** How the Feed tab is sorted. New check-ins show first by default. */
     var sort: FeedSort by mutableStateOf(initialSort)
