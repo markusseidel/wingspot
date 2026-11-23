@@ -61,10 +61,11 @@ struct ReleaseNotesView: View {
         return VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 6) {
                 Text(verbatim: "\(note.version) (\(note.build))").font(.caption.monospacedDigit()).foregroundStyle(.secondary)
-                if note.isBeta { tag("Beta") }
-                if note.build == installed { tag("Installed") }
-                Spacer()
-                Text(note.releasedAt, format: .dateTime.day().month().year()).font(.caption).foregroundStyle(.secondary)
+                    .lineLimit(1).fixedSize()
+                if note.isBeta { badge("Beta") }
+                if note.build == installed { badge("Installed") }
+                Spacer(minLength: 4)
+                Text(note.releasedAt, format: .dateTime.day().month().year()).font(.caption).foregroundStyle(.secondary).lineLimit(1)
             }
             Text(verbatim: text.title).font(.headline)
             ForEach(Array(text.lines.enumerated()), id: \.offset) { _, line in
@@ -73,16 +74,20 @@ struct ReleaseNotesView: View {
                     Text(verbatim: line)
                 }
                 .font(.subheadline)
+                .fixedSize(horizontal: false, vertical: true)
             }
         }
         .padding(.vertical, 4)
         .accessibilityElement(children: .combine)
     }
 
-    private func tag(_ title: LocalizedStringKey) -> some View {
+    private func badge(_ title: LocalizedStringKey) -> some View {
         Text(title)
             .font(.caption2.bold())
+            .foregroundStyle(Color.accentColor)
+            .lineLimit(1)
+            .fixedSize()
             .padding(.horizontal, 6).padding(.vertical, 2)
-            .background(.tint.opacity(0.15), in: Capsule())
+            .background(Capsule().fill(Color.accentColor.opacity(0.18)))
     }
 }

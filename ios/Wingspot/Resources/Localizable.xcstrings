@@ -965,7 +965,6 @@
       }
     },
     "Beta" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2884,7 +2883,6 @@
       }
     },
     "Installed" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
