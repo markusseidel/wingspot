@@ -94,6 +94,10 @@
     <string name="delete">Löschen</string>
     <string name="delete_title">Diesen Check-in löschen?</string>
     <string name="delete_message">Er wird endgültig gelöscht, mit Fotos, Salutes und Kommentaren.</string>
+    <string name="delete_photo">Foto löschen</string>
+    <string name="delete_photo_title">Dieses Foto löschen?</string>
+    <string name="delete_photo_message">Es wird endgültig entfernt. Der Check-in, seine anderen Fotos, Salutes und Kommentare bleiben.</string>
+    <string name="delete_photo_failed">Das Foto konnte nicht gelöscht werden. Bitte prüfe deine Verbindung und versuche es erneut.</string>
     <string name="delete_failed">Der Check-in konnte nicht gelöscht werden. Bitte prüfe deine Verbindung und versuche es erneut.</string>
     <string name="tab_feed">Feed</string>
     <string name="tab_check_in">Check-in</string>

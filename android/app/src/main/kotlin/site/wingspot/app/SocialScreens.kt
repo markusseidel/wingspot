@@ -389,6 +389,8 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
     var reporting by remember { mutableStateOf<Pair<ReportKind, String>?>(null) }
     var localFlight by remember { mutableStateOf(false) }
     var viewing by remember { mutableStateOf<FeedPhoto?>(null) }
+    // The photo the person is asked about deleting.
+    var photoToDelete by remember { mutableStateOf<FeedPhoto?>(null) }
     var tags by remember { mutableStateOf(feed.tags[id].orEmpty()) }
     var confirmLeave by remember { mutableStateOf(false) }
     // Friends who added this check-in to their own logbook. Only filled for your own check-ins.
@@ -505,6 +507,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                 Box {
                     RemoteImage(photo, Modifier.fillMaxWidth().clip(MaterialTheme.shapes.medium).clickable { viewing = photo })
                     if (shown.userId != me) TextButton(onClick = { reporting = ReportKind.PHOTO to photo.id }, modifier = Modifier.align(Alignment.TopEnd)) { Text(stringResource(R.string.report)) }
+                    else TextButton(onClick = { photoToDelete = photo }, modifier = Modifier.align(Alignment.TopEnd)) { Text(stringResource(R.string.delete_photo)) }
                 }
             }
             feed.badges[id]?.takeIf { it.isNotEmpty() }?.let { earned ->
@@ -743,6 +746,22 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
         },
         onDismiss = { confirmDelete = false },
     )
+    photoToDelete?.let { photo ->
+        AlertDialog(
+            onDismissRequest = { photoToDelete = null },
+            title = { Text(stringResource(R.string.delete_photo_title)) },
+            text = { Text(stringResource(R.string.delete_photo_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    photoToDelete = null
+                    scope.launch {
+                        if (model.deletePhoto(photo)) runCatching { app.checkIns.removePhoto(UUID.fromString(photo.id)) } else problem = R.string.delete_photo_failed
+                    }
+                }) { Text(stringResource(R.string.delete)) }
+            },
+            dismissButton = { TextButton(onClick = { photoToDelete = null }) { Text(stringResource(R.string.cancel)) } },
+        )
+    }
     reporting?.let { (kind, target) -> ReportDialog(app, kind, target) { reporting = null } }
     viewing?.let { start -> PhotoViewer(photos, start) { viewing = null } }
 }

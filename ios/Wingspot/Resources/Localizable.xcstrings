@@ -1834,12 +1834,32 @@
         }
       }
     },
+    "Delete photo" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto löschen"
+          }
+        }
+      }
+    },
     "Delete this check-in?" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Diesen Check-in löschen?"
+          }
+        }
+      }
+    },
+    "Delete this photo?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Foto löschen?"
           }
         }
       }
@@ -2798,6 +2818,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Er wird endgültig gelöscht, mit Fotos, Salutes und Kommentaren."
+          }
+        }
+      }
+    },
+    "It is removed for good. The check-in, its other photos, salutes and comments stay." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es wird endgültig entfernt. Der Check-in, seine anderen Fotos, Salutes und Kommentare bleiben."
           }
         }
       }

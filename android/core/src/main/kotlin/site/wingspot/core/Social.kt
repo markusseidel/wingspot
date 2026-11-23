@@ -221,6 +221,20 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
 
     suspend fun deleteCheckIn(id: String) {
         rest.call("POST", "/rest/v1/rpc/delete_checkin", """{"target":"$id"}""")
+        cleanupPhotoFiles()
+    }
+
+    /**
+     * Deletes one photo of your own check-in for good, file included. The check-in, its other photos, salutes and comments
+     * stay. Does nothing if the photo is already gone.
+     */
+    suspend fun deletePhoto(checkInId: String, photoId: String) {
+        rest.call("DELETE", "/functions/v1/checkins/${checkInId.lowercase()}/photos/${photoId.lowercase()}")
+    }
+
+    /** Asks the server to remove the files of deleted check-ins. If it fails they stay queued for the next time. */
+    private suspend fun cleanupPhotoFiles() {
+        try { rest.call("POST", "/functions/v1/checkins/cleanup-photos") } catch (e: ApiException) { }
     }
 
     // Photos --------------------------------------------------------------------------------------------------------

@@ -281,6 +281,9 @@ public protocol FeedBackend: Sendable {
     func checkIn(_ id: UUID) async throws -> FeedItem?
     /// Deletes one of your own check-ins, with its photos, salutes and comments. Does nothing if it is already gone.
     func deleteCheckIn(_ id: UUID) async throws
+    /// Deletes one photo of your own check-in for good, file included. The check-in, its other photos, salutes and comments
+    /// stay. Does nothing if the photo is already gone.
+    func deletePhoto(checkIn: UUID, photo: UUID) async throws
     /// One person's check-ins that the caller may see, newest first.
     func personCheckIns(of person: UUID, after cursor: FeedCursor?, pageSize: Int) async throws -> [FeedItem]
     /// The check-ins at one airport that the caller may see, newest first.
@@ -407,6 +410,24 @@ public final class FeedStore {
             failure = (error as? AccountError) ?? .unknown
             return false
         }
+    }
+
+    /// Deletes one photo of your own check-in on the server and takes it out of this list. Returns `false` if that failed,
+    /// in which case the photo stays. The check-in stays either way, also when it was the last photo.
+    public func deletePhoto(_ photo: FeedPhoto) async -> Bool {
+        do {
+            try await backend.deletePhoto(checkIn: photo.checkInID, photo: photo.id)
+            forget(photo)
+            return true
+        } catch {
+            failure = (error as? AccountError) ?? .unknown
+            return false
+        }
+    }
+
+    /// Takes a photo out of this list, for example one that was deleted from another list.
+    public func forget(_ photo: FeedPhoto) {
+        photos[photo.checkInID]?.removeAll { $0.id == photo.id }
     }
 
     /// Takes a check-in out of this list, for example one that was deleted from another list.

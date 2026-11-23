@@ -182,6 +182,19 @@ class AirportAndFlownStoreTests {
     }
 
     @Test
+    fun aRemovedPhotoGivesItsRoomBack() = runBlocking {
+        val s = store()
+        val id = s.saveSpotted(SpottedDraft(typeIcao = "A320")).id
+        val photos = (0 until 4).map { s.addPhoto(id, byteArrayOf(1), 10, 10, Instant.now().plusMillis(it.toLong()))!! }
+        assertNull(s.addPhoto(id, byteArrayOf(1), 10, 10))
+        s.removePhoto(photos[1])
+        assertEquals(3, s.photoCount(id))
+        // A photo this phone doesn't have is fine, and the room is there again
+        s.removePhoto(java.util.UUID.randomUUID())
+        assertNotNull(s.addPhoto(id, byteArrayOf(1), 10, 10))
+    }
+
+    @Test
     fun anOldDatabaseGainsTheNewColumns() {
         val path = java.io.File.createTempFile("old", ".sqlite").also { it.delete() }.path
         val connection = androidx.sqlite.driver.bundled.BundledSQLiteDriver().open(path)

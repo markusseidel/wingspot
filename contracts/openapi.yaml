@@ -135,6 +135,47 @@ paths:
                 $ref: '#/components/schemas/Error'
         '500':
           $ref: '#/components/responses/ServerError'
+    delete:
+      tags: [checkins]
+      operationId: deleteCheckinPhoto
+      summary: Delete one photo of your own check-in
+      description: |
+        Deletes the photo for good: it disappears from the check-in at once and its file is removed from storage.
+        The check-in, its other photos, salutes and comments stay, also when it was the last photo. Deleting a photo that
+        doesn't exist, or isn't yours, does nothing and answers 204, so a repeated request is safe.
+      parameters:
+        - name: checkinId
+          in: path
+          required: true
+          schema: {type: string, format: uuid}
+        - name: photoId
+          in: path
+          required: true
+          schema: {type: string, format: uuid}
+      responses:
+        '204':
+          description: The photo is gone.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /v1/checkins/cleanup-photos:
+    post:
+      tags: [checkins]
+      operationId: cleanupPhotoFiles
+      summary: Remove the files of deleted photos and check-ins
+      description: |
+        The database keeps a queue of photo files that no longer have a photo. This removes them from storage. Apps call it
+        after deleting a check-in. Any signed-in person may call it, and it only ever removes files that are queued.
+      responses:
+        '204':
+          description: Done (files that could not be removed stay queued for the next call).
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
   /v1/config:
     get:
       tags: [config]

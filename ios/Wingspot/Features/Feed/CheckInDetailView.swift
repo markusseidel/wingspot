@@ -22,6 +22,8 @@ struct CheckInDetailView: View {
     /// Your check-ins saved on this device. Only these can be edited, because the details are sent from here.
     @Query private var localCheckIns: [LocalCheckIn]
     @State private var viewing: FeedPhoto?
+    /// The photo the person is asked about deleting.
+    @State private var photoToDelete: FeedPhoto?
     @State private var editing = false
     @State private var returnStart: ReturnStart?
     @State private var confirmDelete = false
@@ -166,6 +168,11 @@ struct CheckInDetailView: View {
             }
         } message: {
             Text("It is removed for good, with its photos, salutes and comments.")
+        }
+        .confirmationDialog("Delete this photo?", isPresented: Binding(get: { photoToDelete != nil }, set: { if !$0 { photoToDelete = nil } }), titleVisibility: .visible, presenting: photoToDelete) { photo in
+            Button("Delete photo", role: .destructive) { Task { await delete(photo) } }
+        } message: { _ in
+            Text("It is removed for good. The check-in, its other photos, salutes and comments stay.")
         }
         .confirmationDialog("Remove yourself from this check-in?", isPresented: $confirmLeave, titleVisibility: .visible) {
             Button("Remove me", role: .destructive) {
@@ -331,6 +338,17 @@ struct CheckInDetailView: View {
         .padding(.vertical, 4)
     }
 
+    /// Deletes one photo on the server, then takes it out of the lists and out of this device's copy, so the room for photos is
+    /// counted right and nothing is uploaded again. The check-in stays, also when it was the last photo.
+    private func delete(_ photo: FeedPhoto) async {
+        if await list.deletePhoto(photo) {
+            if source != nil { feed.forget(photo) }
+            try? CheckInStore(context: modelContext).removePhoto(id: photo.id)
+        } else {
+            problem = list.failure ?? .unknown
+        }
+    }
+
     private var photoSection: some View {
         Section {
             ForEach(photos) { photo in
@@ -351,7 +369,9 @@ struct CheckInDetailView: View {
                 .contentShape(RoundedRectangle(cornerRadius: 10))
                 .onTapGesture { viewing = photo }
                 .contextMenu {
-                    if !isOwn {
+                    if isOwn {
+                        Button("Delete photo", systemImage: "trash", role: .destructive) { photoToDelete = photo }
+                    } else {
                         Button("Report photo", systemImage: "flag") {
                             report = ReportTarget(kind: .photo, id: photo.id, subject: "this photo")
                         }
