@@ -147,6 +147,7 @@ struct CheckInDetailView: View {
             if shown.kind == "airport" || shown.kind == "spotted" { CheckInSpotSection(spot: spot, sightings: spotSightings, kind: shown.kind) }
             if !copies.isEmpty { copiesSection }
             if !photos.isEmpty { photoSection }
+            if isOwn { PendingPhotosSection(checkInID: item.id) }
             reactions
             actions
             lookup
@@ -785,5 +786,41 @@ private struct FlownRouteMap: View {
         var origin = rect.origin.x - room
         while origin < 0 { origin += size.width }
         return MKMapRect(x: origin, y: max(0, rect.origin.y - room), width: min(rect.width + 2 * room, size.width), height: rect.height + 2 * room)
+    }
+}
+
+/// Photos saved on this iPhone that have not gone up yet, so a photo added in the edit screen is there at once and does not look lost.
+/// A tile disappears when the photo is uploaded: the page then lists it with the others.
+private struct PendingPhotosSection: View {
+    @Query private var pending: [LocalPhoto]
+
+    init(checkInID: UUID) {
+        let waiting = SyncState.pending.rawValue
+        _pending = Query(filter: #Predicate<LocalPhoto> { $0.checkInID == checkInID && $0.syncState == waiting },
+                         sort: \.createdAt)
+    }
+
+    var body: some View {
+        if !pending.isEmpty {
+            Section {
+                ForEach(pending) { photo in
+                    ZStack {
+                        if let image = UIImage(data: photo.jpeg) {
+                            Image(uiImage: image).resizable().scaledToFit().opacity(0.6)
+                        }
+                        VStack(spacing: 6) {
+                            ProgressView()
+                            Text("Uploading…").font(.caption).foregroundStyle(.secondary)
+                        }
+                        .padding(10)
+                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 120)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Photo, uploading")
+                }
+            }
+        }
     }
 }

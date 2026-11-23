@@ -406,6 +406,7 @@
     <string name="choose_photo">Foto auswählen</string>
     <string name="change_photo">Foto ändern</string>
     <string name="remove_photo">Foto entfernen</string>
+    <string name="photo_uploading">Foto wird hochgeladen …</string>
     <string name="profile_photo_hint">Wird neben deinem Namen angezeigt, wo andere dich sehen. Es wird ein Quadrat aus der Mitte des Bildes verwendet.</string>
     <string name="profile_photo_failed">Das Foto konnte nicht gespeichert werden. Versuche es noch einmal.</string>
     <string name="friends_often">Oft gemeinsam geflogen mit</string>

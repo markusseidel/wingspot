@@ -3988,6 +3988,16 @@
         }
       }
     },
+    "Photo, uploading" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto, wird hochgeladen"
+          }
+        }
+      }
+    },
     "Photos" : {
       "localizations" : {
         "de" : {
@@ -5673,6 +5683,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hochgeladen"
+          }
+        }
+      }
+    },
+    "Uploading…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird hochgeladen …"
           }
         }
       }

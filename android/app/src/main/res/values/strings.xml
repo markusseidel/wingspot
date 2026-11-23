@@ -406,6 +406,7 @@
     <string name="choose_photo">Choose photo</string>
     <string name="change_photo">Change photo</string>
     <string name="remove_photo">Remove photo</string>
+    <string name="photo_uploading">Uploading photo…</string>
     <string name="profile_photo_hint">Shown next to your name wherever people see you. A square from the middle of the picture is used.</string>
     <string name="profile_photo_failed">Couldn\'t save the photo. Try again.</string>
     <string name="friends_often">Often flown with</string>
