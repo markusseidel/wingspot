@@ -1,6 +1,6 @@
 # Release notes in the app: plan
 
-Idea from the owner: a "What's new" entry under Profile > Settings, where every version or build that went out can be read, each with a short summary of the tester notes (later the release notes). Issue #315. Status: plan only, nothing built.
+Idea from the owner: a "What's new" entry under Profile > Settings, where every version or build that went out can be read, each with a short summary of the tester notes (later the release notes). Issue #315. Status: built and live (see "As built" at the end).
 
 ## Goal
 
@@ -69,9 +69,33 @@ One migration, one function, one script, tests. Nothing in the existing `checkin
 - Entries for the backend or the website (only app builds).
 - Translations beyond German and English.
 
-## Open questions for the owner
+## Open questions for the owner (decided, see "As built")
 
 1. Is it right that testers see the notes of builds newer than theirs ("Newer than your version")? This shows what the next TestFlight build brings. If not, drop the group.
 2. Should a note be one entry per build, or one per day when several builds go out on the same day (like 2026112307 and 2026112308)? Per build is simplest and matches the tester mails; per day reads better. The recommendation is per build, and a later release entry sums the betas up.
 3. Should the screen be open to signed-out users too? The plan says yes (the function is readable by `anon`), because the notes hold nothing private.
 4. Name of the menu entry: "What's new" (the recommendation) or "Release notes".
+
+## As built
+
+Shipped in PRs #317 (backend), #318 (iOS), #319 (Android) and #321 (iOS fix). Live in production since 2026-11-23.
+
+**Decisions on the open questions:** builds newer than the installed one are shown, under "Newer than your version"; one entry per build; the screen is readable signed out; the menu entry is "What's new" (German "Neuigkeiten"); the version line is in a new About section.
+
+**Where it differs from the plan**
+- The script posts one platform per call (no `both`). It is an upsert on (platform, build), so running it again for the same build replaces the text. `--release` marks a store release.
+- There is no contract entry: `get_release_notes` is a database function called through `/rest/v1/rpc`, like `get_announcements`, which the OpenAPI file does not list either.
+- iOS: `ReleaseNotesStore` in the Account package (cached in `UserDefaults`), `Features/Settings/ReleaseNotesView.swift` (the screen and `AboutSection`). Android: `ReleaseNotes.kt` in `core` (model, API, `groupReleaseNotes`), `ReleaseNotesPage` in `ProfileScreens.kt`, cache in `Prefs`, route `Route.ReleaseNotes`.
+- The entry's date is the day of `released_at`. Pull to refresh is iOS only; Android loads when the page opens.
+- A trap met on the way: a SwiftUI helper must not be called `tag`, because SwiftUI's own `.tag` modifier wins and draws the whole view inside the row (the black boxes in the first iOS build). The helper is `badge`.
+
+**Release routine.** After every iOS and Android build, run
+`backend/scripts/post_release_note.sh --remote post <ios|android> <version> <build> "Title" "- bullet\n- bullet" "Titel" "- Punkt"`
+once per platform, with the tester text shortened: bullets of what changed for the person, no "please try" lines, never a hidden badge. The iOS build is `CURRENT_PROJECT_VERSION`; the Android build is the `versionCode` of the workflow run (date plus two digits). Check with `post_release_note.sh --remote list`.
+
+**Backfilled:** iOS 2026112307 and 2026112308, Android 2026112305 and 2026112306. Earlier builds have no note.
+
+**Not done (still "not in the first version")**
+- A "What's new" sheet that opens after an update, and an unread dot on the Settings row. Both need a "last seen build" kept on the phone.
+- Posting from the build workflows (needs a write secret in GitHub).
+- Not yet checked by hand on the Android screen.
