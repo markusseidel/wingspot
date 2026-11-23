@@ -573,6 +573,16 @@
         }
       }
     },
+    "Add photos" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotos hinzufügen"
+          }
+        }
+      }
+    },
     "Add to my logbook" : {
       "localizations" : {
         "de" : {
@@ -2921,11 +2931,22 @@
       }
     },
     "Location and other details are removed from the photo before it is saved. It goes up with your check-in when you are signed in." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Standort und andere Angaben werden aus dem Foto entfernt, bevor es gespeichert wird. Es wird mit deinem Check-in hochgeladen, wenn du angemeldet bist."
+          }
+        }
+      }
+    },
+    "Location and other details are removed from the photos before they are saved. They go up with your check-in when you are signed in." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standort und andere Angaben werden aus den Fotos entfernt, bevor sie gespeichert werden. Sie werden mit deinem Check-in hochgeladen, wenn du angemeldet bist."
           }
         }
       }
@@ -3822,6 +3843,16 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Photo %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Photos" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotos"
           }
         }
       }
@@ -5053,16 +5084,16 @@
     },
     "The file is for %@ → %@, but this flight is %@ → %@." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "The file is for %1$@ → %2$@, but this flight is %3$@ → %4$@."
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Die Datei gehört zu %1$@ → %2$@, dieser Flug ist aber %3$@ → %4$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The file is for %1$@ → %2$@, but this flight is %3$@ → %4$@."
           }
         }
       }

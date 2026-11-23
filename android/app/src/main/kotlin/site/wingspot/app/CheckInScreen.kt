@@ -1,13 +1,16 @@
 package site.wingspot.app
 
+import android.graphics.BitmapFactory
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -32,9 +35,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import java.time.LocalDate
@@ -45,20 +53,21 @@ import java.util.UUID
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import site.wingspot.core.AircraftType
-import site.wingspot.core.BoardingPass
 import site.wingspot.core.Airport
+import site.wingspot.core.BoardingPass
 import site.wingspot.core.CabinClass
+import site.wingspot.core.CheckInStore
 import site.wingspot.core.FlightTrack
 import site.wingspot.core.GeoCoordinate
 import site.wingspot.core.GreatCircle
 import site.wingspot.core.KmlFlight
-import site.wingspot.core.departureDay
 import site.wingspot.core.LocalCheckIn
 import site.wingspot.core.RecentTypes
 import site.wingspot.core.Registration
 import site.wingspot.core.SocialApi
 import site.wingspot.core.SyncState
 import site.wingspot.core.VisitContext
+import site.wingspot.core.departureDay
 
 /** A check-in: Spotted, Airport or Flown. Saved on the phone first. */
 @Composable
@@ -96,7 +105,7 @@ private fun SpottedForm(state: CheckInState, reference: ReferenceState, model: C
     var input by rememberSaveable { mutableStateOf("") }
     var type by remember { mutableStateOf<AircraftType?>(null) }
     var airport by remember { mutableStateOf<Airport?>(null) }
-    var photo by remember { mutableStateOf<PreparedPhoto?>(null) }
+    var photos by remember { mutableStateOf(emptyList<PreparedPhoto>()) }
     val registration = Registration.parse(input)
     val canSave = if (input.isNotBlank()) registration != null else type != null
     // During a session the airport is the session's.
@@ -113,15 +122,15 @@ private fun SpottedForm(state: CheckInState, reference: ReferenceState, model: C
     RegistrationHint(input, registration, orType = true)
     if (registration == null) TypePicker(reference, type) { type = it }
     AirportPicker(stringResource(R.string.airport_label), reference, airport) { airport = it }
-    PhotoField(photo) { photo = it }
-    SaveBar(state, enabled = canSave, onSave = { model.save(registration, type, airport, photo) }, onCancel = model::close)
+    PhotoField(photos) { photos = it }
+    SaveBar(state, enabled = canSave, onSave = { model.save(registration, type, airport, photos) }, onCancel = model::close)
 }
 
 @Composable
 private fun AirportForm(state: CheckInState, reference: ReferenceState, model: CheckInViewModel) {
     var airport by remember { mutableStateOf<Airport?>(null) }
     var context by rememberSaveable { mutableStateOf(VisitContext.SPOTTING) }
-    var photo by remember { mutableStateOf<PreparedPhoto?>(null) }
+    var photos by remember { mutableStateOf(emptyList<PreparedPhoto>()) }
     val tags = rememberTagChoice()
     val app = LocalContext.current.applicationContext as WingspotApp
     var places by remember { mutableStateOf(emptyList<SocialApi.SpotLocation>()) }
@@ -146,8 +155,8 @@ private fun AirportForm(state: CheckInState, reference: ReferenceState, model: C
         }
     }
     WithFriendsField(tags)
-    PhotoField(photo) { photo = it }
-    SaveBar(state, enabled = airport != null, onSave = { model.saveAirport(airport!!, context, photo, tags.all(), spot) }, onCancel = model::close)
+    PhotoField(photos) { photos = it }
+    SaveBar(state, enabled = airport != null, onSave = { model.saveAirport(airport!!, context, photos, tags.all(), spot) }, onCancel = model::close)
 }
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
@@ -164,7 +173,7 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
     var type by remember(start) { mutableStateOf<AircraftType?>(null) }
     var cabin by rememberSaveable(start) { mutableStateOf<CabinClass?>(start?.cabin) }
     var seat by rememberSaveable(start) { mutableStateOf("") }
-    var photo by remember(start) { mutableStateOf<PreparedPhoto?>(null) }
+    var photos by remember(start) { mutableStateOf(emptyList<PreparedPhoto>()) }
     val tags = rememberTagChoice()
     LaunchedEffect(start) { if (start != null) tags.chosen = start.tagged }
     var date by rememberSaveable(start) { mutableStateOf((start?.date ?: LocalDate.now()).toString()) }
@@ -305,14 +314,14 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
         recentTypes = RecentTypes.forFlight(state.all, flightNumber),
     )
     WithFriendsField(tags)
-    PhotoField(photo) { photo = it }
+    PhotoField(photos) { photos = it }
     SaveBar(
         state, enabled = canSave,
         onSave = {
             // A flight has a day but no time here. Today keeps the real time; any other day uses midday, which stays on that day.
             val at = if (day == LocalDate.now()) java.time.Instant.now() else day.atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant()
             model.saveFlight(
-                origin!!, destination!!, flightNumber, registration, type, cabin, seat, photo, at, tags.all(),
+                origin!!, destination!!, flightNumber, registration, type, cabin, seat, photos, at, tags.all(),
                 returnTo = ReturnStart(destination!!, origin!!, day, cabin, tags.chosen), track = importedTrack,
             )
         },
@@ -389,7 +398,7 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
     val registration = Registration.parse(input)
     // The type this flight already has stays until another is chosen.
     val keptType = flight.typeIcao.takeIf { type == null }
-    var photo by remember { mutableStateOf<PreparedPhoto?>(null) }
+    var photos by remember { mutableStateOf(emptyList<PreparedPhoto>()) }
     val tags = rememberTagChoice(flight.id)
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -405,7 +414,7 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
             keptType = keptType, recentTypes = RecentTypes.forFlight(state.all, flightNumber, flight.id),
         )
         WithFriendsField(tags)
-        if (state.roomForPhoto) PhotoField(photo) { photo = it }
+        if (state.roomForPhoto) PhotoField(photos) { photos = it }
         VisibilityRow(androidx.compose.ui.platform.LocalContext.current.applicationContext as WingspotApp, flight.id.toString())
         SaveBar(
             state, enabled = input.isBlank() || registration != null,
@@ -414,7 +423,7 @@ fun FlownEditScreen(flight: LocalCheckIn, state: CheckInState, reference: Refere
                 val at = if (chosenDay == originalDay) null
                 else if (chosenDay == LocalDate.now()) java.time.Instant.now()
                 else chosenDay.atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant()
-                model.saveEdit(flight.id, registration, type, keptType, flightNumber, cabin, seat, at, photo, tags.ifChanged())
+                model.saveEdit(flight.id, registration, type, keptType, flightNumber, cabin, seat, at, photos, tags.ifChanged())
             },
             onCancel = model::cancelEdit,
         )
@@ -432,7 +441,7 @@ fun SimpleEditScreen(app: WingspotApp, checkIn: LocalCheckIn, state: CheckInStat
     // The type this sighting already has stays until another is chosen.
     val keptType = checkIn.typeIcao.takeIf { type == null }
     val hasAircraft = (registration != null && input.isNotBlank()) || type != null || keptType != null
-    var photo by remember { mutableStateOf<PreparedPhoto?>(null) }
+    var photos by remember { mutableStateOf(emptyList<PreparedPhoto>()) }
     val tags = rememberTagChoice(checkIn.id)
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(stringResource(if (isVisit) R.string.edit_visit else R.string.edit_sighting), style = MaterialTheme.typography.titleLarge)
@@ -453,11 +462,11 @@ fun SimpleEditScreen(app: WingspotApp, checkIn: LocalCheckIn, state: CheckInStat
             TypePicker(reference, type) { type = it }
         }
         if (isVisit) WithFriendsField(tags)
-        if (state.roomForPhoto) PhotoField(photo) { photo = it }
+        if (state.roomForPhoto) PhotoField(photos) { photos = it }
         VisibilityRow(app, checkIn.id.toString())
         SaveBar(
             state, enabled = isVisit || (hasAircraft && (input.isBlank() || registration != null)),
-            onSave = { model.saveSimpleEdit(checkIn.id, registration, type?.icaoCode ?: keptType, if (isVisit) reason else null, photo, if (isVisit) tags.ifChanged() else null) },
+            onSave = { model.saveSimpleEdit(checkIn.id, registration, type?.icaoCode ?: keptType, if (isVisit) reason else null, photos, if (isVisit) tags.ifChanged() else null) },
             onCancel = model::cancelEdit,
         )
     }
@@ -549,29 +558,63 @@ private fun AirportPicker(label: String, reference: ReferenceState, airport: Air
 /** Every check-in on this phone, for the suggestions the pickers offer before anything is typed. */
 val LocalCheckIns = androidx.compose.runtime.compositionLocalOf<List<LocalCheckIn>> { emptyList() }
 
-/** The system photo picker: it needs no permission, and the app sees only the picture that was chosen. */
+/**
+ * The photos part of a form: pick several at once with the system photo picker (it needs no permission, and the app sees
+ * only the pictures that were chosen), see thumbnails and remove the ones you don't want. The photos keep the order they
+ * were picked in, and the first one is the cover. [limit] is how many the check-in can take in all. Create and edit forms
+ * all use this.
+ */
 @Composable
-private fun PhotoField(photo: PreparedPhoto?, onPhoto: (PreparedPhoto?) -> Unit) {
+private fun PhotoField(photos: List<PreparedPhoto>, limit: Int = CheckInStore.MAX_PHOTOS, onPhotos: (List<PreparedPhoto>) -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var failed by remember { mutableStateOf(false) }
-    val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) scope.launch {
-            val prepared = PhotoPrep.prepare(context, uri)
-            failed = prepared == null
-            if (prepared != null) onPhoto(prepared)
+    var preparing by remember { mutableStateOf(false) }
+    val room = limit - photos.size
+    // Read when the pictures come back, so a second pick sees the photos of the first.
+    val current by androidx.compose.runtime.rememberUpdatedState(photos)
+    fun prepare(uris: List<android.net.Uri>) {
+        if (uris.isEmpty()) return
+        scope.launch {
+            preparing = true
+            var bad = false
+            var all = current
+            for (uri in uris) {
+                if (all.size >= limit) break
+                val prepared = PhotoPrep.prepare(context, uri)
+                if (prepared == null) bad = true else all = all + prepared
+            }
+            onPhotos(all)
+            failed = bad
+            preparing = false
         }
     }
-    if (photo != null) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(stringResource(R.string.photo_added, photo.width, photo.height), modifier = Modifier.weight(1f))
-            TextButton(onClick = { onPhoto(null) }) { Text(stringResource(R.string.remove)) }
+    // The multiple picker needs a maximum of at least 2, so the last free place uses the single picker.
+    val pickMany = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(maxOf(2, room))) { uris -> prepare(uris) }
+    val pickOne = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri -> if (uri != null) prepare(listOf(uri)) }
+    if (photos.isNotEmpty()) {
+        Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            photos.forEachIndexed { index, photo ->
+                val bitmap = remember(photo) { BitmapFactory.decodeByteArray(photo.jpeg, 0, photo.jpeg.size)?.asImageBitmap() }
+                Box(Modifier.size(96.dp).clip(MaterialTheme.shapes.small)) {
+                    if (bitmap != null) Image(bitmap, contentDescription = stringResource(R.string.photo_of_check_in), contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+                    TextButton(
+                        onClick = { onPhotos(photos.filterIndexed { i, _ -> i != index }) },
+                        modifier = Modifier.align(Alignment.TopEnd).semantics { contentDescription = context.getString(R.string.remove_photo) },
+                    ) { Text("\u2715", color = androidx.compose.ui.graphics.Color.White) }
+                }
+            }
         }
-    } else {
+    }
+    if (room > 0) {
         OutlinedButton(
-            onClick = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
+            onClick = {
+                if (room > 1) pickMany.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                else pickOne.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            },
+            enabled = !preparing,
             modifier = Modifier.fillMaxWidth().testTag("add-photo"),
-        ) { Text(stringResource(R.string.add_photo)) }
+        ) { Text(stringResource(if (preparing) R.string.reading else if (room > 1) R.string.add_photos else R.string.add_photo)) }
         Text(stringResource(R.string.photo_hint), style = MaterialTheme.typography.bodySmall)
     }
     if (failed) Text(stringResource(R.string.photo_failed), color = MaterialTheme.colorScheme.error)

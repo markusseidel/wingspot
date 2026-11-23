@@ -42,9 +42,10 @@ struct FlownEditView: View {
     @State private var originalDate = Date()
     @State private var loaded = false
     @State private var failed = false
-    @State private var photo: PreparedPhoto?
+    @State private var photos: [PreparedPhoto] = []
     @State private var isPreparingPhoto = false
-    @State private var hasRoomForPhoto = false
+    /// How many more photos the flight can take.
+    @State private var roomForPhotos = 0
     @State private var tagged: [PersonTag] = []
 
     private var registration: Registration? { Registration(registrationInput) }
@@ -100,7 +101,7 @@ struct FlownEditView: View {
                         Text("Not a valid registration yet")
                     }
                 }
-                if hasRoomForPhoto { PhotoSection(photo: $photo, isPreparing: $isPreparingPhoto) }
+                if roomForPhotos > 0 { PhotoSection(photos: $photos, isPreparing: $isPreparingPhoto, limit: roomForPhotos) }
                 Section { CheckInVisibilityPicker(checkInID: flightID) }
                 lookup
             }
@@ -154,7 +155,7 @@ struct FlownEditView: View {
         date = min(flight.occurredAt, Date())
         originalDate = date
         tagged = tags
-        hasRoomForPhoto = ((try? CheckInStore(context: modelContext).photoCount(for: id)) ?? 0) < CheckInStore.maxPhotos
+        roomForPhotos = max(0, CheckInStore.maxPhotos - ((try? CheckInStore(context: modelContext).photoCount(for: id)) ?? 0))
         loaded = true
     }
 
@@ -169,7 +170,7 @@ struct FlownEditView: View {
                 // Only sent when the choice changed, so friends tagged on another device stay.
                 tagged: tagged.map(\.id) == tags.map(\.id) ? nil : tagged.map(\.id)
             )
-            if let photo { try store.addPhoto(photo, to: flightID) }
+            if !photos.isEmpty { try store.addPhotos(photos, to: flightID) }
             sync?.requestSync()
             onSaved()
             dismiss()

@@ -73,8 +73,10 @@
     <string name="seat_label">Seat, e.g. 34K</string>
     <string name="type_kept">Aircraft type: %1$s. Choose another to change it.</string>
     <string name="add_photo">Add a photo</string>
+    <string name="add_photos">Add photos</string>
+    <string name="remove_photo">Remove photo</string>
     <string name="photo_added">Photo added (%1$d × %2$d)</string>
-    <string name="photo_hint">Location and camera data are removed from the photo before it is saved.</string>
+    <string name="photo_hint">Location and camera data are removed from the photos before they are saved.</string>
     <string name="photo_failed">This photo couldn\'t be read.</string>
     <string name="remove">Remove</string>
     <string name="airport_first">First visit to this airport!</string>

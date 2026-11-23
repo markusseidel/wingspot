@@ -25,9 +25,10 @@ struct CheckInEditView: View {
     @State private var reason = VisitContext.spotting
     @State private var loaded = false
     @State private var failed = false
-    @State private var photo: PreparedPhoto?
+    @State private var photos: [PreparedPhoto] = []
     @State private var isPreparingPhoto = false
-    @State private var hasRoomForPhoto = false
+    /// How many more photos the check-in can take.
+    @State private var roomForPhotos = 0
     @State private var tagged: [PersonTag] = []
 
     private var registration: Registration? { Registration(registrationInput) }
@@ -78,7 +79,7 @@ struct CheckInEditView: View {
                         WithFriendsRow(selection: $tagged)
                     }
                 }
-                if hasRoomForPhoto { PhotoSection(photo: $photo, isPreparing: $isPreparingPhoto) }
+                if roomForPhotos > 0 { PhotoSection(photos: $photos, isPreparing: $isPreparingPhoto, limit: roomForPhotos) }
                 Section { CheckInVisibilityPicker(checkInID: checkInID) }
             }
             .navigationTitle(kind == "airport" ? "Edit visit" : "Edit sighting")
@@ -116,7 +117,7 @@ struct CheckInEditView: View {
         default:
             break
         }
-        hasRoomForPhoto = ((try? CheckInStore(context: modelContext).photoCount(for: id)) ?? 0) < CheckInStore.maxPhotos
+        roomForPhotos = max(0, CheckInStore.maxPhotos - ((try? CheckInStore(context: modelContext).photoCount(for: id)) ?? 0))
         tagged = tags
         loaded = true
     }
@@ -132,7 +133,7 @@ struct CheckInEditView: View {
             } else if kind == "airport" {
                 try store.updateVisit(id: checkInID, reason: reason, tagged: tagged.map(\.id) == tags.map(\.id) ? nil : tagged.map(\.id))
             }
-            if let photo { try store.addPhoto(photo, to: checkInID) }
+            if !photos.isEmpty { try store.addPhotos(photos, to: checkInID) }
             sync?.requestSync()
             onSaved()
             dismiss()

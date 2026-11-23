@@ -28,20 +28,21 @@ public struct SpottedDraft: Sendable {
     public var type: AircraftTypeChoice?
     public var place: Place?
     public var position: GeoCoordinate?
-    public var photo: PreparedPhoto?
+    /// The photos saved with the check-in, in the order they are shown (at most `CheckInStore.maxPhotos`; more are ignored).
+    public var photos: [PreparedPhoto]
     /// The airport visit (session) this sighting is made during.
     public var visitID: UUID?
 
     public init(
         registration: Registration? = nil, type: AircraftTypeChoice? = nil, place: Place? = nil,
-        position: GeoCoordinate? = nil, photo: PreparedPhoto? = nil, visitID: UUID? = nil
+        position: GeoCoordinate? = nil, photo: PreparedPhoto? = nil, photos: [PreparedPhoto] = [], visitID: UUID? = nil
     ) {
         self.visitID = visitID
         self.registration = registration
         self.type = type
         self.place = place
         self.position = position
-        self.photo = photo
+        self.photos = (photo.map { [$0] } ?? []) + photos
     }
 
     public var hasAircraft: Bool { registration != nil || type != nil }
@@ -77,7 +78,8 @@ public struct AirportDraft: Sendable {
     public let code: String
     public var context: VisitContext
     public var position: GeoCoordinate?
-    public var photo: PreparedPhoto?
+    /// The photos saved with the check-in, in the order they are shown (at most `CheckInStore.maxPhotos`; more are ignored).
+    public var photos: [PreparedPhoto]
     /// Friends who were there too.
     public var tagged: [UUID]
     /// The friend's check-in this one is made from, when it was added from a tag.
@@ -88,7 +90,7 @@ public struct AirportDraft: Sendable {
 
     public init(
         airportID: Int, code: String, context: VisitContext = .spotting, position: GeoCoordinate? = nil,
-        photo: PreparedPhoto? = nil, tagged: [UUID] = [], sourceID: UUID? = nil, spotID: Int? = nil, spotName: String? = nil
+        photo: PreparedPhoto? = nil, photos: [PreparedPhoto] = [], tagged: [UUID] = [], sourceID: UUID? = nil, spotID: Int? = nil, spotName: String? = nil
     ) {
         self.spotID = spotID
         self.spotName = spotName
@@ -98,7 +100,7 @@ public struct AirportDraft: Sendable {
         self.code = code
         self.context = context
         self.position = position
-        self.photo = photo
+        self.photos = (photo.map { [$0] } ?? []) + photos
     }
 }
 
@@ -136,7 +138,8 @@ public struct FlownDraft: Sendable {
     public var type: SpottedDraft.AircraftTypeChoice?
     public var cabin: CabinClass?
     public var seat: String?
-    public var photo: PreparedPhoto?
+    /// The photos saved with the check-in, in the order they are shown (at most `CheckInStore.maxPhotos`; more are ignored).
+    public var photos: [PreparedPhoto]
     /// Friends who flew with you.
     public var tagged: [UUID]
     /// The friend's flight this one is made from, when it was added from a tag.
@@ -145,11 +148,11 @@ public struct FlownDraft: Sendable {
     public init(
         origin: SpottedDraft.Place, destination: SpottedDraft.Place, distanceKm: Int? = nil, flightNumber: String? = nil,
         registration: Registration? = nil, type: SpottedDraft.AircraftTypeChoice? = nil, cabin: CabinClass? = nil,
-        seat: String? = nil, photo: PreparedPhoto? = nil, tagged: [UUID] = [], sourceID: UUID? = nil
+        seat: String? = nil, photo: PreparedPhoto? = nil, photos: [PreparedPhoto] = [], tagged: [UUID] = [], sourceID: UUID? = nil
     ) {
         self.tagged = tagged
         self.sourceID = sourceID
-        self.photo = photo
+        self.photos = (photo.map { [$0] } ?? []) + photos
         self.origin = origin
         self.destination = destination
         self.distanceKm = distanceKm
@@ -223,7 +226,7 @@ public struct CheckInStore {
             latitude: draft.position?.latitude, longitude: draft.position?.longitude,
             occurredAt: date, syncState: .pending, ownerID: ownerID, visitID: draft.visitID
         ))
-        insertPhoto(draft.photo, for: id, at: date)
+        insertPhotos(draft.photos, for: id, at: date)
         try context.save()
 
         guard let last = earlier.first else {
@@ -248,7 +251,7 @@ public struct CheckInStore {
             taggedIDs: draft.tagged.isEmpty ? nil : draft.tagged, sourceID: draft.sourceID,
             spotID: draft.spotID, spotName: draft.spotName
         ))
-        insertPhoto(draft.photo, for: id, at: date)
+        insertPhotos(draft.photos, for: id, at: date)
         try context.save()
 
         guard let last = earlier.first else {
@@ -277,7 +280,7 @@ public struct CheckInStore {
             seat: draft.seat?.isEmpty ?? true ? nil : draft.seat?.uppercased(),
             taggedIDs: draft.tagged.isEmpty ? nil : draft.tagged, sourceID: draft.sourceID
         ))
-        insertPhoto(draft.photo, for: id, at: date)
+        insertPhotos(draft.photos, for: id, at: date)
         // The airports are checked in too, so they count as visited and show on the airport pages.
         for (airport, visit) in [(draft.origin, VisitContext.departing), (draft.destination, .arriving)] {
             context.insert(LocalCheckIn(
@@ -477,18 +480,35 @@ public struct CheckInStore {
     public func addPhoto(_ photo: PreparedPhoto, to checkInID: UUID, at date: Date = Date()) throws -> Bool {
         let matches = try context.fetchCount(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == checkInID }))
         guard matches > 0, try photoCount(for: checkInID) < Self.maxPhotos else { return false }
-        insertPhoto(photo, for: checkInID, at: date)
+        insertPhotos([photo], for: checkInID, at: date)
         try context.save()
         return true
     }
 
-    /// Saved together with the check-in, so a photo never exists without it.
-    private func insertPhoto(_ photo: PreparedPhoto?, for checkInID: UUID, at date: Date) {
-        guard let photo else { return }
-        context.insert(LocalPhoto(
-            id: UUID.v7(at: date), checkInID: checkInID, jpeg: photo.jpeg, width: photo.width, height: photo.height,
-            createdAt: date
-        ))
+    /// Adds several photos to a check-in that was saved earlier, as many as there is room for, in the order given. They go
+    /// up with the next sync. Returns how many were added; 0 when this device has no such check-in or it has the most.
+    @discardableResult
+    public func addPhotos(_ photos: [PreparedPhoto], to checkInID: UUID, at date: Date = Date()) throws -> Int {
+        let matches = try context.fetchCount(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == checkInID }))
+        guard matches > 0 else { return 0 }
+        let room = max(0, Self.maxPhotos - (try photoCount(for: checkInID)))
+        let added = Array(photos.prefix(room))
+        guard !added.isEmpty else { return 0 }
+        insertPhotos(added, for: checkInID, at: date)
+        try context.save()
+        return added.count
+    }
+
+    /// Saved together with the check-in, so a photo never exists without it. Each photo is one millisecond later than the one
+    /// before, so the photos keep the order they were given in (the id is made from the time, and the photos are sorted by it).
+    private func insertPhotos(_ photos: [PreparedPhoto], for checkInID: UUID, at date: Date) {
+        for (index, photo) in photos.prefix(Self.maxPhotos).enumerated() {
+            let created = date.addingTimeInterval(Double(index) / 1000)
+            context.insert(LocalPhoto(
+                id: UUID.v7(at: created), checkInID: checkInID, jpeg: photo.jpeg, width: photo.width, height: photo.height,
+                createdAt: created
+            ))
+        }
     }
 
     private func history(_ descriptor: FetchDescriptor<LocalCheckIn>) throws -> [LocalCheckIn] {
