@@ -22,7 +22,7 @@ struct SpottedCheckInView: View {
     @State private var position: GeoCoordinate?
     @State private var result: SpottedResult?
     @State private var saveFailed = false
-    @State private var photo: PreparedPhoto?
+    @State private var photos: [PreparedPhoto] = []
     @State private var isPreparingPhoto = false
     @FocusState private var isFocused: Bool
     @Environment(SpotSessionStore.self) private var sessions
@@ -97,7 +97,7 @@ struct SpottedCheckInView: View {
                 }
             }
 
-            PhotoSection(photo: $photo, isPreparing: $isPreparingPhoto)
+            PhotoSection(photos: $photos, isPreparing: $isPreparingPhoto)
 
             Section {
                 Button("Check in", action: save)
@@ -128,7 +128,7 @@ struct SpottedCheckInView: View {
             registration: registration,
             type: type.map { .init(icaoCode: $0.icaoCode, name: $0.name) },
             place: airport.map { .init(airportID: $0.id, code: $0.code) },
-            position: position, photo: photo, visitID: sessions.session?.visitID
+            position: position, photos: photos, visitID: sessions.session?.visitID
         )
         do {
             result = try CheckInStore(context: modelContext).saveSpotted(draft, ownerID: account.userID)
@@ -143,7 +143,7 @@ struct SpottedCheckInView: View {
     private func reset() {
         input = ""
         type = nil
-        photo = nil
+        photos = []
         result = nil
     }
 

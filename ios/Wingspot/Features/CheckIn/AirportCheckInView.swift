@@ -33,7 +33,7 @@ struct AirportCheckInView: View {
     @State private var position: GeoCoordinate?
     @State private var result: AirportResult?
     @State private var saveFailed = false
-    @State private var photo: PreparedPhoto?
+    @State private var photos: [PreparedPhoto] = []
     @State private var isPreparingPhoto = false
     @State private var tagged: [PersonTag] = []
     @Environment(SpotStore.self) private var spots
@@ -100,7 +100,7 @@ struct AirportCheckInView: View {
                 }
             }
 
-            PhotoSection(photo: $photo, isPreparing: $isPreparingPhoto)
+            PhotoSection(photos: $photos, isPreparing: $isPreparingPhoto)
 
             Section {
                 Button("Check in", action: save)
@@ -113,7 +113,7 @@ struct AirportCheckInView: View {
         guard let airport else { return }
         let place = places.first { $0.id == spotID }
         let draft = AirportDraft(
-            airportID: airport.id, code: airport.code, context: context, position: position, photo: photo, tagged: tagged.map(\.id),
+            airportID: airport.id, code: airport.code, context: context, position: position, photos: photos, tagged: tagged.map(\.id),
             spotID: place?.id, spotName: place?.name
         )
         do {

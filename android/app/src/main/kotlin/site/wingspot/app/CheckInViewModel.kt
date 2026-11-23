@@ -51,8 +51,8 @@ data class CheckInState(
     val saveFailed: Boolean = false,
     /** The flight being edited. */
     val editing: LocalCheckIn? = null,
-    /** Whether the check-in being edited can still take a photo. */
-    val roomForPhoto: Boolean = false,
+    /** How many more photos the check-in being edited can take. */
+    val roomForPhotos: Int = 0,
     val deleteFailed: Boolean = false,
     /** What the flight form starts with, when it was opened for a return flight. */
     val returnStart: ReturnStart? = null,
@@ -114,14 +114,14 @@ class CheckInViewModel(
         mutable.value = mutable.value.copy(session = null)
     }
 
-    fun save(registration: Registration?, type: AircraftType?, airport: Airport?, photo: PreparedPhoto?) {
+    fun save(registration: Registration?, type: AircraftType?, airport: Airport?, photos: List<PreparedPhoto>) {
         val session = activeSession()
         val draft = SpottedDraft(
             registration, type?.icaoCode, airport?.id ?: session?.airportId, airportCode = airport?.code ?: session?.code,
             visitId = session?.visitId,
         )
         if (!draft.hasAircraft) return
-        run(photo) {
+        run(photos) {
             val result = store.saveSpotted(draft)
             result.id to SavedResult(
                 Kind.SPOTTED, result.subject,
@@ -131,8 +131,8 @@ class CheckInViewModel(
     }
 
     fun saveAirport(
-        airport: Airport, context: VisitContext, photo: PreparedPhoto?, tagged: List<UUID> = emptyList(), spot: SocialApi.SpotLocation? = null,
-    ) = run(photo) {
+        airport: Airport, context: VisitContext, photos: List<PreparedPhoto>, tagged: List<UUID> = emptyList(), spot: SocialApi.SpotLocation? = null,
+    ) = run(photos) {
         val result = store.saveAirport(
             AirportDraft(Place(airport.id, airport.code), context, tagged = tagged, spotId = spot?.id, spotName = spot?.name),
         )
@@ -147,9 +147,9 @@ class CheckInViewModel(
 
     fun saveFlight(
         origin: Airport, destination: Airport, flightNumber: String, registration: Registration?, type: AircraftType?,
-        cabin: CabinClass?, seat: String, photo: PreparedPhoto?, at: Instant = Instant.now(), tagged: List<UUID> = emptyList(),
+        cabin: CabinClass?, seat: String, photos: List<PreparedPhoto>, at: Instant = Instant.now(), tagged: List<UUID> = emptyList(),
         returnTo: ReturnStart? = null, track: List<site.wingspot.core.GeoCoordinate> = emptyList(),
-    ) = run(photo, onSaved = { it.copy(afterFlight = returnTo) }) {
+    ) = run(photos, onSaved = { it.copy(afterFlight = returnTo) }) {
         val result = store.saveFlown(
             FlownDraft(
                 Place(origin.id, origin.code), Place(destination.id, destination.code), flightNumber, registration,
@@ -162,11 +162,17 @@ class CheckInViewModel(
         result.id to SavedResult(Kind.FLOWN, result.route, result.timesOnRoute, null, trackPositions = if (keepTrack) track.size else 0)
     }
 
-    private fun run(photo: PreparedPhoto?, onSaved: (CheckInState) -> CheckInState = { it }, save: suspend () -> Pair<UUID, SavedResult>) {
+    /** Keeps the photos with the check-in in the order given: each is one millisecond later than the one before, so they sort that way. */
+    private suspend fun addPhotos(id: UUID, photos: List<PreparedPhoto>) {
+        val start = Instant.now()
+        photos.forEachIndexed { index, photo -> store.addPhoto(id, photo.jpeg, photo.width, photo.height, start.plusMillis(index.toLong())) }
+    }
+
+    private fun run(photos: List<PreparedPhoto>, onSaved: (CheckInState) -> CheckInState = { it }, save: suspend () -> Pair<UUID, SavedResult>) {
         viewModelScope.launch {
             try {
                 val (id, result) = save()
-                if (photo != null) store.addPhoto(id, photo.jpeg, photo.width, photo.height)
+                addPhotos(id, photos)
                 mutable.value = onSaved(mutable.value.copy(result = result, saveFailed = false))
                 requestUpload()
                 reload()
@@ -178,8 +184,8 @@ class CheckInViewModel(
 
     fun edit(id: UUID) {
         viewModelScope.launch {
-            val room = store.photoCount(id) < CheckInStore.MAX_PHOTOS
-            mutable.value = mutable.value.copy(editing = store.find(id), roomForPhoto = room, saveFailed = false)
+            val room = maxOf(0, CheckInStore.MAX_PHOTOS - store.photoCount(id))
+            mutable.value = mutable.value.copy(editing = store.find(id), roomForPhotos = room, saveFailed = false)
         }
     }
 
@@ -214,11 +220,11 @@ class CheckInViewModel(
         mutable.value = mutable.value.copy(editing = null)
     }
 
-    fun saveEdit(id: UUID, registration: Registration?, type: AircraftType?, typeIcao: String?, flightNumber: String, cabin: CabinClass?, seat: String, at: Instant? = null, photo: PreparedPhoto? = null, tagged: List<UUID>? = null) {
+    fun saveEdit(id: UUID, registration: Registration?, type: AircraftType?, typeIcao: String?, flightNumber: String, cabin: CabinClass?, seat: String, at: Instant? = null, photos: List<PreparedPhoto> = emptyList(), tagged: List<UUID>? = null) {
         viewModelScope.launch {
             try {
                 store.updateFlown(id, registration, type?.icaoCode ?: typeIcao, flightNumber, cabin, seat, at, tagged)
-                if (photo != null) store.addPhoto(id, photo.jpeg, photo.width, photo.height)
+                addPhotos(id, photos)
                 mutable.value = mutable.value.copy(editing = null, saveFailed = false)
                 requestUpload()
                 reload()
@@ -229,11 +235,11 @@ class CheckInViewModel(
     }
 
     /** Saves the corrected aircraft of a sighting, or the corrected reason of an airport visit. */
-    fun saveSimpleEdit(id: UUID, registration: Registration?, typeIcao: String?, reason: VisitContext?, photo: PreparedPhoto? = null, tagged: List<UUID>? = null) {
+    fun saveSimpleEdit(id: UUID, registration: Registration?, typeIcao: String?, reason: VisitContext?, photos: List<PreparedPhoto> = emptyList(), tagged: List<UUID>? = null) {
         viewModelScope.launch {
             try {
                 if (reason != null) store.updateVisit(id, reason, tagged) else store.updateSpotted(id, registration, typeIcao)
-                if (photo != null) store.addPhoto(id, photo.jpeg, photo.width, photo.height)
+                addPhotos(id, photos)
                 mutable.value = mutable.value.copy(editing = null, saveFailed = false)
                 requestUpload()
                 reload()

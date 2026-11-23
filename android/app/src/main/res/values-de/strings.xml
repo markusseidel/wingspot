@@ -73,8 +73,9 @@
     <string name="seat_label">Sitz, z. B. 34K</string>
     <string name="type_kept">Flugzeugtyp: %1$s. Wähle einen anderen, um ihn zu ändern.</string>
     <string name="add_photo">Foto hinzufügen</string>
+    <string name="add_photos">Fotos hinzufügen</string>
     <string name="photo_added">Foto hinzugefügt (%1$d × %2$d)</string>
-    <string name="photo_hint">Ort und Kameradaten werden aus dem Foto entfernt, bevor es gespeichert wird.</string>
+    <string name="photo_hint">Ort und Kameradaten werden aus den Fotos entfernt, bevor sie gespeichert werden.</string>
     <string name="photo_failed">Dieses Foto konnte nicht gelesen werden.</string>
     <string name="remove">Entfernen</string>
     <string name="airport_first">Erster Besuch an diesem Flughafen!</string>

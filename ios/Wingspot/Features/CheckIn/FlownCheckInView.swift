@@ -66,7 +66,7 @@ struct FlownCheckInView: View {
     @State private var tagged: [PersonTag] = []
     @State private var result: FlownResult?
     @State private var saveFailed = false
-    @State private var tripPhoto: PreparedPhoto?
+    @State private var tripPhotos: [PreparedPhoto] = []
     @State private var isPreparingPhoto = false
     @State private var showCamera = false
     @State private var photo: PhotosPickerItem?
@@ -248,7 +248,7 @@ struct FlownCheckInView: View {
                 WithFriendsRow(selection: $tagged)
             }
 
-            PhotoSection(photo: $tripPhoto, isPreparing: $isPreparingPhoto)
+            PhotoSection(photos: $tripPhotos, isPreparing: $isPreparingPhoto)
 
             Section {
                 Button("Check in", action: save)
@@ -405,7 +405,7 @@ struct FlownCheckInView: View {
             destination: .init(airportID: destination.id, code: destination.code),
             distanceKm: Int(distance.rounded()), flightNumber: flightNumber, registration: registration,
             type: type.map { .init(icaoCode: $0.icaoCode, name: $0.name) }, cabin: cabin, seat: seat,
-            photo: tripPhoto, tagged: tagged.map(\.id)
+            photos: tripPhotos, tagged: tagged.map(\.id)
         )
         do {
             let saved = try CheckInStore(context: modelContext).saveFlown(draft, ownerID: account.userID, at: FlightDay.moment(of: date))
@@ -426,7 +426,7 @@ struct FlownCheckInView: View {
         registrationInput = ""
         type = nil
         seat = ""
-        tripPhoto = nil
+        tripPhotos = []
         assumedYear = nil
         clearImport()
         result = nil
@@ -442,7 +442,7 @@ struct FlownCheckInView: View {
         cabin = nil
         seat = ""
         tagged = []
-        tripPhoto = nil
+        tripPhotos = []
         clearImport()
         result = nil
     }

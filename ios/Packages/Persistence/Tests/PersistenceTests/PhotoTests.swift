@@ -157,6 +157,41 @@ private actor FakePhotoServer: PhotoUploader {
         #expect(try context.fetch(FetchDescriptor<LocalPhoto>()).allSatisfy { $0.syncState == "pending" && $0.checkInID == id })
     }
 
+    @Test func severalPhotosAreSavedWithTheCheckInInTheOrderGiven() throws {
+        let context = try makeContext()
+        let first = PreparedPhoto(jpeg: Data([1]), width: 10, height: 10)
+        let second = PreparedPhoto(jpeg: Data([2]), width: 10, height: 10)
+        let third = PreparedPhoto(jpeg: Data([3]), width: 10, height: 10)
+        let result = try CheckInStore(context: context).saveSpotted(SpottedDraft(registration: Registration("DAIMA"), photos: [first, second, third]))
+        var descriptor = FetchDescriptor<LocalPhoto>()
+        descriptor.sortBy = [SortDescriptor(\.createdAt)]
+        let saved = try context.fetch(descriptor)
+        #expect(saved.map(\.jpeg) == [first.jpeg, second.jpeg, third.jpeg])
+        #expect(saved.allSatisfy { $0.checkInID == result.id && $0.syncState == "pending" })
+        // The id is made from the time, so it sorts the same way.
+        #expect(saved.map(\.id.uuidString) == saved.map(\.id.uuidString).sorted())
+    }
+
+    @Test func moreThanTheLimitAreNotSavedWithTheCheckIn() throws {
+        let context = try makeContext()
+        _ = try CheckInStore(context: context).saveSpotted(
+            SpottedDraft(registration: Registration("DAIMA"), photos: Array(repeating: photo, count: CheckInStore.maxPhotos + 2))
+        )
+        #expect(try context.fetchCount(FetchDescriptor<LocalPhoto>()) == CheckInStore.maxPhotos)
+    }
+
+    @Test func severalPhotosCanBeAddedLaterAsManyAsThereIsRoomFor() throws {
+        let context = try makeContext()
+        let store = CheckInStore(context: context)
+        _ = try store.saveSpotted(SpottedDraft(registration: Registration("DAIMA"), photo: photo))
+        let id = try #require(try context.fetch(FetchDescriptor<LocalCheckIn>()).first).id
+        // One photo is there, so three of five fit.
+        #expect(try store.addPhotos(Array(repeating: photo, count: 5), to: id) == CheckInStore.maxPhotos - 1)
+        #expect(try store.photoCount(for: id) == CheckInStore.maxPhotos)
+        #expect(try store.addPhotos([photo], to: id) == 0)
+        #expect(try store.addPhotos([photo], to: UUID()) == 0)
+    }
+
     @Test func aCheckInWithoutAPhotoSavesNone() throws {
         let context = try makeContext()
         _ = try CheckInStore(context: context).saveSpotted(SpottedDraft(registration: Registration("DAIMA")))
