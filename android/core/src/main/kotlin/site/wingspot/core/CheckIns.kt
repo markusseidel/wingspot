@@ -416,6 +416,18 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
         }
     }
 
+    /** The photos of this check-in that have not gone up yet, oldest first, so the page can show them while they upload. */
+    suspend fun pendingPhotos(checkInId: UUID): List<LocalPhoto> = db {
+        connection.prepare(
+            "SELECT id, checkin_id, jpeg, width, height FROM photos WHERE checkin_id = ? AND sync_state = 'pending' ORDER BY created_at ASC",
+        ).use { s ->
+            s.bindText(1, checkInId.toString())
+            buildList {
+                while (s.step()) add(LocalPhoto(UUID.fromString(s.getText(0)), UUID.fromString(s.getText(1)), s.getBlob(2), s.getLong(3).toInt(), s.getLong(4).toInt()))
+            }
+        }
+    }
+
     /** How many photos this check-in has on this phone. */
     suspend fun photoCount(checkInId: UUID): Int = db { count("checkin_id = ?", table = "photos") { it.bindText(1, checkInId.toString()) } }
 

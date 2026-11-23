@@ -3,6 +3,9 @@ package site.wingspot.app
 import android.graphics.BitmapFactory
 import android.text.format.DateUtils
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.ui.draw.alpha
+import kotlinx.coroutines.delay
 import androidx.compose.foundation.background
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.withLink
@@ -374,6 +377,8 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
     var loaded by remember { mutableStateOf<FeedItem?>(null) }
     var gone by remember { mutableStateOf(false) }
     var photos by remember { mutableStateOf(emptyList<FeedPhoto>()) }
+    // Photos of your own check-in that are still on this phone, shown until they have gone up.
+    var uploading by remember { mutableStateOf(emptyList<site.wingspot.core.LocalPhoto>()) }
     var comments by remember { mutableStateOf(emptyList<CheckInComment>()) }
     var commentsFailed by remember { mutableStateOf(false) }
     var extras by remember { mutableStateOf(emptyMap<String, SocialApi.CommentExtra>()) }
@@ -415,6 +420,21 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
             commentsFailed = true
         }
         localFlight = runCatching { app.checkIns.find(UUID.fromString(id)) != null }.getOrDefault(false)
+    }
+
+    // A photo added in the edit screen is shown at once, with a spinner, and swapped for the uploaded one when it is there.
+    LaunchedEffect(id) {
+        var waited = false
+        while (true) {
+            val waiting = runCatching { app.checkIns.pendingPhotos(UUID.fromString(id)) }.getOrDefault(emptyList())
+            uploading = waiting
+            if (waiting.isEmpty()) {
+                if (waited) runCatching { photos = app.social.photos(listOf(id)) }
+                break
+            }
+            waited = true
+            delay(2000)
+        }
     }
 
     if (pickVisibility) VisibilityDialog(app, id, onClose = { pickVisibility = false })
@@ -508,6 +528,17 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                     RemoteImage(photo, Modifier.fillMaxWidth().clip(MaterialTheme.shapes.medium).clickable { viewing = photo })
                     if (shown.userId != me) TextButton(onClick = { reporting = ReportKind.PHOTO to photo.id }, modifier = Modifier.align(Alignment.TopEnd)) { Text(stringResource(R.string.report)) }
                     else TextButton(onClick = { photoToDelete = photo }, modifier = Modifier.align(Alignment.TopEnd)) { Text(stringResource(R.string.delete_photo)) }
+                }
+            }
+            items(uploading, key = { "uploading-${it.id}" }) { photo ->
+                val bitmap = remember(photo.id) { BitmapFactory.decodeByteArray(photo.jpeg, 0, photo.jpeg.size)?.asImageBitmap() }
+                val label = stringResource(R.string.photo_uploading)
+                Box(Modifier.fillMaxWidth().heightIn(min = 120.dp).clip(MaterialTheme.shapes.medium).semantics { contentDescription = label }) {
+                    if (bitmap != null) Image(bitmap, contentDescription = null, modifier = Modifier.fillMaxWidth().alpha(0.6f), contentScale = ContentScale.FillWidth)
+                    Column(Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
+                        CircularProgressIndicator(Modifier.size(24.dp))
+                        Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
                 }
             }
             feed.badges[id]?.takeIf { it.isNotEmpty() }?.let { earned ->
