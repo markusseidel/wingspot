@@ -36,6 +36,16 @@ android {
     // The upload key is never in the repository. The beta workflow gives its location and passwords as environment
     // variables; without them the release build is simply unsigned.
     signingConfigs {
+        // The beta APK is a debug build. With the beta key's path in this variable the debug build is signed with that one fixed
+        // key (the standard debug key format: alias androiddebugkey, password android) instead of a debug key the runner makes up.
+        System.getenv("WINGSPOT_BETA_KEYSTORE")?.let { betaKeystore ->
+            getByName("debug") {
+                storeFile = file(betaKeystore)
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
+            }
+        }
         val keystorePath = System.getenv("WINGSPOT_KEYSTORE_PATH")
         if (keystorePath != null) {
             create("release") {
