@@ -65,4 +65,13 @@ import Testing
         let answer = try JSONDecoder().decode(ReviewAnswer.self, from: Data(#"{"status":"rejected","code":"not_pending"}"#.utf8))
         #expect(answer.code == "not_pending")
     }
+
+    /// A sighting with its own place and no session has no visit (#331).
+    @Test func aSightingWithItsOwnPlaceAndNoVisitIsRead() throws {
+        let alone = try JSONDecoder().decode(CheckInSpot.self, from: Data(#"{"visit_id":null,"spot_id":7,"spot_name":"North fence","sightings":null}"#.utf8))
+        #expect(alone.visitID == nil)
+        #expect(alone.spotName == "North fence")
+        let visit = try JSONDecoder().decode(CheckInSpot.self, from: Data(#"{"visit_id":"6F9619FF-8B86-D011-B42D-00C04FC964FF","spot_id":7,"spot_name":"North fence","sightings":2}"#.utf8))
+        #expect(visit.visitID != nil)
+    }
 }
