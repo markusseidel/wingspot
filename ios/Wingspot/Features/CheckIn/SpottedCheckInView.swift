@@ -26,6 +26,8 @@ struct SpottedCheckInView: View {
     @State private var isPreparingPhoto = false
     @FocusState private var isFocused: Bool
     @Environment(SpotSessionStore.self) private var sessions
+    @State private var spot: SpotLocation?
+    @State private var spotsLoaded = false
 
     private var registration: Registration? { Registration(input) }
     private var hasInput: Bool { !input.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -87,6 +89,7 @@ struct SpottedCheckInView: View {
                 } label: {
                     LabeledContent("Airport", value: airport.map { "\($0.code) · \($0.name)" } ?? String(localized: "None"))
                 }
+                SightingSpotRow(airportID: airport?.id, inSession: sessions.session != nil, choice: $spot, loaded: $spotsLoaded)
             } footer: {
                 if referenceData.database == nil {
                     if referenceData.isUpdating {
@@ -128,7 +131,8 @@ struct SpottedCheckInView: View {
             registration: registration,
             type: type.map { .init(icaoCode: $0.icaoCode, name: $0.name) },
             place: airport.map { .init(airportID: $0.id, code: $0.code) },
-            position: position, photos: photos, visitID: sessions.session?.visitID
+            position: position, photos: photos, visitID: sessions.session?.visitID,
+            spotID: sessions.session == nil ? spot?.id : nil, spotName: sessions.session == nil ? spot?.name : nil
         )
         do {
             result = try CheckInStore(context: modelContext).saveSpotted(draft, ownerID: account.userID)
@@ -145,6 +149,7 @@ struct SpottedCheckInView: View {
         type = nil
         photos = []
         result = nil
+        spot = nil
     }
 
     private func suggestAirport() async {

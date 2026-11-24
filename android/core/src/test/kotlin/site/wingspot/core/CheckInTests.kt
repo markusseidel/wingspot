@@ -140,7 +140,8 @@ class OutboxTests {
         assertEquals(listOf(visit.id, sighting.id, alone.id).map { it.toString() }, items.map { it["id"]!!.jsonPrimitive.content })
         assertEquals(42, items[0]["spot_location_id"]!!.jsonPrimitive.content.toInt())
         assertEquals(visit.id.toString(), items[1]["visit_id"]!!.jsonPrimitive.content)
-        assertTrue("visit_id" !in items[2] && "spot_location_id" !in items[2])
+        // A sighting always says what its place is (null when it has none), so an edit can clear it.
+        assertTrue("visit_id" !in items[2] && items[2]["spot_location_id"] is kotlinx.serialization.json.JsonNull)
         assertEquals("Deck", store.all().single { it.id == visit.id }.spotName)
     }
 

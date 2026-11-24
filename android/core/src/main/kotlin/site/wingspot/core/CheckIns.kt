@@ -21,8 +21,19 @@ data class SpottedDraft(
     val airportCode: String? = null,
     /** The airport visit (session) this sighting is made during. */
     val visitId: UUID? = null,
+    /** The spotting place the aircraft was seen from, with its name. Not used during a session: the session has the place. */
+    val spotId: Long? = null,
+    val spotName: String? = null,
 ) {
     val hasAircraft: Boolean get() = registration != null || typeIcao != null
+}
+
+/** What an edit does with the spotting place of a sighting. */
+sealed class SpotChange {
+    /** The edit screen did not show the place (no connection, no airport): it stays as it is. */
+    object Keep : SpotChange()
+    data class Set(val id: Long, val name: String) : SpotChange()
+    object Clear : SpotChange()
 }
 
 /** Why someone is at an airport. The names are what the server stores, in lower case. */
@@ -158,8 +169,8 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
             val subject = draft.registration?.value ?: draft.typeIcao!!
             val before = timesSeen(subject)
             connection.prepare(
-                """INSERT INTO checkins (id, kind, occurred_at, registration, type_icao, airport_id, latitude, longitude, sync_state, airport_code, visit_id, saved_at)
-                   VALUES (?, 'spotted', ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?)""",
+                """INSERT INTO checkins (id, kind, occurred_at, registration, type_icao, airport_id, latitude, longitude, sync_state, airport_code, visit_id, spot_id, spot_name, saved_at)
+                   VALUES (?, 'spotted', ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?)""",
             ).use {
                 it.bindText(1, id.toString())
                 it.bindLong(2, now.toEpochMilli())
@@ -170,7 +181,9 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
                 draft.longitude?.let { v -> it.bindDouble(7, v) } ?: it.bindNull(7)
                 draft.airportCode?.let { v -> it.bindText(8, v) } ?: it.bindNull(8)
                 draft.visitId?.let { v -> it.bindText(9, v.toString()) } ?: it.bindNull(9)
-                it.bindLong(10, System.currentTimeMillis())
+                draft.spotId?.let { v -> it.bindLong(10, v) } ?: it.bindNull(10)
+                draft.spotName?.let { v -> it.bindText(11, v) } ?: it.bindNull(11)
+                it.bindLong(12, System.currentTimeMillis())
                 it.step()
             }
             SpottedResult(id, subject, if (before == null) History.FirstTime else History.SeenBefore(before.first + 1, before.second))
@@ -306,7 +319,7 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
      * Corrects the aircraft of a saved sighting and sends it again. Needs a registration or a type, like a new sighting.
      * Returns false when this phone has no such sighting.
      */
-    suspend fun updateSpotted(id: UUID, registration: Registration?, typeIcao: String?): Boolean = db {
+    suspend fun updateSpotted(id: UUID, registration: Registration?, typeIcao: String?, spot: SpotChange = SpotChange.Keep): Boolean = db {
         if (registration == null && typeIcao == null) return@db false
         var found = false
         connection.prepare("SELECT 1 FROM checkins WHERE id = ? AND kind = 'spotted'").use { it.bindText(1, id.toString()); found = it.step() }
@@ -316,6 +329,15 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
             typeIcao?.let { t -> it.bindText(2, t.uppercase()) } ?: it.bindNull(2)
             it.bindText(3, id.toString())
             it.step()
+        }
+        when (spot) {
+            SpotChange.Keep -> {}
+            is SpotChange.Set -> connection.prepare("UPDATE checkins SET spot_id = ?, spot_name = ? WHERE id = ?").use {
+                it.bindLong(1, spot.id); it.bindText(2, spot.name); it.bindText(3, id.toString()); it.step()
+            }
+            SpotChange.Clear -> connection.prepare("UPDATE checkins SET spot_id = NULL, spot_name = NULL WHERE id = ?").use {
+                it.bindText(1, id.toString()); it.step()
+            }
         }
         true
     }

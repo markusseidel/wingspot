@@ -542,3 +542,17 @@ private actor SleepLog {
 }
 
 @MainActor private final class RunCounter { var count = 0 }
+
+@MainActor @Test func aSightingAlwaysSendsItsPlaceSoNullCanClearIt() throws {
+    func json(_ item: CheckInUploadItem) throws -> [String: Any] {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        return try #require(try JSONSerialization.jsonObject(with: encoder.encode(item)) as? [String: Any])
+    }
+    let sighting = CheckInUploadItem(id: UUID(), kind: "spotted", occurredAt: Date(), registration: "D-AIMA", typeICAO: nil, airportID: 1, latitude: nil, longitude: nil)
+    #expect(try json(sighting)["spot_location_id"] is NSNull)
+    let placed = CheckInUploadItem(id: UUID(), kind: "spotted", occurredAt: Date(), registration: "D-AIMA", typeICAO: nil, airportID: 1, latitude: nil, longitude: nil, spotLocationID: 5)
+    #expect(try json(placed)["spot_location_id"] as? Int == 5)
+    let visit = CheckInUploadItem(id: UUID(), kind: "airport", occurredAt: Date(), registration: nil, typeICAO: nil, airportID: 1, latitude: nil, longitude: nil)
+    #expect(try json(visit)["spot_location_id"] == nil)
+}

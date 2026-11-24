@@ -36,6 +36,12 @@ struct CheckInEditView: View {
     /// Existing photos marked as removed. They are deleted when the screen is saved.
     @State private var removedPhotos: Set<UUID> = []
     @State private var isSaving = false
+    /// A sighting's spotting place, and whether the places of its airport were read (so "None" is a real choice).
+    @State private var spot: SpotLocation?
+    @State private var originalSpotID: Int?
+    @State private var spotsLoaded = false
+    @State private var airportID: Int?
+    @State private var inSession = false
 
     private var registration: Registration? { Registration(registrationInput) }
     private var hasRegistrationInput: Bool { !registrationInput.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -70,6 +76,7 @@ struct CheckInEditView: View {
                         } label: {
                             LabeledContent("Aircraft type", value: typeName ?? String(localized: "Optional"))
                         }
+                        SightingSpotRow(airportID: airportID, inSession: inSession, choice: $spot, loaded: $spotsLoaded)
                     } header: {
                         Text("Details")
                     } footer: {
@@ -119,6 +126,10 @@ struct CheckInEditView: View {
             registrationInput = checkIn.registration ?? ""
             typeCode = checkIn.typeICAO
             typeName = checkIn.typeName
+            airportID = checkIn.airportID
+            inSession = checkIn.visitID != nil
+            originalSpotID = checkIn.spotID
+            spot = checkIn.spotID.map { SpotLocation(id: $0, name: checkIn.spotName ?? "", latitude: 0, longitude: 0, description: nil, status: "approved", mine: false, sessions: 0) }
         case "airport":
             title = checkIn.airportCode ?? "?"
             reason = checkIn.visitContext.flatMap(VisitContext.init(rawValue:)) ?? .spotting
@@ -146,13 +157,21 @@ struct CheckInEditView: View {
         saveDetails()
     }
 
+    /// What the edit does with the place: nothing when the picker was not shown, otherwise what was chosen.
+    private var spotChange: SpotChange {
+        guard spotsLoaded, !inSession else { return .keep }
+        if let spot { return spot.id == originalSpotID ? .keep : .set(id: spot.id, name: spot.name) }
+        return originalSpotID == nil ? .keep : .clear
+    }
+
     private func saveDetails() {
         do {
             let store = CheckInStore(context: modelContext)
             if kind == "spotted" {
                 try store.updateSpotted(
                     id: checkInID, registration: registration,
-                    type: typeCode.map { .init(icaoCode: $0, name: typeName ?? $0) }
+                    type: typeCode.map { .init(icaoCode: $0, name: typeName ?? $0) },
+                    spot: spotChange
                 )
             } else if kind == "airport" {
                 try store.updateVisit(id: checkInID, reason: reason, tagged: tagged.map(\.id) == tags.map(\.id) ? nil : tagged.map(\.id))

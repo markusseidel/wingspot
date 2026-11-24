@@ -69,6 +69,7 @@ import site.wingspot.core.LocalCheckIn
 import site.wingspot.core.RecentTypes
 import site.wingspot.core.Registration
 import site.wingspot.core.SocialApi
+import site.wingspot.core.SpotChange
 import site.wingspot.core.SyncState
 import site.wingspot.core.VisitContext
 import site.wingspot.core.departureDay
@@ -110,6 +111,7 @@ private fun SpottedForm(state: CheckInState, reference: ReferenceState, model: C
     var type by remember { mutableStateOf<AircraftType?>(null) }
     var airport by remember { mutableStateOf<Airport?>(null) }
     var photos by remember { mutableStateOf(emptyList<PreparedPhoto>()) }
+    var spot by remember { mutableStateOf<SocialApi.SpotLocation?>(null) }
     val registration = Registration.parse(input)
     val canSave = if (input.isNotBlank()) registration != null else type != null
     // During a session the airport is the session's.
@@ -126,8 +128,35 @@ private fun SpottedForm(state: CheckInState, reference: ReferenceState, model: C
     RegistrationHint(input, registration, orType = true)
     if (registration == null) TypePicker(reference, type) { type = it }
     AirportPicker(stringResource(R.string.airport_label), reference, airport) { airport = it }
+    SightingSpotField(airport?.id, inSession = session != null, spot = spot, onSpot = { spot = it })
     PhotoField(photos) { photos = it }
-    SaveBar(state, enabled = canSave, onSave = { model.save(registration, type, airport, photos) }, onCancel = model::close)
+    SaveBar(state, enabled = canSave, onSave = { model.save(registration, type, airport, photos, spot) }, onCancel = model::close)
+}
+
+/**
+ * The spotting place of a sighting: chips with the places of the sighting's airport, "None" by default. Not shown without an airport,
+ * with no place there, or during a session (the session has the place). [onLoaded] says whether the places were read, so an edit knows
+ * "None" was a real choice and not a failed request.
+ */
+@Composable
+internal fun SightingSpotField(
+    airportId: Long?, inSession: Boolean, spot: SocialApi.SpotLocation?, onSpot: (SocialApi.SpotLocation?) -> Unit, onLoaded: (Boolean) -> Unit = {},
+) {
+    val app = LocalContext.current.applicationContext as WingspotApp
+    var places by remember { mutableStateOf(emptyList<SocialApi.SpotLocation>()) }
+    LaunchedEffect(airportId) {
+        val found = airportId?.let { runCatching { app.social.spotLocations(it) }.getOrDefault(emptyList()) } ?: emptyList()
+        places = found
+        // An empty answer may be a failed request: then nothing is decided, and an edit leaves the place as it was.
+        onLoaded(found.isNotEmpty())
+        if (found.isNotEmpty() && spot != null && found.none { it.id == spot.id }) onSpot(null)
+    }
+    if (inSession || places.isEmpty()) return
+    Text(stringResource(R.string.spotting_location_label), style = MaterialTheme.typography.labelLarge)
+    Row(Modifier.horizontalScroll(rememberScrollState()).testTag("sighting-spot-choices"), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FilterChip(selected = spot == null, onClick = { onSpot(null) }, label = { Text(stringResource(R.string.spot_none)) })
+        for (place in places) FilterChip(selected = spot?.id == place.id, onClick = { onSpot(place) }, label = { Text(place.name) })
+    }
 }
 
 @Composable
@@ -467,6 +496,15 @@ fun SimpleEditScreen(
     val hasAircraft = (registration != null && input.isNotBlank()) || type != null || keptType != null
     var photos by remember { mutableStateOf(emptyList<PreparedPhoto>()) }
     val tags = rememberTagChoice(checkIn.id)
+    // A sighting's spotting place, and whether the places of its airport were read (so "None" is a real choice).
+    var spot by remember { mutableStateOf(checkIn.spotId?.let { SocialApi.SpotLocation(it, checkIn.spotName.orEmpty(), 0.0, 0.0, null, "approved", false, 0) }) }
+    var spotsLoaded by remember { mutableStateOf(false) }
+    val inSession = checkIn.visitId != null
+    val spotChange = when {
+        !spotsLoaded || inSession -> SpotChange.Keep
+        spot != null -> if (spot!!.id == checkIn.spotId) SpotChange.Keep else SpotChange.Set(spot!!.id, spot!!.name)
+        else -> if (checkIn.spotId == null) SpotChange.Keep else SpotChange.Clear
+    }
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(stringResource(if (isVisit) R.string.edit_visit else R.string.edit_sighting), style = MaterialTheme.typography.titleLarge)
         Text(checkIn.title, style = MaterialTheme.typography.titleLarge, fontFamily = FontFamily.Monospace)
@@ -484,6 +522,7 @@ fun SimpleEditScreen(
             RegistrationHint(input, registration, orType = false)
             if (keptType != null) Text(stringResource(R.string.type_kept, keptType), style = MaterialTheme.typography.bodySmall)
             TypePicker(reference, type) { type = it }
+            SightingSpotField(checkIn.airportId, inSession = inSession, spot = spot, onSpot = { spot = it }, onLoaded = { spotsLoaded = it })
         }
         if (isVisit) WithFriendsField(tags)
         // The server's photos count too: a check-in restored on a new phone has none of its own copies here. A photo marked as
@@ -497,7 +536,7 @@ fun SimpleEditScreen(
             onSave = {
                 saveScope.launch {
                     deleteFailed = !deleteRemoved(existing, removed, onDeletePhoto) { removed = it }
-                    if (!deleteFailed) model.saveSimpleEdit(checkIn.id, registration, type?.icaoCode ?: keptType, if (isVisit) reason else null, photos, if (isVisit) tags.ifChanged() else null)
+                    if (!deleteFailed) model.saveSimpleEdit(checkIn.id, registration, type?.icaoCode ?: keptType, if (isVisit) reason else null, photos, if (isVisit) tags.ifChanged() else null, spotChange)
                 }
             },
             onCancel = model::cancelEdit,

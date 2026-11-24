@@ -21,6 +21,7 @@
 		186231C28F6E7DD1B25988E6 /* CheckInHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4459DE5C40C01B9A974864C6 /* CheckInHistoryView.swift */; };
 		1878E11AE259B4D66AF3B0F4 /* BCBP in Frameworks */ = {isa = PBXBuildFile; productRef = 84545F5C809788F8A6A927A8 /* BCBP */; };
 		1B6632058A9CF27AB78931FF /* KmlImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F9F62ED0AF64E8383EC86D /* KmlImport.swift */; };
+		1C2D46867AD2760BC25CE5D8 /* SightingSpotRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE37EDD9A6BB655515A6E57 /* SightingSpotRow.swift */; };
 		2009AC27E2FC13DC4C52C220 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17369D1192D4BAF9721962FE /* RootView.swift */; };
 		2419BA1DA1B17C761D9D0036 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62A4921DD7585EFD9F3F97A /* SettingsView.swift */; };
 		27F83E299CBA8188CF0AA61F /* SharingSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995610FFAC434B480B981139 /* SharingSection.swift */; };
@@ -135,6 +136,7 @@
 		8588DD19FFB9233DAE73D0FD /* CheckInEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInEditView.swift; sourceTree = "<group>"; };
 		887512D89A6F5865C984DC89 /* BadgeStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeStyle.swift; sourceTree = "<group>"; };
 		8AB0A4D42441D44A92BC24E5 /* RegistrationPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationPageView.swift; sourceTree = "<group>"; };
+		8DE37EDD9A6BB655515A6E57 /* SightingSpotRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SightingSpotRow.swift; sourceTree = "<group>"; };
 		995610FFAC434B480B981139 /* SharingSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingSection.swift; sourceTree = "<group>"; };
 		9A035100ED13735493AF7BF1 /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
 		9D09EFA7CF37248C275F6490 /* Spots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spots.swift; sourceTree = "<group>"; };
@@ -212,6 +214,7 @@
 				9A035100ED13735493AF7BF1 /* LocationProvider.swift */,
 				3A82AC64122C34A3DE053C4F /* PhotoSection.swift */,
 				BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */,
+				8DE37EDD9A6BB655515A6E57 /* SightingSpotRow.swift */,
 				41CBBBAF8DD8DAC4FD7390E9 /* SpottedCheckInView.swift */,
 				25144FB28F74B094147B5175 /* WithFriendsView.swift */,
 			);
@@ -543,6 +546,7 @@
 				8AD778BF9F9D8A593DB6DC77 /* ShareCard.swift in Sources */,
 				4427FE8EDAE09F2B68624303 /* ShareSheet.swift in Sources */,
 				27F83E299CBA8188CF0AA61F /* SharingSection.swift in Sources */,
+				1C2D46867AD2760BC25CE5D8 /* SightingSpotRow.swift in Sources */,
 				4C998BCC2CB92D06E880A185 /* SpotReview.swift in Sources */,
 				D361AF59D98CF1F47F241FE4 /* SpotSession.swift in Sources */,
 				4B791396F639C699E8BF392C /* Spots.swift in Sources */,
