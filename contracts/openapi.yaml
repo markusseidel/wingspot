@@ -434,8 +434,7 @@ components:
             visit, and changing the flight's day moves it. The flight may arrive in the same or a later request. Visits
             without it are matched to their flight by time and airports.
         spot_location_id:
-          type: integer
-          nullable: true
+          type: [integer, 'null']
           description: >-
             For `airport` check-ins the spotting location the visit was at (a session), for `spotted` check-ins the
             place the aircraft was seen from. It is kept only if the place is at the check-in's airport and is
