@@ -434,11 +434,13 @@ components:
             visit, and changing the flight's day moves it. The flight may arrive in the same or a later request. Visits
             without it are matched to their flight by time and airports.
         spot_location_id:
-          type: integer
+          type: [integer, 'null']
           description: >-
-            Only for `airport` check-ins: the spotting location the visit was at (a session). It is kept only if the
-            place is at the visit's airport and is approved or your own; otherwise it is dropped and the visit is
-            stored without it.
+            For `airport` check-ins the spotting location the visit was at (a session), for `spotted` check-ins the
+            place the aircraft was seen from. It is kept only if the place is at the check-in's airport and is
+            approved or your own; otherwise it is dropped and the check-in is stored without it. Sending the field
+            again with another id, or with `null`, changes or clears the place of a sighting; leaving the field out
+            keeps it as it was. A sighting's own place wins over the place of its visit.
         visit_id:
           type: string
           format: uuid
