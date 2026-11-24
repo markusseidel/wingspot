@@ -177,6 +177,12 @@ class SocialApiTests {
         server.takeRequest()
         server.enqueue(ok("""{"visit_id":"v1","spot_id":7,"spot_name":"North fence","sightings":2}"""))
         assertEquals(2, api.checkInSpot("v1")!!.sightings)
+        server.takeRequest()
+        // A sighting with its own place and no session has no visit (#331: this crashed the app).
+        server.enqueue(ok("""{"visit_id":null,"spot_id":7,"spot_name":"North fence","sightings":null}"""))
+        val alone = api.checkInSpot("s1")!!
+        assertEquals(null, alone.visitId)
+        assertEquals("North fence", alone.spotName)
     }
 
     @Test

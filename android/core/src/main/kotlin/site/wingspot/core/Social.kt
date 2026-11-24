@@ -364,7 +364,7 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
     /** What a check-in page shows about spotting locations. [sightings] is only set for a visit. */
     @Serializable
     data class CheckInSpot(
-        @SerialName("visit_id") val visitId: String, @SerialName("spot_id") val spotId: Long? = null,
+        @SerialName("visit_id") val visitId: String? = null, @SerialName("spot_id") val spotId: Long? = null,
         @SerialName("spot_name") val spotName: String? = null, val sightings: Int? = null,
     )
 
