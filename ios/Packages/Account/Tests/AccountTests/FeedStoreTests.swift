@@ -400,6 +400,27 @@ private func item(_ n: Int) -> FeedItem {
     #expect(TermsStore(defaults: defaults, userID: { first }).hasAccepted)
 }
 
+/// Coming back to the feed loads it again; the cards must keep their photos and tags meanwhile and not lose them (#345).
+@Test @MainActor func aRefreshKeepsThePhotosOnScreenAndSwapsThemInOneStep() async throws {
+    let backend = FakeFeed(items: (1...2).map(item))
+    let first = item(1).id
+    let url = try #require(URL(string: "https://example.test/a.jpg"))
+    let photo = FeedPhoto(id: UUID(), checkInID: first, url: url)
+    await backend.setPhotos([photo])
+    let store = makeStore(backend)
+    await store.refresh()
+    #expect(store.photos[first]?.map(\.id) == [photo.id])
+    // The photos can't be loaded this time: they stay as they were.
+    await backend.failPhotos(.unknown)
+    await store.refresh()
+    #expect(store.photos[first]?.map(\.id) == [photo.id])
+    // A photo that is gone on the server is gone after the next refresh that worked.
+    await backend.failPhotos(nil)
+    await backend.setPhotos([])
+    await store.refresh()
+    #expect(store.photos[first] == nil)
+}
+
 @Test @MainActor func photosArriveWithTheirCheckIns() async throws {
     let backend = FakeFeed(items: (1...3).map(item))
     let first = item(1).id
