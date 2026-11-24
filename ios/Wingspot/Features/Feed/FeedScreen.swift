@@ -260,7 +260,7 @@ struct FeedCard: View {
                     }
                 }
                 Spacer()
-                Text(verbatim: FeedDate.text(for: item.occurredAt))
+                Text(verbatim: FeedDate.text(for: item.occurredAt, timeKnown: item.timeKnown))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 if !isOwn || onEdit != nil || onDelete != nil {

@@ -57,6 +57,8 @@ public final class LocalCheckIn {
     /// When it was saved on this device: the check-in date. Nil for check-ins made before this was kept and for ones restored from
     /// the server, which then use `syncedAt` and last the flight date (`enteredAt`). Like `ownerID`, it opens an existing store without a migration step.
     public var savedAt: Date?
+    /// `false` for an entry that only has a day, so no time is shown (a backdated check-in, #312). Nil means a time is known. Like `ownerID`, it opens an existing store without a migration step.
+    public var timeKnown: Bool?
 
     /// The check-in date: when it was saved here, else when it reached the server, else the date of the flight or sighting.
     public var enteredAt: Date { savedAt ?? syncedAt ?? occurredAt }
@@ -68,7 +70,7 @@ public final class LocalCheckIn {
         originID: Int? = nil, destinationID: Int? = nil, originCode: String? = nil, destinationCode: String? = nil,
         flightNumber: String? = nil, cabin: String? = nil, seat: String? = nil, flightID: UUID? = nil,
         taggedIDs: [UUID]? = nil, sourceID: UUID? = nil,
-        spotID: Int? = nil, spotName: String? = nil, visitID: UUID? = nil, savedAt: Date? = nil
+        spotID: Int? = nil, spotName: String? = nil, visitID: UUID? = nil, savedAt: Date? = nil, timeKnown: Bool? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -97,5 +99,6 @@ public final class LocalCheckIn {
         self.spotName = spotName
         self.visitID = visitID
         self.savedAt = savedAt
+        self.timeKnown = timeKnown
     }
 }

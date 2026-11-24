@@ -28,6 +28,8 @@ struct SpottedCheckInView: View {
     @Environment(SpotSessionStore.self) private var sessions
     @State private var spot: SpotLocation?
     @State private var spotsLoaded = false
+    /// When it happened: now, or a day in the past (#312).
+    @State private var when = WhenChoice.now
 
     private var registration: Registration? { Registration(input) }
     private var hasInput: Bool { !input.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -100,6 +102,8 @@ struct SpottedCheckInView: View {
                 }
             }
 
+            WhenSection(choice: $when, photos: photos, visit: sessionVisitChoice)
+
             PhotoSection(photos: $photos, isPreparing: $isPreparingPhoto)
 
             Section {
@@ -107,7 +111,16 @@ struct SpottedCheckInView: View {
                     .disabled(!canSave || isPreparingPhoto)
             }
         }
-        .onAppear { isFocused = true }
+        .onAppear {
+            isFocused = true
+            if let visit = sessionVisitChoice { when = visit }
+        }
+    }
+
+    /// During a session at a backdated visit, a sighting starts with the visit's date and time.
+    private var sessionVisitChoice: WhenChoice? {
+        guard let session = sessions.session, let moment = session.visitMoment else { return nil }
+        return .existing(moment, timeKnown: session.visitTimeKnown ?? true)
     }
 
     @ViewBuilder private var status: some View {
@@ -135,7 +148,8 @@ struct SpottedCheckInView: View {
             spotID: sessions.session == nil ? spot?.id : nil, spotName: sessions.session == nil ? spot?.name : nil
         )
         do {
-            result = try CheckInStore(context: modelContext).saveSpotted(draft, ownerID: account.userID)
+            let moment = when.moment()
+            result = try CheckInStore(context: modelContext).saveSpotted(draft, ownerID: account.userID, at: moment.date, timeKnown: moment.timeKnown)
             // Saved on the device first. This sends it when signed in and online, and otherwise it waits.
             sync?.requestSync()
         } catch {

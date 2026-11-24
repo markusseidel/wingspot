@@ -50,3 +50,14 @@ private func text(_ secondsAgo: TimeInterval, _ locale: Locale = english) -> Str
 @Test func aTimeJustAheadIsStillRelative() {
     #expect(FeedDate.text(for: now.addingTimeInterval(3600), now: now, locale: english, calendar: calendar) == "in 1 hour")
 }
+
+@Test func aDayWithoutATimeSaysTheDayNotTheHours() {
+    let english = Locale(identifier: "en_US")
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "UTC")!
+    let now = calendar.date(from: DateComponents(year: 2026, month: 11, day: 24, hour: 21))!
+    let noon = calendar.date(from: DateComponents(year: 2026, month: 11, day: 23, hour: 12))!
+    #expect(FeedDate.text(for: noon, now: now, locale: english, calendar: calendar, timeKnown: false) == "yesterday")
+    let threeDays = calendar.date(from: DateComponents(year: 2026, month: 11, day: 21, hour: 12))!
+    #expect(FeedDate.text(for: threeDays, now: now, locale: english, calendar: calendar, timeKnown: false) == "3 days ago")
+}

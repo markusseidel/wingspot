@@ -238,7 +238,7 @@ struct CheckInDetailView: View {
                     .foregroundStyle(.secondary)
                 Text(verbatim: title)
                     .font(.system(.largeTitle, design: .monospaced, weight: .semibold))
-                Text(shown.occurredAt, format: .dateTime.day().month(.wide).year().hour().minute())
+                Text(shown.occurredAt, format: shown.timeKnown ? .dateTime.day().month(.wide).year().hour().minute() : .dateTime.day().month(.wide).year())
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }

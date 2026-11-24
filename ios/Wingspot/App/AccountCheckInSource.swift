@@ -13,7 +13,7 @@ struct AccountCheckInSource: CheckInSource {
                 typeICAO: $0.typeICAO, airportID: $0.airportID, airportCode: $0.airportCode, originID: $0.originID,
                 destinationID: $0.destinationID, originCode: $0.originCode, destinationCode: $0.destinationCode,
                 flightNumber: $0.flightNumber, cabin: $0.cabin, seat: $0.seat, visitContext: $0.visitContext,
-                latitude: $0.latitude, longitude: $0.longitude
+                latitude: $0.latitude, longitude: $0.longitude, timeKnown: $0.timeKnown
             )
         }
     }

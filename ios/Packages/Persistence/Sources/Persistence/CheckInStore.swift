@@ -219,9 +219,10 @@ public struct CheckInStore {
 
     /// Saves locally and reports how often this aircraft was seen before.
     /// `ownerID` is the signed-in user, or `nil` when signed out. Check-ins without an owner go to whoever signs in next.
-    public func saveSpotted(_ draft: SpottedDraft, ownerID: UUID? = nil, at date: Date = Date()) throws -> SpottedResult {
+    /// `date` is when it happened (a backdated sighting passes its own, #312); `timeKnown` is `false` for a day without a time.
+    public func saveSpotted(_ draft: SpottedDraft, ownerID: UUID? = nil, at date: Date = Date(), timeKnown: Bool = true) throws -> SpottedResult {
         let subject: String
-        let earlier: [LocalCheckIn]
+        var earlier: [LocalCheckIn]
         if let registration = draft.registration?.value {
             subject = registration
             earlier = try history(FetchDescriptor(predicate: #Predicate { $0.registration == registration }))
@@ -231,6 +232,8 @@ public struct CheckInStore {
         } else {
             throw CheckInError.missingAircraft
         }
+        // Only what happened before counts for "seen before": a backdated first sighting is a first time.
+        earlier = earlier.filter { $0.occurredAt < date }
 
         let id = UUID.v7(at: date)
         context.insert(LocalCheckIn(
@@ -239,7 +242,7 @@ public struct CheckInStore {
             airportID: draft.place?.airportID, airportCode: draft.place?.code,
             latitude: draft.position?.latitude, longitude: draft.position?.longitude,
             occurredAt: date, syncState: .pending, ownerID: ownerID, spotID: draft.spotID, spotName: draft.spotName,
-            visitID: draft.visitID, savedAt: Date()
+            visitID: draft.visitID, savedAt: Date(), timeKnown: timeKnown ? nil : false
         ))
         insertPhotos(draft.photos, for: id, at: date)
         try context.save()
@@ -253,9 +256,9 @@ public struct CheckInStore {
     }
 
     /// Saves an airport visit locally and reports whether this airport has been seen before.
-    public func saveAirport(_ draft: AirportDraft, ownerID: UUID? = nil, at date: Date = Date()) throws -> AirportResult {
+    public func saveAirport(_ draft: AirportDraft, ownerID: UUID? = nil, at date: Date = Date(), timeKnown: Bool = true) throws -> AirportResult {
         let airportID = draft.airportID
-        let earlier = try history(FetchDescriptor(predicate: #Predicate { $0.airportID == airportID }))
+        let earlier = try history(FetchDescriptor(predicate: #Predicate { $0.airportID == airportID })).filter { $0.occurredAt < date }
 
         let id = UUID.v7(at: date)
         context.insert(LocalCheckIn(
@@ -264,7 +267,7 @@ public struct CheckInStore {
             latitude: draft.position?.latitude, longitude: draft.position?.longitude,
             occurredAt: date, syncState: .pending, ownerID: ownerID, visitContext: draft.context.rawValue,
             taggedIDs: draft.tagged.isEmpty ? nil : draft.tagged, sourceID: draft.sourceID,
-            spotID: draft.spotID, spotName: draft.spotName, savedAt: Date()
+            spotID: draft.spotID, spotName: draft.spotName, savedAt: Date(), timeKnown: timeKnown ? nil : false
         ))
         insertPhotos(draft.photos, for: id, at: date)
         try context.save()
@@ -355,7 +358,10 @@ public struct CheckInStore {
     /// Corrects the aircraft of a saved sighting and sends it again. Needs a registration or a type, like a new sighting.
     /// Returns `false` when this device has no such sighting.
     @discardableResult
-    public func updateSpotted(id: UUID, registration: Registration?, type: SpottedDraft.AircraftTypeChoice?, spot: SpotChange = .keep) throws -> Bool {
+    public func updateSpotted(
+        id: UUID, registration: Registration?, type: SpottedDraft.AircraftTypeChoice?, spot: SpotChange = .keep,
+        occurredAt: Date? = nil, timeKnown: Bool? = nil
+    ) throws -> Bool {
         let matches = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id && $0.kind == "spotted" }))
         guard let sighting = matches.first, registration != nil || type != nil else { return false }
         sighting.registration = registration?.value
@@ -366,6 +372,8 @@ public struct CheckInStore {
         case .set(let id, let name): sighting.spotID = id; sighting.spotName = name
         case .clear: sighting.spotID = nil; sighting.spotName = nil
         }
+        if let occurredAt { sighting.occurredAt = occurredAt }
+        if let timeKnown { sighting.timeKnown = timeKnown ? nil : false }
         sighting.syncState = SyncState.pending.rawValue
         sighting.syncError = nil
         try context.save()
@@ -375,11 +383,23 @@ public struct CheckInStore {
     /// Corrects the reason for a saved airport visit and sends it again.
     /// Returns `false` when this device has no such visit.
     @discardableResult
-    public func updateVisit(id: UUID, reason: VisitContext, tagged: [UUID]? = nil) throws -> Bool {
+    /// A new `occurredAt` moves the visit and, by the same step, the sightings made during it (as the server does).
+    public func updateVisit(id: UUID, reason: VisitContext, tagged: [UUID]? = nil, occurredAt: Date? = nil, timeKnown: Bool? = nil) throws -> Bool {
         let matches = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id && $0.kind == "airport" }))
         guard let visit = matches.first else { return false }
         visit.visitContext = reason.rawValue
         if let tagged { visit.taggedIDs = tagged }
+        if let occurredAt, occurredAt != visit.occurredAt, visit.flightID == nil {
+            let step = occurredAt.timeIntervalSince(visit.occurredAt)
+            let during = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.visitID == id }))
+            for sighting in during {
+                sighting.occurredAt = sighting.occurredAt.addingTimeInterval(step)
+                sighting.syncState = SyncState.pending.rawValue
+                sighting.syncError = nil
+            }
+            visit.occurredAt = occurredAt
+        }
+        if let timeKnown, visit.flightID == nil { visit.timeKnown = timeKnown ? nil : false }
         visit.syncState = SyncState.pending.rawValue
         visit.syncError = nil
         try context.save()

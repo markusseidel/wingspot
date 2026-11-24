@@ -7,11 +7,15 @@ public struct PreparedPhoto: Equatable, Sendable {
     public let jpeg: Data
     public let width: Int
     public let height: Int
+    /// When the picture was taken, read from the original before its metadata was removed. Only used to suggest a date for a
+    /// backdated check-in; it is never stored or uploaded.
+    public let takenAt: Date?
 
-    public init(jpeg: Data, width: Int, height: Int) {
+    public init(jpeg: Data, width: Int, height: Int, takenAt: Date? = nil) {
         self.jpeg = jpeg
         self.width = width
         self.height = height
+        self.takenAt = takenAt
     }
 }
 
@@ -49,10 +53,40 @@ public enum PhotoPreparer {
             guard CGImageDestinationFinalize(destination) else { throw PhotoError.unreadable }
             let clean = removingMetadata(from: output as Data)
             if clean.count <= maxBytes {
-                return PreparedPhoto(jpeg: clean, width: image.width, height: image.height)
+                return PreparedPhoto(jpeg: clean, width: image.width, height: image.height, takenAt: captureDate(of: source))
             }
         }
         throw PhotoError.tooLarge
+    }
+
+    /// The capture date of the original: EXIF `DateTimeOriginal` (with `OffsetTimeOriginal` when there is one, else the phone's time
+    /// zone), or the TIFF date as a fallback. `nil` when there is none, or when it is not a plausible date.
+    static func captureDate(of source: CGImageSource, timeZone: TimeZone = .current) -> Date? {
+        guard let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any] else { return nil }
+        let exif = properties[kCGImagePropertyExifDictionary] as? [CFString: Any]
+        let tiff = properties[kCGImagePropertyTIFFDictionary] as? [CFString: Any]
+        let text = (exif?[kCGImagePropertyExifDateTimeOriginal] as? String) ?? (tiff?[kCGImagePropertyTIFFDateTime] as? String)
+        let offset = exif?["OffsetTimeOriginal" as CFString] as? String
+        return text.flatMap { parseCaptureDate($0, offset: offset, timeZone: timeZone) }
+    }
+
+    /// "2019:08:12 10:30:05" with an optional "+02:00". Dates before 1990 (a camera with a reset clock) are not suggested.
+    static func parseCaptureDate(_ text: String, offset: String? = nil, timeZone: TimeZone = .current) -> Date? {
+        var zone = timeZone
+        if let offset, offset.count >= 6, let seconds = Self.seconds(fromOffset: offset), let fixed = TimeZone(secondsFromGMT: seconds) { zone = fixed }
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = zone
+        formatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
+        guard let date = formatter.date(from: text.trimmingCharacters(in: .whitespaces)) else { return nil }
+        return date >= Date(timeIntervalSince1970: 631_152_000) ? date : nil
+    }
+
+    private static func seconds(fromOffset offset: String) -> Int? {
+        let sign = offset.hasPrefix("-") ? -1 : 1
+        let parts = offset.dropFirst().split(separator: ":")
+        guard parts.count == 2, let h = Int(parts[0]), let m = Int(parts[1]) else { return nil }
+        return sign * (h * 3600 + m * 60)
     }
 
     /// ImageIO still writes a small EXIF segment with the picture's size and colour space. Nothing in it is

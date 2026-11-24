@@ -3771,6 +3771,16 @@
         }
       }
     },
+    "Now" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jetzt"
+          }
+        }
+      }
+    },
     "OK" : {
       "localizations" : {
         "de" : {
@@ -4044,6 +4054,16 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Photo %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Photo taken %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto aufgenommen am %@"
           }
         }
       }
@@ -4634,6 +4654,16 @@
         }
       }
     },
+    "Same as the visit" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wie beim Besuch"
+          }
+        }
+      }
+    },
     "Save" : {
       "localizations" : {
         "de" : {
@@ -4838,6 +4868,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Festgelegt"
+          }
+        }
+      }
+    },
+    "Set the time" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uhrzeit festlegen"
           }
         }
       }
@@ -5570,6 +5610,16 @@
         }
       }
     },
+    "Time" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uhrzeit"
+          }
+        }
+      }
+    },
     "Time of day" : {
       "localizations" : {
         "de" : {
@@ -5787,6 +5837,16 @@
         }
       }
     },
+    "Use this date" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Datum verwenden"
+          }
+        }
+      }
+    },
     "Username" : {
       "localizations" : {
         "de" : {
@@ -5897,6 +5957,16 @@
         }
       }
     },
+    "When" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wann"
+          }
+        }
+      }
+    },
     "Where is it?" : {
       "localizations" : {
         "de" : {
@@ -5923,6 +5993,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Wer das sieht"
+          }
+        }
+      }
+    },
+    "Who can see this check-in is decided by its visibility, not by its date." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wer diesen Check-in sieht, bestimmt die Sichtbarkeit, nicht das Datum."
           }
         }
       }

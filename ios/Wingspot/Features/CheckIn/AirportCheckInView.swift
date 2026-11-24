@@ -40,6 +40,8 @@ struct AirportCheckInView: View {
     @Environment(SpotSessionStore.self) private var sessions
     @State private var places: [SpotLocation] = []
     @State private var spotID: Int?
+    /// When it happened: now, or a day in the past (#312).
+    @State private var when = WhenChoice.now
 
     var body: some View {
         Group {
@@ -100,6 +102,8 @@ struct AirportCheckInView: View {
                 }
             }
 
+            WhenSection(choice: $when, photos: photos)
+
             PhotoSection(photos: $photos, isPreparing: $isPreparingPhoto)
 
             Section {
@@ -117,11 +121,13 @@ struct AirportCheckInView: View {
             spotID: place?.id, spotName: place?.name
         )
         do {
-            let saved = try CheckInStore(context: modelContext).saveAirport(draft, ownerID: account.userID)
+            let moment = when.moment()
+            let saved = try CheckInStore(context: modelContext).saveAirport(draft, ownerID: account.userID, at: moment.date, timeKnown: moment.timeKnown)
             result = saved
             // A visit at a spotting location starts a session: the aircraft spotted next are linked to this visit.
             if let place {
-                sessions.start(.init(visitID: saved.id, spotID: place.id, spotName: place.name, airportID: airport.id, code: airport.code, startedAt: Date()))
+                sessions.start(.init(visitID: saved.id, spotID: place.id, spotName: place.name, airportID: airport.id, code: airport.code, startedAt: Date(),
+                    visitMoment: when.isNow ? nil : moment.date, visitTimeKnown: when.isNow ? nil : moment.timeKnown))
             }
             sync?.requestSync()
         } catch {

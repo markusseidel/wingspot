@@ -22,12 +22,14 @@ public struct RemoteCheckIn: Sendable, Equatable {
     public let visitContext: String?
     public let latitude: Double?
     public let longitude: Double?
+    /// `false` when the server only has a day for it.
+    public let timeKnown: Bool
 
     public init(
         id: UUID, kind: String, occurredAt: Date, cursorTime: String, registration: String? = nil, typeICAO: String? = nil,
         airportID: Int? = nil, airportCode: String? = nil, originID: Int? = nil, destinationID: Int? = nil,
         originCode: String? = nil, destinationCode: String? = nil, flightNumber: String? = nil, cabin: String? = nil,
-        seat: String? = nil, visitContext: String? = nil, latitude: Double? = nil, longitude: Double? = nil
+        seat: String? = nil, visitContext: String? = nil, latitude: Double? = nil, longitude: Double? = nil, timeKnown: Bool = true
     ) {
         self.id = id
         self.kind = kind
@@ -47,6 +49,7 @@ public struct RemoteCheckIn: Sendable, Equatable {
         self.visitContext = visitContext
         self.latitude = latitude
         self.longitude = longitude
+        self.timeKnown = timeKnown
     }
 }
 
@@ -114,7 +117,8 @@ public final class CheckInRestorer {
                 airportID: remote.airportID, airportCode: remote.airportCode, latitude: remote.latitude, longitude: remote.longitude,
                 occurredAt: remote.occurredAt, syncState: .synced, ownerID: userID, visitContext: remote.visitContext,
                 originID: remote.originID, destinationID: remote.destinationID, originCode: remote.originCode,
-                destinationCode: remote.destinationCode, flightNumber: remote.flightNumber, cabin: remote.cabin, seat: remote.seat
+                destinationCode: remote.destinationCode, flightNumber: remote.flightNumber, cabin: remote.cabin, seat: remote.seat,
+                timeKnown: remote.timeKnown ? nil : false
             )
             checkIn.syncedAt = Date()
             context.insert(checkIn)
