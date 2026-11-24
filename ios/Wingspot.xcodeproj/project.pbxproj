@@ -37,6 +37,7 @@
 		4644DCAB019919C64F9372FD /* AirportsMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C8DE707D5FBC441F2A0A4 /* AirportsMapView.swift */; };
 		4B791396F639C699E8BF392C /* Spots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D09EFA7CF37248C275F6490 /* Spots.swift */; };
 		4C998BCC2CB92D06E880A185 /* SpotReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB1F2D28D8382E2FB54F51D /* SpotReview.swift */; };
+		57D003ABF0F2BCB003F51E3F /* WhenSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4F845662311F3B7C36BA30 /* WhenSection.swift */; };
 		59990CC13D4B5789970BC1EA /* AddSpotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C5A69FB55EF9C2811AE084 /* AddSpotView.swift */; };
 		5B37D64341B84157BCB31647 /* AccountCheckInSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534BE6354EF9EC7D6EA1DA13 /* AccountCheckInSource.swift */; };
 		5BF02F7F79B326015B808389 /* AirportPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1072182D625807362ADE4FB1 /* AirportPageView.swift */; };
@@ -93,6 +94,7 @@
 		0A2B6597262EFD3FAD5D6ACE /* ShareCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCard.swift; sourceTree = "<group>"; };
 		0BA65F3D7DF5E25F2228C346 /* EmailSignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSignInView.swift; sourceTree = "<group>"; };
 		0CB50BDD1D3F4FB1EB8B8007 /* ExploreMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreMapView.swift; sourceTree = "<group>"; };
+		0E4F845662311F3B7C36BA30 /* WhenSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhenSection.swift; sourceTree = "<group>"; };
 		1072182D625807362ADE4FB1 /* AirportPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirportPageView.swift; sourceTree = "<group>"; };
 		12C5A69FB55EF9C2811AE084 /* AddSpotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSpotView.swift; sourceTree = "<group>"; };
 		15CCCA89A7943B8447EE7898 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
@@ -216,6 +218,7 @@
 				BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */,
 				8DE37EDD9A6BB655515A6E57 /* SightingSpotRow.swift */,
 				41CBBBAF8DD8DAC4FD7390E9 /* SpottedCheckInView.swift */,
+				0E4F845662311F3B7C36BA30 /* WhenSection.swift */,
 				25144FB28F74B094147B5175 /* WithFriendsView.swift */,
 			);
 			path = CheckIn;
@@ -555,6 +558,7 @@
 				EB6E169414494D08056B8400 /* TaggingSection.swift in Sources */,
 				8724536D4B58E82924192AC3 /* TermsGate.swift in Sources */,
 				BADA46EC74996E2BE6DDA8FF /* TypePageView.swift in Sources */,
+				57D003ABF0F2BCB003F51E3F /* WhenSection.swift in Sources */,
 				63920812D725A2EE33A89EC1 /* WingspotApp.swift in Sources */,
 				0C5FF86533EB8E85845FC383 /* WithFriendsView.swift in Sources */,
 			);

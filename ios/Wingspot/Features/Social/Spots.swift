@@ -266,7 +266,7 @@ struct CheckInSpotSection: View {
                     Section {
                         ForEach(sightings) { sighting in
                             LabeledContent {
-                                Text(sighting.occurredAt, format: .dateTime.hour().minute()).foregroundStyle(.secondary)
+                                if sighting.timeKnown { Text(sighting.occurredAt, format: .dateTime.hour().minute()).foregroundStyle(.secondary) }
                             } label: {
                                 Text(verbatim: [sighting.registration, sighting.typeICAO].compactMap { $0 }.joined(separator: " · "))
                             }

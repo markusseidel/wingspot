@@ -87,13 +87,15 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
     public let spotLocationID: Int?
     /// For a sighting: the airport visit (session) it was made during. Sent after that visit.
     public let visitID: UUID?
+    /// `false` for an entry that only has a day (no time). Left out it means a time is known.
+    public let timeKnown: Bool?
 
     public init(
         id: UUID, kind: String, occurredAt: Date, registration: String?, typeICAO: String?, airportID: Int?,
         latitude: Double?, longitude: Double?, context: String? = nil,
         originID: Int? = nil, destinationID: Int? = nil, flightNumber: String? = nil, cabin: String? = nil,
         seat: String? = nil, visibility: String? = nil, flightID: UUID? = nil,
-        with: [UUID]? = nil, sourceCheckInID: UUID? = nil, spotLocationID: Int? = nil, visitID: UUID? = nil
+        with: [UUID]? = nil, sourceCheckInID: UUID? = nil, spotLocationID: Int? = nil, visitID: UUID? = nil, timeKnown: Bool? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -115,6 +117,7 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
         self.sourceCheckInID = sourceCheckInID
         self.spotLocationID = spotLocationID
         self.visitID = visitID
+        self.timeKnown = timeKnown
     }
 
     /// Like the synthesized encoding, except that a sighting always sends its place: `null` clears the place on the server (an edit
@@ -141,6 +144,7 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
         try c.encodeIfPresent(sourceCheckInID, forKey: .sourceCheckInID)
         if kind == "spotted" { try c.encode(spotLocationID, forKey: .spotLocationID) } else { try c.encodeIfPresent(spotLocationID, forKey: .spotLocationID) }
         try c.encodeIfPresent(visitID, forKey: .visitID)
+        try c.encodeIfPresent(timeKnown, forKey: .timeKnown)
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -158,6 +162,7 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
         case sourceCheckInID = "source_checkin_id"
         case spotLocationID = "spot_location_id"
         case visitID = "visit_id"
+        case timeKnown = "time_known"
     }
 }
 

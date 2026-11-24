@@ -53,7 +53,7 @@ struct CheckInRow: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
-                Text(checkIn.occurredAt, format: .dateTime.day().month().year().hour().minute())
+                Text(checkIn.occurredAt, format: checkIn.timeKnown == false ? .dateTime.day().month().year() : .dateTime.day().month().year().hour().minute())
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

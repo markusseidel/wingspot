@@ -65,18 +65,23 @@ public struct VisitSighting: Identifiable, Equatable, Sendable, Decodable {
     public let occurredAt: Date
     public let registration: String?
     public let typeICAO: String?
+    private let timeKnownFlag: Bool?
+    /// `false` when only the day is known: then no time of day is shown.
+    public var timeKnown: Bool { timeKnownFlag ?? true }
 
-    public init(id: UUID, occurredAt: Date, registration: String?, typeICAO: String?) {
+    public init(id: UUID, occurredAt: Date, registration: String?, typeICAO: String?, timeKnown: Bool = true) {
         self.id = id
         self.occurredAt = occurredAt
         self.registration = registration
         self.typeICAO = typeICAO
+        self.timeKnownFlag = timeKnown
     }
 
     private enum CodingKeys: String, CodingKey {
         case id, registration
         case occurredAt = "occurred_at"
         case typeICAO = "type_icao"
+        case timeKnownFlag = "time_known"
     }
 }
 
@@ -90,8 +95,12 @@ public struct SpotSighting: Identifiable, Equatable, Sendable, Decodable {
     public let userID: UUID
     public let username: String
     public let displayName: String?
+    private let timeKnownFlag: Bool?
+    /// `false` when only the day is known: then no time of day is shown.
+    public var timeKnown: Bool { timeKnownFlag ?? true }
 
-    public init(id: UUID, occurredAt: Date, registration: String?, typeICAO: String?, typeName: String? = nil, userID: UUID, username: String, displayName: String? = nil) {
+    public init(id: UUID, occurredAt: Date, registration: String?, typeICAO: String?, typeName: String? = nil, userID: UUID, username: String, displayName: String? = nil, timeKnown: Bool = true) {
+        self.timeKnownFlag = timeKnown
         self.id = id
         self.occurredAt = occurredAt
         self.registration = registration
@@ -113,6 +122,7 @@ public struct SpotSighting: Identifiable, Equatable, Sendable, Decodable {
         case typeName = "type_name"
         case userID = "user_id"
         case displayName = "display_name"
+        case timeKnownFlag = "time_known"
     }
 }
 

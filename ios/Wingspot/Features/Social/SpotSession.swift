@@ -14,6 +14,10 @@ final class SpotSessionStore {
         let airportID: Int
         let code: String
         let startedAt: Date
+        /// For a backdated visit: the day (and time) of the visit, which the sightings of the session start with. Nil: they happen now.
+        /// New optional fields like these read an older saved session without a migration step.
+        var visitMoment: Date?
+        var visitTimeKnown: Bool?
     }
 
     static let lifetime: TimeInterval = 12 * 3600

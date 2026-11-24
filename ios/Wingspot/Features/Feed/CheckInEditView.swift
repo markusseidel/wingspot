@@ -42,6 +42,10 @@ struct CheckInEditView: View {
     @State private var spotsLoaded = false
     @State private var airportID: Int?
     @State private var inSession = false
+    /// When it happened. Not shown for the visit of a flight: it follows the flight.
+    @State private var when = WhenChoice.now
+    @State private var originalWhen = WhenChoice.now
+    @State private var followsFlight = false
 
     private var registration: Registration? { Registration(registrationInput) }
     private var hasRegistrationInput: Bool { !registrationInput.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -92,6 +96,7 @@ struct CheckInEditView: View {
                         WithFriendsRow(selection: $tagged)
                     }
                 }
+                if !followsFlight { WhenSection(choice: $when, photos: photos) }
                 if roomForPhotos > 0 || !existingPhotos.isEmpty {
                     PhotoSection(photos: $photos, isPreparing: $isPreparingPhoto, limit: roomForPhotos, existing: existingPhotos, removedExisting: $removedPhotos, removable: onDeletePhoto != nil)
                 }
@@ -120,6 +125,9 @@ struct CheckInEditView: View {
         let matches = (try? modelContext.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id }))) ?? []
         guard let checkIn = matches.first else { return }
         kind = checkIn.kind
+        followsFlight = checkIn.flightID != nil
+        originalWhen = .existing(checkIn.occurredAt, timeKnown: checkIn.timeKnown != false)
+        when = originalWhen
         switch checkIn.kind {
         case "spotted":
             title = checkIn.registration ?? checkIn.typeICAO ?? "?"
@@ -164,17 +172,27 @@ struct CheckInEditView: View {
         return originalSpotID == nil ? .keep : .clear
     }
 
+    /// The new date and time when the "When" row was changed, nothing when it was left alone.
+    private var newMoment: (date: Date, timeKnown: Bool)? {
+        guard !followsFlight, when != originalWhen else { return nil }
+        return when.moment()
+    }
+
     private func saveDetails() {
         do {
             let store = CheckInStore(context: modelContext)
+            let moment = newMoment
             if kind == "spotted" {
                 try store.updateSpotted(
                     id: checkInID, registration: registration,
                     type: typeCode.map { .init(icaoCode: $0, name: typeName ?? $0) },
-                    spot: spotChange
+                    spot: spotChange, occurredAt: moment?.date, timeKnown: moment?.timeKnown
                 )
             } else if kind == "airport" {
-                try store.updateVisit(id: checkInID, reason: reason, tagged: tagged.map(\.id) == tags.map(\.id) ? nil : tagged.map(\.id))
+                try store.updateVisit(
+                    id: checkInID, reason: reason, tagged: tagged.map(\.id) == tags.map(\.id) ? nil : tagged.map(\.id),
+                    occurredAt: moment?.date, timeKnown: moment?.timeKnown
+                )
             }
             if !photos.isEmpty { try store.addPhotos(photos, to: checkInID) }
             sync?.requestSync()

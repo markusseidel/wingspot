@@ -31,13 +31,15 @@ public struct FeedItem: Hashable, Sendable, Identifiable, Decodable {
     public let salutes: Int
     public let comments: Int
     public let saluted: Bool
+    /// `false` when only the day is known (a date-only entry): then no time of day is shown.
+    public let timeKnown: Bool
 
     public init(
         id: UUID, userID: UUID, username: String, displayName: String? = nil, kind: String, occurredAt: Date,
         cursorTime: String? = nil, registration: String? = nil, typeICAO: String? = nil, typeName: String? = nil,
         airportCode: String? = nil, airportID: Int? = nil, originCode: String? = nil, destinationCode: String? = nil,
         flightNumber: String? = nil, distanceKm: Int? = nil, originID: Int? = nil, destinationID: Int? = nil,
-        cabin: String? = nil, seat: String? = nil, salutes: Int = 0, comments: Int = 0, saluted: Bool = false
+        cabin: String? = nil, seat: String? = nil, salutes: Int = 0, comments: Int = 0, saluted: Bool = false, timeKnown: Bool = true
     ) {
         self.id = id
         self.userID = userID
@@ -62,6 +64,7 @@ public struct FeedItem: Hashable, Sendable, Identifiable, Decodable {
         self.salutes = salutes
         self.comments = comments
         self.saluted = saluted
+        self.timeKnown = timeKnown
     }
 
     /// The same check-in with new counts, for updates that don't need another request.
@@ -72,7 +75,7 @@ public struct FeedItem: Hashable, Sendable, Identifiable, Decodable {
             airportCode: airportCode, airportID: airportID, originCode: originCode, destinationCode: destinationCode,
             flightNumber: flightNumber, distanceKm: distanceKm, originID: originID, destinationID: destinationID,
             cabin: cabin, seat: seat, salutes: salutes ?? self.salutes,
-            comments: comments ?? self.comments, saluted: saluted ?? self.saluted
+            comments: comments ?? self.comments, saluted: saluted ?? self.saluted, timeKnown: timeKnown
         )
     }
 
@@ -93,6 +96,7 @@ public struct FeedItem: Hashable, Sendable, Identifiable, Decodable {
         case destinationID = "destination_id"
         case cabin, seat
         case cursorTime = "cursor_time"
+        case timeKnown = "time_known"
     }
 
     public init(from decoder: Decoder) throws {
@@ -125,6 +129,7 @@ public struct FeedItem: Hashable, Sendable, Identifiable, Decodable {
         salutes = try c.decodeIfPresent(Int.self, forKey: .salutes) ?? 0
         comments = try c.decodeIfPresent(Int.self, forKey: .comments) ?? 0
         saluted = try c.decodeIfPresent(Bool.self, forKey: .saluted) ?? false
+        timeKnown = try c.decodeIfPresent(Bool.self, forKey: .timeKnown) ?? true
     }
 
     /// Postgres sends times with or without fractions of a second.
@@ -694,9 +699,12 @@ public struct MyCheckIn: Hashable, Sendable, Decodable {
     public let visitContext: String?
     public let latitude: Double?
     public let longitude: Double?
+    /// `false` when the server only has a day for it.
+    public let timeKnown: Bool
 
     private enum CodingKeys: String, CodingKey {
         case id, kind, registration, cabin, seat, latitude, longitude
+        case timeKnown = "time_known"
         case occurredAt = "occurred_at"
         case typeICAO = "type_icao"
         case airportID = "airport_id"
@@ -733,6 +741,7 @@ public struct MyCheckIn: Hashable, Sendable, Decodable {
         visitContext = try c.decodeIfPresent(String.self, forKey: .visitContext)
         latitude = try c.decodeIfPresent(Double.self, forKey: .latitude)
         longitude = try c.decodeIfPresent(Double.self, forKey: .longitude)
+        timeKnown = try c.decodeIfPresent(Bool.self, forKey: .timeKnown) ?? true
     }
 }
 
