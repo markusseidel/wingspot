@@ -57,11 +57,20 @@ The button shows only when the build knows the Google client id. Until then peop
 4. GitHub secret `GOOGLE_WEB_CLIENT_ID` with the Web client id. For a local build: `export WINGSPOT_GOOGLE_CLIENT_ID=...`. Then run **Android beta** again.
 5. A person who signed up on the iPhone with the same email gets the same account only if Supabase links identities by email; check that in a test before you tell friends.
 
+## One signing key for the beta
+
+The beta APK is a debug build. Without help every run signs it with a new key, so a phone refuses to update over the old build (testers must uninstall first, which also deletes data kept only on the phone, such as imported routes) and a Google Maps key cannot be tied to the signing fingerprint. Make one key, once, and give it to the workflow:
+1. `keytool -genkeypair -keystore ~/wingspot-beta.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Wingspot Beta,O=Wingspot,C=DE"` (the alias and passwords must be exactly these: it is the standard debug key format). If the Mac has no Java, use the `keytool` of a JDK (for example Homebrew's `openjdk@17`).
+2. The SHA-1 for Google (Maps key, Google sign-in): `keytool -list -v -keystore ~/wingspot-beta.keystore -storepass android -alias androiddebugkey | grep SHA1`.
+3. GitHub secret `BETA_KEYSTORE_BASE64`: `base64 -i ~/wingspot-beta.keystore | pbcopy`, then paste. Keep the file safe (a password manager or backup); if it is lost, testers uninstall once.
+4. Testers uninstall once after the first build signed with it. From then on updates install over each other.
+This is not the Play upload key (that one is `ANDROID_KEYSTORE_BASE64`, for store builds).
+
 ## Maps (Google Maps)
 
 The airport page, the airports map (Profile > Collections) and the Explore map use Google Maps. They show a note until the build has a key.
 1. console.cloud.google.com > create or pick a project > enable **Maps SDK for Android** (billing must be on; mobile maps have a free usage allowance, check the current terms) > Credentials > Create API key.
-2. Restrict the key to Android apps: package `site.wingspot.android` and the SHA-1 of the signing certificate. You need two entries: the Play App Signing certificate (Play Console > Setup > App signing) for store builds, and the certificate of the build you sideload (debug builds use the debug keystore).
+2. Restrict the key to Android apps: package `site.wingspot.android` and the SHA-1 of the signing certificate. You need two entries: the Play App Signing certificate (Play Console > Setup > App signing) for store builds, and the SHA-1 of the beta key (see above).
 3. GitHub secret `MAPS_API_KEY` with the key. For a local build: `export WINGSPOT_MAPS_API_KEY=...` before `./gradlew assembleDebug`.
 4. Run **Android beta** again.
 
