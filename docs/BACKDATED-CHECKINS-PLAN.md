@@ -1,6 +1,6 @@
 # Set a date on sightings and airport check-ins: plan for issue #312
 
-Issue by vogtim: a flight check-in can have a date in the past, a sighting ("Gesichtet") or an airport check-in cannot, so backfilled sightings land on the wrong day and "Zuletzt am" is wrong. Status: plan only, nothing built. Tim's answers are in at the end.
+Issue by vogtim: a flight check-in can have a date in the past, a sighting ("Gesichtet") or an airport check-in cannot, so backfilled sightings land on the wrong day and "Zuletzt am" is wrong. Status: built and live (see "As built" at the end).
 
 ## What the issue asks for
 
@@ -85,3 +85,18 @@ Issue by vogtim: a flight check-in can have a date in the past, a sighting ("Ges
 2. **Feed:** a backdated sighting shows the old date but is listed as the newest item. That is what the default sort does today (see decision 6); no feed change.
 3. **Photo date:** tap to use.
 4. **Oldest date:** 1990 is fine.
+
+## As built
+
+Shipped in PRs #336 (backend), #337 (iOS) and #338 (Android). Backend live since 2026-11-24; iOS build 2026112403, Android beta 2026112406.
+
+**Where it differs from the plan**
+- Moving a visit moves **all** the sightings of that visit by the same step (not only those on the visit's exact old time), so the offsets inside a session stay. A local sighting is marked pending and uploaded again; the server does the same move.
+- A repeated upload for an airport visit of a flight is **ignored** (its time stays), not refused.
+- `time_known` is read by nine list readers (`get_feed`, `get_checkin`, `get_my_checkins`, the person, airport, registration and type lists, `get_visit_sightings`, `get_spot_sightings`), which were re-created for the new column. `checkins` has column grants, so `time_known` needed its own grant.
+- "Seen before": the result line counts only entries from before the new date, so a backdated first sighting says "first time". The airport result still counts all visits.
+- iOS: `WhenChoice` is in the Persistence package, the row is `WhenSection`; the capture date comes from `PhotoPreparer` (`PreparedPhoto.takenAt`). Android: `WhenChoice` and `PhotoDates` in `core`, the field is `WhenField`; the capture date is read with the framework `ExifInterface` in `PhotoPrep`.
+- A date-only entry shows "yesterday" or "3 days ago" on the feed card (not "9 hours ago"). The feed keeps its two sorts; by check-in time (default) a backdated entry is at the top.
+- A session at a backdated visit remembers the visit's moment (`visitMoment`), and sightings in it start with "Same as the visit".
+
+**Not checked by hand:** the edit screens on a real phone, a photo with an EXIF date, and a backfilled session of several sightings.
