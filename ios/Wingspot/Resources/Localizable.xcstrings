@@ -643,6 +643,16 @@
         }
       }
     },
+    "Aircraft spotted here" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier gesichtete Flugzeuge"
+          }
+        }
+      }
+    },
     "Aircraft type" : {
       "localizations" : {
         "de" : {
@@ -4898,6 +4908,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "In Bestenlisten von Freunden zeigen"
+          }
+        }
+      }
+    },
+    "Show more" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mehr anzeigen"
           }
         }
       }

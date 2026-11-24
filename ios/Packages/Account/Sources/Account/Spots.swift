@@ -80,6 +80,42 @@ public struct VisitSighting: Identifiable, Equatable, Sendable, Decodable {
     }
 }
 
+/// One aircraft spotted at a place (`get_spot_sightings`): public sightings, and your own.
+public struct SpotSighting: Identifiable, Equatable, Sendable, Decodable {
+    public let id: UUID
+    public let occurredAt: Date
+    public let registration: String?
+    public let typeICAO: String?
+    public let typeName: String?
+    public let userID: UUID
+    public let username: String
+    public let displayName: String?
+
+    public init(id: UUID, occurredAt: Date, registration: String?, typeICAO: String?, typeName: String? = nil, userID: UUID, username: String, displayName: String? = nil) {
+        self.id = id
+        self.occurredAt = occurredAt
+        self.registration = registration
+        self.typeICAO = typeICAO
+        self.typeName = typeName
+        self.userID = userID
+        self.username = username
+        self.displayName = displayName
+    }
+
+    /// The registration, or the type when it was not read.
+    public var title: String { registration ?? typeName ?? typeICAO ?? "?" }
+    public var person: String { displayName ?? username }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, registration, username
+        case occurredAt = "occurred_at"
+        case typeICAO = "type_icao"
+        case typeName = "type_name"
+        case userID = "user_id"
+        case displayName = "display_name"
+    }
+}
+
 /// What a check-in page shows about spotting locations (`get_checkin_spot`).
 public struct CheckInSpot: Equatable, Sendable, Decodable {
     public let visitID: UUID
@@ -102,6 +138,8 @@ public protocol SpotBackend: Sendable {
     /// `nil` when the place does not exist or is not visible to the caller.
     func spotDetail(_ id: Int) async throws -> SpotDetail?
     func visitSightings(_ visit: UUID) async throws -> [VisitSighting]
+    /// The aircraft spotted at a place, newest first. Page with the last row's time and id.
+    func spotSightings(at place: Int, limit: Int, before: (time: Date, id: UUID)?) async throws -> [SpotSighting]
     /// `nil` when the check-in is not part of a session or the caller may not see it.
     func checkInSpot(_ checkIn: UUID) async throws -> CheckInSpot?
     /// Suggests a new place. It waits for approval and is visible only to its author until then.
@@ -302,6 +340,21 @@ public enum MapsLink {
     }
 }
 
+private struct SpotSightingsParams: Encodable {
+    let place: Int
+    let limit: Int
+    let before: (time: Date, id: UUID)?
+
+    private enum CodingKeys: String, CodingKey { case place = "p_place", limit = "p_limit", beforeTime = "p_before_time", beforeID = "p_before_id" }
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(place, forKey: .place)
+        try c.encode(limit, forKey: .limit)
+        try c.encodeIfPresent(before?.time, forKey: .beforeTime)
+        try c.encodeIfPresent(before?.id, forKey: .beforeID)
+    }
+}
+
 extension SupabaseAccountBackend: SpotBackend {
     public func spotLocations(at airport: Int) async throws -> [SpotLocation] {
         try await mappingErrors { try await client.rpc("spotting_locations_at", params: ["p_airport": airport]).execute().value }
@@ -314,6 +367,12 @@ extension SupabaseAccountBackend: SpotBackend {
 
     public func visitSightings(_ visit: UUID) async throws -> [VisitSighting] {
         try await mappingErrors { try await client.rpc("get_visit_sightings", params: ["p_visit": visit]).execute().value }
+    }
+
+    public func spotSightings(at place: Int, limit: Int, before: (time: Date, id: UUID)?) async throws -> [SpotSighting] {
+        try await mappingErrors {
+            try await client.rpc("get_spot_sightings", params: SpotSightingsParams(place: place, limit: limit, before: before)).execute().value
+        }
     }
 
     public func checkInSpot(_ checkIn: UUID) async throws -> CheckInSpot? {
@@ -353,6 +412,7 @@ extension UnconfiguredAccountBackend: SpotBackend {
     public func spotLocations(at airport: Int) async throws -> [SpotLocation] { throw AccountError.notConfigured }
     public func spotDetail(_ id: Int) async throws -> SpotDetail? { throw AccountError.notConfigured }
     public func visitSightings(_ visit: UUID) async throws -> [VisitSighting] { throw AccountError.notConfigured }
+    public func spotSightings(at place: Int, limit: Int, before: (time: Date, id: UUID)?) async throws -> [SpotSighting] { throw AccountError.notConfigured }
     public func checkInSpot(_ checkIn: UUID) async throws -> CheckInSpot? { throw AccountError.notConfigured }
     public func addSpot(_ request: NewSpot) async throws -> NewSpotAnswer { throw AccountError.notConfigured }
     public func myPermissions() async throws -> [String] { throw AccountError.notConfigured }

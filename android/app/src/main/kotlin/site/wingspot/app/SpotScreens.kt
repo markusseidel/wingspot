@@ -29,6 +29,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import java.time.Instant
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.text.font.FontFamily
 import site.wingspot.core.MapsLink
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -121,9 +123,24 @@ fun AddSpotPage(app: WingspotApp, model: SocialViewModel) {
 fun SpotPage(app: WingspotApp, model: SocialViewModel, id: Long) {
     var detail by remember { mutableStateOf<SocialApi.SpotDetail?>(null) }
     var loaded by remember { mutableStateOf(false) }
+    var aircraft by remember { mutableStateOf(emptyList<SocialApi.SpotSighting>()) }
+    var hasMore by remember { mutableStateOf(false) }
+    var loadingMore by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    /** The next 20 aircraft spotted here, after the last one shown. */
+    suspend fun loadMore() {
+        loadingMore = true
+        val last = aircraft.lastOrNull()
+        runCatching { app.social.spotSightings(id, 20, last?.occurredAt, last?.id) }.onSuccess { page ->
+            aircraft = aircraft + page
+            hasMore = page.size == 20
+        }
+        loadingMore = false
+    }
     LaunchedEffect(id) {
         detail = try { app.social.spotDetail(id) } catch (e: ApiException) { null }
         loaded = true
+        if (detail != null) loadMore()
     }
     val uriHandler = LocalUriHandler.current
     Column(Modifier.testTag("spot-page"), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -141,6 +158,16 @@ fun SpotPage(app: WingspotApp, model: SocialViewModel, id: Long) {
                 CountRow(R.string.spot_aircraft_seen, place.aircraft)
                 CountRow(R.string.spot_your_sessions, place.mySessions)
                 Text(stringResource(R.string.spot_counts_note), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                if (aircraft.isNotEmpty()) {
+                    Text(stringResource(R.string.spot_aircraft_here), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 8.dp))
+                    for (sighting in aircraft) {
+                        Column(Modifier.fillMaxWidth().clickable { model.open(Route.CheckInPage(sighting.id)) }.padding(vertical = 6.dp).testTag("spot-aircraft-${sighting.id}")) {
+                            Text(sighting.title, fontFamily = FontFamily.Monospace)
+                            Text("${sighting.person} · ${sighting.occurredAt.take(10)}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
+                    if (hasMore) TextButton(onClick = { scope.launch { loadMore() } }, enabled = !loadingMore, modifier = Modifier.testTag("spot-show-more")) { Text(stringResource(R.string.show_more)) }
+                }
                 listOf(
                     R.string.spot_about to place.description, R.string.spot_best_time to place.bestTime, R.string.spot_facing to place.facing,
                     R.string.spot_tips to place.tips, R.string.spot_good_to_know to place.legalNotes,

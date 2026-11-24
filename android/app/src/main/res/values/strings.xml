@@ -558,4 +558,6 @@
     <string name="tag_installed">Installed</string>
     <string name="release_notes_empty">No release notes yet</string>
     <string name="release_notes_failed">Couldn\'t load the latest notes. Showing what was loaded before.</string>
+    <string name="spot_aircraft_here">Aircraft spotted here</string>
+    <string name="show_more">Show more</string>
 </resources>

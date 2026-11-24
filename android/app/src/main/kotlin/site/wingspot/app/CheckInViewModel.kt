@@ -23,6 +23,7 @@ import site.wingspot.core.Outbox
 import site.wingspot.core.Place
 import site.wingspot.core.Registration
 import site.wingspot.core.SocialApi
+import site.wingspot.core.SpotChange
 import site.wingspot.core.SpotSession
 import site.wingspot.core.SpottedDraft
 import site.wingspot.core.VisitContext
@@ -114,11 +115,11 @@ class CheckInViewModel(
         mutable.value = mutable.value.copy(session = null)
     }
 
-    fun save(registration: Registration?, type: AircraftType?, airport: Airport?, photos: List<PreparedPhoto>) {
+    fun save(registration: Registration?, type: AircraftType?, airport: Airport?, photos: List<PreparedPhoto>, spot: SocialApi.SpotLocation? = null) {
         val session = activeSession()
         val draft = SpottedDraft(
             registration, type?.icaoCode, airport?.id ?: session?.airportId, airportCode = airport?.code ?: session?.code,
-            visitId = session?.visitId,
+            visitId = session?.visitId, spotId = if (session == null) spot?.id else null, spotName = if (session == null) spot?.name else null,
         )
         if (!draft.hasAircraft) return
         run(photos) {
@@ -235,10 +236,10 @@ class CheckInViewModel(
     }
 
     /** Saves the corrected aircraft of a sighting, or the corrected reason of an airport visit. */
-    fun saveSimpleEdit(id: UUID, registration: Registration?, typeIcao: String?, reason: VisitContext?, photos: List<PreparedPhoto> = emptyList(), tagged: List<UUID>? = null) {
+    fun saveSimpleEdit(id: UUID, registration: Registration?, typeIcao: String?, reason: VisitContext?, photos: List<PreparedPhoto> = emptyList(), tagged: List<UUID>? = null, spot: SpotChange = SpotChange.Keep) {
         viewModelScope.launch {
             try {
-                if (reason != null) store.updateVisit(id, reason, tagged) else store.updateSpotted(id, registration, typeIcao)
+                if (reason != null) store.updateVisit(id, reason, tagged) else store.updateSpotted(id, registration, typeIcao, spot)
                 addPhotos(id, photos)
                 mutable.value = mutable.value.copy(editing = null, saveFailed = false)
                 requestUpload()

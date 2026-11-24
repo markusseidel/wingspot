@@ -309,3 +309,21 @@ private let dus = SpottedDraft.Place(airportID: 7, code: "DUS")
     #expect(saved.syncState == SyncState.pending.rawValue)
     #expect(try store.updateVisit(id: UUID(), reason: .working) == false)
 }
+
+@MainActor @Test func aSightingKeepsItsOwnSpottingPlaceAndAnEditCanChangeOrClearIt() throws {
+    let context = try makeContext()
+    let store = CheckInStore(context: context)
+    let result = try store.saveSpotted(SpottedDraft(registration: Registration("DAIMA"), spotID: 7, spotName: "North deck"))
+    func saved() throws -> LocalCheckIn { try #require(try context.fetch(FetchDescriptor<LocalCheckIn>()).first { $0.id == result.id }) }
+    #expect(try saved().spotID == 7)
+    #expect(try saved().spotName == "North deck")
+    // Not shown in the edit screen: the place stays.
+    try store.updateSpotted(id: result.id, registration: Registration("DAIMA"), type: nil)
+    #expect(try saved().spotID == 7)
+    try store.updateSpotted(id: result.id, registration: Registration("DAIMA"), type: nil, spot: .set(id: 9, name: "Hill"))
+    #expect(try saved().spotID == 9)
+    #expect(try saved().spotName == "Hill")
+    try store.updateSpotted(id: result.id, registration: Registration("DAIMA"), type: nil, spot: .clear)
+    #expect(try saved().spotID == nil)
+    #expect(try saved().syncState == SyncState.pending.rawValue)
+}

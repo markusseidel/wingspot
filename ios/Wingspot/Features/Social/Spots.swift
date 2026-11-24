@@ -15,6 +15,9 @@ final class SpotStore {
     func locations(at airport: Int) async -> [SpotLocation] { (try? await backend.spotLocations(at: airport)) ?? [] }
     func detail(_ id: Int) async -> SpotDetail? { try? await backend.spotDetail(id) }
     func sightings(of visit: UUID) async -> [VisitSighting] { (try? await backend.visitSightings(visit)) ?? [] }
+    func sightings(at place: Int, before: (time: Date, id: UUID)? = nil, limit: Int = 20) async -> [SpotSighting]? {
+        try? await backend.spotSightings(at: place, limit: limit, before: before)
+    }
     func spot(of checkIn: UUID) async -> CheckInSpot? { (try? await backend.checkInSpot(checkIn)) ?? nil }
     func add(_ spot: NewSpot) async throws -> NewSpotAnswer { try await backend.addSpot(spot) }
 
@@ -108,12 +111,17 @@ struct SpotPageView: View {
     @Environment(SpotStore.self) private var spots
     @State private var detail: SpotDetail?
     @State private var loaded = false
+    @State private var aircraft: [SpotSighting] = []
+    @State private var hasMore = false
+    @State private var loadingMore = false
+    private let pageSize = 20
 
     var body: some View {
         List {
             if let detail {
                 header(detail)
                 numbers(detail)
+                aircraftList
                 tips(detail)
             } else if loaded {
                 Section {
@@ -128,7 +136,43 @@ struct SpotPageView: View {
         .task {
             detail = await spots.detail(id)
             loaded = true
+            if detail != nil { await loadMore() }
         }
+    }
+
+    /// The aircraft spotted here, newest first: the first 20, then "Show more".
+    @ViewBuilder private var aircraftList: some View {
+        if !aircraft.isEmpty {
+            Section {
+                ForEach(aircraft) { sighting in
+                    NavigationLink { CheckInLoaderView(id: sighting.id) } label: {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(verbatim: sighting.title).font(.system(.body, design: .monospaced))
+                            Text(verbatim: "\(sighting.person) · \(sighting.occurredAt.formatted(date: .abbreviated, time: .omitted))")
+                                .font(.footnote).foregroundStyle(.secondary)
+                        }
+                        .accessibilityElement(children: .combine)
+                    }
+                }
+                if hasMore {
+                    Button { Task { await loadMore() } } label: {
+                        if loadingMore { ProgressView() } else { Text("Show more") }
+                    }
+                    .disabled(loadingMore)
+                }
+            } header: {
+                Text("Aircraft spotted here").font(.headline).textCase(nil)
+            }
+        }
+    }
+
+    private func loadMore() async {
+        loadingMore = true
+        defer { loadingMore = false }
+        let last = aircraft.last.map { (time: $0.occurredAt, id: $0.id) }
+        guard let page = await spots.sightings(at: id, before: last, limit: pageSize) else { return }
+        aircraft += page
+        hasMore = page.count == pageSize
     }
 
     @ViewBuilder

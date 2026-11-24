@@ -32,12 +32,18 @@ public struct SpottedDraft: Sendable {
     public var photos: [PreparedPhoto]
     /// The airport visit (session) this sighting is made during.
     public var visitID: UUID?
+    /// The spotting place the aircraft was seen from, with its name. Not used during a session: the session has the place.
+    public var spotID: Int?
+    public var spotName: String?
 
     public init(
         registration: Registration? = nil, type: AircraftTypeChoice? = nil, place: Place? = nil,
-        position: GeoCoordinate? = nil, photo: PreparedPhoto? = nil, photos: [PreparedPhoto] = [], visitID: UUID? = nil
+        position: GeoCoordinate? = nil, photo: PreparedPhoto? = nil, photos: [PreparedPhoto] = [], visitID: UUID? = nil,
+        spotID: Int? = nil, spotName: String? = nil
     ) {
         self.visitID = visitID
+        self.spotID = spotID
+        self.spotName = spotName
         self.registration = registration
         self.type = type
         self.place = place
@@ -185,6 +191,14 @@ public enum CheckInError: Error, Equatable {
 }
 
 /// The moment a flight is saved at when only its day is known.
+/// What an edit does with the spotting place of a sighting.
+public enum SpotChange: Sendable, Equatable {
+    /// The edit screen did not show the place (no connection, no airport): it stays as it is.
+    case keep
+    case set(id: Int, name: String)
+    case clear
+}
+
 public enum FlightDay {
     /// Today keeps the real time. Any other day uses midday, which stays on that day in any time zone.
     public static func moment(of day: Date, now: Date = Date(), calendar: Calendar = .current) -> Date {
@@ -224,7 +238,8 @@ public struct CheckInStore {
             typeICAO: draft.type?.icaoCode, typeName: draft.type?.name,
             airportID: draft.place?.airportID, airportCode: draft.place?.code,
             latitude: draft.position?.latitude, longitude: draft.position?.longitude,
-            occurredAt: date, syncState: .pending, ownerID: ownerID, visitID: draft.visitID, savedAt: Date()
+            occurredAt: date, syncState: .pending, ownerID: ownerID, spotID: draft.spotID, spotName: draft.spotName,
+            visitID: draft.visitID, savedAt: Date()
         ))
         insertPhotos(draft.photos, for: id, at: date)
         try context.save()
@@ -340,12 +355,17 @@ public struct CheckInStore {
     /// Corrects the aircraft of a saved sighting and sends it again. Needs a registration or a type, like a new sighting.
     /// Returns `false` when this device has no such sighting.
     @discardableResult
-    public func updateSpotted(id: UUID, registration: Registration?, type: SpottedDraft.AircraftTypeChoice?) throws -> Bool {
+    public func updateSpotted(id: UUID, registration: Registration?, type: SpottedDraft.AircraftTypeChoice?, spot: SpotChange = .keep) throws -> Bool {
         let matches = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id && $0.kind == "spotted" }))
         guard let sighting = matches.first, registration != nil || type != nil else { return false }
         sighting.registration = registration?.value
         sighting.typeICAO = type?.icaoCode
         sighting.typeName = type?.name
+        switch spot {
+        case .keep: break
+        case .set(let id, let name): sighting.spotID = id; sighting.spotName = name
+        case .clear: sighting.spotID = nil; sighting.spotName = nil
+        }
         sighting.syncState = SyncState.pending.rawValue
         sighting.syncError = nil
         try context.save()

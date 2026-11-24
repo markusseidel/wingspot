@@ -83,7 +83,7 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
     public let with: [UUID]?
     /// For a check-in made by adding a friend's flight or visit to your own logbook: the friend's check-in.
     public let sourceCheckInID: UUID?
-    /// For an airport visit: the spotting location it was at.
+    /// For an airport visit: the spotting location it was at. For a sighting: the place it was seen from.
     public let spotLocationID: Int?
     /// For a sighting: the airport visit (session) it was made during. Sent after that visit.
     public let visitID: UUID?
@@ -115,6 +115,32 @@ public struct CheckInUploadItem: Encodable, Equatable, Sendable {
         self.sourceCheckInID = sourceCheckInID
         self.spotLocationID = spotLocationID
         self.visitID = visitID
+    }
+
+    /// Like the synthesized encoding, except that a sighting always sends its place: `null` clears the place on the server (an edit
+    /// that removed it), and the server leaves the place alone when the field is missing (older apps).
+    public func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(id, forKey: .id)
+        try c.encode(kind, forKey: .kind)
+        try c.encode(occurredAt, forKey: .occurredAt)
+        try c.encodeIfPresent(registration, forKey: .registration)
+        try c.encodeIfPresent(typeICAO, forKey: .typeICAO)
+        try c.encodeIfPresent(airportID, forKey: .airportID)
+        try c.encodeIfPresent(latitude, forKey: .latitude)
+        try c.encodeIfPresent(longitude, forKey: .longitude)
+        try c.encodeIfPresent(context, forKey: .context)
+        try c.encodeIfPresent(flightID, forKey: .flightID)
+        try c.encodeIfPresent(originID, forKey: .originID)
+        try c.encodeIfPresent(destinationID, forKey: .destinationID)
+        try c.encodeIfPresent(flightNumber, forKey: .flightNumber)
+        try c.encodeIfPresent(cabin, forKey: .cabin)
+        try c.encodeIfPresent(seat, forKey: .seat)
+        try c.encodeIfPresent(visibility, forKey: .visibility)
+        try c.encodeIfPresent(with, forKey: .with)
+        try c.encodeIfPresent(sourceCheckInID, forKey: .sourceCheckInID)
+        if kind == "spotted" { try c.encode(spotLocationID, forKey: .spotLocationID) } else { try c.encodeIfPresent(spotLocationID, forKey: .spotLocationID) }
+        try c.encodeIfPresent(visitID, forKey: .visitID)
     }
 
     private enum CodingKeys: String, CodingKey {

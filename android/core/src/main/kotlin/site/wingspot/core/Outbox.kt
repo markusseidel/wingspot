@@ -5,6 +5,7 @@ import java.time.Instant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.Json
@@ -220,7 +221,8 @@ class ApiClient(
         c.flightId?.let { put("flight_id", it.toString()) }
         c.taggedIds?.let { ids -> put("with", JsonArray(ids.map { JsonPrimitive(it.toString()) })) }
         c.sourceId?.let { put("source_checkin_id", it.toString()) }
-        c.spotId?.let { put("spot_location_id", it) }
+        // A sighting always sends its place: null clears it on the server, and an app that leaves the field out keeps it.
+        if (c.kind == "spotted") put("spot_location_id", c.spotId?.let { JsonPrimitive(it) } ?: JsonNull) else c.spotId?.let { put("spot_location_id", it) }
         c.visitId?.let { put("visit_id", it.toString()) }
         if (c.latitude != null && c.longitude != null) {
             put("latitude", c.latitude)

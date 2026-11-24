@@ -341,6 +341,26 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
         @SerialName("type_icao") val typeIcao: String? = null,
     )
 
+    /** One aircraft spotted at a place: public sightings, and your own. */
+    @Serializable
+    data class SpotSighting(
+        val id: String, @SerialName("occurred_at") val occurredAt: String, val registration: String? = null,
+        @SerialName("type_icao") val typeIcao: String? = null, @SerialName("type_name") val typeName: String? = null,
+        @SerialName("user_id") val userId: String, val username: String, @SerialName("display_name") val displayName: String? = null,
+    ) {
+        val title: String get() = registration ?: typeName ?: typeIcao ?: "?"
+        val person: String get() = displayName ?: username
+    }
+
+    /** The aircraft spotted at a place, newest first. Page with the last row's time and id. */
+    suspend fun spotSightings(place: Long, limit: Int = 20, beforeTime: String? = null, beforeId: String? = null): List<SpotSighting> {
+        val body = buildJsonObject {
+            put("p_place", place); put("p_limit", limit)
+            if (beforeTime != null && beforeId != null) { put("p_before_time", beforeTime); put("p_before_id", beforeId) }
+        }.toString()
+        return json.decodeFromString(ListSerializer(SpotSighting.serializer()), rest.call("POST", "/rest/v1/rpc/get_spot_sightings", body))
+    }
+
     /** What a check-in page shows about spotting locations. [sightings] is only set for a visit. */
     @Serializable
     data class CheckInSpot(

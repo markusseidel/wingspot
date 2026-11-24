@@ -558,4 +558,6 @@
     <string name="tag_installed">Installiert</string>
     <string name="release_notes_empty">Noch keine Neuigkeiten</string>
     <string name="release_notes_failed">Die neuesten Notizen konnten nicht geladen werden. Es wird gezeigt, was vorher geladen wurde.</string>
+    <string name="spot_aircraft_here">Hier gesichtete Flugzeuge</string>
+    <string name="show_more">Mehr anzeigen</string>
 </resources>
