@@ -355,7 +355,7 @@ struct CheckInDetailView: View {
     private var photoSection: some View {
         Section {
             ForEach(photos) { photo in
-                AsyncImage(url: photo.url) { phase in
+                CachedImage(photo: photo) { phase in
                     switch phase {
                     case .success(let image):
                         image.resizable().scaledToFit()

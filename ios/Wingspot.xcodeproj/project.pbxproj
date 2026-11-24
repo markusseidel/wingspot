@@ -52,6 +52,7 @@
 		6DAA715E6FB8E824FA168D2C /* APIProgressSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96EA4033E2C1D21ED547E17 /* APIProgressSource.swift */; };
 		761F6B7BD8870311AFC02EBB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D8FB2291C9A4A75529A9461 /* Assets.xcassets */; };
 		7C48842DEE1C6C143770A7E9 /* Avatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1617F1561EB21E242955326E /* Avatar.swift */; };
+		7DB7ECD3AFF502A7DA72C73C /* PhotoCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA2AAAE7361A0B6CE91C406E /* PhotoCache.swift */; };
 		8724536D4B58E82924192AC3 /* TermsGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0AEFDA7AFD99199BC8AC184 /* TermsGate.swift */; };
 		8A1E836A067C7D670EE85441 /* BadgeStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 887512D89A6F5865C984DC89 /* BadgeStyle.swift */; };
 		8AD778BF9F9D8A593DB6DC77 /* ShareCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2B6597262EFD3FAD5D6ACE /* ShareCard.swift */; };
@@ -155,6 +156,7 @@
 		AFA4C2033974EBB05B5FCF5E /* APIPhotoUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIPhotoUploader.swift; sourceTree = "<group>"; };
 		B0E18517ABA8FEAD7497EE58 /* AppleSignInButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInButton.swift; sourceTree = "<group>"; };
 		B34AD8F064D9FF554BEEE6EF /* LegalLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalLinks.swift; sourceTree = "<group>"; };
+		BA2AAAE7361A0B6CE91C406E /* PhotoCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCache.swift; sourceTree = "<group>"; };
 		BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceSearchViews.swift; sourceTree = "<group>"; };
 		BF4D48FF8AE3EC90CE9EB299 /* AccountMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountMessages.swift; sourceTree = "<group>"; };
 		C2E6559EBEC52E59BEEFE94D /* ProfileEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditorView.swift; sourceTree = "<group>"; };
@@ -286,6 +288,7 @@
 				8588DD19FFB9233DAE73D0FD /* CheckInEditView.swift */,
 				ACC6390EE07C2061FC444960 /* FeedScreen.swift */,
 				346D15D5FD800AAFC82408CF /* FlownEditView.swift */,
+				BA2AAAE7361A0B6CE91C406E /* PhotoCache.swift */,
 				79CF16D48D79F1F5F3E7EBA1 /* PhotoViewer.swift */,
 			);
 			path = Feed;
@@ -535,6 +538,7 @@
 				44D09702BD9AEBE667B05854 /* PersonCheckInsSection.swift in Sources */,
 				13A3F8B8C6248C62D540A996 /* PersonDetailView.swift in Sources */,
 				639292542FCCEBDA015591F3 /* PersonProgress.swift in Sources */,
+				7DB7ECD3AFF502A7DA72C73C /* PhotoCache.swift in Sources */,
 				96D09D7A0351104460703E5B /* PhotoSection.swift in Sources */,
 				EEB0DF0826C0ED40A0D1D6D3 /* PhotoViewer.swift in Sources */,
 				0937BA0BF1EBF4732DA23138 /* ProfileEditorView.swift in Sources */,

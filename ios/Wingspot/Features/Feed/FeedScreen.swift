@@ -98,6 +98,7 @@ struct FeedScreen: View {
             if account.userID == nil {
                 feed.clear()
                 inbox.clear()
+                PhotoCache.shared.clear()
             } else {
                 Task { await inbox.refreshCount() }
                 feed.sort = FeedSort(rawValue: sortChoice) ?? .created
@@ -372,7 +373,7 @@ struct FeedCard: View {
     }
 
     private func photoPage(_ photo: FeedPhoto) -> some View {
-        AsyncImage(url: photo.url) { phase in
+        CachedImage(photo: photo) { phase in
             switch phase {
             case .success(let image):
                 image.resizable().scaledToFill()
