@@ -112,8 +112,9 @@ fun relativeTime(iso: String): String = try {
 /** A picture from a signed link. Shows nothing until it has loaded, and nothing if it can't. */
 @Composable
 fun RemoteImage(photo: FeedPhoto, modifier: Modifier = Modifier) {
-    val bitmap by produceState<androidx.compose.ui.graphics.ImageBitmap?>(null, photo.url) {
-        value = Downloads.bytes(photo.url)?.let { withContext(Dispatchers.Default) { BitmapFactory.decodeByteArray(it, 0, it.size)?.asImageBitmap() } }
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val bitmap by produceState<androidx.compose.ui.graphics.ImageBitmap?>(PhotoCache.cached(photo), photo.id) {
+        value = PhotoCache.load(context, photo)
     }
     val image = bitmap
     if (image != null) Image(image, contentDescription = stringResource(R.string.photo_of_check_in), modifier = modifier, contentScale = ContentScale.Crop)
@@ -838,8 +839,9 @@ private fun PhotoViewer(photos: List<FeedPhoto>, start: FeedPhoto, onClose: () -
 /** Like [RemoteImage] but shows the whole picture. */
 @Composable
 private fun RemoteImageFit(photo: FeedPhoto, modifier: Modifier = Modifier) {
-    val bitmap by produceState<androidx.compose.ui.graphics.ImageBitmap?>(null, photo.url) {
-        value = Downloads.bytes(photo.url)?.let { withContext(Dispatchers.Default) { BitmapFactory.decodeByteArray(it, 0, it.size)?.asImageBitmap() } }
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val bitmap by produceState<androidx.compose.ui.graphics.ImageBitmap?>(PhotoCache.cached(photo), photo.id) {
+        value = PhotoCache.load(context, photo)
     }
     val image = bitmap
     if (image != null) Image(image, contentDescription = stringResource(R.string.photo_of_check_in), modifier = modifier, contentScale = ContentScale.Fit)
