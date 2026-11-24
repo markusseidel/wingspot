@@ -535,12 +535,11 @@ public final class FeedStore {
                 reachedEnd = page.count < Self.pageSize
                 failure = nil
                 hasLoaded = true
-                photos = [:]
-                tags = [:]
-                badges = [:]
-                await loadPhotos(for: items.map(\.id), generation: mine)
-                await loadTags(for: items.map(\.id), generation: mine)
-                await loadBadges(for: items.map(\.id), generation: mine)
+                // What is on screen stays until the new data is there, and each part is swapped in one step: emptying them first made
+                // every card lose its photo, tags and badges for a moment and come back one by one (#345).
+                await loadPhotos(for: items.map(\.id), generation: mine, replacing: true)
+                await loadTags(for: items.map(\.id), generation: mine, replacing: true)
+                await loadBadges(for: items.map(\.id), generation: mine, replacing: true)
                 return
             } catch {
                 guard mine == generation else { return }
@@ -597,21 +596,23 @@ public final class FeedStore {
     }
 
     /// Photos are a bonus: if they can't be loaded, the cards stay as they are.
-    private func loadPhotos(for ids: [UUID], generation mine: Int) async {
+    /// `replacing` swaps the whole set in one step (a refresh); otherwise the new ones are added to what is there (a next page).
+    private func loadPhotos(for ids: [UUID], generation mine: Int, replacing: Bool = false) async {
         guard !ids.isEmpty, let found = try? await backend.photos(for: ids), mine == generation else { return }
-        for (id, group) in Dictionary(grouping: found, by: \.checkInID) { photos[id] = group }
+        let grouped = Dictionary(grouping: found, by: \.checkInID)
+        if replacing { photos = grouped } else { photos.merge(grouped) { _, new in new } }
     }
 
     /// Tags are a bonus too: if they can't be loaded, the cards stay as they are.
-    private func loadTags(for ids: [UUID], generation mine: Int) async {
+    private func loadTags(for ids: [UUID], generation mine: Int, replacing: Bool = false) async {
         guard !ids.isEmpty, let found = try? await backend.tags(for: ids), mine == generation else { return }
-        for (id, group) in found { tags[id] = group }
+        if replacing { tags = found } else { tags.merge(found) { _, new in new } }
     }
 
     /// Badges are a bonus as well: if they can't be loaded, the cards stay as they are.
-    private func loadBadges(for ids: [UUID], generation mine: Int) async {
+    private func loadBadges(for ids: [UUID], generation mine: Int, replacing: Bool = false) async {
         guard !ids.isEmpty, let found = try? await backend.badges(for: ids), mine == generation else { return }
-        for (id, group) in found { badges[id] = group }
+        if replacing { badges = found } else { badges.merge(found) { _, new in new } }
     }
 
     /// The tags of one check-in, loaded again, for example after they were changed.
