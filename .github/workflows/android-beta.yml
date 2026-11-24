@@ -67,6 +67,19 @@ jobs:
           code=$(printf '%s%02d' "$day" "$runs")
           echo "WINGSPOT_VERSION_CODE=$code" >> "$GITHUB_ENV"
           echo "Version code $code"
+      # The beta APK is a debug build. A fresh runner makes a new debug key every time, so every build had another signature: testers
+      # had to uninstall before each update, and a Google Maps key cannot be restricted to a fingerprint that keeps changing. With the
+      # secret the debug build is signed with one fixed key (standard debug format: alias androiddebugkey, password android).
+      - name: Fixed signing key for the beta
+        env:
+          BETA_KEYSTORE_BASE64: ${{ secrets.BETA_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$BETA_KEYSTORE_BASE64" ]; then
+            mkdir -p ~/.android
+            printf '%s' "$BETA_KEYSTORE_BASE64" | base64 -d > ~/.android/debug.keystore
+          else
+            echo "No BETA_KEYSTORE_BASE64 secret: the beta is signed with a new debug key this run."
+          fi
       - name: Shared logic tests
         run: ./gradlew :core:test --no-daemon
       - name: Debug APK
