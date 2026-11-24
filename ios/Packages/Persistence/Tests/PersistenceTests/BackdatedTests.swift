@@ -19,7 +19,8 @@ import WingspotCore
     }
 
     @Test func nowIsNowAndTodayWithoutATimeIsNow() {
-        let now = Date()
+        // A fixed clock: with the real one, an hour earlier is the day before in the early hours.
+        let now = calendar.date(from: DateComponents(year: 2026, month: 11, day: 24, hour: 15))!
         #expect(WhenChoice.now.moment(now: now).date == now)
         #expect(WhenChoice.now.moment(now: now).timeKnown)
         let today = WhenChoice(isNow: false, date: now.addingTimeInterval(-3600), hasTime: false).moment(now: now, calendar: calendar)
