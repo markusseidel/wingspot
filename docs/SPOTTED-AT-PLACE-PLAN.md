@@ -1,6 +1,6 @@
 # Aircraft check-in with a spotting location: plan for issue #286
 
-Issue by vogtim: when you check in an aircraft, you cannot say at which spotting place you saw it. Status: plan only, nothing built.
+Issue by vogtim: when you check in an aircraft, you cannot say at which spotting place you saw it. Status: built (PRs for issue #286; see "As built" at the end).
 
 ## What the issue asks for
 
@@ -55,3 +55,18 @@ Production: migration push, then app builds, on the owner's word as usual.
 1. **Session at the same airport:** hide the picker (recommended) or show it with the session's place preselected?
 2. **Badges:** keep them as they are (recommended), or count directly tagged sightings for place badges later?
 3. **Old sightings:** allow setting a place in the edit form (recommended), or only for new sightings?
+
+## Tim's answers (issue #286, 23 Nov)
+
+1. A reminder is welcome when a sighting becomes part of a running session. The picker stays hidden during a session, and the sighting form already shows the session row ("Session at <place>") at the top, so that is the reminder.
+2. Sightings with their own place do not count for the session badges. Agreed.
+3. Older sightings can get a place afterwards in the edit screen. Agreed.
+4. He logs single aircraft without a session, so the standalone picker is what he was missing.
+
+## As built
+
+- **Backend** (`20261124100000_sighting_spot_location.sql`): `sync_checkins` keeps `spot_location_id` for sightings too, validated like for a visit. A repeated upload (edit) takes the place the app sends: the field missing keeps the place (older apps), `null` clears it. `get_checkin_spot` answers with the sighting's own place first, then its session's. `get_spotting_location` counts each public sighting once (own place, or the place of a public session when it has none). New `get_spot_sightings(place, limit, before_time, before_id)`: public sightings plus your own, signed-in only. pgTAP: `sighting_spot_test.sql`; the contract describes the field.
+- **iOS:** `SightingSpotRow` (picker, shared by the sighting form and the edit screen), `SpotChange` (`keep`, `set`, `clear`) on `updateSpotted`, the upload item always sends the place for a sighting, `SpotSighting` and the "Aircraft spotted here" list with "Show more" on the place page.
+- **Android:** `SightingSpotField` (chips, same two places), `SpotChange`, the outbox sends `spot_location_id` or `null` for a sighting, `SocialApi.spotSightings` and the same list on the place page.
+- **Edit safety:** the edit screen only changes the place when the places of the airport were read; an empty answer (no connection) keeps the place as it was. A sighting made in a session has no picker, in the form or the edit.
+- **Not done:** a badge for aircraft spotted at places (a later step if wanted).
