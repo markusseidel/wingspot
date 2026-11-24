@@ -118,7 +118,8 @@ public struct SpotSighting: Identifiable, Equatable, Sendable, Decodable {
 
 /// What a check-in page shows about spotting locations (`get_checkin_spot`).
 public struct CheckInSpot: Equatable, Sendable, Decodable {
-    public let visitID: UUID
+    /// `nil` for a sighting that has its own place but no session.
+    public let visitID: UUID?
     public let spotID: Int?
     public let spotName: String?
     /// For a visit: how many aircraft are linked to it. `nil` for a sighting.

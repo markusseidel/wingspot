@@ -91,7 +91,7 @@ struct CheckInDetailView: View {
             full = await (source ?? feed).checkIn(item.id)
             if item.kind == "airport" || item.kind == "spotted" {
                 spot = await spots.spot(of: item.id)
-                if let spot, item.kind == "airport" { spotSightings = await spots.sightings(of: spot.visitID) }
+                if let spot, item.kind == "airport", let visit = spot.visitID { spotSightings = await spots.sightings(of: visit) }
             }
             if item.userID == account.userID { copies = await (source ?? feed).copies(of: item.id) }
             await loaded
