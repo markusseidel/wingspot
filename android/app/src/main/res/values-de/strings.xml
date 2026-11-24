@@ -560,4 +560,11 @@
     <string name="release_notes_failed">Die neuesten Notizen konnten nicht geladen werden. Es wird gezeigt, was vorher geladen wurde.</string>
     <string name="spot_aircraft_here">Hier gesichtete Flugzeuge</string>
     <string name="show_more">Mehr anzeigen</string>
+    <string name="when_label">Wann</string>
+    <string name="when_now">Jetzt</string>
+    <string name="when_set_time">Uhrzeit festlegen</string>
+    <string name="when_same_as_visit">Wie beim Besuch</string>
+    <string name="when_help">Wer diesen Check-in sieht, bestimmt die Sichtbarkeit, nicht das Datum.</string>
+    <string name="when_photo_taken">Foto aufgenommen am %1$s</string>
+    <string name="when_use_date">Dieses Datum verwenden</string>
 </resources>

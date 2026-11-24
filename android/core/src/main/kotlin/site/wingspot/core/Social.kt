@@ -43,6 +43,8 @@ data class FeedItem(
     val salutes: Int = 0,
     val comments: Int = 0,
     val saluted: Boolean = false,
+    /** False when only the day is known (a date-only entry): then no time of day is shown. */
+    @SerialName("time_known") val timeKnown: Boolean = true,
 ) {
     /** The name to show: the display name if there is one. */
     val who: String get() = displayName?.takeIf { it.isNotBlank() } ?: username
@@ -338,7 +340,7 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
     @Serializable
     data class VisitSighting(
         val id: String, @SerialName("occurred_at") val occurredAt: String, val registration: String? = null,
-        @SerialName("type_icao") val typeIcao: String? = null,
+        @SerialName("type_icao") val typeIcao: String? = null, @SerialName("time_known") val timeKnown: Boolean = true,
     )
 
     /** One aircraft spotted at a place: public sightings, and your own. */
@@ -347,6 +349,7 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
         val id: String, @SerialName("occurred_at") val occurredAt: String, val registration: String? = null,
         @SerialName("type_icao") val typeIcao: String? = null, @SerialName("type_name") val typeName: String? = null,
         @SerialName("user_id") val userId: String, val username: String, @SerialName("display_name") val displayName: String? = null,
+        @SerialName("time_known") val timeKnown: Boolean = true,
     ) {
         val title: String get() = registration ?: typeName ?: typeIcao ?: "?"
         val person: String get() = displayName ?: username

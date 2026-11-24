@@ -72,6 +72,7 @@ import site.wingspot.core.SocialApi
 import site.wingspot.core.SpotChange
 import site.wingspot.core.SyncState
 import site.wingspot.core.VisitContext
+import site.wingspot.core.WhenChoice
 import site.wingspot.core.departureDay
 
 /** A check-in: Spotted, Airport or Flown. Saved on the phone first. */
@@ -116,6 +117,9 @@ private fun SpottedForm(state: CheckInState, reference: ReferenceState, model: C
     val canSave = if (input.isNotBlank()) registration != null else type != null
     // During a session the airport is the session's.
     val session = state.session
+    // During a session at a backdated visit, the sighting starts with the visit's date and time.
+    val visitChoice = session?.visitMoment?.let { WhenChoice.existing(it, session.visitTimeKnown) }
+    var whenChoice by remember(session?.visitId) { mutableStateOf(visitChoice ?: WhenChoice.NOW) }
     LaunchedEffect(session?.airportId, reference.database) {
         if (airport == null && session != null) airport = reference.database?.airport(session.airportId)
     }
@@ -129,8 +133,9 @@ private fun SpottedForm(state: CheckInState, reference: ReferenceState, model: C
     if (registration == null) TypePicker(reference, type) { type = it }
     AirportPicker(stringResource(R.string.airport_label), reference, airport) { airport = it }
     SightingSpotField(airport?.id, inSession = session != null, spot = spot, onSpot = { spot = it })
+    WhenField(whenChoice, { whenChoice = it }, photos, visitChoice)
     PhotoField(photos) { photos = it }
-    SaveBar(state, enabled = canSave, onSave = { model.save(registration, type, airport, photos, spot) }, onCancel = model::close)
+    SaveBar(state, enabled = canSave, onSave = { model.save(registration, type, airport, photos, spot, whenChoice.moment()) }, onCancel = model::close)
 }
 
 /**
@@ -168,6 +173,7 @@ private fun AirportForm(state: CheckInState, reference: ReferenceState, model: C
     val app = LocalContext.current.applicationContext as WingspotApp
     var places by remember { mutableStateOf(emptyList<SocialApi.SpotLocation>()) }
     var spot by remember { mutableStateOf<SocialApi.SpotLocation?>(null) }
+    var whenChoice by remember { mutableStateOf(WhenChoice.NOW) }
     LaunchedEffect(airport?.id) {
         spot = null
         places = airport?.let { a -> runCatching { app.social.spotLocations(a.id) }.getOrDefault(emptyList()) } ?: emptyList()
@@ -188,8 +194,13 @@ private fun AirportForm(state: CheckInState, reference: ReferenceState, model: C
         }
     }
     WithFriendsField(tags)
+    WhenField(whenChoice, { whenChoice = it }, photos)
     PhotoField(photos) { photos = it }
-    SaveBar(state, enabled = airport != null, onSave = { model.saveAirport(airport!!, context, photos, tags.all(), spot) }, onCancel = model::close)
+    SaveBar(
+        state, enabled = airport != null,
+        onSave = { model.saveAirport(airport!!, context, photos, tags.all(), spot, if (whenChoice.isNow) null else whenChoice.moment()) },
+        onCancel = model::close,
+    )
 }
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
@@ -500,6 +511,11 @@ fun SimpleEditScreen(
     var spot by remember { mutableStateOf(checkIn.spotId?.let { SocialApi.SpotLocation(it, checkIn.spotName.orEmpty(), 0.0, 0.0, null, "approved", false, 0) }) }
     var spotsLoaded by remember { mutableStateOf(false) }
     val inSession = checkIn.visitId != null
+    // When it happened. A visit of a flight follows its flight, so it has no field.
+    val followsFlight = checkIn.flightId != null
+    val originalWhen = remember(checkIn.id) { WhenChoice.existing(checkIn.occurredAt, checkIn.timeKnown) }
+    var whenChoice by remember(checkIn.id) { mutableStateOf(originalWhen) }
+    val newMoment = if (followsFlight || whenChoice == originalWhen) null else whenChoice.moment()
     val spotChange = when {
         !spotsLoaded || inSession -> SpotChange.Keep
         spot != null -> if (spot!!.id == checkIn.spotId) SpotChange.Keep else SpotChange.Set(spot!!.id, spot!!.name)
@@ -525,6 +541,7 @@ fun SimpleEditScreen(
             SightingSpotField(checkIn.airportId, inSession = inSession, spot = spot, onSpot = { spot = it }, onLoaded = { spotsLoaded = it })
         }
         if (isVisit) WithFriendsField(tags)
+        if (!followsFlight) WhenField(whenChoice, { whenChoice = it }, photos)
         // The server's photos count too: a check-in restored on a new phone has none of its own copies here. A photo marked as
         // removed makes room for one more.
         val room = minOf(state.roomForPhotos, CheckInStore.MAX_PHOTOS - existing.size).coerceAtLeast(0) + removed.size
@@ -536,7 +553,7 @@ fun SimpleEditScreen(
             onSave = {
                 saveScope.launch {
                     deleteFailed = !deleteRemoved(existing, removed, onDeletePhoto) { removed = it }
-                    if (!deleteFailed) model.saveSimpleEdit(checkIn.id, registration, type?.icaoCode ?: keptType, if (isVisit) reason else null, photos, if (isVisit) tags.ifChanged() else null, spotChange)
+                    if (!deleteFailed) model.saveSimpleEdit(checkIn.id, registration, type?.icaoCode ?: keptType, if (isVisit) reason else null, photos, if (isVisit) tags.ifChanged() else null, spotChange, newMoment)
                 }
             },
             onCancel = model::cancelEdit,

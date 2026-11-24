@@ -196,6 +196,7 @@ class ApiClient(
                         originId = str("origin_id")?.toLong(), destinationId = str("destination_id")?.toLong(),
                         originCode = str("origin_code"), destinationCode = str("destination_code"),
                         flightNumber = str("flight_number"), cabin = str("cabin"), seat = str("seat"), visitContext = str("visit_context"),
+                        timeKnown = str("time_known") != "false",
                     )
                 }
             }
@@ -224,6 +225,8 @@ class ApiClient(
         // A sighting always sends its place: null clears it on the server, and an app that leaves the field out keeps it.
         if (c.kind == "spotted") put("spot_location_id", c.spotId?.let { JsonPrimitive(it) } ?: JsonNull) else c.spotId?.let { put("spot_location_id", it) }
         c.visitId?.let { put("visit_id", it.toString()) }
+        // A sighting or a visit says whether its time is known, so an edit can set it either way.
+        if (c.kind == "spotted" || c.kind == "airport") put("time_known", c.timeKnown)
         if (c.latitude != null && c.longitude != null) {
             put("latitude", c.latitude)
             put("longitude", c.longitude)
