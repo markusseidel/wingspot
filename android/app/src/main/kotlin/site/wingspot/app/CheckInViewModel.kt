@@ -115,7 +115,11 @@ class CheckInViewModel(
         mutable.value = mutable.value.copy(session = null)
     }
 
-    fun save(registration: Registration?, type: AircraftType?, airport: Airport?, photos: List<PreparedPhoto>, spot: SocialApi.SpotLocation? = null) {
+    /** [moment] is when it happened: now, or the day (and time) the person chose (#312). */
+    fun save(
+        registration: Registration?, type: AircraftType?, airport: Airport?, photos: List<PreparedPhoto>, spot: SocialApi.SpotLocation? = null,
+        moment: site.wingspot.core.Moment = site.wingspot.core.Moment(Instant.now(), true),
+    ) {
         val session = activeSession()
         val draft = SpottedDraft(
             registration, type?.icaoCode, airport?.id ?: session?.airportId, airportCode = airport?.code ?: session?.code,
@@ -123,7 +127,7 @@ class CheckInViewModel(
         )
         if (!draft.hasAircraft) return
         run(photos) {
-            val result = store.saveSpotted(draft)
+            val result = store.saveSpotted(draft, moment.at, timeKnown = moment.timeKnown)
             result.id to SavedResult(
                 Kind.SPOTTED, result.subject,
                 (result.history as? History.SeenBefore)?.count ?: 1, (result.history as? History.SeenBefore)?.lastSeen,
@@ -133,13 +137,15 @@ class CheckInViewModel(
 
     fun saveAirport(
         airport: Airport, context: VisitContext, photos: List<PreparedPhoto>, tagged: List<UUID> = emptyList(), spot: SocialApi.SpotLocation? = null,
+        moment: site.wingspot.core.Moment? = null,
     ) = run(photos) {
         val result = store.saveAirport(
             AirportDraft(Place(airport.id, airport.code), context, tagged = tagged, spotId = spot?.id, spotName = spot?.name),
+            moment?.at ?: Instant.now(), timeKnown = moment?.timeKnown ?: true,
         )
         // A visit at a spotting location starts a session: the aircraft spotted next are linked to this visit.
         if (spot != null) {
-            val session = SpotSession(result.id, spot.id, spot.name, airport.id, airport.code, Instant.now())
+            val session = SpotSession(result.id, spot.id, spot.name, airport.id, airport.code, Instant.now(), moment?.at, moment?.timeKnown ?: true)
             storeSession(session)
             mutable.value = mutable.value.copy(session = session)
         }
@@ -236,10 +242,11 @@ class CheckInViewModel(
     }
 
     /** Saves the corrected aircraft of a sighting, or the corrected reason of an airport visit. */
-    fun saveSimpleEdit(id: UUID, registration: Registration?, typeIcao: String?, reason: VisitContext?, photos: List<PreparedPhoto> = emptyList(), tagged: List<UUID>? = null, spot: SpotChange = SpotChange.Keep) {
+    fun saveSimpleEdit(id: UUID, registration: Registration?, typeIcao: String?, reason: VisitContext?, photos: List<PreparedPhoto> = emptyList(), tagged: List<UUID>? = null, spot: SpotChange = SpotChange.Keep, moment: site.wingspot.core.Moment? = null) {
         viewModelScope.launch {
             try {
-                if (reason != null) store.updateVisit(id, reason, tagged) else store.updateSpotted(id, registration, typeIcao, spot)
+                if (reason != null) store.updateVisit(id, reason, tagged, moment?.at, moment?.timeKnown)
+                else store.updateSpotted(id, registration, typeIcao, spot, moment?.at, moment?.timeKnown)
                 addPhotos(id, photos)
                 mutable.value = mutable.value.copy(editing = null, saveFailed = false)
                 requestUpload()

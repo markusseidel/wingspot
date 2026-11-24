@@ -560,4 +560,11 @@
     <string name="release_notes_failed">Couldn\'t load the latest notes. Showing what was loaded before.</string>
     <string name="spot_aircraft_here">Aircraft spotted here</string>
     <string name="show_more">Show more</string>
+    <string name="when_label">When</string>
+    <string name="when_now">Now</string>
+    <string name="when_set_time">Set the time</string>
+    <string name="when_same_as_visit">Same as the visit</string>
+    <string name="when_help">Who can see this check-in is decided by its visibility, not by its date.</string>
+    <string name="when_photo_taken">Photo taken %1$s</string>
+    <string name="when_use_date">Use this date</string>
 </resources>

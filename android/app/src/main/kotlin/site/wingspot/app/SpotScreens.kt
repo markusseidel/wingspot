@@ -221,7 +221,7 @@ fun CheckInSpotSection(app: WingspotApp, model: SocialViewModel, checkInId: Stri
             sightings.forEach { s ->
                 Row(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
                     Text(listOfNotNull(s.registration, s.typeIcao).joinToString(" · "), Modifier.weight(1f))
-                    Text(runCatching { time.format(Instant.parse(s.occurredAt).atZone(ZoneId.systemDefault())) }.getOrDefault(""), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    if (s.timeKnown) Text(runCatching { time.format(Instant.parse(s.occurredAt).atZone(ZoneId.systemDefault())) }.getOrDefault(""), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }

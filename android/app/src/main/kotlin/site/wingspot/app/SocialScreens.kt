@@ -89,11 +89,13 @@ import site.wingspot.core.ReportKind
  * The date on a feed entry: relative for the last 7 days, then a short date with the month abbreviated, with the year
  * only when it isn't the current one ([site.wingspot.core.FeedDateRule]). The same rule as iOS.
  */
-fun feedDate(iso: String): String = try {
+/** [timeKnown] is false for an entry with only a day: within a week it says "Yesterday" or "3 days ago", never "2 hours ago". */
+fun feedDate(iso: String, timeKnown: Boolean = true): String = try {
     val then = OffsetDateTime.parse(iso).toInstant()
     val now = java.time.Instant.now()
     when (site.wingspot.core.FeedDateRule.style(then, now)) {
-        site.wingspot.core.FeedDateStyle.RELATIVE -> relativeTime(iso)
+        site.wingspot.core.FeedDateStyle.RELATIVE -> if (timeKnown) relativeTime(iso) else
+            DateUtils.getRelativeTimeSpanString(then.toEpochMilli(), now.toEpochMilli(), DateUtils.DAY_IN_MILLIS).toString()
         site.wingspot.core.FeedDateStyle.DATE -> android.icu.text.DateFormat.getInstanceForSkeleton("dMMM").format(java.util.Date.from(then))
         site.wingspot.core.FeedDateStyle.DATE_WITH_YEAR -> android.icu.text.DateFormat.getInstanceForSkeleton("dMMMy").format(java.util.Date.from(then))
     }
@@ -201,7 +203,7 @@ fun FeedCard(
                     Text(item.who, fontWeight = FontWeight.Bold, modifier = Modifier.clickable(onClick = onPerson).padding(vertical = 8.dp))
                 }
                 Box(Modifier.weight(1f))
-                Text(feedDate(item.occurredAt), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(feedDate(item.occurredAt, item.timeKnown), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 FeedCardMenu(
                     own = item.userId == me, id = item.id, onEdit = onEdit,
                     onDelete = { confirmDelete = true }, onReport = { reporting = true },
@@ -487,7 +489,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                         shown.originId?.let { o -> OutlinedButton(onClick = { model.open(Route.AirportPage(o)) }) { Text(stringResource(R.string.from_airport, shown.originCode ?: "?")) } }
                         shown.destinationId?.let { d -> OutlinedButton(onClick = { model.open(Route.AirportPage(d)) }) { Text(stringResource(R.string.to_airport, shown.destinationCode ?: "?")) } }
                     }
-                    Text(fullTime(shown.occurredAt), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(fullTime(shown.occurredAt, shown.timeKnown), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     val unit = app.prefs.unit
                     shown.flightNumber?.let { InfoRow(stringResource(R.string.flight_label), it) }
                     shown.registration?.let { r -> InfoRow(stringResource(R.string.aircraft_label), r, if (shown.kind == "spotted") null else ({ model.open(Route.RegistrationPage(r)) })) }
@@ -811,9 +813,10 @@ private fun InfoRow(label: String, value: String, onClick: (() -> Unit)? = null)
 }
 
 /** The day and time of a check-in, in the phone's language. */
-fun fullTime(iso: String): String = try {
-    java.time.format.DateTimeFormatter.ofLocalizedDateTime(java.time.format.FormatStyle.MEDIUM, java.time.format.FormatStyle.SHORT)
-        .format(OffsetDateTime.parse(iso).atZoneSameInstant(java.time.ZoneId.systemDefault()))
+fun fullTime(iso: String, timeKnown: Boolean = true): String = try {
+    val zoned = OffsetDateTime.parse(iso).atZoneSameInstant(java.time.ZoneId.systemDefault())
+    if (timeKnown) java.time.format.DateTimeFormatter.ofLocalizedDateTime(java.time.format.FormatStyle.MEDIUM, java.time.format.FormatStyle.SHORT).format(zoned)
+    else java.time.format.DateTimeFormatter.ofLocalizedDate(java.time.format.FormatStyle.MEDIUM).format(zoned)
 } catch (e: Exception) {
     ""
 }

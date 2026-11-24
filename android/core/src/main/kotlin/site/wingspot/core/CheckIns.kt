@@ -125,6 +125,8 @@ data class LocalCheckIn(
     val savedAt: Instant? = null,
     /** When it reached the server. */
     val syncedAt: Instant? = null,
+    /** False for an entry that only has a day (a backdated check-in, #312): then no time of day is shown. */
+    val timeKnown: Boolean = true,
 ) {
     /** The check-in date: when it was saved here, else when it reached the server, else the date of the flight or sighting. */
     val enteredAt: Instant
@@ -162,15 +164,18 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
      * Saves a spotted check-in. Throws [IllegalArgumentException] without an aircraft. The registration is already
      * in its canonical form, because [Registration] only exists for valid input.
      */
-    suspend fun saveSpotted(draft: SpottedDraft, now: Instant = Instant.now(), id: UUID = Uuid7.generate(now.toEpochMilli())): SpottedResult {
+    /** [now] is when it happened (a backdated sighting passes its own, #312); [timeKnown] is false for a day without a time. */
+    suspend fun saveSpotted(
+        draft: SpottedDraft, now: Instant = Instant.now(), id: UUID = Uuid7.generate(now.toEpochMilli()), timeKnown: Boolean = true,
+    ): SpottedResult {
         require(draft.hasAircraft) { "A check-in needs a registration or a type." }
         require((draft.latitude == null) == (draft.longitude == null)) { "Latitude and longitude go together." }
         return db {
             val subject = draft.registration?.value ?: draft.typeIcao!!
-            val before = timesSeen(subject)
+            val before = timesSeen(subject, now)
             connection.prepare(
-                """INSERT INTO checkins (id, kind, occurred_at, registration, type_icao, airport_id, latitude, longitude, sync_state, airport_code, visit_id, spot_id, spot_name, saved_at)
-                   VALUES (?, 'spotted', ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?)""",
+                """INSERT INTO checkins (id, kind, occurred_at, registration, type_icao, airport_id, latitude, longitude, sync_state, airport_code, visit_id, spot_id, spot_name, saved_at, time_known)
+                   VALUES (?, 'spotted', ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?)""",
             ).use {
                 it.bindText(1, id.toString())
                 it.bindLong(2, now.toEpochMilli())
@@ -184,6 +189,7 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
                 draft.spotId?.let { v -> it.bindLong(10, v) } ?: it.bindNull(10)
                 draft.spotName?.let { v -> it.bindText(11, v) } ?: it.bindNull(11)
                 it.bindLong(12, System.currentTimeMillis())
+                if (timeKnown) it.bindNull(13) else it.bindLong(13, 0)
                 it.step()
             }
             SpottedResult(id, subject, if (before == null) History.FirstTime else History.SeenBefore(before.first + 1, before.second))
@@ -192,12 +198,14 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
 
 
     /** Saves an airport visit and says how often this airport was visited, counting this one. */
-    suspend fun saveAirport(draft: AirportDraft, now: Instant = Instant.now(), id: UUID = Uuid7.generate(now.toEpochMilli())): AirportResult {
+    suspend fun saveAirport(
+        draft: AirportDraft, now: Instant = Instant.now(), id: UUID = Uuid7.generate(now.toEpochMilli()), timeKnown: Boolean = true,
+    ): AirportResult {
         require((draft.latitude == null) == (draft.longitude == null)) { "Latitude and longitude go together." }
         return db {
             insertAirport(
                 id, draft.place, draft.context, now, draft.latitude, draft.longitude, tagged = draft.tagged, sourceId = draft.sourceId,
-                spotId = draft.spotId, spotName = draft.spotName,
+                spotId = draft.spotId, spotName = draft.spotName, timeKnown = timeKnown,
             )
             AirportResult(id, draft.place.code, count("kind = 'airport' AND airport_id = ?") { it.bindLong(1, draft.place.airportId) })
         }
@@ -205,11 +213,11 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
 
     private fun insertAirport(
         id: UUID, place: Place, context: VisitContext, at: Instant, latitude: Double?, longitude: Double?, flightId: UUID? = null,
-        tagged: List<UUID> = emptyList(), sourceId: UUID? = null, spotId: Long? = null, spotName: String? = null,
+        tagged: List<UUID> = emptyList(), sourceId: UUID? = null, spotId: Long? = null, spotName: String? = null, timeKnown: Boolean = true,
     ) {
         connection.prepare(
-            """INSERT INTO checkins (id, kind, occurred_at, airport_id, airport_code, visit_context, latitude, longitude, sync_state, flight_id, tagged_ids, source_id, spot_id, spot_name, saved_at)
-               VALUES (?, 'airport', ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?)""",
+            """INSERT INTO checkins (id, kind, occurred_at, airport_id, airport_code, visit_context, latitude, longitude, sync_state, flight_id, tagged_ids, source_id, spot_id, spot_name, saved_at, time_known)
+               VALUES (?, 'airport', ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?)""",
         ).use {
             it.bindText(1, id.toString()); it.bindLong(2, at.toEpochMilli())
             it.bindLong(3, place.airportId); it.bindText(4, place.code); it.bindText(5, context.wire)
@@ -221,6 +229,7 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
             spotId?.let { v -> it.bindLong(11, v) } ?: it.bindNull(11)
             spotName?.let { v -> it.bindText(12, v) } ?: it.bindNull(12)
             it.bindLong(13, System.currentTimeMillis())
+            if (timeKnown) it.bindNull(14) else it.bindLong(14, 0)
             it.step()
         }
     }
@@ -308,6 +317,14 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
         true
     }
 
+    /** Marks a check-in as having a time (null: the default) or only a day. */
+    private fun setTimeKnown(id: UUID, known: Boolean) {
+        connection.prepare("UPDATE checkins SET time_known = ? WHERE id = ?").use {
+            if (known) it.bindNull(1) else it.bindLong(1, 0)
+            it.bindText(2, id.toString()); it.step()
+        }
+    }
+
     /** An empty list is stored as empty text, so it clears the tags on the server, unlike null, which leaves them. */
     private fun setTagged(id: UUID, tagged: List<UUID>) {
         connection.prepare("UPDATE checkins SET tagged_ids = ? WHERE id = ?").use {
@@ -319,7 +336,10 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
      * Corrects the aircraft of a saved sighting and sends it again. Needs a registration or a type, like a new sighting.
      * Returns false when this phone has no such sighting.
      */
-    suspend fun updateSpotted(id: UUID, registration: Registration?, typeIcao: String?, spot: SpotChange = SpotChange.Keep): Boolean = db {
+    suspend fun updateSpotted(
+        id: UUID, registration: Registration?, typeIcao: String?, spot: SpotChange = SpotChange.Keep,
+        occurredAt: Instant? = null, timeKnown: Boolean? = null,
+    ): Boolean = db {
         if (registration == null && typeIcao == null) return@db false
         var found = false
         connection.prepare("SELECT 1 FROM checkins WHERE id = ? AND kind = 'spotted'").use { it.bindText(1, id.toString()); found = it.step() }
@@ -339,11 +359,21 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
                 it.bindText(1, id.toString()); it.step()
             }
         }
+        if (occurredAt != null) connection.prepare("UPDATE checkins SET occurred_at = ? WHERE id = ?").use {
+            it.bindLong(1, occurredAt.toEpochMilli()); it.bindText(2, id.toString()); it.step()
+        }
+        if (timeKnown != null) setTimeKnown(id, timeKnown)
         true
     }
 
-    /** Corrects the reason for a saved airport visit and sends it again. Returns false when this phone has no such visit. */
-    suspend fun updateVisit(id: UUID, reason: VisitContext, tagged: List<UUID>? = null): Boolean = db {
+    /**
+     * Corrects the reason for a saved airport visit and sends it again. Returns false when this phone has no such visit.
+     * A new [occurredAt] moves the visit and, by the same step, the sightings made during it (the server does the same). A visit of a
+     * flight follows its flight and is not moved on its own.
+     */
+    suspend fun updateVisit(
+        id: UUID, reason: VisitContext, tagged: List<UUID>? = null, occurredAt: Instant? = null, timeKnown: Boolean? = null,
+    ): Boolean = db {
         var found = false
         connection.prepare("SELECT 1 FROM checkins WHERE id = ? AND kind = 'airport'").use { it.bindText(1, id.toString()); found = it.step() }
         if (!found) return@db false
@@ -351,6 +381,21 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
             it.bindText(1, reason.wire); it.bindText(2, id.toString()); it.step()
         }
         if (tagged != null) setTagged(id, tagged)
+        var own = false
+        var old = 0L
+        connection.prepare("SELECT occurred_at, flight_id IS NULL FROM checkins WHERE id = ?").use {
+            it.bindText(1, id.toString()); if (it.step()) { old = it.getLong(0); own = it.getLong(1) != 0L }
+        }
+        if (own && occurredAt != null && occurredAt.toEpochMilli() != old) {
+            val step = occurredAt.toEpochMilli() - old
+            connection.prepare("UPDATE checkins SET occurred_at = occurred_at + ?, sync_state = 'pending', reject_code = NULL WHERE visit_id = ?").use {
+                it.bindLong(1, step); it.bindText(2, id.toString()); it.step()
+            }
+            connection.prepare("UPDATE checkins SET occurred_at = ? WHERE id = ?").use {
+                it.bindLong(1, occurredAt.toEpochMilli()); it.bindText(2, id.toString()); it.step()
+            }
+        }
+        if (own && timeKnown != null) setTimeKnown(id, timeKnown)
         true
     }
 
@@ -456,12 +501,12 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
     private fun count(where: String, table: String = "checkins", bind: (SQLiteStatement) -> Unit): Int =
         connection.prepare("SELECT COUNT(*) FROM $table WHERE $where").use { bind(it); it.step(); it.getLong(0).toInt() }
 
-    /** (count, last time) of earlier spotted check-ins of this registration or type, or null. */
-    private fun timesSeen(subject: String): Pair<Int, Instant>? =
+    /** (count, last time) of spotted check-ins of this registration or type from before [before], or null. A backdated first sighting is a first time. */
+    private fun timesSeen(subject: String, before: Instant): Pair<Int, Instant>? =
         connection.prepare(
-            "SELECT COUNT(*), MAX(occurred_at) FROM checkins WHERE kind = 'spotted' AND (registration = ? OR (registration IS NULL AND type_icao = ?))",
+            "SELECT COUNT(*), MAX(occurred_at) FROM checkins WHERE kind = 'spotted' AND occurred_at < ? AND (registration = ? OR (registration IS NULL AND type_icao = ?))",
         ).use {
-            it.bindText(1, subject); it.bindText(2, subject)
+            it.bindLong(1, before.toEpochMilli()); it.bindText(2, subject); it.bindText(3, subject)
             it.step()
             val count = it.getLong(0).toInt()
             if (count == 0) null else count to Instant.ofEpochMilli(it.getLong(1))
@@ -477,8 +522,8 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
             connection.prepare(
                 """INSERT OR IGNORE INTO checkins (id, kind, occurred_at, registration, type_icao, airport_id, latitude, longitude,
                        sync_state, airport_code, origin_id, destination_id, origin_code, destination_code, flight_number, cabin, seat,
-                       visit_context, synced_at)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                       visit_context, synced_at, time_known)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             ).use {
                 it.bindText(1, c.id.toString()); it.bindText(2, c.kind); it.bindLong(3, c.occurredAt.toEpochMilli())
                 fun text(i: Int, v: String?) = if (v == null) it.bindNull(i) else it.bindText(i, v)
@@ -488,6 +533,7 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
                 text(9, c.airportCode); long(10, c.originId); long(11, c.destinationId); text(12, c.originCode); text(13, c.destinationCode)
                 text(14, c.flightNumber); text(15, c.cabin); text(16, c.seat); text(17, c.visitContext)
                 it.bindLong(18, System.currentTimeMillis())
+                if (c.timeKnown) it.bindNull(19) else it.bindLong(19, 0)
                 it.step()
             }
             connection.prepare("SELECT changes()").use { it.step(); added += it.getLong(0).toInt() }
@@ -557,7 +603,7 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
     private suspend fun select(tail: String): List<LocalCheckIn> = db {
         connection.prepare(
             """SELECT id, kind, occurred_at, registration, type_icao, airport_id, latitude, longitude, sync_state, reject_code,
-                      airport_code, origin_id, destination_id, origin_code, destination_code, flight_number, cabin, seat, visit_context, flight_id, tagged_ids, source_id, spot_id, spot_name, visit_id, saved_at, synced_at
+                      airport_code, origin_id, destination_id, origin_code, destination_code, flight_number, cabin, seat, visit_context, flight_id, tagged_ids, source_id, spot_id, spot_name, visit_id, saved_at, synced_at, time_known
                FROM checkins $tail""",
         ).use { s ->
             buildList {
@@ -572,7 +618,7 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
                             s.text(20)?.let { list -> list.split(",").filter { it.isNotBlank() }.map(UUID::fromString) },
                             s.text(21)?.let(UUID::fromString),
                             s.long(22), s.text(23), s.text(24)?.let(UUID::fromString),
-                            s.long(25)?.let(Instant::ofEpochMilli), s.long(26)?.let(Instant::ofEpochMilli),
+                            s.long(25)?.let(Instant::ofEpochMilli), s.long(26)?.let(Instant::ofEpochMilli), s.long(27) != 0L,
                         ),
                     )
                 }
@@ -618,7 +664,7 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
                 "airport_code" to "TEXT", "origin_id" to "INTEGER", "destination_id" to "INTEGER", "origin_code" to "TEXT",
                 "destination_code" to "TEXT", "flight_number" to "TEXT", "cabin" to "TEXT", "seat" to "TEXT",
                 "visit_context" to "TEXT", "synced_at" to "INTEGER", "flight_id" to "TEXT", "tagged_ids" to "TEXT", "source_id" to "TEXT",
-                "spot_id" to "INTEGER", "spot_name" to "TEXT", "visit_id" to "TEXT", "saved_at" to "INTEGER",
+                "spot_id" to "INTEGER", "spot_name" to "TEXT", "visit_id" to "TEXT", "saved_at" to "INTEGER", "time_known" to "INTEGER",
             )) if (name !in have) connection.execSQL("ALTER TABLE checkins ADD COLUMN $name $type")
             connection.execSQL("CREATE INDEX IF NOT EXISTS checkins_pending ON checkins (sync_state, occurred_at)")
             connection.execSQL(

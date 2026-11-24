@@ -16,12 +16,15 @@ import kotlinx.serialization.json.put
  */
 data class SpotSession(
     val visitId: UUID, val spotId: Long, val spotName: String, val airportId: Long, val code: String, val startedAt: Instant,
+    /** For a backdated visit: its day (and time), which the sightings of the session start with. Null: they happen now. */
+    val visitMoment: Instant? = null, val visitTimeKnown: Boolean = true,
 ) {
     fun isActive(now: Instant): Boolean = Duration.between(startedAt, now) < LIFETIME
 
     fun encode(): String = buildJsonObject {
         put("visit", visitId.toString()); put("spot", spotId); put("name", spotName)
         put("airport", airportId); put("code", code); put("started", startedAt.toEpochMilli())
+        visitMoment?.let { put("moment", it.toEpochMilli()); put("moment_known", visitTimeKnown) }
     }.toString()
 
     companion object {
@@ -36,6 +39,8 @@ data class SpotSession(
                     UUID.fromString(o.getValue("visit").jsonPrimitive.content), o.getValue("spot").jsonPrimitive.content.toLong(),
                     o.getValue("name").jsonPrimitive.content, o.getValue("airport").jsonPrimitive.content.toLong(),
                     o.getValue("code").jsonPrimitive.content, Instant.ofEpochMilli(o.getValue("started").jsonPrimitive.content.toLong()),
+                    o["moment"]?.jsonPrimitive?.content?.toLongOrNull()?.let(Instant::ofEpochMilli),
+                    o["moment_known"]?.jsonPrimitive?.content != "false",
                 )
             }.getOrNull()
         }
