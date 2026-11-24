@@ -27,7 +27,7 @@ struct PhotoViewer: View {
         ZStack(alignment: .topTrailing) {
             TabView(selection: $selection) {
                 ForEach(photos) { photo in
-                    ZoomablePhoto(url: photo.url, isZoomed: $isZoomed)
+                    ZoomablePhoto(photo: photo, isZoomed: $isZoomed)
                         .tag(photo.id)
                 }
             }
@@ -69,7 +69,7 @@ struct PhotoViewer: View {
 }
 
 private struct ZoomablePhoto: View {
-    let url: URL
+    let photo: FeedPhoto
     @Binding var isZoomed: Bool
 
     @State private var scale: CGFloat = 1
@@ -78,7 +78,7 @@ private struct ZoomablePhoto: View {
     @State private var baseOffset: CGSize = .zero
 
     var body: some View {
-        AsyncImage(url: url) { phase in
+        CachedImage(photo: photo) { phase in
             switch phase {
             case .success(let image):
                 image

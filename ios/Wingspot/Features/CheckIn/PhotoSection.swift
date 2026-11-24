@@ -71,7 +71,7 @@ struct PhotoSection: View {
     /// A photo the check-in already has: with a cross to delete it, when this screen can.
     private func existingThumbnail(_ photo: FeedPhoto) -> some View {
         ZStack(alignment: .topTrailing) {
-            AsyncImage(url: photo.url) { phase in
+            CachedImage(photo: photo) { phase in
                 if let image = phase.image {
                     image.resizable().scaledToFill()
                 } else {
