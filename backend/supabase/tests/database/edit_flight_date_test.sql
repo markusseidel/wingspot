@@ -1,4 +1,4 @@
--- Correcting the day of a flight moves the flight and its two airport visits, and nothing else.
+-- Correcting the day of a flight moves the flight and its two airport visits. A standalone visit has its own date (#312).
 -- Run with: supabase test db --workdir backend
 begin;
 create extension if not exists pgtap with schema extensions;
@@ -27,7 +27,7 @@ select set_config('role', 'postgres', true), set_config('request.jwt.claims', ''
 select is((select occurred_at from public.checkins where id = 'b0000000-0000-7000-8000-000000000001'), '2026-02-20T12:00:00Z'::timestamptz, 'the flight has the new day');
 select is((select occurred_at from public.checkins where id = 'b0000000-0000-7000-8000-000000000002'), '2026-02-20T12:00:00Z'::timestamptz, 'so has its departure visit');
 select is((select occurred_at from public.checkins where id = 'b0000000-0000-7000-8000-000000000003'), '2026-02-20T12:00:00Z'::timestamptz, 'and its arrival visit');
-select is((select occurred_at from public.checkins where id = 'b0000000-0000-7000-8000-000000000004'), '2026-03-01T10:00:00Z'::timestamptz, 'a spotting visit keeps its time, whatever is sent');
+select is((select occurred_at from public.checkins where id = 'b0000000-0000-7000-8000-000000000004'), '2026-02-21T12:00:00Z'::timestamptz, 'a standalone spotting visit takes the time that is sent (backdated check-ins, #312)');
 
 select * from finish();
 rollback;

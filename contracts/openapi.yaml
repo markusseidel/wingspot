@@ -462,6 +462,10 @@ components:
         occurred_at:
           type: string
           format: date-time
+          description: When it happened. A `spotted` or `airport` check-in may be backdated (not before 1990-01-01, not more than a day ahead); sending the same `id` again with another time moves it, and the sightings of a moved visit follow it by the same step. An airport visit of a flight follows the flight and ignores a new time.
+        time_known:
+          type: boolean
+          description: "`false` when only the day is known (a date-only entry), so the apps show no time. Left out it means `true`, and a repeated upload without it keeps the stored value. Ignored for `flown` check-ins. The check-in readers return it as `time_known`."
         registration:
           type: string
           description: Canonical form, such as `D-AIMA`.
