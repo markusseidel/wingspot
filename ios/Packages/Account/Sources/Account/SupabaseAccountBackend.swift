@@ -674,6 +674,33 @@ extension SupabaseAccountBackend {
         return rows.map { PersonTag(id: $0.userID, username: $0.username, displayName: $0.displayName) }
     }
 
+    public func companionRequests() async throws -> [CompanionRequest] {
+        try await socialErrors { try await client.rpc("get_companion_requests").execute().value }
+    }
+
+    public func matchingFlights(for source: UUID) async throws -> [MatchingFlight] {
+        try await socialErrors { try await client.rpc("find_matching_flight", params: ["p_source": source]).execute().value }
+    }
+
+    public func linkCompanion(mine: UUID, source: UUID) async throws -> Bool {
+        try await socialErrors {
+            try await client.rpc("link_companion", params: ["p_mine": mine, "p_source": source]).execute().value
+        }
+    }
+
+    public func replaceFlightData(mine: UUID, source: UUID) async throws -> ReplacedFlight? {
+        try await socialErrors {
+            try await client.rpc("replace_flight_data", params: ["p_mine": mine, "p_source": source]).execute().value
+        }
+    }
+
+    public func checkInSource(_ copy: UUID) async throws -> PersonTag? {
+        let rows: [CopyRow] = try await socialErrors {
+            try await client.rpc("get_checkin_source", params: ["p_checkin": copy]).execute().value
+        }
+        return rows.first.map { PersonTag(id: $0.userID, username: $0.username, displayName: $0.displayName) }
+    }
+
     public func taggableFriends() async throws -> [PersonTag] {
         let rows: [FriendRow] = try await socialErrors {
             try await client.rpc("get_taggable_friends").execute().value

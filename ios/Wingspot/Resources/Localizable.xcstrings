@@ -1567,6 +1567,16 @@
         }
       }
     },
+    "Couldn't add the flight" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Flug konnte nicht hinzugefügt werden"
+          }
+        }
+      }
+    },
     "Couldn't change this setting" : {
       "localizations" : {
         "de" : {
@@ -2495,6 +2505,16 @@
         }
       }
     },
+    "Flights to take over" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flüge zum Übernehmen"
+          }
+        }
+      }
+    },
     "Flights with a route" : {
       "localizations" : {
         "de" : {
@@ -3024,6 +3044,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "KML-Dateien"
+          }
+        }
+      }
+    },
+    "Keep mine" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meinen behalten"
+          }
+        }
+      }
+    },
+    "Keeping yours links the two flights. Replacing changes only the flight data: your photos, notes and comments stay." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn du deinen behältst, werden die beiden Flüge verknüpft. Beim Ersetzen ändern sich nur die Flugdaten: Deine Fotos, Notizen und Kommentare bleiben."
           }
         }
       }
@@ -3757,6 +3797,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "In der Datei nicht gefunden: %@. Bitte trag sie von Hand ein."
+          }
+        }
+      }
+    },
+    "Not me" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht ich"
           }
         }
       }
@@ -4607,6 +4657,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Strecke ersetzen"
+          }
+        }
+      }
+    },
+    "Replace the flight data" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flugdaten ersetzen"
           }
         }
       }
@@ -6253,6 +6313,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Du hast schon zehn Orte, die auf Freigabe warten. Bitte warte, bis einige freigegeben sind."
+          }
+        }
+      }
+    },
+    "You already logged %@ on %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast %1$@ am %2$@ schon eingetragen."
           }
         }
       }

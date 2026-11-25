@@ -1,4 +1,6 @@
 import Account
+import Persistence
+import SwiftData
 import SwiftUI
 
 /// The activity inbox: followers, salutes, comments, tags and alerts, newest first, and how many are unread.
@@ -89,6 +91,11 @@ struct InboxView: View {
     @State private var openedCheckIn: FeedItem?
     @State private var openedPerson: OpenedPerson?
     @State private var showPlaceReview = false
+    /// Taking over a friend's flight (#273).
+    @State private var companion = CompanionFlow()
+    @Environment(\.modelContext) private var modelContext
+    @Environment(AccountStore.self) private var account
+    @Environment(CheckInSyncCoordinator.self) private var sync: CheckInSyncCoordinator?
 
     private struct OpenedPerson: Identifiable, Hashable { let id: UUID }
 
@@ -104,7 +111,7 @@ struct InboxView: View {
                 } actions: {
                     Button("Try again") { Task { await inbox.load() } }
                 }
-            } else if inbox.items.isEmpty {
+            } else if inbox.items.isEmpty && feed.companionRequests.isEmpty {
                 ContentUnavailableView {
                     Label("Nothing yet", systemImage: "bell")
                 } description: {
@@ -112,6 +119,15 @@ struct InboxView: View {
                 }
             } else {
                 List {
+                    if !feed.companionRequests.isEmpty {
+                        Section {
+                            ForEach(feed.companionRequests) { request in
+                                CompanionRequestRow(request: request, onAccept: { accept(request) }, onDecline: { decline(request) })
+                            }
+                        } header: {
+                            Text("Flights to take over")
+                        }
+                    }
                     ForEach(inbox.items) { item in
                         Button { open(item) } label: { InboxRow(item: item) }
                             .buttonStyle(.plain)
@@ -135,8 +151,37 @@ struct InboxView: View {
         .navigationDestination(item: $openedCheckIn) { CheckInDetailView(item: $0) }
         .navigationDestination(item: $openedPerson) { PersonLoaderView(id: $0.id) }
         .navigationDestination(isPresented: $showPlaceReview) { SpotReviewView() }
-        .task { await inbox.load() }
-        .refreshable { await inbox.load() }
+        .task {
+            await inbox.load()
+            await feed.loadCompanionRequests()
+        }
+        .refreshable {
+            await inbox.load()
+            await feed.loadCompanionRequests()
+        }
+        .companionAsk(companion) { choice, ask in
+            Task { await companion.choose(choice, for: ask, feed: feed, context: modelContext, userID: account.userID, sync: sync) }
+        }
+    }
+
+    /// "Add to my logbook" on a request: the friend's check-in is asked for by id, because it may be someone else's and not in the feed.
+    private func accept(_ request: CompanionRequest) {
+        Task {
+            var found = feed.items.first(where: { $0.id == request.checkInID })
+            if found == nil { found = await feed.checkIn(request.checkInID) }
+            guard let item = found else {
+                companion.problem = .unknown
+                return
+            }
+            await companion.accept(item, feed: feed, context: modelContext, userID: account.userID, sync: sync)
+        }
+    }
+
+    /// "Not me": leaves the check-in for good, like "Remove me from this check-in".
+    private func decline(_ request: CompanionRequest) {
+        Task {
+            if await feed.removeMyTag(request.checkInID) { feed.requestAnswered(request.checkInID) } else { companion.problem = feed.failure ?? .unknown }
+        }
     }
 
     private func destination(of item: ActivityItem) -> PushDestination? {
@@ -254,5 +299,32 @@ private struct InboxRow: View {
         var text = AttributedString(sentence)
         if let range = text.range(of: name) { text[range].font = .subheadline.bold() }
         return text
+    }
+}
+
+/// One open request in the inbox: a friend's flight or visit you are tagged on, with the two answers.
+private struct CompanionRequestRow: View {
+    let request: CompanionRequest
+    let onAccept: () -> Void
+    let onDecline: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(verbatim: request.who).font(.subheadline.weight(.semibold))
+            Text(verbatim: details).font(.headline)
+            HStack {
+                Button("Add to my logbook", action: onAccept).buttonStyle(.borderedProminent)
+                Button("Not me", role: .destructive, action: onDecline).buttonStyle(.bordered)
+            }
+            .padding(.top, 2)
+        }
+        .padding(.vertical, 4)
+    }
+
+    private var details: String {
+        var parts = [request.title]
+        if let number = request.flightNumber { parts.append(number) }
+        parts.append(request.occurredAt.formatted(date: .abbreviated, time: .omitted))
+        return parts.joined(separator: " · ")
     }
 }

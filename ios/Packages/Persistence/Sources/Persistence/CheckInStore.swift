@@ -380,6 +380,46 @@ public struct CheckInStore {
         return true
     }
 
+    /// Remembers that one of your check-ins was linked to a friend's (the server did it: "Keep mine"), so the page says it is in your logbook (#273).
+    /// Nothing is sent: the server already has the link. Returns `false` when this phone has no such check-in.
+    @discardableResult
+    public func setSource(id: UUID, source: UUID) throws -> Bool {
+        guard let checkIn = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id })).first else { return false }
+        checkIn.sourceID = source
+        try context.save()
+        return true
+    }
+
+    /// Takes the facts of a friend's flight over into one of your own flights ("Replace the flight data", #273): number, route, day, aircraft,
+    /// and the airports and day of the flight's two visits. The server already did the same, so nothing is sent again. Seat, cabin, photos
+    /// and the saved route of the flight stay. Returns `false` when this phone has no such flight.
+    @discardableResult
+    public func replaceFlightData(
+        id: UUID, flightNumber: String?, origin: SpottedDraft.Place, destination: SpottedDraft.Place, occurredAt: Date,
+        registration: String?, type: SpottedDraft.AircraftTypeChoice?, source: UUID
+    ) throws -> Bool {
+        guard let flight = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.id == id && $0.kind == "flown" })).first else { return false }
+        flight.flightNumber = flightNumber
+        flight.originID = origin.airportID
+        flight.originCode = origin.code
+        flight.destinationID = destination.airportID
+        flight.destinationCode = destination.code
+        flight.occurredAt = occurredAt
+        flight.registration = registration
+        flight.typeICAO = type?.icaoCode
+        flight.typeName = type?.name
+        flight.sourceID = source
+        let visits = try context.fetch(FetchDescriptor<LocalCheckIn>(predicate: #Predicate { $0.flightID == id && $0.kind == "airport" }))
+        for visit in visits {
+            let place = visit.visitContext == VisitContext.arriving.rawValue ? destination : origin
+            visit.airportID = place.airportID
+            visit.airportCode = place.code
+            visit.occurredAt = occurredAt
+        }
+        try context.save()
+        return true
+    }
+
     /// Corrects the reason for a saved airport visit and sends it again.
     /// Returns `false` when this device has no such visit.
     @discardableResult
