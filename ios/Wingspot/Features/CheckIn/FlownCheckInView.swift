@@ -80,6 +80,8 @@ struct FlownCheckInView: View {
     @AppStorage(KmlSwitches.importKey) private var kmlImportOn = true
     /// A KML file shared into the app, read as soon as the form is there.
     @State private var kmlInbox = KmlInbox.shared
+    /// Several KML files picked or shared at once: read in one list (#236).
+    @State private var batchURLs: [URL] = []
     @State private var importNotice: ImportNotice?
     /// The positions of an imported flight. They are kept on this iPhone only and never uploaded.
     @State private var importedTrack: [GeoCoordinate] = []
@@ -129,13 +131,17 @@ struct FlownCheckInView: View {
             }
         }
         .task(id: kmlInbox.pending) {
-            guard let url = kmlInbox.pending else { return }
-            kmlInbox.pending = nil
-            await importFile(url)
+            guard !kmlInbox.pending.isEmpty else { return }
+            // Several files shared at once arrive one after the other: wait a moment, then take them all.
+            try? await Task.sleep(for: .milliseconds(800))
+            openFiles(kmlInbox.takeAll())
         }
-        .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.data]) { picked in
-            guard case .success(let url) = picked else { return }
-            Task { await importFile(url) }
+        .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.data], allowsMultipleSelection: true) { picked in
+            guard case .success(let urls) = picked else { return }
+            openFiles(urls)
+        }
+        .sheet(isPresented: Binding(get: { !batchURLs.isEmpty }, set: { if !$0 { batchURLs = [] } })) {
+            NavigationStack { KmlBatchView(urls: batchURLs, onDone: { batchURLs = []; onDone() }) }
         }
         .alert(importProblem.map { String(localized: $0.title) } ?? "", isPresented: Binding(
             get: { importProblem != nil }, set: { if !$0 { importProblem = nil } }
@@ -312,6 +318,15 @@ struct FlownCheckInView: View {
     /// What the result page says about the route that was saved with the flight.
     private var savedTrackNote: LocalizedStringResource? {
         importedTrack.count >= 2 ? "The flown route (\(importedTrack.count) positions) is saved on this iPhone." : nil
+    }
+
+    /// One file fills this form; several open the list that adds them all (#236).
+    private func openFiles(_ urls: [URL]) {
+        if urls.count == 1, let url = urls.first {
+            Task { await importFile(url) }
+        } else if urls.count > 1 {
+            batchURLs = urls
+        }
     }
 
     /// Fills the form from a KML file. A field the file doesn't have stays as it is, and the notice says which.
