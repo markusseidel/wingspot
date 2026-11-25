@@ -26,3 +26,7 @@ B789,Boeing,787-9,787,jet,2,H
 CRJ9,Bombardier,CRJ-900,CRJ,jet,2,M
 DH8D,De Havilland Canada,Dash 8-400,Dash 8,turboprop,2,M
 E190,Embraer,E190,E-Jet,jet,2,M
+A342,Airbus,A340-200,A340,jet,4,H
+A343,Airbus,A340-300,A340,jet,4,H
+A345,Airbus,A340-500,A340,jet,4,H
+A346,Airbus,A340-600,A340,jet,4,H
