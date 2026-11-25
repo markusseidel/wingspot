@@ -366,6 +366,48 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
         true
     }
 
+    /** Remembers that a check-in of yours was linked to a friend's (the server did it: "Keep mine", #273). Nothing is sent. False when there is none. */
+    suspend fun setSource(id: UUID, source: UUID): Boolean = db {
+        var found = false
+        connection.prepare("SELECT 1 FROM checkins WHERE id = ?").use { it.bindText(1, id.toString()); found = it.step() }
+        if (!found) return@db false
+        connection.prepare("UPDATE checkins SET source_id = ? WHERE id = ?").use { it.bindText(1, source.toString()); it.bindText(2, id.toString()); it.step() }
+        true
+    }
+
+    /**
+     * Takes the facts of a friend's flight over into one of your own flights ("Replace the flight data", #273): number, route, day, aircraft,
+     * and the airports and day of the flight's two visits. The server did the same, so nothing is sent again. Seat, cabin, photos and the
+     * saved route stay. False when there is no such flight.
+     */
+    suspend fun replaceFlightData(
+        id: UUID, flightNumber: String?, origin: Place, destination: Place, occurredAt: Instant, registration: String?, typeIcao: String?, source: UUID,
+    ): Boolean = db {
+        var found = false
+        connection.prepare("SELECT 1 FROM checkins WHERE id = ? AND kind = 'flown'").use { it.bindText(1, id.toString()); found = it.step() }
+        if (!found) return@db false
+        connection.prepare(
+            "UPDATE checkins SET flight_number = ?, origin_id = ?, origin_code = ?, destination_id = ?, destination_code = ?, occurred_at = ?, " +
+                "registration = ?, type_icao = ?, source_id = ? WHERE id = ?",
+        ).use {
+            flightNumber?.let { v -> it.bindText(1, v) } ?: it.bindNull(1)
+            it.bindLong(2, origin.airportId); it.bindText(3, origin.code); it.bindLong(4, destination.airportId); it.bindText(5, destination.code)
+            it.bindLong(6, occurredAt.toEpochMilli())
+            registration?.let { v -> it.bindText(7, v) } ?: it.bindNull(7)
+            typeIcao?.let { v -> it.bindText(8, v.uppercase()) } ?: it.bindNull(8)
+            it.bindText(9, source.toString()); it.bindText(10, id.toString())
+            it.step()
+        }
+        for ((visit, place) in listOf("departing" to origin, "arriving" to destination)) {
+            connection.prepare("UPDATE checkins SET airport_id = ?, airport_code = ?, occurred_at = ? WHERE kind = 'airport' AND flight_id = ? AND visit_context = ?").use {
+                it.bindLong(1, place.airportId); it.bindText(2, place.code); it.bindLong(3, occurredAt.toEpochMilli())
+                it.bindText(4, id.toString()); it.bindText(5, visit)
+                it.step()
+            }
+        }
+        true
+    }
+
     /**
      * Corrects the reason for a saved airport visit and sends it again. Returns false when this phone has no such visit.
      * A new [occurredAt] moves the visit and, by the same step, the sightings made during it (the server does the same). A visit of a

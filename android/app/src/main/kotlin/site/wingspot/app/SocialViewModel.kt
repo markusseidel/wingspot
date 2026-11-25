@@ -168,6 +168,25 @@ class SocialViewModel(
         }
     }
 
+    /** Friends' flights and visits you are tagged on and have not taken over yet (#273). */
+    var companionRequests by mutableStateOf(emptyList<SocialApi.CompanionRequest>())
+        private set
+
+    fun loadCompanionRequests() {
+        if (me() == null) return
+        viewModelScope.launch { try { companionRequests = api.companionRequests() } catch (e: ApiException) { } }
+    }
+
+    /** The request was answered: it is not open any more. */
+    fun requestAnswered(id: String) {
+        companionRequests = companionRequests.filterNot { it.checkInId == id }
+    }
+
+    /** "Not me": leaves the check-in for good, like "Remove me from this check-in". */
+    fun declineRequest(id: String) {
+        viewModelScope.launch { try { api.removeMyTag(id); requestAnswered(id) } catch (e: ApiException) { } }
+    }
+
     /** Goes up when a place was suggested, so lists of places load again. */
     var spotsVersion by mutableStateOf(0)
         private set
