@@ -25,6 +25,7 @@
 		2009AC27E2FC13DC4C52C220 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17369D1192D4BAF9721962FE /* RootView.swift */; };
 		2419BA1DA1B17C761D9D0036 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62A4921DD7585EFD9F3F97A /* SettingsView.swift */; };
 		27F83E299CBA8188CF0AA61F /* SharingSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995610FFAC434B480B981139 /* SharingSection.swift */; };
+		2AC3B95A35F00ACBC9665075 /* KmlInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77D82FE8A46987E818D87346 /* KmlInbox.swift */; };
 		2E4689A87246BCE2846B568F /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82163058748258D0AE08F801 /* NetworkMonitor.swift */; };
 		2FF0C87FC72E3499ADF81C3A /* Invite.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5F9A03781612B9B04E6C31 /* Invite.swift */; };
 		3450A879ADAE02CB4E496D96 /* AlertRulesViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29AD035B27FB3BE30BCB737 /* AlertRulesViews.swift */; };
@@ -132,6 +133,7 @@
 		6FD2433D565B1E9974F334CA /* ProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileScreen.swift; sourceTree = "<group>"; };
 		769842784C2049C177DB02CD /* PersonCheckInsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonCheckInsSection.swift; sourceTree = "<group>"; };
 		76B04C14C68A65FD24C0D6DD /* WingspotCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = WingspotCore; path = Packages/WingspotCore; sourceTree = SOURCE_ROOT; };
+		77D82FE8A46987E818D87346 /* KmlInbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KmlInbox.swift; sourceTree = "<group>"; };
 		79CF16D48D79F1F5F3E7EBA1 /* PhotoViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewer.swift; sourceTree = "<group>"; };
 		7A9D215092A1385FA8E52D3A /* CelebrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrationView.swift; sourceTree = "<group>"; };
 		818E551A57D62222FBB1E0EA /* TaggingSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaggingSection.swift; sourceTree = "<group>"; };
@@ -217,6 +219,7 @@
 				DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */,
 				ED53FE5B4A009D5575119BB4 /* FlownCheckInView.swift */,
 				66F9F62ED0AF64E8383EC86D /* KmlImport.swift */,
+				77D82FE8A46987E818D87346 /* KmlInbox.swift */,
 				9A035100ED13735493AF7BF1 /* LocationProvider.swift */,
 				3A82AC64122C34A3DE053C4F /* PhotoSection.swift */,
 				BDF9CEA14C5F3AFDCAEB77AF /* ReferenceSearchViews.swift */,
@@ -531,6 +534,7 @@
 				D083C97B175DAAD5DC7A05EA /* Inbox.swift in Sources */,
 				2FF0C87FC72E3499ADF81C3A /* Invite.swift in Sources */,
 				1B6632058A9CF27AB78931FF /* KmlImport.swift in Sources */,
+				2AC3B95A35F00ACBC9665075 /* KmlInbox.swift in Sources */,
 				6B48DE11557CC1E967961233 /* Leaderboard.swift in Sources */,
 				FCE2BFC52E897A29214244A2 /* LegalLinks.swift in Sources */,
 				C61866CAD8B2903B8C297F11 /* LocationProvider.swift in Sources */,
