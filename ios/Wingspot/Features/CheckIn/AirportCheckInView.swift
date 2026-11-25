@@ -52,6 +52,7 @@ struct AirportCheckInView: View {
             }
         }
         .navigationTitle("Airport")
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(result != nil)
         .task { position = await LocationProvider.currentPosition() }
         .task(id: airport?.id) {

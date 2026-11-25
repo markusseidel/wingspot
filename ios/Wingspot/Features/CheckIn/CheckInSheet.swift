@@ -36,7 +36,12 @@ struct CheckInSheet: View {
     @Binding var requested: CheckInKind?
     @State private var path: [CheckInKind] = []
 
-    init(requested: Binding<CheckInKind?> = .constant(nil)) { _requested = requested }
+    /// A sheet that opens for a shortcut starts with the form already pushed. Pushing it a moment after the sheet appeared left a
+    /// second, large title drawn over the form.
+    init(requested: Binding<CheckInKind?> = .constant(nil)) {
+        _requested = requested
+        _path = State(initialValue: requested.wrappedValue.map { [$0] } ?? [])
+    }
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -59,7 +64,10 @@ struct CheckInSheet: View {
             .navigationTitle("Check in")
             .navigationBarTitleDisplayMode(.inline)
             .task(id: requested) {
-                if let kind = requested { path = [kind]; requested = nil }
+                if let kind = requested {
+                    if path != [kind] { path = [kind] }
+                    requested = nil
+                }
             }
             .navigationDestination(for: CheckInKind.self) { kind in
                 switch kind {
