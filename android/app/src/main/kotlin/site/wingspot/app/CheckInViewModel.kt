@@ -61,6 +61,8 @@ data class CheckInState(
     val afterFlight: ReturnStart? = null,
     /** The running spotting session: aircraft spotted now are linked to its visit. */
     val session: SpotSession? = null,
+    /** A KML file shared or opened into the app, for the flight form to read (#236). It is cleared once taken. */
+    val incomingKml: android.net.Uri? = null,
 )
 
 /** Saves check-ins on the phone first, then asks for an upload. Works fully offline. */
@@ -82,6 +84,16 @@ class CheckInViewModel(
 
     fun open() {
         mutable.value = mutable.value.copy(isOpen = true, result = null, saveFailed = false, returnStart = null)
+    }
+
+    /** A KML file came in from another app: opens the flight form, which reads it. */
+    fun openKmlFile(uri: android.net.Uri) {
+        mutable.value = mutable.value.copy(isOpen = true, kind = Kind.FLOWN, result = null, editing = null, saveFailed = false, returnStart = null, afterFlight = null, incomingKml = uri)
+    }
+
+    /** The flight form took the file. */
+    fun kmlTaken() {
+        mutable.value = mutable.value.copy(incomingKml = null)
     }
 
     /** Opens the form of one kind straight away, for a shortcut of the app icon (#349). The running session is joined by the form itself. */

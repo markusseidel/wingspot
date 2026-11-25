@@ -38,6 +38,19 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /** The KML file an intent hands over (a view or a share), or null for anything else. */
+    private fun incomingKml(intent: Intent?): android.net.Uri? {
+        if (intent == null || !(application as WingspotApp).prefs.kmlImportOn) return null
+        val uri = when (intent.action) {
+            Intent.ACTION_VIEW -> intent.data
+            Intent.ACTION_SEND -> if (android.os.Build.VERSION.SDK_INT >= 33) intent.getParcelableExtra(Intent.EXTRA_STREAM, android.net.Uri::class.java) else @Suppress("DEPRECATION") intent.getParcelableExtra(Intent.EXTRA_STREAM)
+            else -> null
+        } ?: return null
+        if (uri.scheme != "content" && uri.scheme != "file") return null
+        val name = if (uri.scheme == "file") uri.lastPathSegment else contentResolver.query(uri, arrayOf(android.provider.OpenableColumns.DISPLAY_NAME), null, null, null)?.use { if (it.moveToFirst()) it.getString(0) else null }
+        return uri.takeIf { site.wingspot.core.KmlFile.looksLikeKml(intent.type ?: contentResolver.getType(uri), name ?: uri.lastPathSegment) }
+    }
+
     // The sign-in link opens this activity again (singleTask) instead of starting a second one.
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -45,6 +58,12 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handle(intent: Intent?) {
+        // A KML file shared or opened from another app opens the flight form, which reads it (#236). Only when the import is switched on.
+        incomingKml(intent)?.let { uri ->
+            social.stack.clear()
+            checkIn.openKmlFile(uri)
+            return
+        }
         // A shortcut of a long press on the app icon opens its form straight away (#349).
         site.wingspot.core.QuickAction.parse(intent?.getStringExtra("quick_action"))?.let {
             social.stack.clear()

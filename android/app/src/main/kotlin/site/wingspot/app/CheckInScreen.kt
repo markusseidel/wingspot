@@ -297,15 +297,21 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
         }
     }
 
-    val importPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-        if (uri != null) scope.launch {
-            importing = true
-            when (val read = KmlImport.read(context, uri)) {
-                is KmlRead.Problem -> kmlProblem = read
-                is KmlRead.Done -> applyImport(read.flight)
-            }
-            importing = false
+    suspend fun readKml(uri: android.net.Uri) {
+        importing = true
+        when (val read = KmlImport.read(context, uri)) {
+            is KmlRead.Problem -> kmlProblem = read
+            is KmlRead.Done -> applyImport(read.flight)
         }
+        importing = false
+    }
+    val importPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) scope.launch { readKml(uri) }
+    }
+    // A KML file shared or opened from another app is read as soon as the form is there (#236).
+    // Clearing it changes this effect's key, which would cancel a read running inside it, so the read runs in the form's own scope.
+    LaunchedEffect(state.incomingKml) {
+        state.incomingKml?.let { uri -> model.kmlTaken(); scope.launch { readKml(uri) } }
     }
 
     Text(stringResource(R.string.flown_title), style = MaterialTheme.typography.titleLarge)
