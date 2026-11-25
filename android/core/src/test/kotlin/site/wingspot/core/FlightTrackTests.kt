@@ -4,6 +4,7 @@ import java.io.File
 import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -145,5 +146,17 @@ class FlownRouteStatsTests {
         val years = FlownRouteStats.byYear(listOf(1000.4 to 2025, 2000.4 to 2026, 500.4 to 2025, 100.0 to 2024))
         assertEquals(listOf(YearDistance(2026, 1, 2000), YearDistance(2025, 2, 1501), YearDistance(2024, 1, 100)), years)
         assertEquals(emptyList(), FlownRouteStats.byYear(emptyList()))
+    }
+
+    @Test
+    fun aRouteWithABigGapIsAnEstimate() {
+        val steady = (0..10).map { GeoCoordinate(50.0, it * 0.5) }
+        assertTrue(FlightTrack.largestGapKm(steady) < 50)
+        assertFalse(FlightTrack.isEstimated(steady))
+        val gap = listOf(GeoCoordinate(50.0, 0.0), GeoCoordinate(50.0, 1.0), GeoCoordinate(50.0, 30.0), GeoCoordinate(50.0, 31.0))
+        assertTrue(FlightTrack.largestGapKm(gap) > 1_800)
+        assertTrue(FlightTrack.isEstimated(gap))
+        assertEquals(0.0, FlightTrack.largestGapKm(emptyList()))
+        assertFalse(FlightTrack.isEstimated(listOf(GeoCoordinate(1.0, 1.0))))
     }
 }

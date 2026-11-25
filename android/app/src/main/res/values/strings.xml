@@ -582,4 +582,6 @@
     <string name="kml_row_no_route">No route found in the file</string>
     <string name="kml_row_no_date">No date found in the file</string>
     <string name="stat_distance_by_year">Real distance by year</string>
+    <string name="flown_distance_estimated_label">Flown distance (estimated)</string>
+    <string name="route_gap_note">The route has a gap of %1$s. The flown distance is an estimate, a little too short.</string>
 </resources>

@@ -582,4 +582,6 @@
     <string name="kml_row_no_route">Keine Strecke in der Datei gefunden</string>
     <string name="kml_row_no_date">Kein Datum in der Datei gefunden</string>
     <string name="stat_distance_by_year">Echte Strecke pro Jahr</string>
+    <string name="flown_distance_estimated_label">Geflogene Strecke (geschätzt)</string>
+    <string name="route_gap_note">Die Strecke hat eine Lücke von %1$s. Die geflogene Strecke ist eine Schätzung und etwas zu kurz.</string>
 </resources>

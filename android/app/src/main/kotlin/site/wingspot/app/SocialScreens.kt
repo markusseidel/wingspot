@@ -370,7 +370,7 @@ private fun SaluteButton(item: FeedItem, onSalute: () -> Unit) {
 }
 
 /** The saved route of a flight, as the flight page shows it: the numbers and the simplified line for the map. */
-private data class FlownTrack(val route: site.wingspot.core.FlownRoute, val line: List<site.wingspot.core.GeoCoordinate>)
+private data class FlownTrack(val route: site.wingspot.core.FlownRoute, val line: List<site.wingspot.core.GeoCoordinate>, val gapKm: Double = 0.0)
 
 /** One check-in on its own page: who, when and what, the photos, salute, and the comments with a field to write a new one. */
 @Composable
@@ -506,15 +506,17 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                             value = if (shown.userId == me) withContext(Dispatchers.Default) {
                                 app.tracks.load(UUID.fromString(shown.id))?.let { points ->
                                     site.wingspot.core.FlightTrack.flownRoute(points, shown.distanceKm)?.let {
-                                        FlownTrack(it, site.wingspot.core.FlightTrack.simplified(points, 300.0))
+                                        FlownTrack(it, site.wingspot.core.FlightTrack.simplified(points, 300.0), site.wingspot.core.FlightTrack.largestGapKm(points))
                                     }
                                 }
                             } else null
                         }
                         flown?.let { f ->
                             val r = f.route
-                            InfoRow(stringResource(R.string.flown_distance_label), unit.format(r.flownKm))
+                            val estimated = f.gapKm >= site.wingspot.core.FlightTrack.ESTIMATED_GAP_KM
+                            InfoRow(stringResource(if (estimated) R.string.flown_distance_estimated_label else R.string.flown_distance_label), unit.format(r.flownKm))
                             if (r.extraKm > 0) InfoRow(stringResource(R.string.detour_label), "+" + unit.format(r.extraKm) + " (+" + r.percent + " %)")
+                            if (estimated) Text(stringResource(R.string.route_gap_note, unit.format(Math.round(f.gapKm).toInt())), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.tertiary, modifier = Modifier.testTag("route-gap-note"))
                             TrackMap(f.line, Modifier.fillMaxWidth().height(220.dp).clip(MaterialTheme.shapes.medium))
                             Text(stringResource(R.string.route_note), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
