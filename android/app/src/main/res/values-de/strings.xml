@@ -567,4 +567,7 @@
     <string name="when_help">Wer diesen Check-in sieht, bestimmt die Sichtbarkeit, nicht das Datum.</string>
     <string name="when_photo_taken">Foto aufgenommen am %1$s</string>
     <string name="when_use_date">Dieses Datum verwenden</string>
+    <string name="shortcut_spotted_long">Ein Flugzeug, das du gesehen hast</string>
+    <string name="shortcut_flown_long">Ein Flug, auf dem du warst</string>
+    <string name="shortcut_airport_long">Ein Flughafen, an dem du gerade bist</string>
 </resources>

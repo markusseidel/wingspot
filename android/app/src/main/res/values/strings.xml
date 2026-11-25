@@ -567,4 +567,7 @@
     <string name="when_help">Who can see this check-in is decided by its visibility, not by its date.</string>
     <string name="when_photo_taken">Photo taken %1$s</string>
     <string name="when_use_date">Use this date</string>
+    <string name="shortcut_spotted_long">An aircraft you have seen</string>
+    <string name="shortcut_flown_long">A flight you were on</string>
+    <string name="shortcut_airport_long">An airport you are at</string>
 </resources>

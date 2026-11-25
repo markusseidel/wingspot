@@ -84,6 +84,11 @@ class CheckInViewModel(
         mutable.value = mutable.value.copy(isOpen = true, result = null, saveFailed = false, returnStart = null)
     }
 
+    /** Opens the form of one kind straight away, for a shortcut of the app icon (#349). The running session is joined by the form itself. */
+    fun openKind(kind: Kind) {
+        mutable.value = mutable.value.copy(isOpen = true, kind = kind, result = null, editing = null, saveFailed = false, returnStart = null, afterFlight = null)
+    }
+
     /** Opens the flight form for a return flight, from the page of a flight or from the result of one. */
     fun startReturn(start: ReturnStart) {
         mutable.value = mutable.value.copy(isOpen = true, result = null, saveFailed = false, kind = Kind.FLOWN, returnStart = start)
