@@ -18,6 +18,39 @@
 			</array>
 		</dict>
 	</array>
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>site.wingspot.quick.spotted</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Spotted</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string>An aircraft you have seen</string>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>binoculars.fill</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>site.wingspot.quick.flown</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Flown</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string>A flight you were on</string>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>airplane.departure</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>site.wingspot.quick.airport</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Airport</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string>An airport you are at</string>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>building.columns.fill</string>
+		</dict>
+	</array>
 	<key>WingspotSupabaseURL</key>
 	<string>https://gsfeuxowjymdqbopcpdo.supabase.co</string>
 	<key>WingspotPublishableKey</key>

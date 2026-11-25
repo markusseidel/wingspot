@@ -64,6 +64,16 @@ final class PushAppDelegate: NSObject, UIApplicationDelegate, UNUserNotification
         return true
     }
 
+    /// A shortcut that starts the app arrives in the connection options; one chosen while the app runs goes to the scene delegate.
+    func application(
+        _ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
+        if let item = options.shortcutItem { Task { @MainActor in QuickActionRouter.shared.handle(type: item.type) } }
+        let configuration = UISceneConfiguration(name: connectingSceneSession.configuration.name, sessionRole: connectingSceneSession.role)
+        configuration.delegateClass = QuickActionSceneDelegate.self
+        return configuration
+    }
+
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Task { @MainActor in await Self.store?.didReceive(token: deviceToken) }
     }

@@ -10,11 +10,16 @@ enum AppTab: Hashable {
 struct RootView: View {
     @State private var selection: AppTab = .feed
     @State private var isCheckInPresented = false
+    /// The form a shortcut of the app icon opened the sheet for (#349).
+    @State private var requestedKind: CheckInKind?
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @Environment(AccountStore.self) private var account
     @Environment(BadgeStore.self) private var badges
     @Environment(PushStore.self) private var push
     @Environment(PushRouter.self) private var router
+    @Environment(SpotSessionStore.self) private var sessions
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var quick = QuickActionRouter.shared
 
     var body: some View {
         TabView(selection: tabSelection) {
@@ -35,8 +40,15 @@ struct RootView: View {
             }
         }
         .sheet(isPresented: $isCheckInPresented) {
-            CheckInSheet()
+            CheckInSheet(requested: $requestedKind)
         }
+        // A shortcut of the app icon opens its form once the setup screens are gone (#349).
+        .onChange(of: quick.pending) { openQuickAction() }
+        .onChange(of: isSetupPresented) { openQuickAction() }
+        .task { openQuickAction() }
+        // The entry for the running spotting session, set when it starts and removed when it ends or runs out.
+        .task(id: sessions.session?.visitID) { QuickActionRouter.showSession(sessions.session) }
+        .onChange(of: scenePhase) { if scenePhase == .active { QuickActionRouter.showSession(sessions.session) } }
         // Signing in is optional, because check-ins work without an account and offline.
         .fullScreenCover(isPresented: .constant(isSetupPresented)) {
             Group {
@@ -71,6 +83,13 @@ struct RootView: View {
         .onChange(of: account.state) {
             if case .signedIn = account.state { hasSeenOnboarding = true }
         }
+    }
+
+    private func openQuickAction() {
+        guard let action = quick.pending, !isSetupPresented else { return }
+        quick.pending = nil
+        requestedKind = QuickActionRouter.kind(for: action)
+        isCheckInPresented = true
     }
 
     private var isSetupPresented: Bool {
