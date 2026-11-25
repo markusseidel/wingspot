@@ -158,3 +158,32 @@ public struct FlownRouteStats: Equatable, Sendable {
         )
     }
 }
+
+/// The real distance flown in one year, from the flights that have a route (#239).
+public struct YearDistance: Equatable, Sendable {
+    public let year: Int
+    public let routes: Int
+    public let km: Int
+
+    public init(year: Int, routes: Int, km: Int) {
+        self.year = year
+        self.routes = routes
+        self.km = km
+    }
+}
+
+extension FlownRouteStats {
+    /// The flown distance per year, newest year first. A year is rounded once from the sum, so the years need not add up to the total
+    /// by a kilometre or two.
+    public static func byYear(_ flights: [(flownKm: Double, year: Int)]) -> [YearDistance] {
+        var kilometres = [Int: Double]()
+        var count = [Int: Int]()
+        for flight in flights {
+            kilometres[flight.year, default: 0] += flight.flownKm
+            count[flight.year, default: 0] += 1
+        }
+        return kilometres.keys.sorted(by: >).map { year in
+            YearDistance(year: year, routes: count[year] ?? 0, km: Int((kilometres[year] ?? 0).rounded()))
+        }
+    }
+}

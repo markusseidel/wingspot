@@ -4405,6 +4405,16 @@
         }
       }
     },
+    "Real distance by year" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Echte Strecke pro Jahr"
+          }
+        }
+      }
+    },
     "Real distance flown" : {
       "localizations" : {
         "de" : {
