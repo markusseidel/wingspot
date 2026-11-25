@@ -71,6 +71,8 @@ import site.wingspot.core.CollectionKind
 import site.wingspot.core.Collections
 import site.wingspot.core.DistanceUnit
 import site.wingspot.core.FlightTrack
+import site.wingspot.core.YearDistance
+import site.wingspot.core.byYear
 import site.wingspot.core.FlownRouteStats
 import site.wingspot.core.GeoCoordinate
 import site.wingspot.core.GreatCircle
@@ -254,6 +256,15 @@ private fun StatsCard(stats: CheckInStats, database: ReferenceDatabase?) {
             })
         }
     }
+    // The same flights, by year.
+    val yearStats by produceState(emptyList<YearDistance>(), stats.flightList) {
+        value = withContext(Dispatchers.IO) {
+            FlownRouteStats.byYear(stats.flightList.mapNotNull { flight ->
+                val track = app.tracks.load(flight.id)?.takeIf { it.size >= 2 } ?: return@mapNotNull null
+                FlightTrack.lengthKm(track) to flight.year
+            })
+        }
+    }
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Detail(stringResource(R.string.stat_check_ins), stats.checkIns.toString())
@@ -265,6 +276,10 @@ private fun StatsCard(stats: CheckInStats, database: ReferenceDatabase?) {
                 Detail(stringResource(R.string.stat_routes), r.routes.toString())
                 Detail(stringResource(R.string.stat_longest_route), unit.format(r.longestKm))
                 if (r.biggestDetourKm > 0) Detail(stringResource(R.string.stat_biggest_detour), "+" + unit.format(r.biggestDetourKm))
+                if (yearStats.isNotEmpty()) {
+                    Text(stringResource(R.string.stat_distance_by_year), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    yearStats.forEach { Detail(it.year.toString(), unit.format(it.km)) }
+                }
                 Text(stringResource(R.string.stat_routes_note), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Detail(stringResource(R.string.stat_airport_visits), stats.airportVisits.toString())

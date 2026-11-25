@@ -139,4 +139,11 @@ class FlownRouteStatsTests {
         assertEquals(0, FlownRouteStats.of(listOf(100.0 to null))?.biggestDetourKm)
         assertEquals(null, FlownRouteStats.of(emptyList()))
     }
+
+    @Test
+    fun theFlownDistanceIsSummedPerYearNewestFirst() {
+        val years = FlownRouteStats.byYear(listOf(1000.4 to 2025, 2000.4 to 2026, 500.4 to 2025, 100.0 to 2024))
+        assertEquals(listOf(YearDistance(2026, 1, 2000), YearDistance(2025, 2, 1501), YearDistance(2024, 1, 100)), years)
+        assertEquals(emptyList(), FlownRouteStats.byYear(emptyList()))
+    }
 }

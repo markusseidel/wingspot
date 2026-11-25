@@ -34,6 +34,18 @@ data class FlownRouteStats(val routes: Int, val totalKm: Int, val longestKm: Int
     }
 }
 
+/** The real distance flown in one year, from the flights that have a route (#239). */
+data class YearDistance(val year: Int, val routes: Int, val km: Int)
+
+/**
+ * The flown distance per year, newest year first, from [flights]: each flight's flown length and its year. A year is rounded once from the
+ * sum, so the years need not add up to the total by a kilometre or two.
+ */
+fun FlownRouteStats.Companion.byYear(flights: List<Pair<Double, Int>>): List<YearDistance> =
+    flights.groupBy({ it.second }, { it.first }).toSortedMap(compareByDescending { it }).map { (year, km) ->
+        YearDistance(year, km.size, Math.round(km.sum()).toInt())
+    }
+
 /** A flown route as the flight page shows it. [extraKm] and [percent] are 0 when there is no clear detour. */
 data class FlownRoute(val flownKm: Int, val extraKm: Int, val percent: Int)
 

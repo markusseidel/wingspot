@@ -24,7 +24,8 @@ data class CheckInStats(
     val flightList: List<FlightRef> = emptyList(),
 ) {
     /** A flight and its airports. */
-    data class FlightRef(val id: java.util.UUID, val origin: Long, val destination: Long)
+    /** [year] is the year of the flight on the calendar of this phone. */
+    data class FlightRef(val id: java.util.UUID, val origin: Long, val destination: Long, val year: Int = 0)
 
     /**
      * The kilometres flown: the great-circle distance of each flight, rounded as the server does.
@@ -59,7 +60,7 @@ data class CheckInStats(
                         val destination = c.destinationId
                         if (origin != null && destination != null) {
                             routes.merge(origin to destination, 1, Int::plus)
-                            flightList.add(FlightRef(c.id, origin, destination))
+                            flightList.add(FlightRef(c.id, origin, destination, c.occurredAt.atZone(java.time.ZoneId.systemDefault()).year))
                         }
                     }
                 }
