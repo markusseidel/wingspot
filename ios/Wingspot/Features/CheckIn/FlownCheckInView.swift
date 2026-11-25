@@ -78,6 +78,8 @@ struct FlownCheckInView: View {
     @State private var importProblem: KmlImportProblem?
     /// False when the server switched the KML import off. On until the server says otherwise.
     @AppStorage(KmlSwitches.importKey) private var kmlImportOn = true
+    /// A KML file shared into the app, read as soon as the form is there.
+    @State private var kmlInbox = KmlInbox.shared
     @State private var importNotice: ImportNotice?
     /// The positions of an imported flight. They are kept on this iPhone only and never uploaded.
     @State private var importedTrack: [GeoCoordinate] = []
@@ -125,6 +127,11 @@ struct FlownCheckInView: View {
             ForEach(Array(legChoices.enumerated()), id: \.offset) { _, leg in
                 Button("\(leg.from) → \(leg.to) · \(leg.carrier)\(leg.flightNumber)") { apply(leg) }
             }
+        }
+        .task(id: kmlInbox.pending) {
+            guard let url = kmlInbox.pending else { return }
+            kmlInbox.pending = nil
+            await importFile(url)
         }
         .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.data]) { picked in
             guard case .success(let url) = picked else { return }

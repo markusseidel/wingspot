@@ -230,6 +230,12 @@ struct WingspotApp: App {
 
     /// Never log the full URL: it can carry sign-in codes.
     private func handleLink(_ url: URL) {
+        // A KML file shared or opened into Wingspot opens the Flown form and is read there (#236). Only when the import is switched on.
+        if url.isFileURL {
+            let on = UserDefaults.standard.object(forKey: KmlSwitches.importKey) as? Bool ?? true
+            if on, KmlInbox.shared.offer(url) { QuickActionRouter.shared.pending = .flown } else { logger.notice("Ignored a file that is not a KML") }
+            return
+        }
         if let code = InviteLink.code(in: url) {
             Task { await invites.receive(code: code) }
             return
