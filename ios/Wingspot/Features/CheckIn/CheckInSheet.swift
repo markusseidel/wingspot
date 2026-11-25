@@ -32,9 +32,14 @@ enum CheckInKind: String, CaseIterable, Identifiable {
 
 struct CheckInSheet: View {
     @Environment(\.dismiss) private var dismiss
+    /// A form a shortcut of the app icon asks for (#349): opened as soon as it is set, and cleared. The sheet may be open already.
+    @Binding var requested: CheckInKind?
+    @State private var path: [CheckInKind] = []
+
+    init(requested: Binding<CheckInKind?> = .constant(nil)) { _requested = requested }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List {
                 SpotSessionRow()
                 ForEach(CheckInKind.allCases) { kind in
@@ -53,6 +58,9 @@ struct CheckInSheet: View {
             }
             .navigationTitle("Check in")
             .navigationBarTitleDisplayMode(.inline)
+            .task(id: requested) {
+                if let kind = requested { path = [kind]; requested = nil }
+            }
             .navigationDestination(for: CheckInKind.self) { kind in
                 switch kind {
                 case .spotted:

@@ -68,6 +68,7 @@
 		B317B20A42F064CDC92C2927 /* CheckInResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B545FD209FC2942BD45E71 /* CheckInResultView.swift */; };
 		B9781CFA9DE1264E690E8F1B /* FeedScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC6390EE07C2061FC444960 /* FeedScreen.swift */; };
 		BADA46EC74996E2BE6DDA8FF /* TypePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C3026B7554DE42D34613B0 /* TypePageView.swift */; };
+		BB57026922C6CE42019AB6AD /* QuickActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A473014F663ED2E5500813F /* QuickActions.swift */; };
 		BFA20E25B291B9D566E09D0A /* Compare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3081197D3CD4BE4B1DB4B618 /* Compare.swift */; };
 		C11130AF4BC7A3C72A86C5A3 /* APICheckInUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828B639D7292CFD9B11324B0 /* APICheckInUploader.swift */; };
 		C514F70DAE3982F3745EA554 /* BoardingPassScanning.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADADB9204585A1B0741191CA /* BoardingPassScanning.swift */; };
@@ -138,6 +139,7 @@
 		828B639D7292CFD9B11324B0 /* APICheckInUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICheckInUploader.swift; sourceTree = "<group>"; };
 		8588DD19FFB9233DAE73D0FD /* CheckInEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInEditView.swift; sourceTree = "<group>"; };
 		887512D89A6F5865C984DC89 /* BadgeStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeStyle.swift; sourceTree = "<group>"; };
+		8A473014F663ED2E5500813F /* QuickActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActions.swift; sourceTree = "<group>"; };
 		8AB0A4D42441D44A92BC24E5 /* RegistrationPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationPageView.swift; sourceTree = "<group>"; };
 		8DE37EDD9A6BB655515A6E57 /* SightingSpotRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SightingSpotRow.swift; sourceTree = "<group>"; };
 		995610FFAC434B480B981139 /* SharingSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingSection.swift; sourceTree = "<group>"; };
@@ -249,6 +251,7 @@
 			children = (
 				A29AD035B27FB3BE30BCB737 /* AlertRulesViews.swift */,
 				578259FF97F6C378ABA27E94 /* PushSupport.swift */,
+				8A473014F663ED2E5500813F /* QuickActions.swift */,
 			);
 			path = Push;
 			sourceTree = "<group>";
@@ -544,6 +547,7 @@
 				0937BA0BF1EBF4732DA23138 /* ProfileEditorView.swift in Sources */,
 				A08C4CA8904388F960BBA71F /* ProfileScreen.swift in Sources */,
 				D85287110D33AEDB2AE2653E /* PushSupport.swift in Sources */,
+				BB57026922C6CE42019AB6AD /* QuickActions.swift in Sources */,
 				39383DB2983A80C96D05EA39 /* ReferenceSearchViews.swift in Sources */,
 				34EDCAD11D0A2B6F135DD128 /* RegistrationPageView.swift in Sources */,
 				00B055B01FD55725A55DDCBC /* ReleaseNotesView.swift in Sources */,
