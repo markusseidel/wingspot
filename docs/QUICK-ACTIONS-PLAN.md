@@ -53,7 +53,7 @@ Idea from the owner: on the iPhone home screen a long press on the app icon open
 ## Android
 
 - `res/xml/shortcuts.xml`: three `<shortcut>` entries (`shortcutId`, `enabled`, `icon`, `shortcutShortLabel`, `shortcutLongLabel`, `shortcutDisabledMessage`), each with an `<intent>` (`android.intent.action.MAIN`, `targetPackage`, `targetClass` = `MainActivity`, extra `quick_action`). Referenced in the manifest with `<meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />` on the launcher activity.
-- Labels in `values` and `values-de` (short label up to 10 characters is the safe length: "Spotted", "Airport", "Flown", "Gespottet", "Flughafen", "Geflogen"; the long label is the full line).
+- Labels in `values` and `values-de` (short label up to 10 characters is the safe length: "Spotted", "Flown", "Airport", "Gespottet", "Geflogen", "Flughafen"; the long label is the full line).
 - `MainActivity.handle(intent)` reads `quick_action`, calls `QuickAction.parse`, and stores the pending action in the `CheckInViewModel` (survives rotation); `AppScreen` consumes it when the main screen is visible: `social.tab = Tab.CHECK_IN`, `checkIn.open()`, `checkIn.chooseKind(...)`.
 - The dynamic shortcut `session`: `ShortcutManagerCompat.setDynamicShortcuts` with a label "Session at <place>", set when a session starts, removed when it ends or has run out, refreshed in `onCreate`/`onResume` (a session can run out while the app is closed).
 - Tests: `QuickAction.parse` in `core`; a unit test that every `shortcutId` in the static file is one `QuickAction` knows (reads the XML in the test); a Compose test that the pending action opens the right form.
