@@ -311,6 +311,16 @@ public protocol FeedBackend: Sendable {
     func taggableFriends() async throws -> [PersonTag]
     /// The friends who added this check-in of the caller's to their own logbook. Empty for anyone but its author.
     func checkInCopies(_ checkIn: UUID) async throws -> [PersonTag]
+    /// The friends' flights and visits the caller is tagged on and has not taken over (#273).
+    func companionRequests() async throws -> [CompanionRequest]
+    /// The caller's own flights that are the same flight as this one they were tagged on, best first.
+    func matchingFlights(for source: UUID) async throws -> [MatchingFlight]
+    /// "Keep mine": links a check-in the caller has to the friend's. False when the server refuses.
+    func linkCompanion(mine: UUID, source: UUID) async throws -> Bool
+    /// "Replace the flight data": the new facts, or nil when the server refuses.
+    func replaceFlightData(mine: UUID, source: UUID) async throws -> ReplacedFlight?
+    /// On a copy: the person whose check-in it was taken from.
+    func checkInSource(_ copy: UUID) async throws -> PersonTag?
     /// The caller leaves a check-in they are tagged on, for good.
     func removeMyTag(_ checkIn: UUID) async throws
     /// Whether friends may tag the caller, and changing it.
@@ -323,6 +333,11 @@ extension FeedBackend {
     public func badges(for checkIns: [UUID]) async throws -> [UUID: [FeedBadge]] { [:] }
     public func taggableFriends() async throws -> [PersonTag] { [] }
     public func checkInCopies(_ checkIn: UUID) async throws -> [PersonTag] { [] }
+    public func companionRequests() async throws -> [CompanionRequest] { [] }
+    public func matchingFlights(for source: UUID) async throws -> [MatchingFlight] { [] }
+    public func linkCompanion(mine: UUID, source: UUID) async throws -> Bool { false }
+    public func replaceFlightData(mine: UUID, source: UUID) async throws -> ReplacedFlight? { nil }
+    public func checkInSource(_ copy: UUID) async throws -> PersonTag? { nil }
     public func removeMyTag(_ checkIn: UUID) async throws {}
     public func allowsTags(of me: UUID) async throws -> Bool { true }
     public func setAllowsTags(_ allowed: Bool, as me: UUID) async throws {}
@@ -624,6 +639,43 @@ public final class FeedStore {
     /// Your mutual friends who allow being tagged. Empty if they can't be loaded.
     public func taggableFriends() async -> [PersonTag] {
         (try? await backend.taggableFriends()) ?? []
+    }
+
+    /// The open requests: friends' flights and visits you are tagged on and have not taken over. Loaded again after each answer.
+    public private(set) var companionRequests: [CompanionRequest] = []
+
+    public func loadCompanionRequests() async {
+        guard let found = try? await backend.companionRequests() else { return }
+        companionRequests = found
+    }
+
+    /// Your own flights that are the same flight as this request's. Empty when there are none or it can't be asked (offline).
+    public func matches(for source: UUID) async -> [MatchingFlight] {
+        (try? await backend.matchingFlights(for: source)) ?? []
+    }
+
+    /// Links your flight to the friend's. Throws when the server can't be reached; false when it refuses.
+    public func link(mine: UUID, to source: UUID) async throws -> Bool {
+        let done = try await backend.linkCompanion(mine: mine, source: source)
+        if done { companionRequests.removeAll { $0.checkInID == source } }
+        return done
+    }
+
+    /// Takes the friend's flight data over into your flight. Throws when the server can't be reached; nil when it refuses.
+    public func replace(mine: UUID, with source: UUID) async throws -> ReplacedFlight? {
+        let facts = try await backend.replaceFlightData(mine: mine, source: source)
+        if facts != nil { companionRequests.removeAll { $0.checkInID == source } }
+        return facts
+    }
+
+    /// The request was answered some other way (the copy was made on this phone): it is not open any more.
+    public func requestAnswered(_ source: UUID) {
+        companionRequests.removeAll { $0.checkInID == source }
+    }
+
+    /// The person a copy of yours was taken from, if any.
+    public func source(of copy: UUID) async -> PersonTag? {
+        (try? await backend.checkInSource(copy)) ?? nil
     }
 
     /// The friends who added your check-in to their own logbook. Empty if there are none or it can't be loaded.

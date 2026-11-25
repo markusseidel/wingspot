@@ -75,3 +75,27 @@ import Testing
         #expect(visit.visitID != nil)
     }
 }
+
+/// What `get_companion_requests`, `find_matching_flight` and `replace_flight_data` send back (#273).
+@Suite struct CompanionTests {
+    @Test func aRequestIsReadFromTheServersAnswer() throws {
+        let json = #"[{"checkin_id":"6F9619FF-8B86-D011-B42D-00C04FC964FF","author_id":"7F9619FF-8B86-D011-B42D-00C04FC964FF","username":"jan","display_name":"Jan","kind":"flown","occurred_at":"2026-08-12T12:00:00+00:00","flight_number":"LH400","origin_id":1,"destination_id":2,"origin_code":"FRA","destination_code":"JFK","airport_id":null,"airport_code":null,"distance_km":6200,"requested_at":"2026-08-13T08:00:00.123456+00:00"}]"#
+        let requests = try JSONDecoder().decode([CompanionRequest].self, from: Data(json.utf8))
+        let request = try #require(requests.first)
+        #expect(request.who == "Jan" && request.title == "FRA → JFK" && request.flightNumber == "LH400" && request.distanceKm == 6200)
+        #expect(request.requestedAt != nil)
+        let visit = #"[{"checkin_id":"6F9619FF-8B86-D011-B42D-00C04FC964FF","author_id":"7F9619FF-8B86-D011-B42D-00C04FC964FF","username":"jan","display_name":null,"kind":"airport","occurred_at":"2026-08-13T09:00:00+00:00","flight_number":null,"origin_id":null,"destination_id":null,"origin_code":null,"destination_code":null,"airport_id":3,"airport_code":"LHR","distance_km":null,"requested_at":"2026-08-13T09:01:00+00:00"}]"#
+        let visits = try JSONDecoder().decode([CompanionRequest].self, from: Data(visit.utf8))
+        #expect(visits.first?.who == "jan" && visits.first?.title == "LHR")
+    }
+
+    @Test func aMatchAndTheReplacedFactsAreRead() throws {
+        let match = #"[{"id":"6F9619FF-8B86-D011-B42D-00C04FC964FF","reason":"route","seconds_apart":18000,"flight_number":"UA900","occurred_at":"2026-08-12T17:00:00+00:00","origin_code":"FRA","destination_code":"JFK"}]"#
+        let found = try JSONDecoder().decode([MatchingFlight].self, from: Data(match.utf8))
+        #expect(found.first?.reason == "route" && found.first?.secondsApart == 18000 && found.first?.originCode == "FRA")
+        let facts = #"{"flight_number":"LH500","origin_id":1,"destination_id":2,"occurred_at":"2026-09-01T12:00:00+00:00","registration":null,"type_icao":"A388","distance_km":6200}"#
+        let replaced = try JSONDecoder().decode(ReplacedFlight?.self, from: Data(facts.utf8))
+        #expect(replaced?.flightNumber == "LH500" && replaced?.typeICAO == "A388" && replaced?.registration == nil)
+        #expect(try JSONDecoder().decode(ReplacedFlight?.self, from: Data("null".utf8)) == nil)
+    }
+}

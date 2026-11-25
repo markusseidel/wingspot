@@ -28,6 +28,10 @@ struct CheckInDetailView: View {
     @State private var returnStart: ReturnStart?
     @State private var confirmDelete = false
     @State private var confirmLeave = false
+    /// Taking over a friend's flight: the question when you already have it (#273).
+    @State private var companion = CompanionFlow()
+    /// On a copy of yours: the person it was taken from, shown as a companion.
+    @State private var sourcePerson: PersonTag?
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @State private var full: FeedItem?
@@ -111,6 +115,11 @@ struct CheckInDetailView: View {
     }
     private var photos: [FeedPhoto] { list.photos[item.id] ?? [] }
     private var tags: [PersonTag] { list.tags[item.id] ?? [] }
+    /// The people shown as along: the tags, and on a copy of yours the person it was taken from. Only for showing; editing uses the tags.
+    private var withPeople: [PersonTag] {
+        guard let sourcePerson, !tags.contains(where: { $0.id == sourcePerson.id }) else { return tags }
+        return [sourcePerson] + tags
+    }
     private var earned: [FeedBadge] { list.badges[item.id] ?? [] }
     private var isTagged: Bool { tags.contains { $0.id == account.userID } }
     /// A friend's flight or airport visit that you are tagged on can be added to your own logbook, once.
@@ -146,7 +155,7 @@ struct CheckInDetailView: View {
         List {
             summary
             if !earned.isEmpty { Section { FeedBadgesLine(badges: earned) } header: { Text("Badges earned").font(.headline).textCase(nil) } }
-            if !tags.isEmpty { withSection }
+            if !withPeople.isEmpty { withSection }
             if shown.kind == "airport" || shown.kind == "spotted" { CheckInSpotSection(spot: spot, sightings: spotSightings, kind: shown.kind) }
             if !copies.isEmpty { copiesSection }
             if !photos.isEmpty { photoSection }
@@ -217,6 +226,13 @@ struct CheckInDetailView: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .safeAreaInset(edge: .bottom) { composer(store) }
+        .companionAsk(companion) { choice, ask in
+            Task { await companion.choose(choice, for: ask, feed: list, context: modelContext, userID: account.userID, sync: sync) }
+        }
+        .task(id: item.id) {
+            // A copy of yours says whose flight it came from, with the friends who were along.
+            sourcePerson = isOwn ? await list.source(of: item.id) : nil
+        }
         .alert("Couldn't complete this", isPresented: Binding(get: { problem != nil }, set: { if !$0 { problem = nil } })) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -315,7 +331,7 @@ struct CheckInDetailView: View {
     /// The friends who were along, one row each, so a tap opens exactly one of them.
     private var withSection: some View {
         Section {
-            ForEach(tags) { person in
+            ForEach(withPeople) { person in
                 if person.id == account.userID {
                     friendRow(String(localized: "You"), id: person.id)
                 } else {
@@ -424,7 +440,9 @@ struct CheckInDetailView: View {
                     if inMyLogbook {
                         Label("In your logbook", systemImage: "checkmark.circle")
                     } else {
-                        Button("Add to my logbook", systemImage: "plus.circle") { addToLogbook() }
+                        Button("Add to my logbook", systemImage: "plus.circle") {
+                            Task { await companion.accept(shown, feed: list, context: modelContext, userID: account.userID, sync: sync) }
+                        }
                     }
                 } footer: {
                     if !inMyLogbook { Text("Adds it to your own check-ins, so it counts for your statistics and badges.") }
@@ -659,31 +677,6 @@ struct CheckInDetailView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-    }
-
-    /// Saves a copy of the friend's flight or visit on this device, linked to the original. It goes up with the next sync.
-    private func addToLogbook() {
-        let store = CheckInStore(context: modelContext)
-        do {
-            if shown.kind == "flown", let origin = shown.originID, let destination = shown.destinationID {
-                let draft = FlownDraft(
-                    origin: .init(airportID: origin, code: shown.originCode ?? "?"),
-                    destination: .init(airportID: destination, code: shown.destinationCode ?? "?"),
-                    distanceKm: shown.distanceKm, flightNumber: shown.flightNumber,
-                    registration: shown.registration.flatMap { Registration($0) },
-                    type: shown.typeICAO.map { .init(icaoCode: $0, name: shown.typeName ?? $0) }, sourceID: item.id
-                )
-                _ = try store.saveFlown(draft, ownerID: account.userID, at: shown.occurredAt)
-            } else if shown.kind == "airport", let airport = shown.airportID {
-                let draft = AirportDraft(airportID: airport, code: shown.airportCode ?? "?", context: .spotting, sourceID: item.id)
-                _ = try store.saveAirport(draft, ownerID: account.userID, at: shown.occurredAt)
-            } else {
-                return
-            }
-            sync?.requestSync()
-        } catch {
-            problem = .unknown
-        }
     }
 
     /// Opens the flight form for the way back: this flight's route the other way round, on the same day.

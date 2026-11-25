@@ -103,4 +103,37 @@ import WingspotCore
         let saved = try context.fetch(FetchDescriptor<LocalCheckIn>()).first { $0.id == result.id }
         #expect(saved?.occurredAt == day && saved?.timeKnown == false)
     }
+
+    @Test func replacingTheFlightDataTakesTheFriendsFactsAndKeepsTheRest() throws {
+        let (store, context) = try store()
+        let day = ISO8601DateFormatter().date(from: "2026-08-11T12:00:00Z")!
+        let result = try store.saveFlown(
+            FlownDraft(origin: .init(airportID: 1, code: "FRA"), destination: .init(airportID: 3, code: "LHR"), flightNumber: "XX1", cabin: .economy, seat: "12A"),
+            at: day
+        )
+        let source = UUID()
+        let newDay = ISO8601DateFormatter().date(from: "2026-09-01T12:00:00Z")!
+        let done = try store.replaceFlightData(
+            id: result.id, flightNumber: "LH500", origin: .init(airportID: 1, code: "FRA"), destination: .init(airportID: 2, code: "JFK"),
+            occurredAt: newDay, registration: "D-AIMA", type: .init(icaoCode: "A388", name: "Airbus A380"), source: source
+        )
+        #expect(done)
+        let all = try context.fetch(FetchDescriptor<LocalCheckIn>())
+        let flight = try #require(all.first { $0.id == result.id })
+        #expect(flight.flightNumber == "LH500" && flight.destinationCode == "JFK" && flight.occurredAt == newDay)
+        #expect(flight.seat == "12A" && flight.cabin == "economy")
+        #expect(flight.sourceID == source)
+        let arrival = try #require(all.first { $0.flightID == result.id && $0.visitContext == "arriving" })
+        #expect(arrival.airportCode == "JFK" && arrival.occurredAt == newDay)
+        #expect(try !store.replaceFlightData(id: UUID(), flightNumber: nil, origin: .init(airportID: 1, code: "FRA"), destination: .init(airportID: 2, code: "JFK"), occurredAt: newDay, registration: nil, type: nil, source: source))
+    }
+
+    @Test func keepingMineOnlyRemembersTheLink() throws {
+        let (store, context) = try store()
+        let result = try store.saveSpotted(SpottedDraft(registration: Registration("D-AIMA")))
+        let source = UUID()
+        #expect(try store.setSource(id: result.id, source: source))
+        #expect(try context.fetch(FetchDescriptor<LocalCheckIn>()).first { $0.id == result.id }?.sourceID == source)
+        #expect(try !store.setSource(id: UUID(), source: source))
+    }
 }
