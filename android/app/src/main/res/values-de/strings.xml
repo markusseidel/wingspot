@@ -570,4 +570,15 @@
     <string name="shortcut_spotted_long">Ein Flugzeug, das du gesehen hast</string>
     <string name="shortcut_flown_long">Ein Flug, auf dem du warst</string>
     <string name="shortcut_airport_long">Ein Flughafen, an dem du gerade bist</string>
+    <string name="kml_files_title">KML-Dateien</string>
+    <string name="kml_files_count">%1$d Dateien</string>
+    <string name="kml_batch_reading">Dateien werden gelesen…</string>
+    <string name="kml_batch_add">%1$d Flüge hinzufügen</string>
+    <string name="kml_batch_added">%1$d Flüge hinzugefügt.</string>
+    <string name="kml_batch_footer">Die markierten Flüge kommen in dein Logbuch. Ein Flug, den du schon hast, ist nicht markiert. Die Strecken bleiben auf diesem Handy.</string>
+    <string name="kml_row_duplicate">Schon in deinem Logbuch</string>
+    <string name="kml_row_not_kml">Keine KML-Datei eines Flugs</string>
+    <string name="kml_row_no_data">Die Flughafendaten sind noch nicht geladen</string>
+    <string name="kml_row_no_route">Keine Strecke in der Datei gefunden</string>
+    <string name="kml_row_no_date">Kein Datum in der Datei gefunden</string>
 </resources>

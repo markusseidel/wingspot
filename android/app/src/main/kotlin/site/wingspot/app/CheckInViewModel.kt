@@ -42,6 +42,12 @@ data class ReturnStart(
     val tagged: List<site.wingspot.core.Person>,
 )
 
+/** One flight of a KML batch, ready to save. */
+class BatchFlight(
+    val origin: Airport, val destination: Airport, val flightNumber: String?, val registration: Registration?, val type: AircraftType?,
+    val at: Instant, val track: List<site.wingspot.core.GeoCoordinate>,
+)
+
 data class CheckInState(
     val isOpen: Boolean = false,
     val kind: Kind = Kind.SPOTTED,
@@ -63,6 +69,8 @@ data class CheckInState(
     val session: SpotSession? = null,
     /** A KML file shared or opened into the app, for the flight form to read (#236). It is cleared once taken. */
     val incomingKml: android.net.Uri? = null,
+    /** Several KML files picked or shared at once: the list that adds them all replaces the form (#236). */
+    val kmlFiles: List<android.net.Uri> = emptyList(),
 )
 
 /** Saves check-ins on the phone first, then asks for an upload. Works fully offline. */
@@ -89,6 +97,37 @@ class CheckInViewModel(
     /** A KML file came in from another app: opens the flight form, which reads it. */
     fun openKmlFile(uri: android.net.Uri) {
         mutable.value = mutable.value.copy(isOpen = true, kind = Kind.FLOWN, result = null, editing = null, saveFailed = false, returnStart = null, afterFlight = null, incomingKml = uri)
+    }
+
+    /** Several KML files came in or were picked: opens the list that adds them all. */
+    fun openKmlFiles(uris: List<android.net.Uri>) {
+        mutable.value = mutable.value.copy(isOpen = true, kind = Kind.FLOWN, result = null, editing = null, saveFailed = false, returnStart = null, afterFlight = null, kmlFiles = uris)
+    }
+
+    fun closeKmlFiles() {
+        mutable.value = mutable.value.copy(kmlFiles = emptyList())
+    }
+
+    /** Saves the ticked flights of a batch, each with its route (which stays on this phone), one after the other. [onDone] gets how many were saved. */
+    fun saveKmlBatch(flights: List<BatchFlight>, onDone: (Int) -> Unit) {
+        viewModelScope.launch {
+            var saved = 0
+            for (f in flights) {
+                try {
+                    val result = store.saveFlown(
+                        FlownDraft(Place(f.origin.id, f.origin.code), Place(f.destination.id, f.destination.code), f.flightNumber.orEmpty(), f.registration, f.type?.icaoCode, null, "", emptyList()),
+                        f.at,
+                    )
+                    if (f.track.size >= 2) runCatching { tracks?.save(f.track, result.id) }
+                    saved++
+                } catch (e: Exception) {
+                    mutable.value = mutable.value.copy(saveFailed = true)
+                }
+            }
+            requestUpload()
+            reload()
+            onDone(saved)
+        }
     }
 
     /** The flight form took the file. */

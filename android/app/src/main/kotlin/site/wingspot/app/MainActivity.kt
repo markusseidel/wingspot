@@ -38,17 +38,23 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    /** The KML file an intent hands over (a view or a share), or null for anything else. */
-    private fun incomingKml(intent: Intent?): android.net.Uri? {
-        if (intent == null || !(application as WingspotApp).prefs.kmlImportOn) return null
-        val uri = when (intent.action) {
-            Intent.ACTION_VIEW -> intent.data
-            Intent.ACTION_SEND -> if (android.os.Build.VERSION.SDK_INT >= 33) intent.getParcelableExtra(Intent.EXTRA_STREAM, android.net.Uri::class.java) else @Suppress("DEPRECATION") intent.getParcelableExtra(Intent.EXTRA_STREAM)
-            else -> null
-        } ?: return null
-        if (uri.scheme != "content" && uri.scheme != "file") return null
-        val name = if (uri.scheme == "file") uri.lastPathSegment else contentResolver.query(uri, arrayOf(android.provider.OpenableColumns.DISPLAY_NAME), null, null, null)?.use { if (it.moveToFirst()) it.getString(0) else null }
-        return uri.takeIf { site.wingspot.core.KmlFile.looksLikeKml(intent.type ?: contentResolver.getType(uri), name ?: uri.lastPathSegment) }
+    /** The KML files an intent hands over (a view or a share of one or several), or none for anything else. */
+    private fun incomingKml(intent: Intent?): List<android.net.Uri> {
+        if (intent == null || !(application as WingspotApp).prefs.kmlImportOn) return emptyList()
+        val uris: List<android.net.Uri> = when (intent.action) {
+            Intent.ACTION_VIEW -> listOfNotNull(intent.data)
+            Intent.ACTION_SEND -> listOfNotNull(
+                if (android.os.Build.VERSION.SDK_INT >= 33) intent.getParcelableExtra(Intent.EXTRA_STREAM, android.net.Uri::class.java) else @Suppress("DEPRECATION") intent.getParcelableExtra(Intent.EXTRA_STREAM),
+            )
+            Intent.ACTION_SEND_MULTIPLE ->
+                (if (android.os.Build.VERSION.SDK_INT >= 33) intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, android.net.Uri::class.java) else @Suppress("DEPRECATION") intent.getParcelableArrayListExtra<android.net.Uri>(Intent.EXTRA_STREAM)).orEmpty()
+            else -> emptyList()
+        }
+        return uris.filter { uri ->
+            if (uri.scheme != "content" && uri.scheme != "file") return@filter false
+            val name = if (uri.scheme == "file") uri.lastPathSegment else contentResolver.query(uri, arrayOf(android.provider.OpenableColumns.DISPLAY_NAME), null, null, null)?.use { if (it.moveToFirst()) it.getString(0) else null }
+            site.wingspot.core.KmlFile.looksLikeKml(if (uris.size == 1) intent.type ?: contentResolver.getType(uri) else contentResolver.getType(uri), name ?: uri.lastPathSegment)
+        }
     }
 
     // The sign-in link opens this activity again (singleTask) instead of starting a second one.
@@ -59,10 +65,12 @@ class MainActivity : ComponentActivity() {
 
     private fun handle(intent: Intent?) {
         // A KML file shared or opened from another app opens the flight form, which reads it (#236). Only when the import is switched on.
-        incomingKml(intent)?.let { uri ->
-            social.stack.clear()
-            checkIn.openKmlFile(uri)
-            return
+        incomingKml(intent).let { uris ->
+            if (uris.isNotEmpty()) {
+                social.stack.clear()
+                if (uris.size == 1) checkIn.openKmlFile(uris.first()) else checkIn.openKmlFiles(uris)
+                return
+            }
         }
         // A shortcut of a long press on the app icon opens its form straight away (#349).
         site.wingspot.core.QuickAction.parse(intent?.getStringExtra("quick_action"))?.let {
