@@ -124,3 +124,15 @@ struct TrackVectors: Decodable {
     #expect(FlownRouteStats.byYear([]).isEmpty)
 }
 
+@Test func aRouteWithABigGapIsAnEstimate() {
+    let steady = (0...10).map { GeoCoordinate(latitude: 50, longitude: Double($0) * 0.5) }
+    #expect(FlightTrack.largestGapKm(steady) < 50)
+    #expect(!FlightTrack.isEstimated(steady))
+    // About 2,000 km from one position to the next over the sea.
+    let gap = [GeoCoordinate(latitude: 50, longitude: 0), GeoCoordinate(latitude: 50, longitude: 1), GeoCoordinate(latitude: 50, longitude: 30), GeoCoordinate(latitude: 50, longitude: 31)]
+    #expect(FlightTrack.largestGapKm(gap) > 1_800)
+    #expect(FlightTrack.isEstimated(gap))
+    #expect(FlightTrack.largestGapKm([]) == 0)
+    #expect(!FlightTrack.isEstimated([GeoCoordinate(latitude: 1, longitude: 1)]))
+}
+

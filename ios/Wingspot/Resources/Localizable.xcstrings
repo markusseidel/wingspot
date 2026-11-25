@@ -2537,6 +2537,16 @@
         }
       }
     },
+    "Flown distance (estimated)" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geflogene Strecke (geschätzt)"
+          }
+        }
+      }
+    },
     "Follow" : {
       "localizations" : {
         "de" : {
@@ -5555,6 +5565,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Der alte Link und Code funktionieren dann nicht mehr."
+          }
+        }
+      }
+    },
+    "The route has a gap of %@. The flown distance is an estimate, a little too short." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Strecke hat eine Lücke von %@. Die geflogene Strecke ist eine Schätzung und etwas zu kurz."
           }
         }
       }
