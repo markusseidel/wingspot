@@ -84,6 +84,7 @@
 		DF77734F90690A4AEB359E70 /* CheckInDeletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A459FFDFC00F28185B70D33B /* CheckInDeletion.swift */; };
 		E2E45560E0A3701D1C226A90 /* CelebrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A9D215092A1385FA8E52D3A /* CelebrationView.swift */; };
 		E480FE0DE9DC4CBB55FFD70B /* ExploreMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB50BDD1D3F4FB1EB8B8007 /* ExploreMapView.swift */; };
+		E56D904DF312C3447CBED31C /* KmlBatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819095C062C04712091550B1 /* KmlBatchView.swift */; };
 		E743B21C623831BB31024A48 /* AirportCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E539BCC329B1D95E5DE61344 /* AirportCheckInView.swift */; };
 		EB6E169414494D08056B8400 /* TaggingSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 818E551A57D62222FBB1E0EA /* TaggingSection.swift */; };
 		EEB0DF0826C0ED40A0D1D6D3 /* PhotoViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CF16D48D79F1F5F3E7EBA1 /* PhotoViewer.swift */; };
@@ -137,6 +138,7 @@
 		79CF16D48D79F1F5F3E7EBA1 /* PhotoViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewer.swift; sourceTree = "<group>"; };
 		7A9D215092A1385FA8E52D3A /* CelebrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrationView.swift; sourceTree = "<group>"; };
 		818E551A57D62222FBB1E0EA /* TaggingSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaggingSection.swift; sourceTree = "<group>"; };
+		819095C062C04712091550B1 /* KmlBatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KmlBatchView.swift; sourceTree = "<group>"; };
 		82163058748258D0AE08F801 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		828B639D7292CFD9B11324B0 /* APICheckInUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICheckInUploader.swift; sourceTree = "<group>"; };
 		8588DD19FFB9233DAE73D0FD /* CheckInEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInEditView.swift; sourceTree = "<group>"; };
@@ -218,6 +220,7 @@
 				48B545FD209FC2942BD45E71 /* CheckInResultView.swift */,
 				DC349882B02E5E1B7E15FDB2 /* CheckInSheet.swift */,
 				ED53FE5B4A009D5575119BB4 /* FlownCheckInView.swift */,
+				819095C062C04712091550B1 /* KmlBatchView.swift */,
 				66F9F62ED0AF64E8383EC86D /* KmlImport.swift */,
 				77D82FE8A46987E818D87346 /* KmlInbox.swift */,
 				9A035100ED13735493AF7BF1 /* LocationProvider.swift */,
@@ -533,6 +536,7 @@
 				FCBB4985FC51D2F3A7B55D66 /* FlownEditView.swift in Sources */,
 				D083C97B175DAAD5DC7A05EA /* Inbox.swift in Sources */,
 				2FF0C87FC72E3499ADF81C3A /* Invite.swift in Sources */,
+				E56D904DF312C3447CBED31C /* KmlBatchView.swift in Sources */,
 				1B6632058A9CF27AB78931FF /* KmlImport.swift in Sources */,
 				2AC3B95A35F00ACBC9665075 /* KmlInbox.swift in Sources */,
 				6B48DE11557CC1E967961233 /* Leaderboard.swift in Sources */,

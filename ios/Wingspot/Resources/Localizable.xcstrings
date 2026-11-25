@@ -281,6 +281,16 @@
         }
       }
     },
+    "%lld files" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Dateien"
+          }
+        }
+      }
+    },
     "%lld hours" : {
       "localizations" : {
         "de" : {
@@ -543,6 +553,16 @@
         }
       }
     },
+    "Add %lld flights" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Flüge hinzufügen"
+          }
+        }
+      }
+    },
     "Add a friend by code" : {
       "localizations" : {
         "de" : {
@@ -589,6 +609,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zu meinem Logbuch hinzufügen"
+          }
+        }
+      }
+    },
+    "Added %lld flights." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Flüge hinzugefügt."
           }
         }
       }
@@ -709,6 +739,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Flughafendaten fehlen"
+          }
+        }
+      }
+    },
+    "Airport data is not downloaded yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Flughafendaten sind noch nicht geladen"
           }
         }
       }
@@ -850,6 +890,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gesamt"
+          }
+        }
+      }
+    },
+    "Already in your logbook" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schon in deinem Logbuch"
           }
         }
       }
@@ -1710,6 +1760,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Die Entscheidung konnte nicht gespeichert werden. Versuch es noch einmal."
+          }
+        }
+      }
+    },
+    "Couldn't save the flights" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Flüge konnten nicht gespeichert werden"
           }
         }
       }
@@ -2948,6 +3008,16 @@
         }
       }
     },
+    "KML files" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "KML-Dateien"
+          }
+        }
+      }
+    },
     "Kilometres" : {
       "localizations" : {
         "de" : {
@@ -3541,6 +3611,16 @@
         }
       }
     },
+    "No date found in the file" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kein Datum in der Datei gefunden"
+          }
+        }
+      }
+    },
     "No delay" : {
       "localizations" : {
         "de" : {
@@ -3571,6 +3651,16 @@
         }
       }
     },
+    "No route found in the file" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Strecke in der Datei gefunden"
+          }
+        }
+      }
+    },
     "No spam or advertising." : {
       "localizations" : {
         "de" : {
@@ -3597,6 +3687,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Keiner"
+          }
+        }
+      }
+    },
+    "Not a KML file of a flight" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine KML-Datei eines Flugs"
           }
         }
       }
@@ -4281,6 +4381,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Um eine Bordkarte zu lesen, ist einmal ein Download mit Internetverbindung nötig."
+          }
+        }
+      }
+    },
+    "Reading the files…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dateien werden gelesen…"
           }
         }
       }
@@ -5606,6 +5716,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dieses Jahr"
+          }
+        }
+      }
+    },
+    "Ticked flights are added to your logbook. A flight you already have is not ticked. The routes stay on this iPhone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die markierten Flüge kommen in dein Logbuch. Ein Flug, den du schon hast, ist nicht markiert. Die Strecken bleiben auf diesem iPhone."
           }
         }
       }
