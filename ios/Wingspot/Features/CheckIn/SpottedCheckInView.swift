@@ -44,6 +44,7 @@ struct SpottedCheckInView: View {
             }
         }
         .navigationTitle("Spotted")
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(result != nil)
         .task { position = await LocationProvider.currentPosition() }
         .task {

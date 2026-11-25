@@ -110,6 +110,7 @@ struct FlownCheckInView: View {
             }
         }
         .navigationTitle("Flown")
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(result != nil)
         .fullScreenCover(isPresented: $showCamera) {
             BoardingPassCameraView { pass in handle(pass) }
