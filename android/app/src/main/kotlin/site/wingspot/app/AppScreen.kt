@@ -84,6 +84,9 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
     // After a check-in, a flight or an edit went up, the lists show it without a pull to refresh.
     LaunchedEffect(me) { app.uploads.collect { if (me != null) { checkIn.reload(); social.refresh() } } }
     CelebrationDialog(badges)
+    // Taking over a friend's flight (#273): the question when you already have it, and the inbox dropping an answered request.
+    CompanionAskDialog(checkInState, checkIn)
+    LaunchedEffect(checkInState.companionAnswered) { checkInState.companionAnswered?.let { social.requestAnswered(it) } }
     social.pendingInvite?.let { owner ->
         if (me != null) AlertDialog(
             onDismissRequest = social::dismissInvite,
@@ -144,7 +147,7 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
                     page is Route.CollectionDetail -> CollectionDetailPage(app, page.kind, page.key, checkInState.all, social, refState)
                     page is Route.Leaderboard && me != null -> LeaderboardPage(app, social, me)
                     page is Route.Invite && me != null -> InvitePage(app, social, me)
-                    page is Route.Inbox && me != null -> InboxPage(social)
+                    page is Route.Inbox && me != null -> InboxPage(app, social, checkIn)
                     page is Route.Settings -> SettingsPage(app, me, social)
                     page is Route.ReleaseNotes -> ReleaseNotesPage(app, social)
                     page is Route.EditProfile && me != null -> EditProfilePage(app, me, refState, social)

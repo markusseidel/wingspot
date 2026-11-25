@@ -584,4 +584,11 @@
     <string name="stat_distance_by_year">Echte Strecke pro Jahr</string>
     <string name="flown_distance_estimated_label">Geflogene Strecke (geschätzt)</string>
     <string name="route_gap_note">Die Strecke hat eine Lücke von %1$s. Die geflogene Strecke ist eine Schätzung und etwas zu kurz.</string>
+    <string name="companion_requests_title">Flüge zum Übernehmen</string>
+    <string name="companion_not_me">Nicht ich</string>
+    <string name="companion_already_title">Du hast %1$s am %2$s schon eingetragen.</string>
+    <string name="companion_already_message">Wenn du deinen behältst, werden die beiden Flüge verknüpft. Beim Ersetzen ändern sich nur die Flugdaten: Deine Fotos, Notizen und Kommentare bleiben.</string>
+    <string name="companion_keep_mine">Meinen behalten</string>
+    <string name="companion_replace">Flugdaten ersetzen</string>
+    <string name="companion_failed">Der Flug konnte nicht hinzugefügt werden. Bitte prüfe deine Verbindung und versuche es noch einmal.</string>
 </resources>

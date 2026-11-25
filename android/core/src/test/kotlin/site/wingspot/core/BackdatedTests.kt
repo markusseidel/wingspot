@@ -98,4 +98,35 @@ class BackdatedTests {
         store.updateSpotted(result.id, Registration.parse("D-AIMD"), null, occurredAt = day, timeKnown = true)
         assertTrue(store.all().first { it.id == result.id }.timeKnown)
     }
+
+    @Test
+    fun replacingTheFlightDataTakesTheFriendsFactsAndKeepsTheRest() = runBlocking {
+        val store = store()
+        val day = Instant.parse("2026-08-11T12:00:00Z")
+        val saved = store.saveFlown(FlownDraft(Place(1L, "FRA"), Place(3L, "LHR"), "XX1", seat = "12A", cabin = CabinClass.ECONOMY), day)
+        val source = java.util.UUID.randomUUID()
+        val newDay = Instant.parse("2026-09-01T12:00:00Z")
+        assertTrue(store.replaceFlightData(saved.id, "LH500", Place(1L, "FRA"), Place(2L, "JFK"), newDay, "D-AIMA", "A388", source))
+        val all = store.all()
+        val flight = all.first { it.id == saved.id }
+        assertEquals("LH500", flight.flightNumber)
+        assertEquals("JFK", flight.destinationCode)
+        assertEquals(newDay, flight.occurredAt)
+        assertEquals("12A", flight.seat)
+        assertEquals(source, flight.sourceId)
+        val arrival = all.first { it.flightId == saved.id && it.visitContext == "arriving" }
+        assertEquals("JFK", arrival.airportCode)
+        assertEquals(newDay, arrival.occurredAt)
+        assertFalse(store.replaceFlightData(java.util.UUID.randomUUID(), null, Place(1L, "FRA"), Place(2L, "JFK"), newDay, null, null, source))
+    }
+
+    @Test
+    fun keepingMineOnlyRemembersTheLink() = runBlocking {
+        val store = store()
+        val saved = store.saveSpotted(SpottedDraft(registration = Registration.parse("D-AIMA")), now)
+        val source = java.util.UUID.randomUUID()
+        assertTrue(store.setSource(saved.id, source))
+        assertEquals(source, store.all().first { it.id == saved.id }.sourceId)
+        assertFalse(store.setSource(java.util.UUID.randomUUID(), source))
+    }
 }

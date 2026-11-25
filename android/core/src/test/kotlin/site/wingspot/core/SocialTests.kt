@@ -2,6 +2,7 @@ package site.wingspot.core
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -183,6 +184,41 @@ class SocialApiTests {
         val alone = api.checkInSpot("s1")!!
         assertEquals(null, alone.visitId)
         assertEquals("North fence", alone.spotName)
+    }
+
+    /** What the companion functions send back (#273): the requests, the same-flight match, the replaced facts and the source of a copy. */
+    @Test
+    fun theCompanionAnswersAreRead() = withApi { server, api, _ ->
+        server.enqueue(ok("""[{"checkin_id":"c1","author_id":"u1","username":"jan","display_name":"Jan","kind":"flown","occurred_at":"2026-08-12T12:00:00+00:00","flight_number":"LH400","origin_id":1,"destination_id":2,"origin_code":"FRA","destination_code":"JFK","airport_id":null,"airport_code":null,"distance_km":6200,"requested_at":"2026-08-13T08:00:00+00:00"}]"""))
+        val request = api.companionRequests().single()
+        assertEquals("Jan", request.who)
+        assertEquals("FRA \u2192 JFK", request.title)
+        assertEquals("/rest/v1/rpc/get_companion_requests", server.takeRequest().url.encodedPath)
+
+        server.enqueue(ok("""[{"id":"m1","reason":"route","seconds_apart":18000,"flight_number":"UA900","occurred_at":"2026-08-12T17:00:00+00:00","origin_code":"FRA","destination_code":"JFK"}]"""))
+        val match = api.matchingFlights("c1").single()
+        assertEquals("route", match.reason)
+        assertEquals("c1", kotlinx.serialization.json.Json.parseToJsonElement(server.takeRequest().body!!.utf8()).jsonObject["p_source"]!!.jsonPrimitive.content)
+
+        server.enqueue(ok("true"))
+        assertTrue(api.linkCompanion("m1", "c1"))
+        server.takeRequest()
+        server.enqueue(ok("false"))
+        assertFalse(api.linkCompanion("m1", "c1"))
+        server.takeRequest()
+
+        server.enqueue(ok("""{"flight_number":"LH500","origin_id":1,"destination_id":2,"occurred_at":"2026-09-01T12:00:00+00:00","registration":null,"type_icao":"A388","distance_km":6200}"""))
+        assertEquals("LH500", api.replaceFlightData("m1", "c1")!!.flightNumber)
+        server.takeRequest()
+        server.enqueue(ok("null"))
+        assertEquals(null, api.replaceFlightData("m1", "c1"))
+        server.takeRequest()
+
+        server.enqueue(ok("""[{"user_id":"u1","username":"jan","display_name":"Jan"}]"""))
+        assertEquals("Jan", api.checkInSource("copy")!!.who)
+        server.takeRequest()
+        server.enqueue(ok("[]"))
+        assertEquals(null, api.checkInSource("copy"))
     }
 
     @Test

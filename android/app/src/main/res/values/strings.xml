@@ -584,4 +584,11 @@
     <string name="stat_distance_by_year">Real distance by year</string>
     <string name="flown_distance_estimated_label">Flown distance (estimated)</string>
     <string name="route_gap_note">The route has a gap of %1$s. The flown distance is an estimate, a little too short.</string>
+    <string name="companion_requests_title">Flights to take over</string>
+    <string name="companion_not_me">Not me</string>
+    <string name="companion_already_title">You already logged %1$s on %2$s.</string>
+    <string name="companion_already_message">Keeping yours links the two flights. Replacing changes only the flight data: your photos, notes and comments stay.</string>
+    <string name="companion_keep_mine">Keep mine</string>
+    <string name="companion_replace">Replace the flight data</string>
+    <string name="companion_failed">Couldn\'t add the flight. Please check your connection and try again.</string>
 </resources>

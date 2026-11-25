@@ -71,7 +71,15 @@ data class CheckInState(
     val incomingKml: android.net.Uri? = null,
     /** Several KML files picked or shared at once: the list that adds them all replaces the form (#236). */
     val kmlFiles: List<android.net.Uri> = emptyList(),
+    /** The question when a friend's flight is one you already have ("Keep mine" or "Replace the flight data", #273). */
+    val companionAsk: CompanionAsk? = null,
+    /** A request that was just answered, so the inbox can drop it. */
+    val companionAnswered: String? = null,
+    val companionFailed: Boolean = false,
 )
+
+/** A friend's flight that you are about to take over, and the flight of yours that looks like the same one. */
+data class CompanionAsk(val item: site.wingspot.core.FeedItem, val match: SocialApi.MatchingFlight)
 
 /** Saves check-ins on the phone first, then asks for an upload. Works fully offline. */
 class CheckInViewModel(
@@ -82,6 +90,7 @@ class CheckInViewModel(
     private val storeSession: (SpotSession?) -> Unit = {},
     /** Where the tracks of imported flights are kept on this phone. */
     private val tracks: site.wingspot.core.FlightTrackFiles? = null,
+    private val social: SocialApi? = null,
 ) : ViewModel() {
     private val mutable = MutableStateFlow(CheckInState(session = loadSession()?.takeIf { it.isActive(Instant.now()) }))
     val state: StateFlow<CheckInState> = mutable.asStateFlow()
@@ -252,6 +261,67 @@ class CheckInViewModel(
         }
     }
 
+    /**
+     * "Add to my logbook" on a friend's flight or visit (#273). When a flight of yours looks like the same flight, the person is asked first
+     * ([CheckInState.companionAsk]); otherwise a copy is saved, linked to the original.
+     */
+    fun acceptFromFriend(item: site.wingspot.core.FeedItem) {
+        viewModelScope.launch {
+            if (item.kind == "flown") {
+                val asked = runCatching { social?.matchingFlights(item.id) }.getOrNull().orEmpty()
+                val best = asked.firstOrNull() ?: localMatches(item).firstOrNull()
+                if (best != null) {
+                    mutable.value = mutable.value.copy(companionAsk = CompanionAsk(item, best))
+                    return@launch
+                }
+            }
+            addFromFriend(item)
+        }
+    }
+
+    /** The flights on this phone with the same flight number on the same day, for when the server can't be asked. */
+    private fun localMatches(item: site.wingspot.core.FeedItem): List<SocialApi.MatchingFlight> {
+        val number = site.wingspot.core.KmlBatch.normalized(item.flightNumber)
+        val day = runCatching { java.time.OffsetDateTime.parse(item.occurredAt).toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate() }.getOrNull()
+        if (number.isEmpty() || day == null) return emptyList()
+        return mutable.value.all.filter {
+            it.kind == "flown" && it.sourceId == null && site.wingspot.core.KmlBatch.normalized(it.flightNumber) == number &&
+                it.occurredAt.atZone(java.time.ZoneId.systemDefault()).toLocalDate() == day
+        }.map { SocialApi.MatchingFlight(it.id.toString(), "number", 0, it.flightNumber, it.occurredAt.toString(), it.originCode, it.destinationCode) }
+    }
+
+    fun dismissCompanionAsk() {
+        mutable.value = mutable.value.copy(companionAsk = null, companionFailed = false)
+    }
+
+    /** The person chose what to do with the flight they already have. "Keep mine" links the two; "Replace" takes the friend's flight data over. */
+    fun chooseCompanion(keepMine: Boolean) {
+        val ask = mutable.value.companionAsk ?: return
+        mutable.value = mutable.value.copy(companionAsk = null)
+        viewModelScope.launch {
+            try {
+                val api = social ?: throw IllegalStateException("no connection")
+                val mine = UUID.fromString(ask.match.id)
+                val source = UUID.fromString(ask.item.id)
+                if (keepMine) {
+                    if (!api.linkCompanion(ask.match.id, ask.item.id)) throw IllegalStateException("refused")
+                    store.setSource(mine, source)
+                } else {
+                    val facts = api.replaceFlightData(ask.match.id, ask.item.id) ?: throw IllegalStateException("refused")
+                    val at = java.time.OffsetDateTime.parse(facts.occurredAt).toInstant()
+                    store.replaceFlightData(
+                        mine, facts.flightNumber, Place(facts.originId, ask.item.originCode ?: "?"), Place(facts.destinationId, ask.item.destinationCode ?: "?"),
+                        at, facts.registration, facts.typeIcao, source,
+                    )
+                }
+                mutable.value = mutable.value.copy(companionAnswered = ask.item.id)
+                reload()
+            } catch (e: Exception) {
+                mutable.value = mutable.value.copy(companionFailed = true)
+            }
+        }
+    }
+
     /** Adds a friend's flight or airport visit that you are tagged on to your own logbook, linked to the original. */
     fun addFromFriend(item: site.wingspot.core.FeedItem) {
         val at = runCatching { java.time.OffsetDateTime.parse(item.occurredAt).toInstant() }.getOrNull() ?: return
@@ -272,6 +342,7 @@ class CheckInViewModel(
                     return@launch
                 }
                 requestUpload()
+                mutable.value = mutable.value.copy(companionAnswered = item.id)
                 reload()
             } catch (e: Exception) {
                 mutable.value = mutable.value.copy(saveFailed = true)
@@ -337,7 +408,7 @@ class CheckInViewModel(
                 CheckInViewModel(
                     app.checkIns, app.outbox, { OutboxWorker.schedule(app) },
                     { SpotSession.decode(app.prefs.spotSession) }, { app.prefs.spotSession = it?.encode() },
-                    tracks = app.tracks,
+                    tracks = app.tracks, social = app.social,
                 )
             }
         }

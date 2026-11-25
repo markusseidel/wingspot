@@ -403,6 +403,8 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
     var confirmLeave by remember { mutableStateOf(false) }
     // Friends who added this check-in to their own logbook. Only filled for your own check-ins.
     var copies by remember { mutableStateOf(emptyList<site.wingspot.core.Person>()) }
+    // On a copy of yours: the person it was taken from, shown with the friends who were along (#273).
+    var sourcePerson by remember { mutableStateOf<site.wingspot.core.Person?>(null) }
     val mine by checkIn.state.collectAsState()
 
     // The list's copy has the live counts. The copy loaded by id has the airports and your own cabin and seat.
@@ -416,6 +418,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
             photos = feed.photos[id] ?: app.social.photos(listOf(id))
             tags = model.reloadTags(id)
             if (fromList?.userId == me || loaded?.userId == me) copies = runCatching { app.social.checkInCopies(id) }.getOrDefault(emptyList())
+            if (fromList?.userId == me || loaded?.userId == me) sourcePerson = runCatching { app.social.checkInSource(id) }.getOrNull()
             comments = app.social.comments(id)
             model.setCommentCount(id, comments.size)
             extras = runCatching { app.social.commentExtras(id) }.getOrDefault(extras)
@@ -554,12 +557,13 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                     }
                 }
             }
-            if (tags.isNotEmpty()) item {
+            val withPeople = sourcePerson?.takeIf { s -> tags.none { it.id == s.id } }?.let { listOf(it) + tags } ?: tags
+            if (withPeople.isNotEmpty()) item {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(stringResource(R.string.with_label), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                     Card(modifier = Modifier.fillMaxWidth()) {
                         Column {
-                            tags.forEachIndexed { index, person ->
+                            withPeople.forEachIndexed { index, person ->
                                 if (index > 0) HorizontalDivider(Modifier.padding(start = 64.dp))
                                 val isMe = person.id == me
                                 Row(
@@ -613,7 +617,7 @@ fun CheckInPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewMo
                     if (mine.all.any { it.sourceId?.toString() == id }) {
                         Text(stringResource(R.string.in_my_logbook), color = MaterialTheme.colorScheme.primary)
                     } else {
-                        OutlinedButton(onClick = { checkIn.addFromFriend(shown) }, modifier = Modifier.testTag("add-to-logbook")) { Text(stringResource(R.string.add_to_logbook)) }
+                        OutlinedButton(onClick = { checkIn.acceptFromFriend(shown) }, modifier = Modifier.testTag("add-to-logbook")) { Text(stringResource(R.string.add_to_logbook)) }
                         Text(stringResource(R.string.add_to_logbook_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }

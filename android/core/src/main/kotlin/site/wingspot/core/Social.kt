@@ -622,6 +622,65 @@ class SocialApi(private val rest: Rest, private val storageUrl: String) {
     }
 
     /** The caller leaves a check-in they are tagged on, for good. */
+    /** A friend's flight or airport visit you are tagged on and have not taken over yet (`get_companion_requests`, #273). */
+    @Serializable
+    data class CompanionRequest(
+        @SerialName("checkin_id") val checkInId: String, @SerialName("author_id") val authorId: String, val username: String,
+        @SerialName("display_name") val displayName: String? = null, val kind: String, @SerialName("occurred_at") val occurredAt: String,
+        @SerialName("flight_number") val flightNumber: String? = null,
+        @SerialName("origin_id") val originId: Long? = null, @SerialName("destination_id") val destinationId: Long? = null,
+        @SerialName("origin_code") val originCode: String? = null, @SerialName("destination_code") val destinationCode: String? = null,
+        @SerialName("airport_id") val airportId: Long? = null, @SerialName("airport_code") val airportCode: String? = null,
+        @SerialName("distance_km") val distanceKm: Int? = null,
+    ) {
+        val who: String get() = displayName?.takeIf { it.isNotBlank() } ?: username
+
+        /** "FRA → JFK", or the airport's code for a visit. */
+        val title: String get() = if (kind == "flown" && originCode != null && destinationCode != null) "$originCode → $destinationCode" else airportCode ?: "?"
+    }
+
+    /** One of your own flights that is the same flight as the one you were tagged on (`find_matching_flight`). [reason] is `number` or `route`. */
+    @Serializable
+    data class MatchingFlight(
+        val id: String, val reason: String, @SerialName("seconds_apart") val secondsApart: Int = 0,
+        @SerialName("flight_number") val flightNumber: String? = null, @SerialName("occurred_at") val occurredAt: String,
+        @SerialName("origin_code") val originCode: String? = null, @SerialName("destination_code") val destinationCode: String? = null,
+    )
+
+    /** The facts "Replace the flight data" took over from the friend's flight (`replace_flight_data`). */
+    @Serializable
+    data class ReplacedFlight(
+        @SerialName("flight_number") val flightNumber: String? = null, @SerialName("origin_id") val originId: Long,
+        @SerialName("destination_id") val destinationId: Long, @SerialName("occurred_at") val occurredAt: String,
+        val registration: String? = null, @SerialName("type_icao") val typeIcao: String? = null, @SerialName("distance_km") val distanceKm: Int? = null,
+    )
+
+    suspend fun companionRequests(): List<CompanionRequest> =
+        json.decodeFromString(ListSerializer(CompanionRequest.serializer()), rest.call("POST", "/rest/v1/rpc/get_companion_requests", "{}"))
+
+    suspend fun matchingFlights(source: String): List<MatchingFlight> =
+        json.decodeFromString(ListSerializer(MatchingFlight.serializer()), rest.call("POST", "/rest/v1/rpc/find_matching_flight", buildJsonObject { put("p_source", source) }.toString()))
+
+    /** "Keep mine": links a check-in you have to the friend's. False when the server refuses. */
+    suspend fun linkCompanion(mine: String, source: String): Boolean {
+        val body = buildJsonObject { put("p_mine", mine); put("p_source", source) }.toString()
+        return rest.call("POST", "/rest/v1/rpc/link_companion", body).trim() == "true"
+    }
+
+    /** "Replace the flight data": the new facts, or null when the server refuses. */
+    suspend fun replaceFlightData(mine: String, source: String): ReplacedFlight? {
+        val body = buildJsonObject { put("p_mine", mine); put("p_source", source) }.toString()
+        val text = rest.call("POST", "/rest/v1/rpc/replace_flight_data", body).trim()
+        return if (text == "null" || text.isEmpty()) null else json.decodeFromString(ReplacedFlight.serializer(), text)
+    }
+
+    /** On a copy of yours: the person whose check-in it was taken from, or null. */
+    suspend fun checkInSource(copy: String): Person? {
+        val body = buildJsonObject { put("p_checkin", copy) }.toString()
+        return json.decodeFromString(ListSerializer(CopyRow.serializer()), rest.call("POST", "/rest/v1/rpc/get_checkin_source", body))
+            .firstOrNull()?.let { Person(it.userId, it.username, it.displayName) }
+    }
+
     suspend fun removeMyTag(checkIn: String) {
         rest.call("POST", "/rest/v1/rpc/remove_my_tag", """{"checkin":"$checkIn"}""")
     }

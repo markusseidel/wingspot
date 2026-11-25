@@ -30,12 +30,14 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import site.wingspot.core.SocialApi
 
 /** The activity inbox: followers, salutes, comments, tags and alerts, newest first. */
 @Composable
-fun InboxPage(model: SocialViewModel) {
-    LaunchedEffect(Unit) { model.loadInbox() }
+fun InboxPage(app: WingspotApp, model: SocialViewModel, checkIn: CheckInViewModel) {
+    LaunchedEffect(Unit) { model.loadInbox(); model.loadCompanionRequests() }
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
     Column(Modifier.fillMaxWidth().testTag("inbox"), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextButton(onClick = model::back) { Text("‹ " + stringResource(R.string.back)) }
@@ -49,11 +51,22 @@ fun InboxPage(model: SocialViewModel) {
                 Text(stringResource(R.string.activity_failed), color = MaterialTheme.colorScheme.error)
                 TextButton(onClick = model::loadInbox) { Text(stringResource(R.string.refresh)) }
             }
-            model.inbox.isEmpty() -> {
+            model.inbox.isEmpty() && model.companionRequests.isEmpty() -> {
                 Text(stringResource(R.string.activity_empty_title), style = MaterialTheme.typography.titleMedium)
                 Text(stringResource(R.string.activity_empty), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             else -> LazyColumn(Modifier.fillMaxWidth()) {
+                if (model.companionRequests.isNotEmpty()) {
+                    item(key = "companion-title") { Text(stringResource(R.string.companion_requests_title), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(vertical = 8.dp)) }
+                    items(model.companionRequests, key = { "companion-" + it.checkInId }) { request ->
+                        CompanionRequestRow(
+                            request,
+                            onAccept = { scope.launch { app.social.checkIn(request.checkInId)?.let(checkIn::acceptFromFriend) } },
+                            onDecline = { model.declineRequest(request.checkInId) },
+                        )
+                        HorizontalDivider()
+                    }
+                }
                 items(model.inbox, key = { it.id }) { row ->
                     InboxRow(row, onClick = {
                         model.markInboxRowRead(row)
