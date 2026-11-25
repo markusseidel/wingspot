@@ -142,6 +142,18 @@ object FlightTrack {
         return FlownRoute(flownKm, detour.extraKm.roundHalfUp().toInt(), detour.percent.roundHalfUp().toInt())
     }
 
+    /**
+     * A gap this long between two neighbouring positions (over the ocean, for example) is drawn as a straight line, so the flown distance of a
+     * route with such a gap is an estimate, a little too short (#239). The number is a first guess, to be tuned with real files.
+     */
+    const val ESTIMATED_GAP_KM = 200.0
+
+    /** The longest distance between two neighbouring positions, in kilometres. 0 for fewer than two positions. */
+    fun largestGapKm(points: List<GeoCoordinate>): Double = points.zipWithNext().maxOfOrNull { (a, b) -> GreatCircle.distanceKm(a, b) } ?: 0.0
+
+    /** Whether the route has a gap of at least [ESTIMATED_GAP_KM], so its flown distance is an estimate. */
+    fun isEstimated(points: List<GeoCoordinate>): Boolean = largestGapKm(points) >= ESTIMATED_GAP_KM
+
     /** Rounds .5 away from zero, as the iPhone app does, so both apps shift a point at exactly 180° the same way. */
     private fun Double.roundHalfAwayFromZero(): Double = if (this < 0) -((-this).roundHalfUp()) else roundHalfUp()
     private fun Double.roundHalfUp(): Double = kotlin.math.floor(this + 0.5)

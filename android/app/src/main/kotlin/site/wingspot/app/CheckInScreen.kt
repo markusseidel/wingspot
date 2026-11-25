@@ -352,6 +352,10 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
                 },
                 modifier = Modifier.testTag("import-track"),
             )
+            // A big gap in the route makes the flown distance an estimate (#239).
+            if (FlightTrack.isEstimated(importedTrack)) {
+                Text(stringResource(R.string.route_gap_note, unit.format(Math.round(FlightTrack.largestGapKm(importedTrack)).toInt())), color = MaterialTheme.colorScheme.tertiary, modifier = Modifier.testTag("import-estimated"))
+            }
         }
         if (duplicate) Text(stringResource(R.string.imported_duplicate, normalizedNumber), color = MaterialTheme.colorScheme.error, modifier = Modifier.testTag("import-duplicate"))
         Text(stringResource(R.string.imported_check), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
