@@ -79,6 +79,10 @@ import site.wingspot.core.departureDay
 @Composable
 fun CheckInScreen(state: CheckInState, reference: ReferenceState, model: CheckInViewModel) {
     val result = state.result
+    if (state.kmlFiles.isNotEmpty()) {
+        KmlBatchScreen(state.kmlFiles, state, reference, model)
+        return
+    }
     if (result != null) {
         ResultView(result, onReturn = if (state.afterFlight != null) model::returnFromResult else null, onAnother = model::another, onDone = model::close)
         return
@@ -305,8 +309,9 @@ private fun FlownForm(state: CheckInState, reference: ReferenceState, model: Che
         }
         importing = false
     }
-    val importPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-        if (uri != null) scope.launch { readKml(uri) }
+    // One file fills this form; several open the list that adds them all (#236).
+    val importPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
+        if (uris.size == 1) scope.launch { readKml(uris.first()) } else if (uris.size > 1) model.openKmlFiles(uris)
     }
     // A KML file shared or opened from another app is read as soon as the form is there (#236).
     // Clearing it changes this effect's key, which would cancel a read running inside it, so the read runs in the form's own scope.

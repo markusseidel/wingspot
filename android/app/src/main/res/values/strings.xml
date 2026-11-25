@@ -570,4 +570,15 @@
     <string name="shortcut_spotted_long">An aircraft you have seen</string>
     <string name="shortcut_flown_long">A flight you were on</string>
     <string name="shortcut_airport_long">An airport you are at</string>
+    <string name="kml_files_title">KML files</string>
+    <string name="kml_files_count">%1$d files</string>
+    <string name="kml_batch_reading">Reading the files…</string>
+    <string name="kml_batch_add">Add %1$d flights</string>
+    <string name="kml_batch_added">Added %1$d flights.</string>
+    <string name="kml_batch_footer">Ticked flights are added to your logbook. A flight you already have is not ticked. The routes stay on this phone.</string>
+    <string name="kml_row_duplicate">Already in your logbook</string>
+    <string name="kml_row_not_kml">Not a KML file of a flight</string>
+    <string name="kml_row_no_data">Airport data is not downloaded yet</string>
+    <string name="kml_row_no_route">No route found in the file</string>
+    <string name="kml_row_no_date">No date found in the file</string>
 </resources>
