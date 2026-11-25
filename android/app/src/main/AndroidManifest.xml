@@ -26,6 +26,8 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- The shortcuts of a long press on the icon (#349). -->
+            <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
             <!-- The link in the sign-in email: wingspot://auth-callback?code=... -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

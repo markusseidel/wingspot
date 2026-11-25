@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- What a long press on the app icon shows (#349), in the order of the Check in screen. Each opens the form of that kind. -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="spotted"
+        android:enabled="true"
+        android:icon="@drawable/ic_glyph_binoculars"
+        android:shortcutShortLabel="@string/spotted_title"
+        android:shortcutLongLabel="@string/shortcut_spotted_long">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetPackage="site.wingspot.android"
+            android:targetClass="site.wingspot.app.MainActivity">
+            <extra android:name="quick_action" android:value="spotted" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="flown"
+        android:enabled="true"
+        android:icon="@drawable/ic_glyph_plane"
+        android:shortcutShortLabel="@string/flown_title"
+        android:shortcutLongLabel="@string/shortcut_flown_long">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetPackage="site.wingspot.android"
+            android:targetClass="site.wingspot.app.MainActivity">
+            <extra android:name="quick_action" android:value="flown" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="airport"
+        android:enabled="true"
+        android:icon="@drawable/ic_glyph_building"
+        android:shortcutShortLabel="@string/airport_title"
+        android:shortcutLongLabel="@string/shortcut_airport_long">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetPackage="site.wingspot.android"
+            android:targetClass="site.wingspot.app.MainActivity">
+            <extra android:name="quick_action" android:value="airport" />
+        </intent>
+    </shortcut>
+</shortcuts>
