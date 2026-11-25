@@ -86,6 +86,22 @@ public enum FlightTrack {
         return (extra, extra / greatCircleKm * 100)
     }
 
+    /// A gap this long between two neighbouring positions (over the ocean, for example) is drawn as a straight line, so the flown distance of
+    /// a route with such a gap is an estimate, a little too short (#239). The number is a first guess, to be tuned with real files.
+    public static let estimatedGapKm = 200.0
+
+    /// The longest distance between two neighbouring positions, in kilometres. 0 for fewer than two positions.
+    public static func largestGapKm(_ points: [GeoCoordinate]) -> Double {
+        var largest = 0.0
+        for (a, b) in zip(points, points.dropFirst()) { largest = max(largest, GreatCircle.distanceKm(from: a, to: b)) }
+        return largest
+    }
+
+    /// Whether the route has a gap of at least `estimatedGapKm`, so its flown distance is an estimate.
+    public static func isEstimated(_ points: [GeoCoordinate]) -> Bool {
+        largestGapKm(points) >= estimatedGapKm
+    }
+
     /// What a flight page shows about a flown route: its length in whole kilometres and, when it is clearly longer than the
     /// airport-to-airport distance, how much more that is (kilometres and percent). Nil for fewer than two positions.
     public static func flownRoute(_ points: [GeoCoordinate], greatCircleKm: Int?) -> FlownRoute? {

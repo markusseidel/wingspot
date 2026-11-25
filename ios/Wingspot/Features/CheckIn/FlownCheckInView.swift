@@ -201,6 +201,7 @@ struct FlownCheckInView: View {
                         Text("Not found in the file: \(ImportNotice.list(importNotice.missing)). Please add them by hand.")
                     }
                     if let trackSummary { Text(trackSummary) }
+                    if let estimateNote { Text(estimateNote).foregroundStyle(.orange) }
                     if hasDuplicate {
                         Label("You already have a flight \(normalizedFlightNumber) on this day. Save it only if it is another flight.", systemImage: "exclamationmark.triangle")
                             .foregroundStyle(.orange)
@@ -304,6 +305,13 @@ struct FlownCheckInView: View {
             $0.kind == "flown" && $0.flightNumber != nil && $0.ownerID == owner
         }))) ?? []
         return found.contains { $0.flightNumber == normalizedFlightNumber && Calendar.current.isDate($0.occurredAt, inSameDayAs: date) }
+    }
+
+    /// Says so when the route has a big gap: its flown distance is then an estimate (#239).
+    private var estimateNote: String? {
+        guard importedTrack.count >= 2, FlightTrack.isEstimated(importedTrack) else { return nil }
+        let gap = DistanceUnit.preferred.format(km: Int(FlightTrack.largestGapKm(importedTrack).rounded()))
+        return String(localized: "The route has a gap of \(gap). The flown distance is an estimate, a little too short.")
     }
 
     private var trackSummary: String? {

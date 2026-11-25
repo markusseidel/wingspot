@@ -44,6 +44,8 @@ struct CheckInDetailView: View {
     @State private var copies: [PersonTag] = []
     /// The route of an imported KML file, for your own flights. It stays on this iPhone.
     @State private var flownRoute: FlownRoute?
+    /// The longest gap between two positions of the saved route; a big one makes the flown distance an estimate (#239).
+    @State private var routeGapKm = 0.0
     /// The same route, simplified, for the map.
     @State private var routeLine: [GeoCoordinate] = []
     /// Counts up when a route was saved from a file, so the page reads it again.
@@ -75,13 +77,14 @@ struct CheckInDetailView: View {
         .task(id: "\(item.id)-\(shown.distanceKm ?? 0)-\(routeVersion)") {
             guard isOwn, item.kind == "flown" else { flownRoute = nil; return }
             let id = item.id, distance = shown.distanceKm
-            let found: (route: FlownRoute, line: [GeoCoordinate])? = await Task.detached {
+            let found: (route: FlownRoute, line: [GeoCoordinate], gapKm: Double)? = await Task.detached {
                 guard let points = FlightTrackFiles.standard.load(id: id),
                       let route = FlightTrack.flownRoute(points, greatCircleKm: distance) else { return nil }
-                return (route, FlightTrack.simplified(points, toleranceMeters: 300))
+                return (route, FlightTrack.simplified(points, toleranceMeters: 300), FlightTrack.largestGapKm(points))
             }.value
             flownRoute = found?.route
             routeLine = found?.line ?? []
+            routeGapKm = found?.gapKm ?? 0
         }
         .task {
             let created = (source ?? feed).commentStore(for: item.id)
@@ -263,9 +266,15 @@ struct CheckInDetailView: View {
                 if let km = shown.distanceKm { LabeledContent("Distance", value: unit.format(km: km)) }
                 // The route from an imported KML file stays on this iPhone, so only your own flights have one.
                 if let route = flownRoute {
-                    LabeledContent("Flown distance", value: unit.format(km: route.flownKm))
+                    let estimated = routeGapKm >= FlightTrack.estimatedGapKm
+                    LabeledContent(estimated ? "Flown distance (estimated)" : "Flown distance", value: unit.format(km: route.flownKm))
                     if route.extraKm > 0 {
                         LabeledContent("More than the direct way", value: "+\(unit.format(km: route.extraKm)) (+\(route.percent) %)")
+                    }
+                    if estimated {
+                        Text("The route has a gap of \(unit.format(km: Int(routeGapKm.rounded()))). The flown distance is an estimate, a little too short.")
+                            .font(.footnote)
+                            .foregroundStyle(.orange)
                     }
                     if routeLine.count >= 2 { FlownRouteMap(line: routeLine) }
                     Text("From your Flightradar24 file. The route stays on this iPhone.")
