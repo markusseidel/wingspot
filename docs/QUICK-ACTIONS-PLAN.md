@@ -1,10 +1,10 @@
 # Home screen shortcuts (long press on the app icon): plan
 
-Idea from the owner: on the iPhone home screen a long press on the app icon opens a small menu with shortcuts. Wingspot should offer the check-in kinds there, and the same on Android. Status: plan only, nothing built. Issue #349.
+Idea from the owner: on the iPhone home screen a long press on the app icon opens a small menu with shortcuts. Wingspot should offer the check-in kinds there, and the same on Android. Status: plan agreed, nothing built. Issue #349.
 
 ## Goal
 
-- A long press on the Wingspot icon shows **Spotted**, **Airport** and **Flown**. A tap opens the app on that check-in form, ready to type, with no taps through the Check in tab and the kind list in between. That is the whole point: a spotter at the fence wants the registration field in two seconds.
+- A long press on the Wingspot icon shows **Spotted**, **Flown** and **Airport** (the order of the Check in sheet). A tap opens the app on that check-in form, ready to type, with no taps through the Check in tab and the kind list in between. That is the whole point: a spotter at the fence wants the registration field in two seconds.
 - While a spotting session runs, a fourth entry **Session at <place>** opens the sighting form of that session.
 - It works when the app is closed, in the background, or already on screen, and in German and English.
 - Both apps get it (parity), with the same entries in the same order.
@@ -29,7 +29,7 @@ Idea from the owner: on the iPhone home screen a long press on the app icon open
 
 ## Decisions
 
-1. **Entries and order:** 1 Spotted, 2 Airport, 3 Flown, and a dynamic 4 "Session at <place>" only while a session runs. Spotted is first because it is the one done most often. The titles are the words the app already uses ("Spotted", "Airport", "Flown"; German "Gespottet", "Flughafen", "Geflogen"); the subtitle is the existing one ("An aircraft you have seen" and so on).
+1. **Entries and order:** 1 Spotted, 2 Flown, 3 Airport, the same order as the Check in sheet, and a dynamic 4 "Session at <place>" only while a session runs. The owner decided this order, and that there are no entries for the Feed or the inbox. The titles are the words the app already uses ("Spotted", "Flown", "Airport"; German "Gespottet", "Geflogen", "Flughafen"); the subtitle is the existing one ("An aircraft you have seen" and so on).
 2. **A shortcut opens the form, not the sheet.** The sheet or tab is skipped: the form is shown straight away, with the registration field focused where the form does that today. Back from the form goes to the Check in list (iOS) or the form's own close (Android), as it would after tapping through.
 3. **While a session runs**, "Spotted" already links the sighting to the session (the forms read the running session). The dynamic fourth entry exists for the person who sees the long-press menu and wants to know that the session is still running; it opens the same Spotted form. It is removed when the session ends or runs out, and rebuilt when the app starts or comes back (a session can run out while the app is closed).
 4. **Waiting for the app to be ready.** If the shortcut arrives while a full-screen step is up (onboarding, first profile setup, terms), the action is kept and used when the main screen is there, like a tapped notification. It never skips a legal or setup step.
@@ -61,7 +61,7 @@ Idea from the owner: on the iPhone home screen a long press on the app icon open
 ## Order of work
 
 1. One PR per platform (the parity rule), merged together: the shared `QuickAction`, the static entries, the routing, the dynamic session entry, strings in both languages.
-2. Both builds with the tester text and the release note for each platform ("Long press the app icon: Spotted, Airport, Flown").
+2. Both builds with the tester text and the release note for each platform ("Long press the app icon: Spotted, Flown, Airport").
 3. Click-through on a phone each: cold start, app in the background, app in the check-in sheet already, with a session running (the dynamic entry), signed out, and with the onboarding screen up (the action waits).
 
 ## Risks
@@ -71,8 +71,8 @@ Idea from the owner: on the iPhone home screen a long press on the app icon open
 - **A stale dynamic entry.** A session that ended while the app was closed leaves its shortcut on the icon until the app runs again. The entry opens the normal Spotted form, which is harmless, and the next start removes it.
 - **Titles are long in German.** "Flughafen" and "Gespottet" fit; if a launcher cuts a label, the long label is shown elsewhere.
 
-## Open questions for the owner
+## Decided by the owner
 
-1. Are these entries right: Spotted, Airport, Flown, plus the session entry while one runs? Or also "Feed" or "Inbox"?
-2. Spotted first (the plan) or the same order as the sheet (Spotted, Flown, Airport)?
-3. Should the shortcut open the form with the keyboard ready (the plan), or the kind list like the tab does?
+1. The entries are Spotted, Flown and Airport, plus the session entry while one runs. No Feed or inbox entry.
+2. The order is the one of the Check in sheet: Spotted, Flown, Airport.
+3. A shortcut opens the form with the keyboard ready (the registration field focused on Spotted; the first field of the other forms where they have one), not the kind list.
