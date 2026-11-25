@@ -295,6 +295,7 @@ private struct ProfileStatsRows: View {
     @Environment(ReferenceDataStore.self) private var referenceData
     @State private var kilometres: Int?
     @State private var routeStats: FlownRouteStats?
+    @State private var yearStats: [YearDistance] = []
 
     private struct Key: Hashable {
         let routes: [CheckInStats.Route: Int]
@@ -319,6 +320,12 @@ private struct ProfileStatsRows: View {
             if routeStats.biggestDetourKm > 0 {
                 LabeledContent("Biggest detour") { Text(verbatim: "+\(unit.format(km: routeStats.biggestDetourKm))") }
             }
+            if !yearStats.isEmpty {
+                Text("Real distance by year").font(.footnote).foregroundStyle(.secondary)
+                ForEach(yearStats, id: \.year) { entry in
+                    LabeledContent(String(entry.year)) { Text(verbatim: unit.format(km: entry.km)) }
+                }
+            }
             Text("From your imported Flightradar24 routes. They stay on this iPhone.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -334,15 +341,16 @@ private struct ProfileStatsRows: View {
         }
         kilometres = stats.kilometres { places[$0] }
         let flights = stats.flightList, coordinates = places
-        let measured: [(flownKm: Double, greatCircleKm: Double?)] = await Task.detached {
+        let measured: [(flownKm: Double, greatCircleKm: Double?, year: Int)] = await Task.detached {
             flights.compactMap { flight in
                 guard let track = FlightTrackFiles.standard.load(id: flight.id), track.count >= 2 else { return nil }
                 let circle = coordinates[flight.origin].flatMap { from in
                     coordinates[flight.destination].map { GreatCircle.distanceKm(from: from, to: $0) }
                 }
-                return (FlightTrack.lengthKm(track), circle)
+                return (FlightTrack.lengthKm(track), circle, flight.year)
             }
         }.value
-        routeStats = FlownRouteStats.of(measured)
+        routeStats = FlownRouteStats.of(measured.map { (flownKm: $0.flownKm, greatCircleKm: $0.greatCircleKm) })
+        yearStats = FlownRouteStats.byYear(measured.map { (flownKm: $0.flownKm, year: $0.year) })
     }
 }

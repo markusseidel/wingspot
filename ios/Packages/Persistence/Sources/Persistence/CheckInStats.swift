@@ -29,6 +29,8 @@ public struct CheckInStats: Equatable, Sendable {
         public let id: UUID
         public let origin: Int
         public let destination: Int
+        /// The year of the flight on the calendar of this phone.
+        public let year: Int
     }
     /// Every flight with its two airports.
     public var flightList = [Flight]()
@@ -61,7 +63,7 @@ public struct CheckInStats: Equatable, Sendable {
                 flights += 1
                 if let origin = checkIn.originID, let destination = checkIn.destinationID {
                     routes[Route(origin: origin, destination: destination), default: 0] += 1
-                    flightList.append(Flight(id: checkIn.id, origin: origin, destination: destination))
+                    flightList.append(Flight(id: checkIn.id, origin: origin, destination: destination, year: Calendar.current.component(.year, from: checkIn.occurredAt)))
                 }
             default:
                 break

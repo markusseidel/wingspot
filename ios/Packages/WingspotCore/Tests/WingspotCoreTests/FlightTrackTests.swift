@@ -117,3 +117,10 @@ struct TrackVectors: Decodable {
     #expect(FlownRouteStats.of([(flownKm: 100, greatCircleKm: nil)])?.biggestDetourKm == 0)
     #expect(FlownRouteStats.of([]) == nil)
 }
+
+@Test func theFlownDistanceIsSummedPerYearNewestFirst() {
+    let years = FlownRouteStats.byYear([(flownKm: 1000.4, year: 2025), (flownKm: 2000.4, year: 2026), (flownKm: 500.4, year: 2025), (flownKm: 100, year: 2024)])
+    #expect(years == [YearDistance(year: 2026, routes: 1, km: 2000), YearDistance(year: 2025, routes: 2, km: 1501), YearDistance(year: 2024, routes: 1, km: 100)])
+    #expect(FlownRouteStats.byYear([]).isEmpty)
+}
+
