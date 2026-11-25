@@ -581,4 +581,5 @@
     <string name="kml_row_no_data">Airport data is not downloaded yet</string>
     <string name="kml_row_no_route">No route found in the file</string>
     <string name="kml_row_no_date">No date found in the file</string>
+    <string name="stat_distance_by_year">Real distance by year</string>
 </resources>
