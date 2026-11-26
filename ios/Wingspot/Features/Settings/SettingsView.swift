@@ -55,6 +55,7 @@ struct SettingsView: View {
                     ForEach(DistanceUnit.allCases, id: \.self) { Text($0.title).tag($0) }
                 }
             }
+            BackupSection()
             LegalLinksSection()
             AboutSection()
         }

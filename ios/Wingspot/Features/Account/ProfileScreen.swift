@@ -12,6 +12,7 @@ struct ProfileScreen: View {
     @State private var isSigningIn = false
     @State private var isShowingHistory = false
     @State private var isShowingCollections = false
+    @State private var isShowingBackup = false
 
     var body: some View {
         NavigationStack {
@@ -36,6 +37,12 @@ struct ProfileScreen: View {
             }
             .navigationDestination(isPresented: $isShowingCollections) {
                 CollectionsView()
+            }
+            // Signed out there is no Settings, but the check-ins and routes are only on this iPhone: the backup is here (#310).
+            .navigationDestination(isPresented: $isShowingBackup) {
+                Form { BackupSection() }
+                    .navigationTitle("Backup")
+                    .navigationBarTitleDisplayMode(.inline)
             }
         }
         .onChange(of: account.state) {
@@ -81,6 +88,8 @@ struct ProfileScreen: View {
                     VStack(spacing: 12) { signedOutLinks }
                 }
                 .buttonStyle(.bordered)
+                Button("Backup", systemImage: "externaldrive") { isShowingBackup = true }
+                    .controlSize(.regular)
             }
             .controlSize(.large)
             .padding(.horizontal)

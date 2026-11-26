@@ -974,6 +974,32 @@
         }
       }
     },
+    "Backup" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backup"
+          }
+        }
+      }
+    },
+    "Backup of %@ from %@: %lld routes, %lld check-ins that were only on that phone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backup vom %1$@ von %2$@: %3$lld Routen, %4$lld Check-ins, die nur auf diesem Handy waren."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Backup of %1$@ from %2$@: %3$lld routes, %4$lld check-ins that were only on that phone."
+          }
+        }
+      }
+    },
     "Badge" : {
       "localizations" : {
         "de" : {
@@ -1597,6 +1623,16 @@
         }
       }
     },
+    "Couldn't create the backup" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Backup konnte nicht erstellt werden"
+          }
+        }
+      }
+    },
     "Couldn't delete this check-in" : {
       "localizations" : {
         "de" : {
@@ -1880,6 +1916,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gezählt werden nur Check-ins, die du sehen darfst."
+          }
+        }
+      }
+    },
+    "Create backup" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backup erstellen"
           }
         }
       }
@@ -3058,6 +3104,16 @@
         }
       }
     },
+    "Keep the backup file: it is the only copy of what was only on the other phone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bewahre die Backup-Datei auf: Sie ist die einzige Kopie von dem, was nur auf dem anderen Handy war."
+          }
+        }
+      }
+    },
     "Keeping yours links the two flights. Replacing changes only the flight data: your photos, notes and comments stay." : {
       "localizations" : {
         "de" : {
@@ -3737,6 +3793,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Keiner"
+          }
+        }
+      }
+    },
+    "None of these flights are on this phone yet. Their routes show up once the flights are here, for example after you sign in with the account they belong to." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keiner dieser Flüge ist bisher auf diesem Handy. Ihre Routen erscheinen, sobald die Flüge da sind, zum Beispiel nachdem du dich mit dem Konto anmeldest, zu dem sie gehören."
           }
         }
       }
@@ -4661,6 +4727,16 @@
         }
       }
     },
+    "Replace routes I already have" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorhandene Routen ersetzen"
+          }
+        }
+      }
+    },
     "Replace the flight data" : {
       "localizations" : {
         "de" : {
@@ -4727,6 +4803,62 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Foto melden"
+          }
+        }
+      }
+    },
+    "Restore" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wiederherstellen"
+          }
+        }
+      }
+    },
+    "Restore backup" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backup wiederherstellen"
+          }
+        }
+      }
+    },
+    "Restore from a backup" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aus einem Backup wiederherstellen"
+          }
+        }
+      }
+    },
+    "Restore from backup" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aus Backup wiederherstellen"
+          }
+        }
+      }
+    },
+    "Restored %lld routes and %lld check-ins." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld Routen und %2$lld Check-ins wiederhergestellt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Restored %1$lld routes and %2$lld check-ins."
           }
         }
       }
@@ -5289,6 +5421,16 @@
         }
       }
     },
+    "Skipped %lld that were already here." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld übersprungen, die schon da waren."
+          }
+        }
+      }
+    },
     "Someone else already decided on this place." : {
       "localizations" : {
         "de" : {
@@ -5526,6 +5668,26 @@
         }
       }
     },
+    "The backup holds the routes of your imported flights and the check-ins that are only on this phone. Photos are not in it. It contains your travel history: keep it somewhere private." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Backup enthält die Routen deiner importierten Flüge und die Check-ins, die nur auf diesem Handy sind. Fotos sind nicht dabei. Es enthält deine Reisehistorie: Bewahre es an einem privaten Ort auf."
+          }
+        }
+      }
+    },
+    "The check-ins are added to the account you are signed in with." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Check-ins werden dem Konto hinzugefügt, mit dem du angemeldet bist."
+          }
+        }
+      }
+    },
     "The email or password is wrong." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5539,6 +5701,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The email or password is wrong."
+          }
+        }
+      }
+    },
+    "The file is damaged." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Datei ist beschädigt."
           }
         }
       }
@@ -5679,6 +5851,16 @@
         }
       }
     },
+    "This backup was made by a newer version of Wingspot. Please update the app." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Backup wurde mit einer neueren Version von Wingspot erstellt. Bitte aktualisiere die App."
+          }
+        }
+      }
+    },
     "This comment isn't allowed. Please rephrase it." : {
       "localizations" : {
         "de" : {
@@ -5725,6 +5907,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Das ist keine KML-Datei"
+          }
+        }
+      }
+    },
+    "This is not a Wingspot backup." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das ist kein Wingspot-Backup."
           }
         }
       }
@@ -6617,6 +6809,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Flugzeugtyp"
+          }
+        }
+      }
+    },
+    "an Android phone" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "einem Android-Handy"
+          }
+        }
+      }
+    },
+    "an iPhone" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "einem iPhone"
           }
         }
       }
