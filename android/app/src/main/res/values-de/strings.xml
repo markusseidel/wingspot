@@ -591,4 +591,25 @@
     <string name="companion_keep_mine">Meinen behalten</string>
     <string name="companion_replace">Flugdaten ersetzen</string>
     <string name="companion_failed">Der Flug konnte nicht hinzugefügt werden. Bitte prüfe deine Verbindung und versuche es noch einmal.</string>
+    <!-- Backup and restore (#310) -->
+    <string name="backup_title">Backup</string>
+    <string name="backup_hint">Das Backup enthält die Routen deiner importierten Flüge und die Check-ins, die nur auf diesem Handy sind. Fotos sind nicht dabei. Es enthält deine Reisehistorie: Bewahre es an einem privaten Ort auf.</string>
+    <string name="backup_create">Backup erstellen</string>
+    <string name="backup_restore">Aus Backup wiederherstellen</string>
+    <string name="backup_restore_link">Aus einem Backup wiederherstellen</string>
+    <string name="backup_create_failed">Das Backup konnte nicht erstellt werden</string>
+    <string name="backup_restore_title">Backup wiederherstellen</string>
+    <string name="backup_restore_button">Wiederherstellen</string>
+    <string name="backup_summary">Backup vom %1$s von %2$s: %3$d Routen, %4$d Check-ins, die nur auf diesem Handy waren.</string>
+    <string name="backup_from_iphone">einem iPhone</string>
+    <string name="backup_from_android">einem Android-Handy</string>
+    <string name="backup_replace_routes">Vorhandene Routen ersetzen</string>
+    <string name="backup_added_to_account">Die Check-ins werden dem Konto hinzugefügt, mit dem du angemeldet bist.</string>
+    <string name="backup_flights_not_here">Keiner dieser Flüge ist bisher auf diesem Handy. Ihre Routen erscheinen, sobald die Flüge da sind, zum Beispiel nachdem du dich mit dem Konto anmeldest, zu dem sie gehören.</string>
+    <string name="backup_restored">%1$d Routen und %2$d Check-ins wiederhergestellt.</string>
+    <string name="backup_skipped">%1$d übersprungen, die schon da waren.</string>
+    <string name="backup_keep_file">Bewahre die Backup-Datei auf: Sie ist die einzige Kopie von dem, was nur auf dem anderen Handy war.</string>
+    <string name="backup_not_backup">Das ist kein Wingspot-Backup.</string>
+    <string name="backup_newer_version">Dieses Backup wurde mit einer neueren Version von Wingspot erstellt. Bitte aktualisiere die App.</string>
+    <string name="backup_damaged">Die Datei ist beschädigt.</string>
 </resources>

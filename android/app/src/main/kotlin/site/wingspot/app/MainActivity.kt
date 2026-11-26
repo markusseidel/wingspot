@@ -57,6 +57,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /** A single backup file an intent hands over (a view or a share), or null. */
+    private fun incomingBackup(intent: Intent?): android.net.Uri? {
+        val uri = when (intent?.action) {
+            Intent.ACTION_VIEW -> intent.data
+            Intent.ACTION_SEND -> if (android.os.Build.VERSION.SDK_INT >= 33) intent.getParcelableExtra(Intent.EXTRA_STREAM, android.net.Uri::class.java) else @Suppress("DEPRECATION") intent.getParcelableExtra(Intent.EXTRA_STREAM)
+            else -> null
+        } ?: return null
+        return uri.takeIf { BackupInbox.looksLikeBackup(this, it) }
+    }
+
     // The sign-in link opens this activity again (singleTask) instead of starting a second one.
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -64,6 +74,11 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handle(intent: Intent?) {
+        // A Wingspot backup opened or shared from another app goes to the restore review (#310).
+        incomingBackup(intent)?.let {
+            BackupInbox.pending = it
+            return
+        }
         // A KML file shared or opened from another app opens the flight form, which reads it (#236). Only when the import is switched on.
         incomingKml(intent).let { uris ->
             if (uris.isNotEmpty()) {

@@ -591,4 +591,25 @@
     <string name="companion_keep_mine">Keep mine</string>
     <string name="companion_replace">Replace the flight data</string>
     <string name="companion_failed">Couldn\'t add the flight. Please check your connection and try again.</string>
+    <!-- Backup and restore (#310) -->
+    <string name="backup_title">Backup</string>
+    <string name="backup_hint">The backup holds the routes of your imported flights and the check-ins that are only on this phone. Photos are not in it. It contains your travel history: keep it somewhere private.</string>
+    <string name="backup_create">Create backup</string>
+    <string name="backup_restore">Restore from backup</string>
+    <string name="backup_restore_link">Restore from a backup</string>
+    <string name="backup_create_failed">Couldn\'t create the backup</string>
+    <string name="backup_restore_title">Restore backup</string>
+    <string name="backup_restore_button">Restore</string>
+    <string name="backup_summary">Backup of %1$s from %2$s: %3$d routes, %4$d check-ins that were only on that phone.</string>
+    <string name="backup_from_iphone">an iPhone</string>
+    <string name="backup_from_android">an Android phone</string>
+    <string name="backup_replace_routes">Replace routes I already have</string>
+    <string name="backup_added_to_account">The check-ins are added to the account you are signed in with.</string>
+    <string name="backup_flights_not_here">None of these flights are on this phone yet. Their routes show up once the flights are here, for example after you sign in with the account they belong to.</string>
+    <string name="backup_restored">Restored %1$d routes and %2$d check-ins.</string>
+    <string name="backup_skipped">Skipped %1$d that were already here.</string>
+    <string name="backup_keep_file">Keep the backup file: it is the only copy of what was only on the other phone.</string>
+    <string name="backup_not_backup">This is not a Wingspot backup.</string>
+    <string name="backup_newer_version">This backup was made by a newer version of Wingspot. Please update the app.</string>
+    <string name="backup_damaged">The file is damaged.</string>
 </resources>
