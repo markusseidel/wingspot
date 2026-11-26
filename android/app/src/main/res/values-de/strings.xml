@@ -146,6 +146,16 @@
     <string name="rule_spam">Kein Spam und keine Werbung.</string>
     <string name="rule_responsible">Du bist für deine Beiträge verantwortlich. Kommentare mit Beleidigungen werden automatisch abgelehnt.</string>
     <string name="rules_report">Du kannst Personen, Check-ins und Kommentare melden und jeden blockieren. Wir prüfen Meldungen und können Inhalte oder Konten entfernen, die gegen diese Regeln verstoßen.</string>
+    <string name="reason_underage">Scheint jünger als 16</string>
+    <string name="age_confirm">Ich bin 16 oder älter</string>
+    <string name="age_younger">Ich bin jünger als 16</string>
+    <string name="age_younger_title">Jünger als 16</string>
+    <string name="age_younger_message">Wingspot-Konten sind für Menschen ab 16. Du kannst Wingspot ohne Konto weiter nutzen: Deine Check-ins bleiben auf diesem Handy.</string>
+    <string name="age_younger_delete_hint">Beim Löschen des Kontos werden auch seine Check-ins auf diesem Handy entfernt. Wenn du sie behalten möchtest, mach vorher in den Einstellungen ein Backup.</string>
+    <string name="age_delete_my_account">Mein Konto löschen</string>
+    <string name="update_title">Bitte aktualisiere Wingspot</string>
+    <string name="update_message">Diese Version von Wingspot ist zu alt für den Feed, Personen und das Teilen. Dein Logbuch funktioniert weiter.</string>
+    <string name="update_button">Aktualisieren</string>
     <string name="i_agree">Ich stimme zu</string>
     <string name="setup_title">Wähle einen Benutzernamen</string>
     <string name="setup_hint">So finden dich andere Leute. Du kannst ihn später ändern.</string>

@@ -67,7 +67,7 @@ struct WingspotApp: App {
         _releaseNotes = State(initialValue: ReleaseNotesStore(backend: accountBackend))
         _visibility = State(initialValue: CheckInVisibilityStore(backend: accountBackend))
         _reporter = State(initialValue: Reporter(backend: accountBackend))
-        _terms = State(initialValue: TermsStore(userID: { account.userID }))
+        _terms = State(initialValue: TermsStore(backend: accountBackend, userID: { account.userID }))
         _avatars = State(initialValue: AvatarStore(projectURL: Self.supabaseURL, backend: accountBackend))
         _personProgress = State(initialValue: PersonProgressStore(backend: accountBackend))
         _inbox = State(initialValue: InboxStore(backend: accountBackend))
@@ -135,18 +135,19 @@ struct WingspotApp: App {
                     badges.begin(userID: account.userID)
                     sync.requestSync()
                     await push.sync()
+                    await terms.sync()
                 }
                 .task { network.start { Task { @MainActor in sync.requestSync() } } }
                 // After signing in or out, and each time the app comes to the foreground.
                 .onChange(of: account.userID) {
                     badges.begin(userID: account.userID)
                     sync.requestSync()
-                    if account.userID == nil { push.clear() } else { Task { await push.sync() } }
+                    if account.userID == nil { push.clear() } else { Task { await push.sync(); await terms.sync() } }
                 }
                 .onChange(of: scenePhase) {
                     if scenePhase == .active {
                         sync.requestSync()
-                        Task { await push.sync() }
+                        Task { await push.sync(); await terms.sync() }
                     }
                 }
                 .onOpenURL(perform: handleLink)
@@ -188,7 +189,7 @@ struct WingspotApp: App {
         return url.flatMap(URL.init(string:))
     }
 
-    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend & MyCheckInsBackend & ReactionBackend & PushBackend & AnnouncementBackend & CheckInVisibilityBackend & AvatarBackend & PersonProgressBackend & ActivityBackend & CompareBackend & LeaderboardBackend & InviteBackend & SpotBackend & ReleaseNotesBackend {
+    private static func makeAccountBackend() -> any AccountBackend & SocialBackend & FeedBackend & MyCheckInsBackend & ReactionBackend & PushBackend & AnnouncementBackend & CheckInVisibilityBackend & AvatarBackend & PersonProgressBackend & ActivityBackend & CompareBackend & LeaderboardBackend & InviteBackend & SpotBackend & ReleaseNotesBackend & TermsBackend {
         var url = Bundle.main.object(forInfoDictionaryKey: "WingspotSupabaseURL") as? String
         var key = Bundle.main.object(forInfoDictionaryKey: "WingspotPublishableKey") as? String
         #if DEBUG
@@ -213,11 +214,20 @@ struct WingspotApp: App {
         }
     }
 
+    private func applyMinimumVersion() {
+        let installed = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        terms.updateRequired = AppVersion.needsUpdate(installed: installed, minimum: UserDefaults.standard.string(forKey: AppVersion.minimumKey))
+    }
+
     private func loadRemoteConfig() async {
+        applyMinimumVersion()
         guard let client = Self.apiClient else { return }
         do {
             let config = try await client.config()
             logger.info("Remote config loaded, minimum iOS version \(config.minimumVersion.ios, privacy: .public)")
+            // Below the minimum, the social parts wait for an update (docs/MINIMUM-AGE-PLAN.md 4a). Kept for the next offline start.
+            UserDefaults.standard.set(config.minimumVersion.ios, forKey: AppVersion.minimumKey)
+            applyMinimumVersion()
             // The KML import can be switched off from the server (docs/KML-IMPORT-PLAN.md). The last answer is
             // kept, so the button stays hidden when the config can't be read.
             let kml = KmlSwitches(flags: config.featureFlags)

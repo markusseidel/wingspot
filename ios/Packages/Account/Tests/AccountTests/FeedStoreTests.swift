@@ -400,6 +400,53 @@ private func item(_ n: Int) -> FeedItem {
     #expect(TermsStore(defaults: defaults, userID: { first }).hasAccepted)
 }
 
+private actor FakeTerms: TermsBackend {
+    var stored = 0
+    var offline = false
+    func setStored(_ value: Int) { stored = value }
+    func setOffline(_ value: Bool) { offline = value }
+    func myTermsVersion() async throws -> Int {
+        if offline { throw AccountError.offline }
+        return stored
+    }
+    func acceptTerms(version: Int) async throws {
+        if offline { throw AccountError.offline }
+        stored = max(stored, version)
+    }
+}
+
+/// Minimum age 16: an agreement to version 1 (no age question) asks again; one from another phone is taken over.
+@Test @MainActor func termsVersionOneAsksAgainAndAnotherPhonesAgreementCounts() async throws {
+    let defaults = try #require(UserDefaults(suiteName: "TermsTests-\(UUID().uuidString)"))
+    let me = UUID()
+    defaults.set(1, forKey: "termsAcceptedVersion.\(me.uuidString)")
+    let backend = FakeTerms()
+    let terms = TermsStore(defaults: defaults, backend: backend, userID: { me })
+    #expect(!terms.hasAccepted)
+    await terms.sync()
+    #expect(!terms.hasAccepted)
+    await backend.setStored(2)
+    await terms.sync()
+    #expect(terms.hasAccepted)
+}
+
+/// An agreement made offline stays on the phone and reaches the server on a later sync.
+@Test @MainActor func anOfflineAgreementIsSentLater() async throws {
+    let defaults = try #require(UserDefaults(suiteName: "TermsTests-\(UUID().uuidString)"))
+    let me = UUID()
+    let backend = FakeTerms()
+    await backend.setOffline(true)
+    let terms = TermsStore(defaults: defaults, backend: backend, userID: { me })
+    terms.accept()
+    #expect(terms.hasAccepted)
+    await terms.sync()
+    #expect(await backend.stored == 0)
+    await backend.setOffline(false)
+    await terms.sync()
+    #expect(await backend.stored == 2)
+    #expect(terms.hasAccepted)
+}
+
 /// Coming back to the feed loads it again; the cards must keep their photos and tags meanwhile and not lose them (#345).
 @Test @MainActor func aRefreshKeepsThePhotosOnScreenAndSwapsThemInOneStep() async throws {
     let backend = FakeFeed(items: (1...2).map(item))

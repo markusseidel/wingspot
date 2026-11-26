@@ -858,7 +858,7 @@ private fun RemoteImageFit(photo: FeedPhoto, modifier: Modifier = Modifier) {
 @Composable
 fun ReportDialog(app: WingspotApp, kind: ReportKind, target: String, onClose: () -> Unit) {
     val scope = rememberCoroutineScope()
-    val reasons = listOf("spam" to R.string.reason_spam, "offensive" to R.string.reason_offensive, "privacy" to R.string.reason_privacy, "other" to R.string.reason_other)
+    val reasons = listOf("spam" to R.string.reason_spam, "offensive" to R.string.reason_offensive, "privacy" to R.string.reason_privacy, "underage" to R.string.reason_underage, "other" to R.string.reason_other)
     var chosen by remember { mutableStateOf("spam") }
     var sent by remember { mutableStateOf(false) }
     var failed by remember { mutableStateOf(false) }

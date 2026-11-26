@@ -43,6 +43,13 @@ class Prefs(context: Context) {
         prefs.edit().putBoolean("kmlImportOn", value).apply()
     }
 
+    /** The last minimum Android version the server sent (docs/MINIMUM-AGE-PLAN.md 4a), null when none is known. */
+    val minimumVersion: String? get() = prefs.getString("minimumAppVersion", null)
+
+    fun rememberMinimumVersion(value: String?) {
+        prefs.edit().putString("minimumAppVersion", value).apply()
+    }
+
     /** How the Feed tab is sorted. */
     var feedSort: FeedSort = FeedSort.entries.firstOrNull { it.name == prefs.getString("feedSort", null) } ?: FeedSort.CREATED
         private set

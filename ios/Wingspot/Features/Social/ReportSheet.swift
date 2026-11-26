@@ -15,6 +15,7 @@ extension ReportReason {
         case .spam: "Spam or advertising"
         case .offensive: "Offensive, hateful or harassing"
         case .privacy: "Shows private information"
+        case .underage: "This person seems to be younger than 16"
         case .other: "Something else"
         }
     }

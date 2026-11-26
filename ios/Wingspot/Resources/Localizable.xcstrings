@@ -6912,6 +6912,116 @@
           }
         }
       }
+    },
+    "I am 16 or older" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich bin 16 oder älter"
+          }
+        }
+      }
+    },
+    "I'm younger than 16" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich bin jünger als 16"
+          }
+        }
+      }
+    },
+    "Younger than 16" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jünger als 16"
+          }
+        }
+      }
+    },
+    "Wingspot accounts are for people 16 and older. You can keep using Wingspot without an account: your check-ins stay on this iPhone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wingspot-Konten sind für Menschen ab 16. Du kannst Wingspot ohne Konto weiter nutzen: Deine Check-ins bleiben auf diesem iPhone."
+          }
+        }
+      }
+    },
+    "Delete my account" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mein Konto löschen"
+          }
+        }
+      }
+    },
+    "Deleting the account also removes its check-ins from this iPhone. Make a backup in Settings first if you want to keep them." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beim Löschen des Kontos werden auch seine Check-ins auf diesem iPhone entfernt. Wenn du sie behalten möchtest, mach vorher in den Einstellungen ein Backup."
+          }
+        }
+      }
+    },
+    "Something went wrong" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwas ist schiefgelaufen"
+          }
+        }
+      }
+    },
+    "Please update Wingspot" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte aktualisiere Wingspot"
+          }
+        }
+      }
+    },
+    "This version of Wingspot is too old for the feed, people and sharing. Your logbook keeps working." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Version von Wingspot ist zu alt für den Feed, Personen und das Teilen. Dein Logbuch funktioniert weiter."
+          }
+        }
+      }
+    },
+    "Update" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktualisieren"
+          }
+        }
+      }
+    },
+    "This person seems to be younger than 16" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Person scheint jünger als 16 zu sein"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
