@@ -151,6 +151,10 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
                     page is Route.Invite && me != null -> InvitePage(app, social, me)
                     page is Route.Inbox && me != null -> InboxPage(app, social, checkIn)
                     page is Route.Settings -> SettingsPage(app, me, social)
+                    page is Route.Backup -> Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        PageHeader(stringResource(R.string.backup_title), social::back)
+                        BackupSection(app)
+                    }
                     page is Route.ReleaseNotes -> ReleaseNotesPage(app, social)
                     page is Route.EditProfile && me != null -> EditProfilePage(app, me, refState, social)
                     else -> when (social.tab) {

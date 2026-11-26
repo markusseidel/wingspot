@@ -41,6 +41,8 @@ sealed class Route {
     object Leaderboard : Route()
     object Invite : Route()
     object Settings : Route()
+    /** The backup on its own, for the signed-out profile, which has no Settings (#310). */
+    object Backup : Route()
     object ReleaseNotes : Route()
     object Inbox : Route()
     object EditProfile : Route()
