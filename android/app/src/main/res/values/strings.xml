@@ -146,6 +146,16 @@
     <string name="rule_spam">No spam or advertising.</string>
     <string name="rule_responsible">You\'re responsible for what you post. Comments with insults are refused automatically.</string>
     <string name="rules_report">You can report a person, check-in or comment, and block anyone. We review reports and may remove content or accounts that break these rules.</string>
+    <string name="reason_underage">Seems younger than 16</string>
+    <string name="age_confirm">I am 16 or older</string>
+    <string name="age_younger">I\'m younger than 16</string>
+    <string name="age_younger_title">Younger than 16</string>
+    <string name="age_younger_message">Wingspot accounts are for people 16 and older. You can keep using Wingspot without an account: your check-ins stay on this phone.</string>
+    <string name="age_younger_delete_hint">Deleting the account also removes its check-ins from this phone. Make a backup in Settings first if you want to keep them.</string>
+    <string name="age_delete_my_account">Delete my account</string>
+    <string name="update_title">Please update Wingspot</string>
+    <string name="update_message">This version of Wingspot is too old for the feed, people and sharing. Your logbook keeps working.</string>
+    <string name="update_button">Update</string>
     <string name="i_agree">I agree</string>
     <string name="setup_title">Choose a username</string>
     <string name="setup_hint">This is how other people find you. You can change it later.</string>

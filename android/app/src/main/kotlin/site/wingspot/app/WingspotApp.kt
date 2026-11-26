@@ -42,7 +42,7 @@ class WingspotApp : Application() {
     val checkIns by lazy { CheckInStore.open(File(filesDir, "checkins.sqlite").path, tracks) }
     val referenceInstaller by lazy { ReferenceDataInstaller(File(filesDir, "refdata"), BuildConfig.SUPABASE_URL + "/functions") }
     val prefs by lazy { Prefs(this) }
-    val terms by lazy { TermsStore(this) }
+    val terms by lazy { TermsStore(this, site.wingspot.core.TermsApi(rest)).also { it.updateRequired = needsUpdate() } }
     val rest by lazy { Rest(BuildConfig.SUPABASE_URL, BuildConfig.PUBLISHABLE_KEY, ::accessToken) }
     val announcements by lazy { AnnouncementsApi(rest) }
     val releaseNotes by lazy { site.wingspot.core.ReleaseNotesApi(rest) }
@@ -55,10 +55,19 @@ class WingspotApp : Application() {
      * when the server can't be reached. Turning the routes off deletes the ones saved on this phone.
      */
     suspend fun refreshKmlSwitches() {
-        val flags = try { api.featureFlags() } catch (e: ApiException) { return }
-        val kml = site.wingspot.core.KmlSwitches.from(flags)
+        val config = try { api.config() } catch (e: ApiException) { return }
+        // Below the minimum, the social parts wait for an update (docs/MINIMUM-AGE-PLAN.md 4a). Kept for the next offline start.
+        prefs.rememberMinimumVersion(config.minimumAndroid)
+        applyMinimumVersion()
+        val kml = site.wingspot.core.KmlSwitches.from(config.featureFlags)
         prefs.rememberKmlImport(kml.importOn)
         if (!kml.keepRoutes) tracks.deleteAll()
+    }
+
+    private fun needsUpdate() = site.wingspot.core.AppVersion.needsUpdate(BuildConfig.VERSION_NAME, prefs.minimumVersion)
+
+    private fun applyMinimumVersion() {
+        terms.updateRequired = needsUpdate()
     }
 
     val outbox by lazy { Outbox(checkIns, api, ::accessToken).also { it.userId = { sessions.load()?.user?.id } } }

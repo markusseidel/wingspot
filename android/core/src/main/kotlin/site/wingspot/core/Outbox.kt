@@ -14,6 +14,7 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.put
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -35,6 +36,9 @@ sealed class ApiException(message: String) : Exception(message) {
 }
 
 /** The Wingspot API (`contracts/openapi.yaml`) as the phone uses it. */
+/** What `GET /v1/config` says. [minimumAndroid] is null when the server sends none. */
+data class RemoteConfig(val featureFlags: Map<String, Boolean>, val minimumAndroid: String?)
+
 class ApiClient(
     functionsUrl: String,
     private val client: OkHttpClient = OkHttpClient(),
@@ -47,13 +51,18 @@ class ApiClient(
     private val json = Json { ignoreUnknownKeys = true }
 
     /** `GET /v1/config`, the feature flags only. Public. Throws [ApiException.Retry] when the server can't be reached or answers badly. */
-    suspend fun featureFlags(): Map<String, Boolean> = withContext(Dispatchers.IO) {
+    suspend fun featureFlags(): Map<String, Boolean> = config().featureFlags
+
+    /** `GET /v1/config`: the feature flags and the minimum Android version (null when missing). Public. */
+    suspend fun config(): RemoteConfig = withContext(Dispatchers.IO) {
         val request = Request.Builder().url("$base/v1/config").get().build()
         try {
             client.newCall(request).execute().use { response ->
                 if (response.code != 200) throw ApiException.Retry
-                val flags = json.parseToJsonElement(response.body.string()).jsonObject["feature_flags"]?.jsonObject ?: return@use emptyMap()
-                flags.mapNotNull { (key, value) -> value.jsonPrimitive.booleanOrNull?.let { key to it } }.toMap()
+                val root = json.parseToJsonElement(response.body.string()).jsonObject
+                val flags = root["feature_flags"]?.jsonObject?.mapNotNull { (key, value) -> value.jsonPrimitive.booleanOrNull?.let { key to it } }?.toMap()
+                val minimum = (root["min_version"] as? JsonObject)?.get("android")?.jsonPrimitive?.contentOrNull
+                RemoteConfig(flags ?: emptyMap(), minimum)
             }
         } catch (e: IOException) {
             throw ApiException.Retry

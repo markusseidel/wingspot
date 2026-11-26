@@ -70,6 +70,7 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
     LaunchedEffect(me) {
         badges.begin(me)
         if (me != null) {
+            app.terms.sync(me)
             Push.register(app)
             if (Push.isAvailable(app) && !Push.isAllowed(app) && !app.prefs.askedForNotifications) {
                 app.prefs.askedForNotifications = true
@@ -158,7 +159,20 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
                     page is Route.ReleaseNotes -> ReleaseNotesPage(app, social)
                     page is Route.EditProfile && me != null -> EditProfilePage(app, me, refState, social)
                     else -> when (social.tab) {
-                        Tab.FEED -> SocialGate(app, me, announcements, onSignIn = { social.tab = Tab.PROFILE }) { FeedTab(social, it, announcements, checkIn) }
+                        Tab.FEED -> SocialGate(
+                            app, me, announcements, onSignIn = { social.tab = Tab.PROFILE },
+                            // The "younger than 16" path (docs/MINIMUM-AGE-PLAN.md): the same steps as in the profile.
+                            leave = AccountLeave(
+                                signOut = { Push.unregister(app); social.clear(); PhotoCache.clear(app); badges.begin(null); model.signOut() },
+                                delete = {
+                                    model.deleteAccount()
+                                    social.clear(); badges.begin(null)
+                                    me?.let { app.prefs.forget(it) }
+                                    app.checkIns.deleteEverything()
+                                    checkIn.reload()
+                                },
+                            ),
+                        ) { FeedTab(social, it, announcements, checkIn) }
                         Tab.EXPLORE -> Scrolling { ExploreTab(app, social, me, refState, checkInState.all) }
                         Tab.CHECK_IN -> Scrolling {
                             Spacer(Modifier.height(16.dp))
@@ -192,7 +206,7 @@ private fun Scrolling(content: @Composable ColumnScope.() -> Unit) {
  * Shows what is missing instead, and the content once everything is in place.
  */
 @Composable
-private fun SocialGate(app: WingspotApp, me: String?, announcements: AnnouncementsViewModel, onSignIn: () -> Unit, content: @Composable (String) -> Unit) {
+private fun SocialGate(app: WingspotApp, me: String?, announcements: AnnouncementsViewModel, onSignIn: () -> Unit, leave: AccountLeave, content: @Composable (String) -> Unit) {
     if (me == null) {
         LaunchedEffect(Unit) { announcements.refresh() }
         Scrolling {
@@ -209,14 +223,14 @@ private fun SocialGate(app: WingspotApp, me: String?, announcements: Announcemen
         return
     }
     var needsName by remember(me) { mutableStateOf<Boolean?>(null) }
-    var accepted by remember(me) { mutableStateOf(app.terms.hasAccepted(me)) }
     LaunchedEffect(me) {
         needsName = try { app.social.person(me)?.username?.let(Username::isPlaceholder) ?: false } catch (e: ApiException) { false }
     }
     when {
         needsName == null -> CircularProgressIndicator()
         needsName == true -> Scrolling { ProfileSetup(app, me) { needsName = false } }
-        !accepted -> Scrolling { TermsScreen { app.terms.accept(me); accepted = true } }
+        app.terms.updateRequired -> Scrolling { UpdateScreen() }
+        !app.terms.hasAccepted(me) -> Scrolling { TermsScreen(app, me, leave) }
         else -> content(me)
     }
 }

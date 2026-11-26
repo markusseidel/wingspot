@@ -8,7 +8,7 @@ public enum ReportKind: String, Sendable, CaseIterable {
 
 /// Why someone is reported. The server stores the reason as free text, so this becomes its first words.
 public enum ReportReason: String, Sendable, CaseIterable, Identifiable {
-    case spam, offensive, privacy, other
+    case spam, offensive, privacy, underage, other
     public var id: String { rawValue }
 }
 

@@ -53,7 +53,7 @@ Bis du dein Konto löschst. Dann werden Konto, Check-ins, Fotos, Kommentare, Fol
 
 ## Kinder
 
-Wingspot richtet sich nicht an Kinder unter [16] Jahren.
+Wingspot-Konten sind für Menschen ab 16 Jahren. Ohne Konto bleibt alles auf deinem Gerät, und es werden keine Daten an uns gesendet. Erfahren wir, dass ein Konto jemandem unter 16 gehört, löschen wir es.
 
 Stand: [Datum]
 
@@ -108,6 +108,6 @@ Until you delete your account; then your account, check-ins, photos, comments, f
 
 ## Children
 
-Wingspot is not aimed at children under [16].
+Wingspot accounts are for people 16 and older. Without an account everything stays on your device and nothing is sent to us. If we learn that an account belongs to someone younger, we delete it.
 
 Last updated: [date]
