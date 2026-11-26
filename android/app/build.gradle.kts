@@ -13,7 +13,7 @@ android {
         targetSdk = 35
         // The beta workflow passes the date and the day's run number (like 202611191) as -PwingspotVersionCode, so every upload to Google Play is higher than the last.
         versionCode = providers.gradleProperty("wingspotVersionCode").map { it.toInt() }.getOrElse(1)
-        versionName = "0.2.0"
+        versionName = "0.3.0"
 
         // Both are public: the same address and publishable key the iPhone app ships with. Override with
         // -PwingspotSupabaseUrl=... when pointing at a local stack.
