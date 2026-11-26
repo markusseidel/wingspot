@@ -514,6 +514,9 @@ fun SettingsPage(app: WingspotApp, me: String?, social: SocialViewModel) {
                 Text(stringResource(unitTitle(unit)), Modifier.padding(start = 8.dp))
             }
         }
+        HorizontalDivider()
+        BackupSection(app)
+        HorizontalDivider()
         LegalLinksSection()
         HorizontalDivider()
         Text(stringResource(R.string.about_title), style = MaterialTheme.typography.titleMedium)

@@ -44,6 +44,11 @@ class FlightTrackFiles(private val directory: File) {
         return points
     }
 
+    /** The check-ins that have a saved route, for the backup. */
+    fun ids(): List<UUID> = directory.listFiles()?.mapNotNull { file ->
+        if (!file.name.endsWith(".trk")) null else runCatching { UUID.fromString(file.name.removeSuffix(".trk")) }.getOrNull()
+    } ?: emptyList()
+
     fun has(id: UUID): Boolean = file(id).isFile
 
     fun delete(id: UUID) {

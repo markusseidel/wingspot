@@ -19,6 +19,19 @@ class WingspotApp : Application() {
     override fun onCreate() {
         super.onCreate()
         Push.createChannel(this)
+        afterAutoBackupRestore()
+    }
+
+    /**
+     * Android Auto Backup (#310) brings the logbook to a new phone, but it may be older than what the server has. A marker that is never
+     * backed up tells a restored logbook from this phone's own: when it is missing, the next sign-in fetches the server's check-ins again
+     * and adds the missing ones.
+     */
+    private fun afterAutoBackupRestore() {
+        val marker = File(noBackupFilesDir, "logbook-is-local")
+        if (marker.exists()) return
+        if (File(filesDir, "checkins.sqlite").exists()) kotlinx.coroutines.runBlocking { checkIns.forgetRestored() }
+        runCatching { marker.createNewFile() }
     }
 
 

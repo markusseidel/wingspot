@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android Auto Backup up to Android 11 (#310). Only the logbook on this phone and the routes of imported flights: no sign-in,
+     no settings, no reference data (it is downloaded again) and no caches. Android 12 and later read data_extraction_rules.xml. -->
+<full-backup-content>
+    <include domain="file" path="checkins.sqlite" />
+    <include domain="file" path="checkins.sqlite-wal" />
+    <include domain="file" path="checkins.sqlite-shm" />
+    <include domain="file" path="flight-tracks/" />
+</full-backup-content>

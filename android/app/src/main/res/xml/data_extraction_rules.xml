@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android Auto Backup and phone-to-phone transfer from Android 12 on (#310). The same files as backup_rules.xml: the logbook on this
+     phone and the routes of imported flights. The sign-in is left out on purpose: it is encrypted with a key that never leaves the phone. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="file" path="checkins.sqlite" />
+        <include domain="file" path="checkins.sqlite-wal" />
+        <include domain="file" path="checkins.sqlite-shm" />
+        <include domain="file" path="flight-tracks/" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="file" path="checkins.sqlite" />
+        <include domain="file" path="checkins.sqlite-wal" />
+        <include domain="file" path="checkins.sqlite-shm" />
+        <include domain="file" path="flight-tracks/" />
+    </device-transfer>
+</data-extraction-rules>

@@ -86,6 +86,8 @@ fun AppScreen(app: WingspotApp, model: AppViewModel, reference: ReferenceViewMod
     CelebrationDialog(badges)
     // Taking over a friend's flight (#273): the question when you already have it, and the inbox dropping an answered request.
     CompanionAskDialog(checkInState, checkIn)
+    // A backup picked or opened from another app (#310).
+    BackupRestoreDialog(app, signedIn = me != null) { checkIn.reload() }
     LaunchedEffect(checkInState.companionAnswered) { checkInState.companionAnswered?.let { social.requestAnswered(it) } }
     social.pendingInvite?.let { owner ->
         if (me != null) AlertDialog(
@@ -194,6 +196,10 @@ private fun SocialGate(app: WingspotApp, me: String?, announcements: Announcemen
             AnnouncementCards(announcements)
             EmptyState(R.drawable.ic_tab_feed, stringResource(R.string.empty_feed_title), stringResource(R.string.sign_in_for_social)) {
                 Button(onClick = onSignIn) { Text(stringResource(R.string.sign_in_title)) }
+                // Coming from another phone: the routes and the check-ins that were only there (#310). Only while this phone has none.
+                val empty by androidx.compose.runtime.produceState(false, BackupInbox.pending) { value = app.checkIns.all().isEmpty() && app.tracks.ids().isEmpty() }
+                val pick = rememberBackupPicker()
+                if (empty) TextButton(onClick = pick, modifier = Modifier.testTag("restore-backup-link")) { Text(stringResource(R.string.backup_restore_link)) }
             }
         }
         return
