@@ -1,6 +1,6 @@
 # Minimum age 16: plan
 
-Question from the owner: does the age of the people using Wingspot matter? It does: plane spotting draws many teenagers, Wingspot has public content, comments, following, photos and locations, and the drafts of the privacy policy and the terms say "not aimed at children under [16]" without the app asking anything. The owner decided: **the minimum age for an account is 16.** Status: plan only, nothing built. This is not legal advice; the texts get a lawyer's look before the public launch.
+Question from the owner: does the age of the people using Wingspot matter? It does: plane spotting draws many teenagers, Wingspot has public content, comments, following, photos and locations, and the drafts of the privacy policy and the terms say "not aimed at children under [16]" without the app asking anything. The owner decided: **the minimum age for an account is 16.** Status: decided, being built. This is not legal advice; the texts get a lawyer's look before the public launch.
 
 ## 1. Why 16
 
@@ -42,8 +42,8 @@ One PR for the backend (deploy first, old apps ignore the new fields), then one 
 - Apps: "I agree" stays off until the switch is on; an account with version 1 sees the screen again; an account confirmed on another phone does not; offline the local copy lets the app start; the "younger" path signs out and keeps the local check-ins.
 - By hand on both phones: new account, existing account, second phone, the younger path, the new report reason.
 
-## 5. Questions for the owner
+## 5. Decided by the owner (2026-11-26)
 
-1. Signed-out use stays open to everyone (decision 1). Agreed?
-2. Confirmation switch without a date of birth (decision 2). Agreed?
-3. Should the "younger" path offer **Delete my account** directly, or only sign out and point to deletion in the profile?
+1. Signed-out use stays open to everyone (decision 1): **yes**.
+2. Confirmation switch without a date of birth (decision 2): **yes**.
+3. The "younger" path offers **Delete my account** directly, next to **Sign out**.
