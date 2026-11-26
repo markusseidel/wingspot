@@ -3,6 +3,7 @@ import SwiftUI
 /// Shown once on first launch. Asks for nothing yet: location is requested when a check-in needs it.
 struct OnboardingView: View {
     let onSkip: () -> Void
+    @State private var isPickingBackup = false
 
     var body: some View {
         NavigationStack {
@@ -30,11 +31,16 @@ struct OnboardingView: View {
                         Text("Not now").frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.bordered)
+                    // Coming from another phone: the routes and the check-ins that were only there (#310).
+                    Button("Restore from a backup") { isPickingBackup = true }
+                        .font(.footnote)
+                        .controlSize(.small)
                 }
                 .controlSize(.large)
                 .padding(.horizontal)
             }
             .padding(.bottom)
+            .backupPicker(isPresented: $isPickingBackup)
         }
     }
 

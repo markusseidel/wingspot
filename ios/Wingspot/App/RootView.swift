@@ -61,8 +61,10 @@ struct RootView: View {
                 }
             }
             .signInLinkAlert(isEnabled: true)
+            .backupRestore(isEnabled: true)
         }
         .signInLinkAlert(isEnabled: !isSetupPresented)
+        .backupRestore(isEnabled: !isSetupPresented)
         // One sheet at a time: the celebration waits until the check-in sheet and the setup screens are gone.
         .sheet(isPresented: .constant(!badges.celebrations.isEmpty && !isCheckInPresented && !isSetupPresented)) {
             CelebrationView(celebrations: badges.celebrations) { badges.acknowledge() }

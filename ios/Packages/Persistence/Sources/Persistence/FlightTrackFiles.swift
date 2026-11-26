@@ -54,6 +54,15 @@ public struct FlightTrackFiles: Sendable {
         return points
     }
 
+    /// The check-ins that have a saved route, for the backup.
+    public func ids() -> [UUID] {
+        let names = (try? FileManager.default.contentsOfDirectory(atPath: directory.path)) ?? []
+        return names.compactMap { name in
+            guard name.hasSuffix(".trk") else { return nil }
+            return UUID(uuidString: String(name.dropLast(4)))
+        }
+    }
+
     public func has(id: UUID) -> Bool { FileManager.default.fileExists(atPath: url(id).path) }
 
     /// Removes every saved route. Flights themselves are not touched.
