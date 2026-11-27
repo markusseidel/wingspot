@@ -57,3 +57,22 @@ The gap on the iPhone: an up-to-date copy that a person can restore **without re
 1. Android: Auto Backup only. No folder switch, so step 4 is dropped.
 2. Keep the latest and the previous file.
 3. The switch is off by default; the person turns it on.
+
+## 8. Change after the first test (#391, decided by the owner 2026-11-27)
+
+The first build backed up only what was on the phone alone, after each change. A signed-in check-in reaches the server within
+seconds, so it never caused a backup, and a logbook without KML routes was never backed up at all. The owner wants it to work
+like WhatsApp:
+
+1. **Schedule, not changes.** Settings > Backup gets *Automatic backup: Off / Daily / Weekly / Monthly* (off by default) and a
+   *Back up now* button. iOS has no exact timer for apps, so a backup is made when the app comes to the foreground or goes to the
+   background and the chosen period has passed since the last one. The backup after each change is removed. Turning it on backs
+   up at once.
+2. **Full backup.** The file holds every check-in of the logbook, also those on the server, and the imported routes. Photos stay
+   out (they are on the server; several MB each). Format schema 2 (docs/BACKUP-FORMAT.md): each check-in says whether the
+   server already has it. Restore skips a check-in that is already on this phone; one the server has comes back as stored, so
+   it is not uploaded again.
+3. **The manual backup becomes the same full backup, on iPhone and Android**, so one file can be restored on either. Both apps
+   still read schema 1 files.
+4. The status line shows the last backup, its size, and when the next one is due.
+5. Android keeps Auto Backup and gets no schedule switch (section 7, decision 1); it gets the full manual backup and schema 2.
