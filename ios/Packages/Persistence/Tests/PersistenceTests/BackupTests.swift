@@ -38,6 +38,15 @@ private let orphanRouteID = UUID(uuidString: "019a0000-0000-7000-8000-0000000000
     #expect(plain.checkins[0].typeIcao == "A359" && plain.checkins[0].timeKnown == false)
 }
 
+@Test func theSchema2VectorReadsWithWhatTheServerHas() throws {
+    let zipped = try BackupCodec.decode(vector("example-schema2.wingspotbackup"))
+    let plain = try BackupCodec.decode(vector("example-schema2.json"))
+    #expect(zipped == plain && plain.schema == 2 && plain.checkins.count == 3)
+    let visit = try #require(plain.checkins.last)
+    #expect(visit.onServer == true && visit.ownerId == "019a0000-0000-7000-8000-0000000000ff" && visit.visitContext == "departing")
+    #expect(plain.checkins[0].onServer == nil)
+}
+
 @Test func whatIsNotABackupIsTold() throws {
     #expect(throws: BackupError.notBackup) { try BackupCodec.decode(Data("hello".utf8)) }
     #expect(throws: BackupError.notBackup) { try BackupCodec.decode(Data(#"{"format":"other","schema":1}"#.utf8)) }
@@ -83,7 +92,7 @@ private let orphanRouteID = UUID(uuidString: "019a0000-0000-7000-8000-0000000000
     #expect(try context.fetch(FetchDescriptor<LocalCheckIn>()).count == 2)
 }
 
-@MainActor @Test func aBackupHoldsRoutesAndOnlyTheCheckInsTheServerLacks() throws {
+@MainActor @Test func aBackupHoldsRoutesAndEveryCheckIn() throws {
     let context = try makeContext(), tracks = temporaryFiles()
     let store = CheckInStore(context: context, tracks: tracks)
     let fra = SpottedDraft.Place(airportID: 2212, code: "FRA"), jfk = SpottedDraft.Place(airportID: 3797, code: "JFK")
@@ -93,8 +102,9 @@ private let orphanRouteID = UUID(uuidString: "019a0000-0000-7000-8000-0000000000
     try tracks.save([GeoCoordinate(latitude: 50.033333333, longitude: 8.570634567), GeoCoordinate(latitude: 40.64, longitude: -73.78)], for: flown.id)
 
     let document = try BackupService(context: context, tracks: tracks).make(app: "Wingspot test", now: Date(timeIntervalSince1970: 0))
-    // The flight and the two airport visits it made; the sighting the server has is left out.
-    #expect(document.checkins.contains { $0.id == flown.id.uuidString.lowercased() } && document.checkins.count == 3)
+    // The flight, the two airport visits it made, and the sighting the server has, marked as such.
+    #expect(document.checkins.contains { $0.id == flown.id.uuidString.lowercased() } && document.checkins.count == 4)
+    #expect(document.checkins.filter { $0.onServer == true }.map(\.id) == [sent.id.uuidString.lowercased()])
     #expect(document.routes.features.first?.properties.flightNumber == "LH400")
     #expect(document.createdAt == "1970-01-01T00:00:00Z")
 
@@ -102,12 +112,13 @@ private let orphanRouteID = UUID(uuidString: "019a0000-0000-7000-8000-0000000000
     let json = try #require(String(data: Gzip.decompress(data, limit: 1_000_000), encoding: .utf8))
     #expect(json.contains("[8.57063,50.03333]"))
     #expect(json.contains(#""checkin_id":""#) && json.contains(#""type":"FeatureCollection""#))
-    #expect(!json.contains("ownerID") && !json.contains(sent.id.uuidString.lowercased()))
+    #expect(!json.contains("ownerID") && json.contains(#""on_server":true"#))
 
     // Round trip onto another phone.
     let other = try makeContext(), otherTracks = temporaryFiles()
     let result = try BackupService(context: other, tracks: otherTracks).restore(BackupCodec.decode(data), replaceRoutes: false)
-    #expect(result == BackupResult(routes: 1, checkIns: 3, skipped: 0))
+    #expect(result == BackupResult(routes: 1, checkIns: 4, skipped: 0))
+    #expect(try other.fetch(FetchDescriptor<LocalCheckIn>()).filter { $0.syncState == SyncState.pending.rawValue }.count == 3)
     #expect(otherTracks.load(id: flown.id)?.first == GeoCoordinate(latitude: 50.03333, longitude: 8.57063))
 }
 

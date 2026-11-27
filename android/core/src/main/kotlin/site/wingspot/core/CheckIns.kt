@@ -584,8 +584,8 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
     }
 
     /**
-     * Adds check-ins from a backup (#310) that this phone does not have, as [SyncState.PENDING], with every detail, so they are
-     * sent like new ones. One this phone already has is left as it is. Returns the ids that were added.
+     * Adds check-ins from a backup (#310) that this phone does not have, with every detail: [SyncState.PENDING] ones are sent
+     * like new ones, [SyncState.SYNCED] ones (the server has them, #391) are not sent again. One this phone already has is left as it is. Returns the ids that were added.
      */
     suspend fun restoreFromBackup(items: List<LocalCheckIn>): Set<UUID> = db {
         val added = mutableSetOf<UUID>()
@@ -593,19 +593,22 @@ class CheckInStore private constructor(private val connection: SQLiteConnection,
             connection.prepare(
                 """INSERT OR IGNORE INTO checkins (id, kind, occurred_at, registration, type_icao, airport_id, latitude, longitude,
                        sync_state, airport_code, origin_id, destination_id, origin_code, destination_code, flight_number, cabin, seat,
-                       visit_context, flight_id, source_id, spot_id, spot_name, visit_id, saved_at, time_known)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                       visit_context, flight_id, source_id, spot_id, spot_name, visit_id, saved_at, time_known, synced_at)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             ).use {
                 fun text(i: Int, v: String?) = if (v == null) it.bindNull(i) else it.bindText(i, v)
                 fun long(i: Int, v: Long?) = if (v == null) it.bindNull(i) else it.bindLong(i, v)
                 fun double(i: Int, v: Double?) = if (v == null) it.bindNull(i) else it.bindDouble(i, v)
+                val synced = c.syncState == SyncState.SYNCED
                 it.bindText(1, c.id.toString()); it.bindText(2, c.kind); it.bindLong(3, c.occurredAt.toEpochMilli())
                 text(4, c.registration); text(5, c.typeIcao); long(6, c.airportId); double(7, c.latitude); double(8, c.longitude)
-                text(9, c.airportCode); long(10, c.originId); long(11, c.destinationId); text(12, c.originCode); text(13, c.destinationCode)
-                text(14, c.flightNumber); text(15, c.cabin); text(16, c.seat); text(17, c.visitContext)
-                text(18, c.flightId?.toString()); text(19, c.sourceId?.toString()); long(20, c.spotId); text(21, c.spotName)
-                text(22, c.visitId?.toString()); long(23, c.savedAt?.toEpochMilli())
-                if (c.timeKnown) it.bindNull(24) else it.bindLong(24, 0)
+                it.bindText(9, if (synced) "synced" else "pending")
+                text(10, c.airportCode); long(11, c.originId); long(12, c.destinationId); text(13, c.originCode); text(14, c.destinationCode)
+                text(15, c.flightNumber); text(16, c.cabin); text(17, c.seat); text(18, c.visitContext)
+                text(19, c.flightId?.toString()); text(20, c.sourceId?.toString()); long(21, c.spotId); text(22, c.spotName)
+                text(23, c.visitId?.toString()); long(24, c.savedAt?.toEpochMilli())
+                if (c.timeKnown) it.bindNull(25) else it.bindLong(25, 0)
+                long(26, if (synced) System.currentTimeMillis() else null)
                 it.step()
             }
             connection.prepare("SELECT changes()").use { s -> s.step(); if (s.getLong(0) > 0) added.add(c.id) }

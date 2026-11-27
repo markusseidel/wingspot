@@ -984,22 +984,6 @@
         }
       }
     },
-    "Backup of %@ from %@: %lld routes, %lld check-ins that were only on that phone." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Backup vom %1$@ von %2$@: %3$lld Routen, %4$lld Check-ins, die nur auf diesem Handy waren."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Backup of %1$@ from %2$@: %3$lld routes, %4$lld check-ins that were only on that phone."
-          }
-        }
-      }
-    },
     "Badge" : {
       "localizations" : {
         "de" : {
@@ -3100,16 +3084,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Meinen behalten"
-          }
-        }
-      }
-    },
-    "Keep the backup file: it is the only copy of what was only on the other phone." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bewahre die Backup-Datei auf: Sie ist die einzige Kopie von dem, was nur auf dem anderen Handy war."
           }
         }
       }
@@ -5668,16 +5642,6 @@
         }
       }
     },
-    "The backup holds the routes of your imported flights and the check-ins that are only on this phone. Photos are not in it. It contains your travel history: keep it somewhere private." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Backup enthält die Routen deiner importierten Flüge und die Check-ins, die nur auf diesem Handy sind. Fotos sind nicht dabei. Es enthält deine Reisehistorie: Bewahre es an einem privaten Ort auf."
-          }
-        }
-      }
-    },
     "The check-ins are added to the account you are signed in with." : {
       "localizations" : {
         "de" : {
@@ -7023,32 +6987,12 @@
         }
       }
     },
-    "Back up to iCloud Drive automatically" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Automatisch in iCloud Drive sichern"
-          }
-        }
-      }
-    },
     "Name of this iPhone" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Name dieses iPhones"
-          }
-        }
-      }
-    },
-    "Wingspot keeps the latest backup and the one before it in the Wingspot folder of your iCloud Drive, after each change. Apple stores it; Wingspot can't read it. Each iPhone writes its own file, named after it." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wingspot legt nach jeder Änderung das neueste Backup und das davor im Ordner Wingspot in deinem iCloud Drive ab. Apple speichert es; Wingspot kann es nicht lesen. Jedes iPhone schreibt eine eigene Datei mit seinem Namen."
           }
         }
       }
@@ -7073,16 +7017,6 @@
         }
       }
     },
-    "No backup yet: it is made once there are routes or check-ins only on this iPhone." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch kein Backup: Es entsteht, sobald es Routen oder Check-ins gibt, die nur auf diesem iPhone sind."
-          }
-        }
-      }
-    },
     "iCloud Drive is off for Wingspot. Turn it on in the Settings app under your name > iCloud." : {
       "localizations" : {
         "de" : {
@@ -7099,16 +7033,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dein iCloud-Speicher ist voll."
-          }
-        }
-      }
-    },
-    "The last backup failed. Wingspot tries again after the next change." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das letzte Backup ist fehlgeschlagen. Wingspot versucht es nach der nächsten Änderung erneut."
           }
         }
       }
@@ -7159,6 +7083,166 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Neuestes Backup, %@"
+          }
+        }
+      }
+    },
+    "Back up to iCloud Drive" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In iCloud Drive sichern"
+          }
+        }
+      }
+    },
+    "Off" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aus"
+          }
+        }
+      }
+    },
+    "Daily" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Täglich"
+          }
+        }
+      }
+    },
+    "Weekly" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wöchentlich"
+          }
+        }
+      }
+    },
+    "Monthly" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monatlich"
+          }
+        }
+      }
+    },
+    "Back up now" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jetzt sichern"
+          }
+        }
+      }
+    },
+    "iCloud Drive" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud Drive"
+          }
+        }
+      }
+    },
+    "A full backup of your check-ins and routes, in the Wingspot folder of your iCloud Drive. Wingspot keeps the latest backup and the one before it. Apple stores it; Wingspot can't read it. Each iPhone writes its own file, named after it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein vollständiges Backup deiner Check-ins und Routen im Ordner Wingspot in deinem iCloud Drive. Wingspot behält das neueste Backup und das davor. Apple speichert es; Wingspot kann es nicht lesen. Jedes iPhone schreibt eine eigene Datei mit seinem Namen."
+          }
+        }
+      }
+    },
+    "Nothing to back up yet: your logbook is empty." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nichts zu sichern: Dein Logbuch ist leer."
+          }
+        }
+      }
+    },
+    "Size: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Größe: %@"
+          }
+        }
+      }
+    },
+    "Next backup: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nächstes Backup: %@"
+          }
+        }
+      }
+    },
+    "No backup yet." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch kein Backup."
+          }
+        }
+      }
+    },
+    "The last backup failed. Wingspot tries again next time." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das letzte Backup ist fehlgeschlagen. Wingspot versucht es beim nächsten Mal erneut."
+          }
+        }
+      }
+    },
+    "The backup holds all your check-ins and the routes of your imported flights. Photos are not in it. It contains your travel history: keep it somewhere private." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Backup enthält alle deine Check-ins und die Routen deiner importierten Flüge. Fotos sind nicht dabei. Es enthält deine Reisehistorie: Bewahre es an einem privaten Ort auf."
+          }
+        }
+      }
+    },
+    "Keep the backup file somewhere safe: the routes are only on your phones and in this file." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bewahre die Backup-Datei sicher auf: Die Routen gibt es nur auf deinen Handys und in dieser Datei."
+          }
+        }
+      }
+    },
+    "Backup of %@ from %@: %lld routes, %lld check-ins." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backup vom %1$@ von %2$@: %3$lld Routen, %4$lld Check-ins."
           }
         }
       }

@@ -118,11 +118,17 @@ public struct BackupFolder: Sendable {
     }
 }
 
-/// Keeps a backup file in a folder up to date by itself, once the person turned it on (docs/ICLOUD-BACKUP-PLAN.md). Changes
-/// are collected for a while, then one backup is written, and only if something in it changed.
+/// Keeps a full backup in a folder by itself, like WhatsApp: daily, weekly or monthly, once the person chose that
+/// (docs/ICLOUD-BACKUP-PLAN.md, section 8). iOS gives apps no exact timer, so the app asks `backupIfDue()` when it comes to the
+/// foreground or goes to the background.
 @MainActor
 @Observable
 public final class AutoBackup {
+    public enum Frequency: String, CaseIterable, Sendable, Identifiable {
+        case off, daily, weekly, monthly
+        public var id: String { rawValue }
+    }
+
     public enum Problem: Equatable, Sendable {
         /// The folder can't be reached: iCloud Drive is off for the app, or nobody is signed in to iCloud.
         case unavailable
@@ -131,50 +137,59 @@ public final class AutoBackup {
         case failed
     }
 
-    public static let isOnKey = "autoBackupOn"
+    static let frequencyKey = "autoBackupFrequency"
+    /// The switch of the first build; on counts as daily.
+    static let oldIsOnKey = "autoBackupOn"
     static let deviceKey = "autoBackupDevice"
     static let writtenDeviceKey = "autoBackupWrittenDevice"
     static let lastKey = "autoBackupLast"
-    static let fingerprintKey = "autoBackupFingerprint"
+    static let sizeKey = "autoBackupSize"
 
     private let defaults: UserDefaults
     private let folder: @Sendable () async -> BackupFolder?
     private let snapshot: @MainActor () throws -> BackupSnapshot
-    private let delay: Duration
-    private var pending: Task<Void, Never>?
+    private let calendar: Calendar
     private var running: Task<Void, Never>?
 
     public private(set) var lastBackup: Date?
+    /// The size of the last backup file, in bytes.
+    public private(set) var lastSize: Int?
     public private(set) var problem: Problem?
     public private(set) var isWorking = false
+    /// The logbook was empty at the last try, so no file was written.
+    public private(set) var nothingToBackUp = false
 
     /// - Parameters:
     ///   - folder: where to write, or nil when it can't be reached. Called away from the main thread.
     ///   - snapshot: what to back up, read from the database.
-    ///   - delay: how long changes are collected before one backup is written.
     public init(
         defaults: UserDefaults = .standard,
-        delay: Duration = .seconds(30),
+        calendar: Calendar = .current,
         defaultDevice: String = "iPhone",
         folder: @escaping @Sendable () async -> BackupFolder?,
         snapshot: @escaping @MainActor () throws -> BackupSnapshot
     ) {
         self.defaults = defaults
-        self.delay = delay
+        self.calendar = calendar
         self.folder = folder
         self.snapshot = snapshot
         lastBackup = defaults.object(forKey: Self.lastKey) as? Date
+        lastSize = defaults.object(forKey: Self.sizeKey) as? Int
+        if defaults.string(forKey: Self.frequencyKey) == nil, defaults.bool(forKey: Self.oldIsOnKey) {
+            defaults.set(Frequency.daily.rawValue, forKey: Self.frequencyKey)
+        }
         if defaults.string(forKey: Self.deviceKey) == nil {
             // A short code keeps two phones of one Apple ID apart until the person names them.
             defaults.set("\(defaultDevice) \(UUID().uuidString.prefix(4))", forKey: Self.deviceKey)
         }
     }
 
-    public var isOn: Bool {
-        get { access(keyPath: \.isOn); return defaults.bool(forKey: Self.isOnKey) }
+    public var frequency: Frequency {
+        get { access(keyPath: \.frequency); return defaults.string(forKey: Self.frequencyKey).flatMap(Frequency.init) ?? .off }
         set {
-            withMutation(keyPath: \.isOn) { defaults.set(newValue, forKey: Self.isOnKey) }
-            if newValue { Task { await backupNow() } } else { pending?.cancel(); problem = nil }
+            let wasOff = frequency == .off
+            withMutation(keyPath: \.frequency) { defaults.set(newValue.rawValue, forKey: Self.frequencyKey) }
+            if newValue == .off { problem = nil } else if wasOff { Task { await backupNow() } }
         }
     }
 
@@ -182,28 +197,42 @@ public final class AutoBackup {
     /// falls back to "iPhone" (`BackupFolder.safe`).
     public var device: String {
         get { access(keyPath: \.device); return defaults.string(forKey: Self.deviceKey) ?? "iPhone" }
-        set {
-            withMutation(keyPath: \.device) { defaults.set(String(newValue.prefix(40)), forKey: Self.deviceKey) }
-            schedule()
+        set { withMutation(keyPath: \.device) { defaults.set(String(newValue.prefix(40)), forKey: Self.deviceKey) } }
+    }
+
+    /// When the next backup is due, or nil when it is off or none was made yet (then it is due now).
+    public var nextBackup: Date? {
+        guard let lastBackup, let step = step(frequency) else { return nil }
+        return calendar.date(byAdding: step, to: calendar.startOfDay(for: lastBackup))
+    }
+
+    private func step(_ frequency: Frequency) -> DateComponents? {
+        switch frequency {
+        case .off: nil
+        case .daily: DateComponents(day: 1)
+        case .weekly: DateComponents(day: 7)
+        case .monthly: DateComponents(month: 1)
         }
     }
 
-    /// Something changed: back up after a while, so a burst of changes writes once.
-    public func schedule() {
-        guard isOn else { return }
-        pending?.cancel()
-        pending = Task { [delay] in
-            try? await Task.sleep(for: delay)
-            guard !Task.isCancelled else { return }
-            await backupNow()
-        }
+    /// Whether a backup is due: on, and the chosen period has passed, counted in calendar days, so a daily backup made at 9 in
+    /// the evening is due again the next morning.
+    public func isDue(now: Date = .now) -> Bool {
+        guard frequency != .off else { return false }
+        guard let next = nextBackup else { return true }
+        return calendar.startOfDay(for: now) >= next
     }
 
-    /// Backs up now if something changed since the last backup. Waits for a backup already running.
-    public func backupNow() async {
+    /// Backs up if one is due. Call it when the app comes to the foreground or goes to the background.
+    public func backupIfDue(now: Date = .now) async {
+        guard isDue(now: now) else { return }
+        await backupNow(now: now)
+    }
+
+    /// Backs up now, also while the schedule is off ("Back up now"). Waits for a backup already running.
+    public func backupNow(now: Date = .now) async {
         while let running { await running.value }
-        guard isOn else { return }
-        let task = Task { await write() }
+        let task = Task { await write(now: now) }
         running = task
         await task.value
         running = nil
@@ -221,28 +250,29 @@ public final class AutoBackup {
         return try await Task.detached { try folder.read(file) }.value
     }
 
-    private func write() async {
+    private func write(now: Date) async {
         let snapshot: BackupSnapshot
         do { snapshot = try self.snapshot() } catch { problem = .failed; return }
-        let device = self.device
-        let fingerprint = snapshot.fingerprint + "|" + BackupFolder.safe(device)
-        // Unchanged: nothing to write. Empty: nothing worth keeping, and an earlier backup is not replaced by an empty one.
-        if snapshot.isEmpty || (fingerprint == defaults.string(forKey: Self.fingerprintKey) && problem == nil) { return }
+        // An empty logbook is not worth a file, and must not replace an earlier backup.
+        nothingToBackUp = snapshot.isEmpty
+        if snapshot.isEmpty { return }
         isWorking = true
         defer { isWorking = false }
         guard let folder = await folder() else { problem = .unavailable; return }
+        let device = self.device
         let written = defaults.string(forKey: Self.writtenDeviceKey)
         do {
-            try await Task.detached {
+            let size = try await Task.detached {
                 let data = try BackupCodec.encode(snapshot.document())
                 try folder.write(data, device: device)
                 if let written, BackupFolder.safe(written) != BackupFolder.safe(device) { folder.remove(device: written) }
+                return data.count
             }.value
-            let now = Date.now
-            defaults.set(fingerprint, forKey: Self.fingerprintKey)
             defaults.set(device, forKey: Self.writtenDeviceKey)
             defaults.set(now, forKey: Self.lastKey)
+            defaults.set(size, forKey: Self.sizeKey)
             lastBackup = now
+            lastSize = size
             problem = nil
         } catch let error as CocoaError where error.code == .fileWriteOutOfSpace {
             problem = .full

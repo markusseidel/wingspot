@@ -30,7 +30,7 @@ sealed class BackupException : Exception() {
 }
 
 /**
- * The backup file (docs/BACKUP-FORMAT.md): the routes of imported flights and the check-ins only this phone has, as one
+ * The backup file (docs/BACKUP-FORMAT.md): every check-in and the routes of imported flights, as one
  * gzip-compressed JSON document. The same layout is written and read by the iPhone app.
  */
 @Serializable
@@ -72,7 +72,8 @@ data class BackupDocument(
 
     companion object {
         const val FORMAT = "wingspot-backup"
-        const val SCHEMA = 1
+        /** 2 holds every check-in, each saying whether the server has it (#391); 1 held only what the server did not have. */
+        const val SCHEMA = 2
     }
 }
 
@@ -104,6 +105,10 @@ data class BackupCheckIn(
     val seat: String? = null,
     @SerialName("flight_id") val flightId: String? = null,
     @SerialName("source_id") val sourceId: String? = null,
+    /** Schema 2: the server already has it, so restoring doesn't send it again. */
+    @SerialName("on_server") val onServer: Boolean? = null,
+    /** Schema 2: the account it belongs to, written by the iPhone app. This app keeps one account's check-ins only. */
+    @SerialName("owner_id") val ownerId: String? = null,
 )
 
 internal object BackupDates {
@@ -179,7 +184,7 @@ data class BackupResult(val routes: Int = 0, val checkIns: Int = 0, val skipped:
 
 /** Makes a backup of this phone and restores one into it. Restore only adds (docs/BACKUP-PLAN.md, decision 6). */
 class BackupService(private val store: CheckInStore, private val tracks: FlightTrackFiles) {
-    /** The routes on this phone and the check-ins the server does not have. */
+    /** The whole logbook: every check-in and the routes on this phone. */
     suspend fun make(app: String, now: Instant = Instant.now()): BackupDocument {
         val all = store.all()
         val byId = all.associateBy { it.id }
@@ -194,7 +199,7 @@ class BackupService(private val store: CheckInStore, private val tracks: FlightT
                 geometry = BackupDocument.Geometry(coordinates = points.map { listOf(round5(it.longitude), round5(it.latitude)) }),
             )
         }
-        val checkIns = all.filter { it.syncState != SyncState.SYNCED }.sortedBy { it.occurredAt }.map(::backupCheckIn)
+        val checkIns = all.sortedBy { it.occurredAt }.map(::backupCheckIn)
         return BackupDocument(
             format = BackupDocument.FORMAT, schema = BackupDocument.SCHEMA, createdAt = BackupDates.format(now), app = app,
             platform = "android", counts = BackupDocument.Counts(features.size, checkIns.size),
@@ -249,9 +254,13 @@ class BackupService(private val store: CheckInStore, private val tracks: FlightT
             visitId = c.visitId?.toString(), originId = c.originId, originCode = c.originCode, destinationId = c.destinationId,
             destinationCode = c.destinationCode, flightNumber = c.flightNumber, cabin = c.cabin, seat = c.seat,
             flightId = c.flightId?.toString(), sourceId = c.sourceId?.toString(),
+            onServer = if (c.syncState == SyncState.SYNCED) true else null,
         )
 
-        /** A pending check-in, so it goes to the account that is signed in or signs in next. Null when it cannot be used. */
+        /**
+         * One the server has comes back as sent; any other is pending, so it goes to the account that is signed in or signs in
+         * next. Null when it cannot be used.
+         */
         fun localCheckIn(b: BackupCheckIn): LocalCheckIn? {
             val id = uuid(b.id) ?: return null
             val occurredAt = BackupDates.parse(b.occurredAt) ?: return null
@@ -260,7 +269,7 @@ class BackupService(private val store: CheckInStore, private val tracks: FlightT
             if (b.longitude != null && b.longitude !in -180.0..180.0) return null
             return LocalCheckIn(
                 id = id, kind = b.kind, occurredAt = occurredAt, registration = b.registration, typeIcao = b.typeIcao,
-                airportId = b.airportId, latitude = b.latitude, longitude = b.longitude, syncState = SyncState.PENDING, rejectCode = null,
+                airportId = b.airportId, latitude = b.latitude, longitude = b.longitude, syncState = if (b.onServer == true) SyncState.SYNCED else SyncState.PENDING, rejectCode = null,
                 airportCode = b.airportCode, originId = b.originId, destinationId = b.destinationId, originCode = b.originCode,
                 destinationCode = b.destinationCode, flightNumber = b.flightNumber, cabin = b.cabin, seat = b.seat,
                 visitContext = b.visitContext, flightId = uuid(b.flightId), sourceId = uuid(b.sourceId), spotId = b.spotId,

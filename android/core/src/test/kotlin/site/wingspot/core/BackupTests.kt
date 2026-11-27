@@ -39,6 +39,23 @@ class BackupTests {
     }
 
     @Test
+    fun theSchema2VectorReadsWithWhatTheServerHas() = runBlocking {
+        val zipped = BackupCodec.decode(vector("example-schema2.wingspotbackup"))
+        val plain = BackupCodec.decode(vector("example-schema2.json"))
+        assertEquals(plain, zipped)
+        assertEquals(2, plain.schema)
+        assertEquals(3, plain.checkins.size)
+        assertEquals(true, plain.checkins.last().onServer)
+        assertEquals("019a0000-0000-7000-8000-0000000000ff", plain.checkins.last().ownerId)
+        val tracks = tracks()
+        val store = store(tracks)
+        assertEquals(BackupResult(2, 3, 0), BackupService(store, tracks).restore(plain, replaceRoutes = false))
+        val visit = store.all().first { it.id.toString() == "019a0000-0000-7000-8000-000000000003" }
+        assertEquals(SyncState.SYNCED, visit.syncState)
+        assertEquals("departing", visit.visitContext)
+    }
+
+    @Test
     fun whatIsNotABackupIsTold() {
         assertFailsWith<BackupException.NotBackup> { BackupCodec.decode("hello".toByteArray()) }
         assertFailsWith<BackupException.NotBackup> { BackupCodec.decode("""{"format":"other","schema":1}""".toByteArray()) }
@@ -80,7 +97,7 @@ class BackupTests {
     }
 
     @Test
-    fun aBackupHoldsRoutesAndOnlyTheCheckInsTheServerLacks() = runBlocking {
+    fun aBackupHoldsRoutesAndEveryCheckIn() = runBlocking {
         val tracks = tracks()
         val store = store(tracks)
         val flown = store.saveFlown(FlownDraft(Place(2212, "FRA"), Place(3797, "JFK"), flightNumber = "LH400"))
@@ -89,9 +106,11 @@ class BackupTests {
         tracks.save(listOf(GeoCoordinate(50.033333333, 8.570634567), GeoCoordinate(40.64, -73.78)), flown.id)
 
         val document = BackupService(store, tracks).make("Wingspot test", Instant.EPOCH)
-        // The flight and the two airport visits it made; the sighting the server has is left out.
+        // The flight, the two airport visits it made, and the sighting the server has, marked as such.
         assertTrue(document.checkins.any { it.id == flown.id.toString() })
-        assertEquals(3, document.checkins.size)
+        assertEquals(4, document.checkins.size)
+        assertEquals(listOf(sent.id.toString()), document.checkins.filter { it.onServer == true }.map { it.id })
+        assertEquals(2, document.schema)
         assertEquals("LH400", document.routes.features.first().properties.flightNumber)
         assertEquals("1970-01-01T00:00:00Z", document.createdAt)
 
@@ -99,12 +118,16 @@ class BackupTests {
         val json = String(GZIPInputStream(ByteArrayInputStream(data)).readBytes())
         assertTrue("[8.57063,50.03333]" in json, json)
         assertTrue("\"checkin_id\":\"" in json && "\"type\":\"FeatureCollection\"" in json)
-        assertFalse(sent.id.toString() in json)
+        assertTrue("\"on_server\":true" in json, json)
 
         // Round trip onto another phone.
         val otherTracks = tracks()
-        val result = BackupService(store(otherTracks), otherTracks).restore(BackupCodec.decode(data), replaceRoutes = false)
-        assertEquals(BackupResult(1, 3, 0), result)
+        val otherStore = store(otherTracks)
+        val result = BackupService(otherStore, otherTracks).restore(BackupCodec.decode(data), replaceRoutes = false)
+        assertEquals(BackupResult(1, 4, 0), result)
+        // The sighting the server has is not sent again.
+        assertEquals(SyncState.SYNCED, otherStore.all().first { it.id == sent.id }.syncState)
+        assertEquals(3, otherStore.all().count { it.syncState == SyncState.PENDING })
         assertEquals(GeoCoordinate(50.03333, 8.57063), otherTracks.load(flown.id)?.first())
     }
 

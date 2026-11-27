@@ -1,0 +1,103 @@
+{
+  "format": "wingspot-backup",
+  "schema": 2,
+  "created_at": "2026-11-27T10:00:00Z",
+  "app": "Wingspot 0.3.0 (2026112702)",
+  "platform": "ios",
+  "counts": {
+    "routes": 2,
+    "checkins": 3
+  },
+  "routes": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "checkin_id": "019a0000-0000-7000-8000-000000000001",
+          "flight_number": "LH400",
+          "origin": "FRA",
+          "destination": "JFK",
+          "day": "2026-08-12"
+        },
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [
+              8.57063,
+              50.03333
+            ],
+            [
+              -1.5,
+              55.25
+            ],
+            [
+              -73.77814,
+              40.64131
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "checkin_id": "019A0000-0000-7000-8000-00000000000A"
+        },
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [
+              11.78611,
+              48.35378
+            ],
+            [
+              13.5,
+              52.36667
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "checkins": [
+    {
+      "id": "019a0000-0000-7000-8000-000000000001",
+      "kind": "flown",
+      "occurred_at": "2026-08-12T12:00:00.250Z",
+      "time_known": false,
+      "origin_id": 2212,
+      "origin_code": "FRA",
+      "destination_id": 3797,
+      "destination_code": "JFK",
+      "flight_number": "LH400",
+      "registration": "D-AIXP",
+      "type_icao": "A359",
+      "type_name": "Airbus A350-900",
+      "cabin": "economy",
+      "seat": "34K",
+      "saved_at": "2026-08-12T18:30:00Z",
+      "a_field_from_the_future": 1
+    },
+    {
+      "id": "019A0000-0000-7000-8000-000000000002",
+      "kind": "spotted",
+      "occurred_at": "2026-09-01T07:15:00Z",
+      "registration": "D-AIMA",
+      "type_icao": "A388",
+      "airport_id": 2212,
+      "airport_code": "FRA",
+      "latitude": 50.0379,
+      "longitude": 8.56216
+    },
+    {
+      "id": "019a0000-0000-7000-8000-000000000003",
+      "kind": "airport",
+      "occurred_at": "2026-11-27T08:00:00Z",
+      "airport_id": 2212,
+      "airport_code": "FRA",
+      "visit_context": "departing",
+      "on_server": true,
+      "owner_id": "019a0000-0000-7000-8000-0000000000ff"
+    }
+  ]
+}

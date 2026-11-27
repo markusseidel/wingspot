@@ -31,39 +31,36 @@ private func pendingCheckIn(_ id: UUID = UUID()) -> LocalCheckIn {
     )
 }
 
-@MainActor @Test func theFingerprintChangesOnlyWithWhatIsInTheBackup() throws {
+@MainActor @Test func theBackupHoldsTheWholeLogbookAndRestoresWhatTheServerHasAsSent() throws {
     let context = try makeContext()
     let tracks = FlightTrackFiles(directory: temporaryDirectory("tracks"))
-    let service = BackupService(context: context, tracks: tracks)
-    let empty = try service.snapshot(app: "test")
-    #expect(empty.isEmpty)
+    let owner = UUID()
+    #expect(try BackupService(context: context, tracks: tracks).snapshot(app: "test").isEmpty)
 
     let synced = pendingCheckIn()
     synced.syncState = SyncState.synced.rawValue
-    context.insert(synced)
-    try context.save()
-    #expect(try service.snapshot(app: "test").fingerprint == empty.fingerprint)
-
+    synced.ownerID = owner
     let pending = pendingCheckIn()
+    context.insert(synced)
     context.insert(pending)
     try context.save()
-    let withCheckIn = try service.snapshot(app: "test")
-    #expect(!withCheckIn.isEmpty && withCheckIn.fingerprint != empty.fingerprint)
-    #expect(try service.snapshot(app: "test", now: .now.addingTimeInterval(60)).fingerprint == withCheckIn.fingerprint)
-
-    pending.seat = "12A"
-    try context.save()
-    let edited = try service.snapshot(app: "test")
-    #expect(edited.fingerprint != withCheckIn.fingerprint)
-
     try tracks.save(route, for: synced.id)
-    let withRoute = try service.snapshot(app: "test")
-    #expect(withRoute.fingerprint != edited.fingerprint)
-    #expect(withRoute.document().routes.features.count == 1)
+    let document = try BackupService(context: context, tracks: tracks).make(app: "test")
+    #expect(document.schema == 2)
+    #expect(document.checkins.count == 2 && document.routes.features.count == 1)
+    let sent = try #require(document.checkins.first { $0.id == synced.id.uuidString.lowercased() })
+    #expect(sent.onServer == true && sent.ownerId == owner.uuidString.lowercased())
+    #expect(document.checkins.first { $0.id == pending.id.uuidString.lowercased() }?.onServer == nil)
 
-    pending.syncState = SyncState.synced.rawValue
-    try context.save()
-    #expect(try service.snapshot(app: "test").fingerprint != withRoute.fingerprint)
+    let other = try makeContext()
+    let result = try BackupService(context: other, tracks: FlightTrackFiles(directory: temporaryDirectory("tracks")))
+        .restore(BackupCodec.decode(BackupCodec.encode(document)), replaceRoutes: false, userID: UUID())
+    #expect(result.checkIns == 2 && result.routes == 1)
+    let restored = try other.fetch(FetchDescriptor<LocalCheckIn>())
+    let back = try #require(restored.first { $0.id == synced.id })
+    #expect(back.syncState == SyncState.synced.rawValue && back.ownerID == owner)
+    let again = try #require(restored.first { $0.id == pending.id })
+    #expect(again.syncState == SyncState.pending.rawValue && again.ownerID == nil)
 }
 
 @Test func theFolderKeepsTheLatestAndThePreviousFile() throws {
@@ -109,58 +106,83 @@ private func pendingCheckIn(_ id: UUID = UUID()) -> LocalCheckIn {
     #expect(files.first?.url.lastPathComponent == "Wingspot-backup-iPad.wingspotbackup")
 }
 
-@MainActor @Test func aBurstOfChangesWritesOnceAndAnUnchangedLogbookNothing() async throws {
+@MainActor
+private func makeBackup(_ defaults: UserDefaults, _ context: ModelContext, _ directory: URL, reachable: Counter? = nil, writes: Counter? = nil) -> AutoBackup {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "Europe/Berlin")!
+    return AutoBackup(
+        defaults: defaults, calendar: calendar,
+        folder: {
+            writes?.value += 1
+            return reachable?.value == 0 ? nil : BackupFolder(directory: directory, coordinated: false)
+        },
+        snapshot: { try BackupService(context: context, tracks: FlightTrackFiles(directory: directory.appending(path: "none"))).snapshot(app: "test") }
+    )
+}
+
+private func date(_ text: String) -> Date { try! Date(text, strategy: .iso8601) }
+
+@MainActor @Test func aBackupIsMadeWhenTheChosenPeriodHasPassed() async throws {
     let defaults = UserDefaults(suiteName: UUID().uuidString)!
     let context = try makeContext()
-    let tracks = FlightTrackFiles(directory: temporaryDirectory("tracks"))
-    let directory = temporaryDirectory("backup")
-    let writes = Counter()
-    let backup = AutoBackup(
-        defaults: defaults, delay: .milliseconds(100),
-        folder: { writes.value += 1; return BackupFolder(directory: directory, coordinated: false) },
-        snapshot: { try BackupService(context: context, tracks: tracks).snapshot(app: "test") }
-    )
-
-    // Off: nothing happens.
     context.insert(pendingCheckIn())
     try context.save()
-    backup.schedule()
-    try await Task.sleep(for: .milliseconds(250))
+    let writes = Counter()
+    let backup = makeBackup(defaults, context, temporaryDirectory("backup"), writes: writes)
+
+    // Off: never due, but "Back up now" still works.
+    #expect(!backup.isDue())
+    await backup.backupIfDue()
     #expect(writes.value == 0)
+    await backup.backupNow(now: date("2026-11-27T21:00:00Z"))
+    #expect(writes.value == 1 && backup.lastSize ?? 0 > 0 && backup.problem == nil)
 
-    defaults.set(true, forKey: AutoBackup.isOnKey)
-    for _ in 0..<5 { backup.schedule() }
-    // Tests run side by side, so the delay can take longer than asked; wait for the write, then a while longer for a second one.
-    for _ in 0..<100 where backup.lastBackup == nil { try await Task.sleep(for: .milliseconds(50)) }
-    try await Task.sleep(for: .milliseconds(300))
-    #expect(writes.value == 1)
-    #expect(backup.lastBackup != nil && backup.problem == nil)
-    let file = try #require(BackupFolder(directory: directory, coordinated: false).backups().first)
-    #expect(try BackupCodec.decode(Data(contentsOf: file.url)).checkins.count == 1)
+    defaults.set(AutoBackup.Frequency.daily.rawValue, forKey: "autoBackupFrequency")
+    // 22:00 in Berlin, the same day: not due. The next morning: due.
+    #expect(!backup.isDue(now: date("2026-11-27T21:30:00Z")))
+    #expect(backup.isDue(now: date("2026-11-28T06:00:00Z")))
+    await backup.backupIfDue(now: date("2026-11-28T06:00:00Z"))
+    #expect(writes.value == 2 && backup.lastBackup == date("2026-11-28T06:00:00Z"))
+
+    defaults.set(AutoBackup.Frequency.weekly.rawValue, forKey: "autoBackupFrequency")
+    #expect(!backup.isDue(now: date("2026-12-04T12:00:00Z")))
+    #expect(backup.isDue(now: date("2026-12-05T06:00:00Z")))
+
+    defaults.set(AutoBackup.Frequency.monthly.rawValue, forKey: "autoBackupFrequency")
+    #expect(!backup.isDue(now: date("2026-12-27T12:00:00Z")))
+    #expect(backup.isDue(now: date("2026-12-28T06:00:00Z")))
+}
+
+@MainActor @Test func anEmptyLogbookWritesNothingAndTurningItOnBacksUpAtOnce() async throws {
+    let defaults = UserDefaults(suiteName: UUID().uuidString)!
+    defaults.set(true, forKey: "autoBackupOn")
+    let context = try makeContext()
+    let directory = temporaryDirectory("backup")
+    let backup = makeBackup(defaults, context, directory)
+    // The switch of the first build counts as daily.
+    #expect(backup.frequency == .daily)
 
     await backup.backupNow()
-    #expect(writes.value == 1)
+    #expect(backup.nothingToBackUp && backup.lastBackup == nil)
 
-    try tracks.save(route, for: UUID())
-    await backup.backupNow()
-    #expect(writes.value == 2)
-    #expect(BackupFolder(directory: directory, coordinated: false).backups().count == 2)
+    context.insert(pendingCheckIn())
+    try context.save()
+    backup.frequency = .off
+    backup.frequency = .weekly
+    for _ in 0..<100 where backup.lastBackup == nil { try await Task.sleep(for: .milliseconds(20)) }
+    #expect(backup.lastBackup != nil && !backup.nothingToBackUp)
+    #expect(BackupFolder(directory: directory, coordinated: false).backups().count == 1)
 }
 
 @MainActor @Test func renamingTheDeviceMovesItsFilesAndAMissingFolderIsTold() async throws {
     let defaults = UserDefaults(suiteName: UUID().uuidString)!
-    defaults.set(true, forKey: AutoBackup.isOnKey)
     let context = try makeContext()
     context.insert(pendingCheckIn())
     try context.save()
     let directory = temporaryDirectory("backup")
     let reachable = Counter()
     reachable.value = 1
-    let backup = AutoBackup(
-        defaults: defaults, delay: .seconds(60),
-        folder: { reachable.value == 1 ? BackupFolder(directory: directory, coordinated: false) : nil },
-        snapshot: { try BackupService(context: context, tracks: FlightTrackFiles(directory: directory.appending(path: "none"))).snapshot(app: "test") }
-    )
+    let backup = makeBackup(defaults, context, directory, reachable: reachable)
     #expect(backup.device.hasPrefix("iPhone "))
 
     await backup.backupNow()
@@ -169,7 +191,6 @@ private func pendingCheckIn(_ id: UUID = UUID()) -> LocalCheckIn {
     #expect(BackupFolder(directory: directory, coordinated: false).backups().map(\.device) == ["Kitchen phone"])
 
     reachable.value = 0
-    backup.device = "Work phone"
     await backup.backupNow()
     #expect(backup.problem == .unavailable)
 }

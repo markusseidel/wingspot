@@ -22,54 +22,70 @@ extension AutoBackup {
 
     /// Backs up while the app goes to the background, asking iOS for the time it takes.
     func backupInBackground() {
-        guard isOn else { return }
+        guard isDue() else { return }
         var id = UIBackgroundTaskIdentifier.invalid
         id = UIApplication.shared.beginBackgroundTask(withName: "backup") {
             UIApplication.shared.endBackgroundTask(id)
             id = .invalid
         }
         Task {
-            await backupNow()
+            await backupIfDue()
             if id != .invalid { UIApplication.shared.endBackgroundTask(id) }
         }
     }
 }
 
-/// The switch for the automatic backup, with when it last worked or why it can't.
+/// The automatic backup to iCloud Drive: how often, a button for now, when it last worked or why it can't.
 struct ICloudBackupSection: View {
     @Environment(AutoBackup.self) private var backup
 
     var body: some View {
         @Bindable var backup = backup
         Section {
-            Toggle("Back up to iCloud Drive automatically", isOn: $backup.isOn)
-            if backup.isOn {
-                status
-                HStack {
-                    Text("Name of this iPhone").layoutPriority(1)
-                    TextField("Name of this iPhone", text: $backup.device)
-                        .multilineTextAlignment(.trailing)
-                        .foregroundStyle(.secondary)
-                        .submitLabel(.done)
-                }
+            Picker("Back up to iCloud Drive", selection: $backup.frequency) {
+                Text("Off").tag(AutoBackup.Frequency.off)
+                Text("Daily").tag(AutoBackup.Frequency.daily)
+                Text("Weekly").tag(AutoBackup.Frequency.weekly)
+                Text("Monthly").tag(AutoBackup.Frequency.monthly)
             }
+            Button("Back up now", systemImage: "icloud.and.arrow.up") { Task { await backup.backupNow() } }
+                .disabled(backup.isWorking)
+            status
+            HStack {
+                Text("Name of this iPhone").layoutPriority(1)
+                TextField("Name of this iPhone", text: $backup.device)
+                    .multilineTextAlignment(.trailing)
+                    .foregroundStyle(.secondary)
+                    .submitLabel(.done)
+            }
+        } header: {
+            Text("iCloud Drive")
         } footer: {
-            Text("Wingspot keeps the latest backup and the one before it in the Wingspot folder of your iCloud Drive, after each change. Apple stores it; Wingspot can't read it. Each iPhone writes its own file, named after it.")
+            Text("A full backup of your check-ins and routes, in the Wingspot folder of your iCloud Drive. Wingspot keeps the latest backup and the one before it. Apple stores it; Wingspot can't read it. Each iPhone writes its own file, named after it.")
         }
-        // Shows the real state when the page opens: writes only if something changed, or tells why it can't.
-        .task { await backup.backupNow() }
+        // A backup that is due is made when the page opens, so the line below shows the real state.
+        .task { await backup.backupIfDue() }
     }
 
     @ViewBuilder private var status: some View {
         if backup.isWorking {
-            Label("Backing up…", systemImage: "icloud.and.arrow.up")
+            Label("Backing up…", systemImage: "arrow.triangle.2.circlepath.icloud")
         } else if let problem = backup.problem {
             Label(problemLine(problem), systemImage: "exclamationmark.icloud").foregroundStyle(.red)
+        } else if backup.nothingToBackUp {
+            Label("Nothing to back up yet: your logbook is empty.", systemImage: "icloud").foregroundStyle(.secondary)
         } else if let last = backup.lastBackup {
-            Label("Last backup: \(last.formatted(.relative(presentation: .named)))", systemImage: "checkmark.icloud")
+            VStack(alignment: .leading, spacing: 2) {
+                Label("Last backup: \(last.formatted(date: .abbreviated, time: .shortened))", systemImage: "checkmark.icloud")
+                if let size = backup.lastSize {
+                    Text("Size: \(size.formatted(.byteCount(style: .file)))").font(.footnote).foregroundStyle(.secondary)
+                }
+                if backup.frequency != .off, let next = backup.nextBackup {
+                    Text("Next backup: \(next.formatted(date: .abbreviated, time: .omitted))").font(.footnote).foregroundStyle(.secondary)
+                }
+            }
         } else {
-            Label("No backup yet: it is made once there are routes or check-ins only on this iPhone.", systemImage: "icloud")
-                .foregroundStyle(.secondary)
+            Label("No backup yet.", systemImage: "icloud").foregroundStyle(.secondary)
         }
     }
 
@@ -77,7 +93,7 @@ struct ICloudBackupSection: View {
         switch problem {
         case .unavailable: "iCloud Drive is off for Wingspot. Turn it on in the Settings app under your name > iCloud."
         case .full: "Your iCloud storage is full."
-        case .failed: "The last backup failed. Wingspot tries again after the next change."
+        case .failed: "The last backup failed. Wingspot tries again next time."
         }
     }
 }
