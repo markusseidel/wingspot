@@ -35,7 +35,8 @@ struct BackupSection: View {
         } footer: {
             Text("The backup holds the routes of your imported flights and the check-ins that are only on this phone. Photos are not in it. It contains your travel history: keep it somewhere private.")
         }
-        .sheet(item: $file, onDismiss: removeFile) { ShareSheet(file: $0.url) }
+        ICloudBackupSection()
+            .sheet(item: $file, onDismiss: removeFile) { ShareSheet(file: $0.url) }
         .backupPicker(isPresented: $isPicking)
         .alert("Couldn't create the backup", isPresented: $failed) {
             Button("OK", role: .cancel) {}
@@ -63,11 +64,9 @@ struct BackupSection: View {
 }
 
 extension View {
-    /// The file picker for a backup; the picked file goes to the restore review.
+    /// Picking a backup: the ones in iCloud Drive first, then the file picker; the picked file goes to the restore review.
     func backupPicker(isPresented: Binding<Bool>) -> some View {
-        fileImporter(isPresented: isPresented, allowedContentTypes: [.wingspotBackup, .json, .gzip, .data]) { picked in
-            if case .success(let url) = picked { BackupInbox.shared.pending = url }
-        }
+        modifier(BackupChooser(isPresented: isPresented))
     }
 
     /// Shows the restore review when a backup file waits. Only one screen in the stack does it at a time.
@@ -98,6 +97,7 @@ struct BackupRestoreView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(AccountStore.self) private var account
     @Environment(CheckInSyncCoordinator.self) private var sync
+    @Environment(AutoBackup.self) private var autoBackup
     @State private var document: BackupDocument?
     @State private var preview: BackupPreview?
     @State private var problem: BackupError?
@@ -170,6 +170,7 @@ struct BackupRestoreView: View {
         do {
             result = try BackupService(context: modelContext).restore(document, replaceRoutes: replaceRoutes)
             sync.requestSync()
+            autoBackup.schedule()
         } catch {
             problem = .damaged
         }

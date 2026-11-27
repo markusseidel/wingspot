@@ -34,6 +34,10 @@ targets:
         com.apple.developer.applesignin: [Default]
         # Xcode changes this to production when the app is archived for TestFlight or the App Store.
         aps-environment: development
+        # The automatic backup to iCloud Drive (docs/ICLOUD-BACKUP-PLAN.md): a Wingspot folder in the person's iCloud Drive.
+        com.apple.developer.icloud-container-identifiers: [iCloud.site.wingspot.ios]
+        com.apple.developer.icloud-services: [CloudDocuments]
+        com.apple.developer.ubiquity-container-identifiers: [iCloud.site.wingspot.ios]
     configFiles:
       Debug: Config/Wingspot.xcconfig
       Release: Config/Wingspot.xcconfig

@@ -7022,6 +7022,146 @@
           }
         }
       }
+    },
+    "Back up to iCloud Drive automatically" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatisch in iCloud Drive sichern"
+          }
+        }
+      }
+    },
+    "Name of this iPhone" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name dieses iPhones"
+          }
+        }
+      }
+    },
+    "Wingspot keeps the latest backup and the one before it in the Wingspot folder of your iCloud Drive, after each change. Apple stores it; Wingspot can't read it. Each iPhone writes its own file, named after it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wingspot legt nach jeder Änderung das neueste Backup und das davor im Ordner Wingspot in deinem iCloud Drive ab. Apple speichert es; Wingspot kann es nicht lesen. Jedes iPhone schreibt eine eigene Datei mit seinem Namen."
+          }
+        }
+      }
+    },
+    "Backing up…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird gesichert …"
+          }
+        }
+      }
+    },
+    "Last backup: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letztes Backup: %@"
+          }
+        }
+      }
+    },
+    "No backup yet: it is made once there are routes or check-ins only on this iPhone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch kein Backup: Es entsteht, sobald es Routen oder Check-ins gibt, die nur auf diesem iPhone sind."
+          }
+        }
+      }
+    },
+    "iCloud Drive is off for Wingspot. Turn it on in the Settings app under your name > iCloud." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud Drive ist für Wingspot aus. Schalte es in der Einstellungen-App unter deinem Namen > iCloud ein."
+          }
+        }
+      }
+    },
+    "Your iCloud storage is full." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein iCloud-Speicher ist voll."
+          }
+        }
+      }
+    },
+    "The last backup failed. Wingspot tries again after the next change." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das letzte Backup ist fehlgeschlagen. Wingspot versucht es nach der nächsten Änderung erneut."
+          }
+        }
+      }
+    },
+    "In iCloud Drive" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In iCloud Drive"
+          }
+        }
+      }
+    },
+    "Choose a file…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datei auswählen …"
+          }
+        }
+      }
+    },
+    "Couldn't download the backup from iCloud Drive" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Backup konnte nicht aus iCloud Drive geladen werden"
+          }
+        }
+      }
+    },
+    "Previous backup, %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorheriges Backup, %@"
+          }
+        }
+      }
+    },
+    "Latest backup, %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neuestes Backup, %@"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
