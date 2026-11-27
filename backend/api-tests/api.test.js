@@ -90,7 +90,8 @@ describe("GET /v1/config", () => {
     const response = await call("/v1/config");
     assert.equal(response.status, 200);
     assertMatches("Config", response.body);
-    assert.equal(response.body.min_version.ios, "0.1.0");
+    assert.equal(response.body.min_version.ios, "0.3.0");
+    assert.equal(response.body.min_version.android, "0.3.0");
   });
 
   test("rejects other methods", async () => {
