@@ -32,6 +32,7 @@ struct WingspotApp: App {
     @State private var sync: CheckInSyncCoordinator
     @State private var badges: BadgeStore
     @State private var push: PushStore
+    @State private var autoBackup: AutoBackup
     @Environment(\.scenePhase) private var scenePhase
     private let network = NetworkMonitor()
 
@@ -88,6 +89,8 @@ struct WingspotApp: App {
             source: APIProgressSource(client: Self.apiClient, accessToken: { await account.accessToken() })
         )
         _badges = State(initialValue: badgeStore)
+        let autoBackup = AutoBackup.iCloud(context: container.mainContext)
+        _autoBackup = State(initialValue: autoBackup)
         _sync = State(initialValue: CheckInSyncCoordinator(
             outbox: CheckInOutbox(context: container.mainContext, uploader: uploader),
             photos: PhotoOutbox(context: container.mainContext, uploader: photoUploader),
@@ -95,7 +98,8 @@ struct WingspotApp: App {
             restorer: CheckInRestorer(context: container.mainContext, source: AccountCheckInSource(backend: accountBackend)),
             userID: { account.userID },
             // After a run, with or without uploads, the server may have unlocked something.
-            afterRun: { Task { await badgeStore.refresh() } },
+            // Check-ins went up or came back, so the automatic backup may hold something different.
+            afterRun: { Task { await badgeStore.refresh() }; autoBackup.schedule() },
             // After a check-in, a flight or an edit went up, the Feed shows it without a pull to refresh.
             afterUpload: { Task { await feedStore.refresh() } }
         ))
@@ -125,6 +129,7 @@ struct WingspotApp: App {
                 .environment(sync)
                 .environment(badges)
                 .environment(push)
+                .environment(autoBackup)
                 .environment(PushRouter.shared)
                 .modelContainer(modelContainer)
                 .task { await referenceData.prepare() }
@@ -148,6 +153,9 @@ struct WingspotApp: App {
                     if scenePhase == .active {
                         sync.requestSync()
                         Task { await push.sync(); await terms.sync() }
+                    } else if scenePhase == .background {
+                        // Leaving the app is the moment to back up what changed, also while signed out, when no sync runs.
+                        autoBackup.backupInBackground()
                     }
                 }
                 .onOpenURL(perform: handleLink)

@@ -1,6 +1,6 @@
 # Automatic backup to iCloud Drive: plan
 
-Follow-up to the backup file (#310, [BACKUP-PLAN.md](BACKUP-PLAN.md), format in [BACKUP-FORMAT.md](BACKUP-FORMAT.md)). Today a person makes a backup by hand: Settings > Backup > Create backup, then the share sheet. The owner asked whether the iPhone app can back up to iCloud on its own. Status: decided (section 7), not built yet.
+Follow-up to the backup file (#310, [BACKUP-PLAN.md](BACKUP-PLAN.md), format in [BACKUP-FORMAT.md](BACKUP-FORMAT.md)). Today a person makes a backup by hand: Settings > Backup > Create backup, then the share sheet. The owner asked whether the iPhone app can back up to iCloud on its own. Status: decided (section 7), being built.
 
 ## 1. What exists, and the gap
 

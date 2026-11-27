@@ -213,6 +213,60 @@ public struct BackupResult: Equatable, Sendable {
     public var skipped = 0
 }
 
+/// The contents of a backup before the routes are read: made on the main thread by `BackupService.snapshot`, turned into the
+/// document anywhere.
+public struct BackupSnapshot: Sendable {
+    struct Flight: Sendable {
+        var flightNumber: String?
+        var origin: String?
+        var destination: String?
+        var day: String
+    }
+
+    let app: String
+    let now: Date
+    let tracks: FlightTrackFiles
+    let routeStamps: [UUID: String]
+    let flights: [UUID: Flight]
+    let checkIns: [BackupCheckIn]
+
+    /// Nothing worth keeping: no routes and no check-ins that are only on this phone.
+    public var isEmpty: Bool { routeStamps.isEmpty && checkIns.isEmpty }
+
+    /// Changes when a route is added, replaced or removed, or a check-in that is only on this phone is added, changed, sent or
+    /// removed. Check-ins the server has don't count: they are not in the backup.
+    public var fingerprint: String {
+        var text = routeStamps.map { "\($0.key.uuidString)=\($0.value)" }.sorted().joined(separator: "\n")
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        for c in checkIns { text += "\n" + (String(data: (try? encoder.encode(c)) ?? Data(), encoding: .utf8) ?? c.id) }
+        return String(format: "%08x-%d", Gzip.crc32(Data(text.utf8)), text.utf8.count)
+    }
+
+    public func document() -> BackupDocument {
+        var features: [BackupDocument.Feature] = []
+        for id in routeStamps.keys.sorted(by: { $0.uuidString < $1.uuidString }) {
+            guard let points = tracks.load(id: id), points.count >= 2 else { continue }
+            let flight = flights[id]
+            features.append(BackupDocument.Feature(
+                type: "Feature",
+                properties: BackupDocument.Properties(
+                    checkinId: id.uuidString.lowercased(), flightNumber: flight?.flightNumber, origin: flight?.origin,
+                    destination: flight?.destination, day: flight?.day
+                ),
+                geometry: BackupDocument.Geometry(type: "LineString", coordinates: points.map { [Self.round5($0.longitude), Self.round5($0.latitude)] })
+            ))
+        }
+        return BackupDocument(
+            format: BackupDocument.formatName, schema: BackupDocument.currentSchema, createdAt: BackupDates.format(now),
+            app: app, platform: "ios", counts: .init(routes: features.count, checkins: checkIns.count),
+            routes: .init(type: "FeatureCollection", features: features), checkins: checkIns
+        )
+    }
+
+    private static func round5(_ value: Double) -> Double { (value * 100_000).rounded() / 100_000 }
+}
+
 /// Makes a backup of this phone and restores one into it. Restore only adds (docs/BACKUP-PLAN.md, decision 6).
 @MainActor
 public struct BackupService {
@@ -226,28 +280,19 @@ public struct BackupService {
 
     /// The routes on this phone and the check-ins the server does not have.
     public func make(app: String, now: Date = .now) throws -> BackupDocument {
+        try snapshot(app: app, now: now).document()
+    }
+
+    /// What a backup needs from the database, read quickly here; the routes are read later by `BackupSnapshot.document()`,
+    /// which can run away from the main thread.
+    public func snapshot(app: String, now: Date = .now) throws -> BackupSnapshot {
         let all = try context.fetch(FetchDescriptor<LocalCheckIn>())
-        let byID = Dictionary(all.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-        var features: [BackupDocument.Feature] = []
-        for id in tracks.ids().sorted(by: { $0.uuidString < $1.uuidString }) {
-            guard let points = tracks.load(id: id), points.count >= 2 else { continue }
-            let flight = byID[id]
-            features.append(BackupDocument.Feature(
-                type: "Feature",
-                properties: BackupDocument.Properties(
-                    checkinId: id.uuidString.lowercased(), flightNumber: flight?.flightNumber, origin: flight?.originCode,
-                    destination: flight?.destinationCode, day: flight.map { BackupDates.day($0.occurredAt) }
-                ),
-                geometry: BackupDocument.Geometry(type: "LineString", coordinates: points.map { [round5($0.longitude), round5($0.latitude)] })
-            ))
+        var flights: [UUID: BackupSnapshot.Flight] = [:]
+        for c in all where flights[c.id] == nil {
+            flights[c.id] = .init(flightNumber: c.flightNumber, origin: c.originCode, destination: c.destinationCode, day: BackupDates.day(c.occurredAt))
         }
         let local = all.filter { $0.syncState != SyncState.synced.rawValue }.sorted { $0.occurredAt < $1.occurredAt }
-        let checkIns = local.map(Self.backupCheckIn)
-        return BackupDocument(
-            format: BackupDocument.formatName, schema: BackupDocument.currentSchema, createdAt: BackupDates.format(now),
-            app: app, platform: "ios", counts: .init(routes: features.count, checkins: checkIns.count),
-            routes: .init(type: "FeatureCollection", features: features), checkins: checkIns
-        )
+        return BackupSnapshot(app: app, now: now, tracks: tracks, routeStamps: tracks.stamps(), flights: flights, checkIns: local.map(Self.backupCheckIn))
     }
 
     public func preview(_ document: BackupDocument) throws -> BackupPreview {
@@ -280,8 +325,6 @@ public struct BackupService {
         }
         return result
     }
-
-    private func round5(_ value: Double) -> Double { (value * 100_000).rounded() / 100_000 }
 
     private static func points(_ geometry: BackupDocument.Geometry) -> [GeoCoordinate]? {
         guard geometry.type == "LineString", geometry.coordinates.count >= 2 else { return nil }

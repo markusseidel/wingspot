@@ -41,6 +41,7 @@
 		57D003ABF0F2BCB003F51E3F /* WhenSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4F845662311F3B7C36BA30 /* WhenSection.swift */; };
 		59990CC13D4B5789970BC1EA /* AddSpotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C5A69FB55EF9C2811AE084 /* AddSpotView.swift */; };
 		5B37D64341B84157BCB31647 /* AccountCheckInSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534BE6354EF9EC7D6EA1DA13 /* AccountCheckInSource.swift */; };
+		5BBC5973BA1978D020231DB5 /* ICloudBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 395113A0102254A1F16FE10F /* ICloudBackup.swift */; };
 		5BF02F7F79B326015B808389 /* AirportPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1072182D625807362ADE4FB1 /* AirportPageView.swift */; };
 		5EFAD640812D73C675B33326 /* FlownCheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED53FE5B4A009D5575119BB4 /* FlownCheckInView.swift */; };
 		6011B00CBD96A7EE9270C0C9 /* DistanceUnitSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D41472169C437C8D788A92 /* DistanceUnitSetting.swift */; };
@@ -115,6 +116,7 @@
 		3081197D3CD4BE4B1DB4B618 /* Compare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Compare.swift; sourceTree = "<group>"; };
 		33B92659A5AE5ABC21AA1484 /* Leaderboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Leaderboard.swift; sourceTree = "<group>"; };
 		346D15D5FD800AAFC82408CF /* FlownEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlownEditView.swift; sourceTree = "<group>"; };
+		395113A0102254A1F16FE10F /* ICloudBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudBackup.swift; sourceTree = "<group>"; };
 		3A82AC64122C34A3DE053C4F /* PhotoSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSection.swift; sourceTree = "<group>"; };
 		41CBBBAF8DD8DAC4FD7390E9 /* SpottedCheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpottedCheckInView.swift; sourceTree = "<group>"; };
 		42C6ED1702C36D93C339FDB0 /* Inbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Inbox.swift; sourceTree = "<group>"; };
@@ -355,6 +357,7 @@
 			children = (
 				0A4565A71D3F34A2AF6CF7A1 /* BackupViews.swift */,
 				04D41472169C437C8D788A92 /* DistanceUnitSetting.swift */,
+				395113A0102254A1F16FE10F /* ICloudBackup.swift */,
 				B34AD8F064D9FF554BEEE6EF /* LegalLinks.swift */,
 				55470F216CED22B3357AF0C9 /* ReleaseNotesView.swift */,
 				A62A4921DD7585EFD9F3F97A /* SettingsView.swift */,
@@ -542,6 +545,7 @@
 				B9781CFA9DE1264E690E8F1B /* FeedScreen.swift in Sources */,
 				5EFAD640812D73C675B33326 /* FlownCheckInView.swift in Sources */,
 				FCBB4985FC51D2F3A7B55D66 /* FlownEditView.swift in Sources */,
+				5BBC5973BA1978D020231DB5 /* ICloudBackup.swift in Sources */,
 				D083C97B175DAAD5DC7A05EA /* Inbox.swift in Sources */,
 				2FF0C87FC72E3499ADF81C3A /* Invite.swift in Sources */,
 				E56D904DF312C3447CBED31C /* KmlBatchView.swift in Sources */,
