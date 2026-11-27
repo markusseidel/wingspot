@@ -1,6 +1,6 @@
 # Automatic backup to iCloud Drive: plan
 
-Follow-up to the backup file (#310, [BACKUP-PLAN.md](BACKUP-PLAN.md), format in [BACKUP-FORMAT.md](BACKUP-FORMAT.md)). Today a person makes a backup by hand: Settings > Backup > Create backup, then the share sheet. The owner asked whether the iPhone app can back up to iCloud on its own. Status: plan only, nothing built.
+Follow-up to the backup file (#310, [BACKUP-PLAN.md](BACKUP-PLAN.md), format in [BACKUP-FORMAT.md](BACKUP-FORMAT.md)). Today a person makes a backup by hand: Settings > Backup > Create backup, then the share sheet. The owner asked whether the iPhone app can back up to iCloud on its own. Status: decided (section 7), not built yet.
 
 ## 1. What exists, and the gap
 
@@ -28,7 +28,7 @@ The gap on the iPhone: an up-to-date copy that a person can restore **without re
 5. **Several iPhones on one Apple ID.** Each phone writes its own file, named with a short device label the person sees in Settings (for example "iPhone 16 Pro", changeable), so two phones never overwrite each other. Restore lists the files it finds, newest first.
 6. **Restore merges, as today.** The same `BackupService.restore`: nothing is deleted, routes already here are kept unless the person chooses to replace them.
 7. **iCloud off or full.** The switch shows why it cannot back up ("iCloud Drive is off", "iCloud storage is full") and the manual backup keeps working. Nothing is retried in a loop; the next trigger tries again.
-8. **Android.** Android already has the automatic part through Auto Backup (Google's backup of the logbook and routes). An automatic file in Google Drive would need a Google Drive sign-in and API access for a small gain; it is **not** part of this plan. If parity in the visible switch matters, Android gets the same switch writing the file into a folder the person picks once (Storage Access Framework, persisted permission): a local folder, an SD card, or a cloud app that offers folders (Nextcloud, OneDrive; Google Drive does not offer folder access this way). Decision for the owner (section 7).
+8. **Android.** Android already has the automatic part through Auto Backup (Google's backup of the logbook and routes). An automatic file in Google Drive would need a Google Drive sign-in and API access for a small gain; it is **not** part of this plan. If parity in the visible switch matters, Android gets the same switch writing the file into a folder the person picks once (Storage Access Framework, persisted permission): a local folder, an SD card, or a cloud app that offers folders (Nextcloud, OneDrive; Google Drive does not offer folder access this way). The owner decided on Auto Backup only (section 7).
 
 ## 4. iOS work
 
@@ -50,10 +50,10 @@ The gap on the iPhone: an up-to-date copy that a person can restore **without re
 | 1 | Capability and container in the portal and `project.yml`; a build that still uploads to TestFlight | small (needs the owner in the developer portal if automatic signing cannot create the container) |
 | 2 | `ICloudBackup` with fingerprint, rotation, tests | medium |
 | 3 | Switch, last-backup line, restore list, triggers, strings | medium |
-| 4 | Android, if the owner wants the folder switch (section 3, decision 8) | medium |
+| ~~4~~ | ~~Android folder switch~~: dropped, Android keeps Auto Backup only (section 7) | |
 
-## 7. Questions for the owner
+## 7. Decided by the owner (2026-11-27)
 
-1. Android: rely on Auto Backup only (the plan), or add the same switch writing into a folder the person picks?
-2. Keep the latest and the previous file (the plan), or one file per day for a week?
-3. Should the switch be **on** by default for people who already have iCloud Drive on? The plan says off, because the file is travel history and the person should choose.
+1. Android: Auto Backup only. No folder switch, so step 4 is dropped.
+2. Keep the latest and the previous file.
+3. The switch is off by default; the person turns it on.
