@@ -45,15 +45,19 @@ struct ICloudBackupSection: View {
             Toggle("Back up to iCloud Drive automatically", isOn: $backup.isOn)
             if backup.isOn {
                 status
-                LabeledContent("Name of this iPhone") {
+                HStack {
+                    Text("Name of this iPhone").layoutPriority(1)
                     TextField("Name of this iPhone", text: $backup.device)
                         .multilineTextAlignment(.trailing)
+                        .foregroundStyle(.secondary)
                         .submitLabel(.done)
                 }
             }
         } footer: {
             Text("Wingspot keeps the latest backup and the one before it in the Wingspot folder of your iCloud Drive, after each change. Apple stores it; Wingspot can't read it. Each iPhone writes its own file, named after it.")
         }
+        // Shows the real state when the page opens: writes only if something changed, or tells why it can't.
+        .task { await backup.backupNow() }
     }
 
     @ViewBuilder private var status: some View {

@@ -39,7 +39,12 @@ struct WingspotApp: App {
     init() {
         let container: ModelContainer
         do {
-            container = try ModelContainer(for: LocalCheckIn.self, LocalPhoto.self, BadgeAck.self, BadgeAccount.self)
+            // Never CloudKit: the app has an iCloud container for the backup file, and SwiftData would otherwise try to sync the
+            // database through it and refuse to open (docs/ICLOUD-BACKUP-PLAN.md, decision 1).
+            container = try ModelContainer(
+                for: LocalCheckIn.self, LocalPhoto.self, BadgeAck.self, BadgeAccount.self,
+                configurations: ModelConfiguration(cloudKitDatabase: .none)
+            )
         } catch {
             fatalError("Local check-in storage can't open: \(error)")
         }

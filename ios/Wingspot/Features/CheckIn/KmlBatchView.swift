@@ -15,6 +15,7 @@ struct KmlBatchView: View {
     @Environment(AccountStore.self) private var account
     @Environment(\.modelContext) private var modelContext
     @Environment(CheckInSyncCoordinator.self) private var sync: CheckInSyncCoordinator?
+    @Environment(AutoBackup.self) private var autoBackup: AutoBackup?
 
     private struct Row: Identifiable {
         enum State: Equatable {
@@ -196,6 +197,7 @@ struct KmlBatchView: View {
             }
         }
         sync?.requestSync()
+        autoBackup?.schedule()
         if count > 0 { added = count }
     }
 }

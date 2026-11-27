@@ -48,7 +48,8 @@ public struct BackupFolder: Sendable {
         let manager = FileManager.default
         try manager.createDirectory(at: directory, withIntermediateDirectories: true)
         let latest = url(Self.fileName(device: device)), previous = url(Self.fileName(device: device, previous: true))
-        let temporary = url(".\(UUID().uuidString).tmp")
+        // Written outside the folder first, so iCloud never sees a half-written file.
+        let temporary = manager.temporaryDirectory.appending(path: "\(UUID().uuidString).\(Self.fileExtension)", directoryHint: .notDirectory)
         defer { try? manager.removeItem(at: temporary) }
         try data.write(to: temporary, options: .atomic)
         try coordinate(writing: [latest, previous]) {
@@ -177,13 +178,12 @@ public final class AutoBackup {
         }
     }
 
-    /// The name this device's files carry, shown and changeable in Settings.
+    /// The name this device's files carry, shown and changeable in Settings. Kept as typed, also while empty; the file name
+    /// falls back to "iPhone" (`BackupFolder.safe`).
     public var device: String {
         get { access(keyPath: \.device); return defaults.string(forKey: Self.deviceKey) ?? "iPhone" }
         set {
-            let trimmed = String(newValue.trimmingCharacters(in: .whitespaces).prefix(40))
-            guard !trimmed.isEmpty else { return }
-            withMutation(keyPath: \.device) { defaults.set(trimmed, forKey: Self.deviceKey) }
+            withMutation(keyPath: \.device) { defaults.set(String(newValue.prefix(40)), forKey: Self.deviceKey) }
             schedule()
         }
     }
