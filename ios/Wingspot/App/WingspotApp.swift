@@ -103,8 +103,7 @@ struct WingspotApp: App {
             restorer: CheckInRestorer(context: container.mainContext, source: AccountCheckInSource(backend: accountBackend)),
             userID: { account.userID },
             // After a run, with or without uploads, the server may have unlocked something.
-            // Check-ins went up or came back, so the automatic backup may hold something different.
-            afterRun: { Task { await badgeStore.refresh() }; autoBackup.schedule() },
+            afterRun: { Task { await badgeStore.refresh() } },
             // After a check-in, a flight or an edit went up, the Feed shows it without a pull to refresh.
             afterUpload: { Task { await feedStore.refresh() } }
         ))
@@ -157,9 +156,9 @@ struct WingspotApp: App {
                 .onChange(of: scenePhase) {
                     if scenePhase == .active {
                         sync.requestSync()
-                        Task { await push.sync(); await terms.sync() }
+                        Task { await push.sync(); await terms.sync(); await autoBackup.backupIfDue() }
                     } else if scenePhase == .background {
-                        // Leaving the app is the moment to back up what changed, also while signed out, when no sync runs.
+                        // The daily, weekly or monthly backup, if due; iOS gives apps no exact timer.
                         autoBackup.backupInBackground()
                     }
                 }

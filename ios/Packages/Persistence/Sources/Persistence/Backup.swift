@@ -16,7 +16,8 @@ public enum BackupError: Error, Equatable, Sendable {
 /// gzip-compressed JSON document. The same layout is written and read by the Android app.
 public struct BackupDocument: Codable, Sendable, Equatable {
     public static let formatName = "wingspot-backup"
-    public static let currentSchema = 1
+    /// 2 holds every check-in, each saying whether the server has it (#391); 1 held only what the server did not have.
+    public static let currentSchema = 2
 
     public var format: String
     public var schema: Int
@@ -89,6 +90,10 @@ public struct BackupCheckIn: Codable, Sendable, Equatable {
     public var seat: String?
     public var flightId: String?
     public var sourceId: String?
+    /// Schema 2: the server already has it, so restoring doesn't send it again.
+    public var onServer: Bool?
+    /// Schema 2: the account it belongs to, when known.
+    public var ownerId: String?
 }
 
 enum BackupDates {
@@ -201,7 +206,7 @@ public struct BackupPreview: Equatable, Sendable {
     public let platform: String?
     public let routes: Int
     public let checkIns: Int
-    /// Routes whose flight is on this phone already. None while signed in means the flights may belong to another account,
+    /// Routes whose flight is on this phone or in the backup. None while signed in means the flights may belong to another account,
     /// or have not come back from the server yet.
     public let routesWithFlightHere: Int
 }
@@ -226,26 +231,16 @@ public struct BackupSnapshot: Sendable {
     let app: String
     let now: Date
     let tracks: FlightTrackFiles
-    let routeStamps: [UUID: String]
+    let routeIDs: [UUID]
     let flights: [UUID: Flight]
     let checkIns: [BackupCheckIn]
 
-    /// Nothing worth keeping: no routes and no check-ins that are only on this phone.
-    public var isEmpty: Bool { routeStamps.isEmpty && checkIns.isEmpty }
-
-    /// Changes when a route is added, replaced or removed, or a check-in that is only on this phone is added, changed, sent or
-    /// removed. Check-ins the server has don't count: they are not in the backup.
-    public var fingerprint: String {
-        var text = routeStamps.map { "\($0.key.uuidString)=\($0.value)" }.sorted().joined(separator: "\n")
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.sortedKeys]
-        for c in checkIns { text += "\n" + (String(data: (try? encoder.encode(c)) ?? Data(), encoding: .utf8) ?? c.id) }
-        return String(format: "%08x-%d", Gzip.crc32(Data(text.utf8)), text.utf8.count)
-    }
+    /// Nothing worth keeping: no routes and no check-ins.
+    public var isEmpty: Bool { routeIDs.isEmpty && checkIns.isEmpty }
 
     public func document() -> BackupDocument {
         var features: [BackupDocument.Feature] = []
-        for id in routeStamps.keys.sorted(by: { $0.uuidString < $1.uuidString }) {
+        for id in routeIDs.sorted(by: { $0.uuidString < $1.uuidString }) {
             guard let points = tracks.load(id: id), points.count >= 2 else { continue }
             let flight = flights[id]
             features.append(BackupDocument.Feature(
@@ -278,7 +273,7 @@ public struct BackupService {
         self.tracks = tracks
     }
 
-    /// The routes on this phone and the check-ins the server does not have.
+    /// The whole logbook: every check-in and the routes on this phone.
     public func make(app: String, now: Date = .now) throws -> BackupDocument {
         try snapshot(app: app, now: now).document()
     }
@@ -291,12 +286,14 @@ public struct BackupService {
         for c in all where flights[c.id] == nil {
             flights[c.id] = .init(flightNumber: c.flightNumber, origin: c.originCode, destination: c.destinationCode, day: BackupDates.day(c.occurredAt))
         }
-        let local = all.filter { $0.syncState != SyncState.synced.rawValue }.sorted { $0.occurredAt < $1.occurredAt }
-        return BackupSnapshot(app: app, now: now, tracks: tracks, routeStamps: tracks.stamps(), flights: flights, checkIns: local.map(Self.backupCheckIn))
+        let checkIns = all.sorted { $0.occurredAt < $1.occurredAt }.map(Self.backupCheckIn)
+        return BackupSnapshot(app: app, now: now, tracks: tracks, routeIDs: tracks.ids(), flights: flights, checkIns: checkIns)
     }
 
     public func preview(_ document: BackupDocument) throws -> BackupPreview {
+        // A flight in the backup comes back with it, so its route shows too.
         let ids = Set(try context.fetch(FetchDescriptor<LocalCheckIn>()).map(\.id))
+            .union(document.checkins.compactMap { UUID(uuidString: $0.id) })
         let routeIDs = document.routes.features.compactMap { UUID(uuidString: $0.properties.checkinId) }
         return BackupPreview(
             created: document.createdDate, platform: document.platform, routes: routeIDs.count, checkIns: document.checkins.count,
@@ -304,11 +301,12 @@ public struct BackupService {
         )
     }
 
-    public func restore(_ document: BackupDocument, replaceRoutes: Bool) throws -> BackupResult {
+    /// - Parameter userID: the signed-in account, which check-ins the server has get when the file doesn't say whose they are.
+    public func restore(_ document: BackupDocument, replaceRoutes: Bool, userID: UUID? = nil) throws -> BackupResult {
         var result = BackupResult()
         let here = Set(try context.fetch(FetchDescriptor<LocalCheckIn>()).map(\.id))
         for item in document.checkins {
-            guard let checkIn = Self.localCheckIn(item) else { result.skipped += 1; continue }
+            guard let checkIn = Self.localCheckIn(item, userID: userID) else { result.skipped += 1; continue }
             if here.contains(checkIn.id) { result.skipped += 1; continue }
             context.insert(checkIn)
             result.checkIns += 1
@@ -346,20 +344,23 @@ public struct BackupService {
             spotId: c.spotID, spotName: c.spotName, visitId: c.visitID?.uuidString.lowercased(),
             originId: c.originID, originCode: c.originCode, destinationId: c.destinationID, destinationCode: c.destinationCode,
             flightNumber: c.flightNumber, cabin: c.cabin, seat: c.seat, flightId: c.flightID?.uuidString.lowercased(),
-            sourceId: c.sourceID?.uuidString.lowercased()
+            sourceId: c.sourceID?.uuidString.lowercased(),
+            onServer: c.syncState == SyncState.synced.rawValue ? true : nil, ownerId: c.ownerID?.uuidString.lowercased()
         )
     }
 
-    /// A pending check-in with no owner, so it goes to the account that is signed in or signs in next. Nil when it cannot be used.
-    static func localCheckIn(_ b: BackupCheckIn) -> LocalCheckIn? {
+    /// One the server has comes back as sent, with its owner. Any other is pending with no owner, so it goes to the account that
+    /// is signed in or signs in next. Nil when it cannot be used.
+    static func localCheckIn(_ b: BackupCheckIn, userID: UUID? = nil) -> LocalCheckIn? {
         guard let id = UUID(uuidString: b.id), ["spotted", "airport", "flown"].contains(b.kind),
               let occurredAt = BackupDates.parse(b.occurredAt) else { return nil }
         if let latitude = b.latitude, !(-90...90).contains(latitude) { return nil }
         if let longitude = b.longitude, !(-180...180).contains(longitude) { return nil }
         return LocalCheckIn(
             id: id, kind: b.kind, registration: b.registration, typeICAO: b.typeIcao, typeName: b.typeName, airportID: b.airportId,
-            airportCode: b.airportCode, latitude: b.latitude, longitude: b.longitude, occurredAt: occurredAt, syncState: .pending,
-            ownerID: nil, visitContext: b.visitContext, originID: b.originId, destinationID: b.destinationId, originCode: b.originCode,
+            airportCode: b.airportCode, latitude: b.latitude, longitude: b.longitude, occurredAt: occurredAt,
+            syncState: b.onServer == true ? .synced : .pending,
+            ownerID: b.onServer == true ? (b.ownerId.flatMap(UUID.init(uuidString:)) ?? userID) : nil, visitContext: b.visitContext, originID: b.originId, destinationID: b.destinationId, originCode: b.originCode,
             destinationCode: b.destinationCode, flightNumber: b.flightNumber, cabin: b.cabin, seat: b.seat,
             flightID: b.flightId.flatMap(UUID.init(uuidString:)), sourceID: b.sourceId.flatMap(UUID.init(uuidString:)),
             spotID: b.spotId, spotName: b.spotName, visitID: b.visitId.flatMap(UUID.init(uuidString:)),

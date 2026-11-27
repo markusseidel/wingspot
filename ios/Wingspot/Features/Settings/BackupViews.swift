@@ -33,7 +33,7 @@ struct BackupSection: View {
         } header: {
             Text("Backup")
         } footer: {
-            Text("The backup holds the routes of your imported flights and the check-ins that are only on this phone. Photos are not in it. It contains your travel history: keep it somewhere private.")
+            Text("The backup holds all your check-ins and the routes of your imported flights. Photos are not in it. It contains your travel history: keep it somewhere private.")
         }
         ICloudBackupSection()
             .sheet(item: $file, onDismiss: removeFile) { ShareSheet(file: $0.url) }
@@ -97,7 +97,6 @@ struct BackupRestoreView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(AccountStore.self) private var account
     @Environment(CheckInSyncCoordinator.self) private var sync
-    @Environment(AutoBackup.self) private var autoBackup
     @State private var document: BackupDocument?
     @State private var preview: BackupPreview?
     @State private var problem: BackupError?
@@ -111,7 +110,7 @@ struct BackupRestoreView: View {
                     Section {
                         Label(resultLine(result), systemImage: "checkmark.circle.fill")
                     } footer: {
-                        Text("Keep the backup file: it is the only copy of what was only on the other phone.")
+                        Text("Keep the backup file somewhere safe: the routes are only on your phones and in this file.")
                     }
                 } else if let problem {
                     Label(problemLine(problem), systemImage: "exclamationmark.triangle.fill")
@@ -168,9 +167,8 @@ struct BackupRestoreView: View {
     private func restore() {
         guard let document else { return }
         do {
-            result = try BackupService(context: modelContext).restore(document, replaceRoutes: replaceRoutes)
+            result = try BackupService(context: modelContext).restore(document, replaceRoutes: replaceRoutes, userID: account.userID)
             sync.requestSync()
-            autoBackup.schedule()
         } catch {
             problem = .damaged
         }
@@ -179,7 +177,7 @@ struct BackupRestoreView: View {
     private func summary(_ preview: BackupPreview) -> String {
         let date = preview.created?.formatted(date: .abbreviated, time: .omitted) ?? "?"
         let source = preview.platform == "android" ? String(localized: "an Android phone") : String(localized: "an iPhone")
-        return String(localized: "Backup of \(date) from \(source): \(preview.routes) routes, \(preview.checkIns) check-ins that were only on that phone.")
+        return String(localized: "Backup of \(date) from \(source): \(preview.routes) routes, \(preview.checkIns) check-ins.")
     }
 
     private func resultLine(_ result: BackupResult) -> String {

@@ -88,7 +88,6 @@ struct RouteFromFileButton: View {
     let hasRoute: Bool
     let onSaved: () -> Void
 
-    @Environment(AutoBackup.self) private var autoBackup: AutoBackup?
     @State private var showImporter = false
     @State private var isReading = false
     @State private var problem: KmlImportProblem?
@@ -117,7 +116,6 @@ struct RouteFromFileButton: View {
         ) { route in
             Button(hasRoute ? "Replace route" : "Save route") {
                 try? FlightTrackFiles.standard.save(route.track, for: flightID)
-                autoBackup?.schedule()
                 onSaved()
             }
             Button("Cancel", role: .cancel) {}

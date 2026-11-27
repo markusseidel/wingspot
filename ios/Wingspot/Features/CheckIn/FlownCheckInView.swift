@@ -52,7 +52,6 @@ struct FlownCheckInView: View {
     }
     @Environment(AccountStore.self) private var account
     @Environment(CheckInSyncCoordinator.self) private var sync: CheckInSyncCoordinator?
-    @Environment(AutoBackup.self) private var autoBackup: AutoBackup?
 
     @State private var origin: Airport?
     @State private var destination: Airport?
@@ -444,7 +443,6 @@ struct FlownCheckInView: View {
             if importedTrack.count >= 2 { try? FlightTrackFiles.standard.save(importedTrack, for: saved.id) }
             result = saved
             sync?.requestSync()
-            autoBackup?.schedule()
         } catch {
             saveFailed = true
         }

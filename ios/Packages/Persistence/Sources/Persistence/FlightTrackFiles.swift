@@ -63,19 +63,6 @@ public struct FlightTrackFiles: Sendable {
         }
     }
 
-    /// Size and modification time of every saved route, so the automatic backup can tell whether a route changed without reading it.
-    public func stamps() -> [UUID: String] {
-        let keys: Set<URLResourceKey> = [.fileSizeKey, .contentModificationDateKey]
-        let urls = (try? FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: Array(keys))) ?? []
-        var result: [UUID: String] = [:]
-        for url in urls where url.pathExtension == "trk" {
-            guard let id = UUID(uuidString: url.deletingPathExtension().lastPathComponent) else { continue }
-            let values = try? url.resourceValues(forKeys: keys)
-            result[id] = "\(values?.fileSize ?? 0)/\(values?.contentModificationDate?.timeIntervalSince1970 ?? 0)"
-        }
-        return result
-    }
-
     public func has(id: UUID) -> Bool { FileManager.default.fileExists(atPath: url(id).path) }
 
     /// Removes every saved route. Flights themselves are not touched.
