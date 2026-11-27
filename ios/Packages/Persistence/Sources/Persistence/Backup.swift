@@ -206,7 +206,7 @@ public struct BackupPreview: Equatable, Sendable {
     public let platform: String?
     public let routes: Int
     public let checkIns: Int
-    /// Routes whose flight is on this phone already. None while signed in means the flights may belong to another account,
+    /// Routes whose flight is on this phone or in the backup. None while signed in means the flights may belong to another account,
     /// or have not come back from the server yet.
     public let routesWithFlightHere: Int
 }
@@ -291,7 +291,9 @@ public struct BackupService {
     }
 
     public func preview(_ document: BackupDocument) throws -> BackupPreview {
+        // A flight in the backup comes back with it, so its route shows too.
         let ids = Set(try context.fetch(FetchDescriptor<LocalCheckIn>()).map(\.id))
+            .union(document.checkins.compactMap { UUID(uuidString: $0.id) })
         let routeIDs = document.routes.features.compactMap { UUID(uuidString: $0.properties.checkinId) }
         return BackupPreview(
             created: document.createdDate, platform: document.platform, routes: routeIDs.count, checkIns: document.checkins.count,

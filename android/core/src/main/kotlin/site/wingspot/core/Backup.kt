@@ -175,7 +175,7 @@ data class BackupPreview(
     val platform: String?,
     val routes: Int,
     val checkIns: Int,
-    /** Routes whose flight is on this phone already. None means the flights belong to another account or have not come back yet. */
+    /** Routes whose flight is on this phone or in the backup. None means the flights belong to another account or have not come back yet. */
     val routesWithFlightHere: Int,
 )
 
@@ -208,7 +208,8 @@ class BackupService(private val store: CheckInStore, private val tracks: FlightT
     }
 
     suspend fun preview(document: BackupDocument): BackupPreview {
-        val here = store.all().map { it.id }.toSet()
+        // A flight in the backup comes back with it, so its route shows too.
+        val here = store.all().map { it.id }.toSet() + document.checkins.mapNotNull { uuid(it.id) }
         val routeIds = document.routes.features.mapNotNull { uuid(it.properties.checkinId) }
         return BackupPreview(
             document.created, document.platform, routeIds.size, document.checkins.size, routeIds.count { it in here },

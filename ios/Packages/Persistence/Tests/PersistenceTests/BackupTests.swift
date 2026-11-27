@@ -126,7 +126,8 @@ private let orphanRouteID = UUID(uuidString: "019a0000-0000-7000-8000-0000000000
     let context = try makeContext(), tracks = temporaryFiles()
     let service = BackupService(context: context, tracks: tracks)
     let document = try BackupCodec.decode(vector("example.json"))
-    #expect(try service.preview(document).routesWithFlightHere == 0)
+    // The flight of the first route is in the file; the second route's flight is nowhere.
+    #expect(try service.preview(document).routesWithFlightHere == 1)
     _ = try service.restore(document, replaceRoutes: false)
     let preview = try service.preview(document)
     #expect(preview.routes == 2 && preview.checkIns == 2 && preview.routesWithFlightHere == 1)

@@ -136,7 +136,8 @@ class BackupTests {
         val tracks = tracks()
         val service = BackupService(store(tracks), tracks)
         val document = BackupCodec.decode(vector("example.json"))
-        assertEquals(0, service.preview(document).routesWithFlightHere)
+        // The flight of the first route is in the file; the second route's flight is nowhere.
+        assertEquals(1, service.preview(document).routesWithFlightHere)
         service.restore(document, replaceRoutes = false)
         val preview = service.preview(document)
         assertEquals(2, preview.routes)
