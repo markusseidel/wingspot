@@ -143,7 +143,7 @@ struct FlownEditView: View {
                     Link(destination: aircraftPage) { Label("Look up the aircraft on Flightradar24", systemImage: "arrow.up.right.square") }
                 }
             } footer: {
-                Text("Opens Flightradar24 in your browser. Nothing from Wingspot is sent there.")
+                Text("Opens Flightradar24 in your browser. Nothing from Wingspotted is sent there.")
             }
         }
     }

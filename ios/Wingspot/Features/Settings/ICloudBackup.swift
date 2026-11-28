@@ -16,7 +16,7 @@ extension AutoBackup {
                       let base = FileManager.default.url(forUbiquityContainerIdentifier: containerID) else { return nil }
                 return BackupFolder(directory: base.appending(path: "Documents", directoryHint: .isDirectory))
             },
-            snapshot: { try BackupService(context: context).snapshot(app: "Wingspot \(Bundle.main.versionLine)") }
+            snapshot: { try BackupService(context: context).snapshot(app: "Wingspotted \(Bundle.main.versionLine)") }
         )
     }
 
@@ -61,7 +61,7 @@ struct ICloudBackupSection: View {
         } header: {
             Text("iCloud Drive")
         } footer: {
-            Text("A full backup of your check-ins and routes, in the Wingspot folder of your iCloud Drive. Wingspot keeps the latest backup and the one before it. Apple stores it; Wingspot can't read it. Each iPhone writes its own file, named after it.")
+            Text("A full backup of your check-ins and routes, in the Wingspotted folder of your iCloud Drive. Wingspotted keeps the latest backup and the one before it. Apple stores it; Wingspotted can't read it. Each iPhone writes its own file, named after it.")
         }
         // A backup that is due is made when the page opens, so the line below shows the real state.
         .task { await backup.backupIfDue() }
@@ -91,9 +91,9 @@ struct ICloudBackupSection: View {
 
     private func problemLine(_ problem: AutoBackup.Problem) -> LocalizedStringKey {
         switch problem {
-        case .unavailable: "iCloud Drive is off for Wingspot. Turn it on in the Settings app under your name > iCloud."
+        case .unavailable: "iCloud Drive is off for Wingspotted. Turn it on in the Settings app under your name > iCloud."
         case .full: "Your iCloud storage is full."
-        case .failed: "The last backup failed. Wingspot tries again next time."
+        case .failed: "The last backup failed. Wingspotted tries again next time."
         }
     }
 }

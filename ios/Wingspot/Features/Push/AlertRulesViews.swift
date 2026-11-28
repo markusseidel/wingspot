@@ -19,7 +19,7 @@ struct PersonAlertsSection: View {
     var body: some View {
         Section {
             if push.authorization == .denied {
-                Text("Notifications are off for Wingspot in the system settings.").foregroundStyle(.secondary)
+                Text("Notifications are off for Wingspotted in the system settings.").foregroundStyle(.secondary)
                 Button("Open system settings") {
                     if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
                 }

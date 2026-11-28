@@ -83,17 +83,17 @@ export function render(row: PushRow, locale: string | null): Rendered {
     case "spot_proposed": {
       // Sent to the people who review places. The snippet is the name of the place; the tap opens the review list.
       const place = (row.snippet ?? "").split("\n")[0].trim();
-      return { title: place || "Wingspot", body: german ? `${name} hat diesen Ort vorgeschlagen. Zum Prüfen tippen.` : `${name} suggested this place. Tap to review.` };
+      return { title: place || "Wingspotted", body: german ? `${name} hat diesen Ort vorgeschlagen. Zum Prüfen tippen.` : `${name} suggested this place. Tap to review.` };
     }
     case "spot_approved": {
       const place = (row.snippet ?? "").split("\n")[0].trim();
-      return { title: place || "Wingspot", body: german ? "ist freigegeben. Alle können den Ort jetzt sehen." : "is approved. Everyone can see the place now." };
+      return { title: place || "Wingspotted", body: german ? "ist freigegeben. Alle können den Ort jetzt sehen." : "is approved. Everyone can see the place now." };
     }
     case "spot_rejected": {
       const [place, ...rest] = (row.snippet ?? "").split("\n");
       const reason = rest.join(" ").trim();
       const body = german ? "wurde nicht übernommen." : "was not accepted.";
-      return { title: place.trim() || "Wingspot", body: reason ? `${body} ${reason}` : body };
+      return { title: place.trim() || "Wingspotted", body: reason ? `${body} ${reason}` : body };
     }
     case "comment_like":
       return { title: name, body: german ? "hat deinen Kommentar salutiert." : "saluted your comment." };

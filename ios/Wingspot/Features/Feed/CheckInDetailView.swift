@@ -137,16 +137,16 @@ struct CheckInDetailView: View {
             let details = [shown.flightNumber, shown.typeName, date].compactMap { $0 }.joined(separator: " · ")
             return ShareCardModel(
                 kicker: String(localized: "Flown"), headline: "\(from) → \(to)", figure: shown.distanceKm.map { "\($0.formatted()) km" },
-                caption: details, name: name, message: String(localized: "I flew \(from) → \(to) (Wingspot).")
+                caption: details, name: name, message: String(localized: "I flew \(from) → \(to) (Wingspotted).")
             )
         case "airport":
             guard let code = shown.airportCode else { return nil }
             return ShareCardModel(kicker: String(localized: "Airport"), headline: code, figure: nil, caption: date, name: name,
-                                  message: String(localized: "I was at \(code) (Wingspot)."))
+                                  message: String(localized: "I was at \(code) (Wingspotted)."))
         default:
             guard let what = shown.registration ?? shown.typeICAO else { return nil }
             return ShareCardModel(kicker: String(localized: "Spotted"), headline: what, figure: shown.typeName, caption: date, name: name,
-                                  message: String(localized: "I spotted \(what) (Wingspot)."))
+                                  message: String(localized: "I spotted \(what) (Wingspotted)."))
         }
     }
     private var canEdit: Bool { isOwn && localCheckIns.contains { $0.id == item.id } }
@@ -476,7 +476,7 @@ struct CheckInDetailView: View {
                     Link(destination: aircraftPage) { Label("Look up the aircraft on Flightradar24", systemImage: "arrow.up.right.square") }
                 }
             } footer: {
-                Text("Opens Flightradar24 in your browser. Nothing from Wingspot is sent there.")
+                Text("Opens Flightradar24 in your browser. Nothing from Wingspotted is sent there.")
             }
         }
     }

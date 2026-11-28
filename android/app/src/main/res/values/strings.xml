@@ -140,7 +140,7 @@
     <string name="block_title">Block %1$s?</string>
     <string name="block_message">You won\'t see each other\'s check-ins or comments anymore, and any follows between you end.</string>
     <string name="rules_title">Community rules</string>
-    <string name="rules_intro">Wingspot is for people who love aircraft. To keep it friendly, please agree to these rules before you follow people, see the feed, or share your check-ins.</string>
+    <string name="rules_intro">Wingspotted is for people who love aircraft. To keep it friendly, please agree to these rules before you follow people, see the feed, or share your check-ins.</string>
     <string name="rule_respect">Be respectful. No harassment, hate or threats.</string>
     <string name="rule_share">Post only what you may share: no illegal content and no one else\'s private information.</string>
     <string name="rule_spam">No spam or advertising.</string>
@@ -150,11 +150,11 @@
     <string name="age_confirm">I am 16 or older</string>
     <string name="age_younger">I\'m younger than 16</string>
     <string name="age_younger_title">Younger than 16</string>
-    <string name="age_younger_message">Wingspot accounts are for people 16 and older. You can keep using Wingspot without an account: your check-ins stay on this phone.</string>
+    <string name="age_younger_message">Wingspotted accounts are for people 16 and older. You can keep using Wingspotted without an account: your check-ins stay on this phone.</string>
     <string name="age_younger_delete_hint">Deleting the account also removes its check-ins from this phone. Make a backup in Settings first if you want to keep them.</string>
     <string name="age_delete_my_account">Delete my account</string>
-    <string name="update_title">Please update Wingspot</string>
-    <string name="update_message">This version of Wingspot is too old for the feed, people and sharing. Your logbook keeps working.</string>
+    <string name="update_title">Please update Wingspotted</string>
+    <string name="update_message">This version of Wingspotted is too old for the feed, people and sharing. Your logbook keeps working.</string>
     <string name="update_button">Update</string>
     <string name="i_agree">I agree</string>
     <string name="setup_title">Choose a username</string>
@@ -318,7 +318,7 @@
     <string name="channel_name">Activity</string>
     <string name="notifications_title">Notifications</string>
     <string name="push_not_in_build">This build can\'t receive push notifications yet.</string>
-    <string name="notifications_denied">Notifications are turned off for Wingspot on this phone.</string>
+    <string name="notifications_denied">Notifications are turned off for Wingspotted on this phone.</string>
     <string name="open_phone_settings">Open phone settings</string>
     <string name="notify_followers">New followers</string>
     <string name="notify_salutes">Salutes</string>
@@ -390,7 +390,7 @@
     <string name="scan_needs_data">Reading a boarding pass needs one download while online.</string>
     <string name="camera_needed">Camera needed</string>
     <string name="camera_why">The camera reads the barcode on your boarding pass. No picture is taken or kept, and the barcode is read on this phone.</string>
-    <string name="camera_denied">The camera is turned off for Wingspot. You can allow it in the phone settings, or read the boarding pass from a picture.</string>
+    <string name="camera_denied">The camera is turned off for Wingspotted. You can allow it in the phone settings, or read the boarding pass from a picture.</string>
     <string name="allow_camera">Allow camera</string>
     <string name="scan_aim">Hold the barcode inside the picture</string>
     <string name="ok">OK</string>
@@ -400,7 +400,7 @@
     <string name="distance_label">Distance</string>
     <string name="lookup_flight">Look up the flight on Flightradar24</string>
     <string name="lookup_aircraft">Look up the aircraft on Flightradar24</string>
-    <string name="lookup_footer">Opens Flightradar24 in your browser. Nothing from Wingspot is sent there.</string>
+    <string name="lookup_footer">Opens Flightradar24 in your browser. Nothing from Wingspotted is sent there.</string>
     <string name="close">Close</string>
     <string name="salute_action">Salute</string>
     <string name="sort_checked_in">Check-in date</string>
@@ -486,7 +486,7 @@
     <string name="invite_your_code">Your invite code</string>
     <string name="invite_your_code_hint">A friend who opens the link, scans the code or types it can follow you in one step.</string>
     <string name="invite_share">Share</string>
-    <string name="invite_share_text">Join me on Wingspot! My invite code is %1$s, or open %2$s</string>
+    <string name="invite_share_text">Join me on Wingspotted! My invite code is %1$s, or open %2$s</string>
     <string name="invite_qr">QR code of your invite link</string>
     <string name="invite_add_by_code">Add a friend by code</string>
     <string name="invite_code_hint">Code from a friend</string>
@@ -501,16 +501,16 @@
     <string name="invite_new_code_title">Make a new invite code?</string>
     <string name="invite_new_code_message">The old link and code stop working.</string>
     <string name="invite_follow_title">Follow %1$s?</string>
-    <string name="invite_follow_message">They invited you to Wingspot. You can unfollow any time.</string>
+    <string name="invite_follow_message">They invited you to Wingspotted. You can unfollow any time.</string>
     <string name="not_now">Not now</string>
     <string name="share_flown">Flown</string>
     <string name="share_airport">Airport</string>
     <string name="share_spotted">Spotted</string>
     <string name="share_level">Level</string>
     <string name="share_badge">Badge</string>
-    <string name="share_level_message">I reached level %1$d on Wingspot.</string>
+    <string name="share_level_message">I reached level %1$d on Wingspotted.</string>
     <string name="share_level_caption">%1$d XP · %2$d badges</string>
-    <string name="share_badge_message">I earned the badge %1$s on Wingspot.</string>
+    <string name="share_badge_message">I earned the badge %1$s on Wingspotted.</string>
     <string name="spotting_locations">Spotting locations</string>
     <string name="spot_pending_short">Waiting for approval</string>
     <string name="spot_pending">Waiting for approval. Only you can see this place.</string>
@@ -619,7 +619,7 @@
     <string name="backup_restored">Restored %1$d routes and %2$d check-ins.</string>
     <string name="backup_skipped">Skipped %1$d that were already here.</string>
     <string name="backup_keep_file">Keep the backup file somewhere safe: the routes are only on your phones and in this file.</string>
-    <string name="backup_not_backup">This is not a Wingspot backup.</string>
-    <string name="backup_newer_version">This backup was made by a newer version of Wingspot. Please update the app.</string>
+    <string name="backup_not_backup">This is not a Wingspotted backup.</string>
+    <string name="backup_newer_version">This backup was made by a newer version of Wingspotted. Please update the app.</string>
     <string name="backup_damaged">The file is damaged.</string>
 </resources>

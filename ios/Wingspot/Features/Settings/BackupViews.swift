@@ -45,11 +45,11 @@ struct BackupSection: View {
 
     private func create() {
         do {
-            let document = try BackupService(context: modelContext).make(app: "Wingspot \(Bundle.main.versionLine)")
+            let document = try BackupService(context: modelContext).make(app: "Wingspotted \(Bundle.main.versionLine)")
             let folder = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString, directoryHint: .isDirectory)
             try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
             let day = Date.now.formatted(.iso8601.year().month().day())
-            let url = folder.appending(path: "Wingspot-backup-\(day).wingspotbackup")
+            let url = folder.appending(path: "Wingspotted-backup-\(day).wingspotbackup")
             try BackupCodec.encode(document).write(to: url, options: [.atomic, .completeFileProtection])
             file = SharedFile(url: url)
         } catch {
@@ -188,8 +188,8 @@ struct BackupRestoreView: View {
 
     private func problemLine(_ problem: BackupError) -> String {
         switch problem {
-        case .notBackup: String(localized: "This is not a Wingspot backup.")
-        case .newerVersion: String(localized: "This backup was made by a newer version of Wingspot. Please update the app.")
+        case .notBackup: String(localized: "This is not a Wingspotted backup.")
+        case .newerVersion: String(localized: "This backup was made by a newer version of Wingspotted. Please update the app.")
         case .damaged: String(localized: "The file is damaged.")
         }
     }

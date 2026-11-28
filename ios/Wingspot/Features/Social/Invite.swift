@@ -61,7 +61,7 @@ struct InviteLinkAlert: ViewModifier {
             Button("Follow") { Task { _ = await invites.followPending() } }
             Button("Not now", role: .cancel) { invites.dismissPending() }
         } message: {
-            Text("They invited you to Wingspot. You can unfollow any time.")
+            Text("They invited you to Wingspotted. You can unfollow any time.")
         }
     }
 }
@@ -82,7 +82,7 @@ struct InviteView: View {
 
     private var shareText: String {
         guard let code, let link = InviteLink.url(for: code) else { return "" }
-        return String(localized: "Join me on Wingspot! My invite code is \(code), or open \(link.absoluteString)")
+        return String(localized: "Join me on Wingspotted! My invite code is \(code), or open \(link.absoluteString)")
     }
 
     var body: some View {

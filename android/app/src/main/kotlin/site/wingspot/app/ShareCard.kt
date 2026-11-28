@@ -38,7 +38,7 @@ object ShareCards {
         })
         val pad = 84f
         // Top: the name of the app and the label.
-        text(canvas, "Wingspot", pad, 140f, 54f, 0xFFFFFFFF.toInt(), bold = true)
+        text(canvas, "Wingspotted", pad, 140f, 54f, 0xFFFFFFFF.toInt(), bold = true)
         val kicker = model.kicker.uppercase()
         val kickerPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 38f; typeface = Typeface.DEFAULT_BOLD; color = 0xFFFFFFFF.toInt() }
         val kickerWidth = kickerPaint.measureText(kicker)

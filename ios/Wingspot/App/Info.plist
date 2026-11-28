@@ -34,7 +34,7 @@
 		</dict>
 		<dict>
 			<key>CFBundleTypeName</key>
-			<string>Wingspot backup</string>
+			<string>Wingspotted backup</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>LSHandlerRank</key>
@@ -51,7 +51,7 @@
 			<key>UTTypeIdentifier</key>
 			<string>site.wingspot.backup</string>
 			<key>UTTypeDescription</key>
-			<string>Wingspot backup</string>
+			<string>Wingspotted backup</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.data</string>
@@ -96,7 +96,7 @@
 			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
 			<true/>
 			<key>NSUbiquitousContainerName</key>
-			<string>Wingspot</string>
+			<string>Wingspotted</string>
 			<key>NSUbiquitousContainerSupportedFolderLevels</key>
 			<string>One</string>
 		</dict>
@@ -141,9 +141,9 @@
 	<key>WingspotPublishableKey</key>
 	<string>$(WINGSPOT_PUBLISHABLE_KEY)</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Wingspot suggests the airport you're at when you check in.</string>
+	<string>Wingspotted suggests the airport you're at when you check in.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Wingspot scans your boarding pass to fill in a flight. Your name and booking code are never saved.</string>
+	<string>Wingspotted scans your boarding pass to fill in a flight. Your name and booking code are never saved.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>WingspotAPIBaseURL</key>

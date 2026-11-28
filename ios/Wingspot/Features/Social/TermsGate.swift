@@ -27,7 +27,7 @@ struct TermsScreen: View {
                     .foregroundStyle(.tint)
                     .accessibilityHidden(true)
                 Text("Community rules").font(.title.bold())
-                Text("Wingspot is for people who love aircraft. To keep it friendly, please agree to these rules before you follow people, see the feed, or share your check-ins.")
+                Text("Wingspotted is for people who love aircraft. To keep it friendly, please agree to these rules before you follow people, see the feed, or share your check-ins.")
                 VStack(alignment: .leading, spacing: 10) {
                     rule("Be respectful. No harassment, hate or threats.")
                     rule("Post only what you may share: no illegal content and no one else's private information.")
@@ -79,7 +79,7 @@ private struct YoungerView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("Wingspot accounts are for people 16 and older. You can keep using Wingspot without an account: your check-ins stay on this iPhone.")
+                    Text("Wingspotted accounts are for people 16 and older. You can keep using Wingspotted without an account: your check-ins stay on this iPhone.")
                     Button(action: signOut) {
                         Text("Sign out").frame(maxWidth: .infinity)
                     }
@@ -164,8 +164,8 @@ struct UpdateScreen: View {
                     .font(.largeTitle)
                     .foregroundStyle(.tint)
                     .accessibilityHidden(true)
-                Text("Please update Wingspot").font(.title.bold())
-                Text("This version of Wingspot is too old for the feed, people and sharing. Your logbook keeps working.")
+                Text("Please update Wingspotted").font(.title.bold())
+                Text("This version of Wingspotted is too old for the feed, people and sharing. Your logbook keeps working.")
                 Button {
                     // The TestFlight app, or its web page when it isn't installed.
                     openURL(URL(string: "itms-beta://")!) { opened in
