@@ -140,7 +140,7 @@
     <string name="block_title">%1$s blockieren?</string>
     <string name="block_message">Ihr seht die Check-ins und Kommentare des anderen nicht mehr, und bestehende Follows enden.</string>
     <string name="rules_title">Regeln der Community</string>
-    <string name="rules_intro">Wingspot ist für Leute, die Flugzeuge lieben. Damit es freundlich bleibt, stimme bitte diesen Regeln zu, bevor du Leuten folgst, den Feed siehst oder deine Check-ins teilst.</string>
+    <string name="rules_intro">Wingspotted ist für Leute, die Flugzeuge lieben. Damit es freundlich bleibt, stimme bitte diesen Regeln zu, bevor du Leuten folgst, den Feed siehst oder deine Check-ins teilst.</string>
     <string name="rule_respect">Sei respektvoll. Keine Belästigung, kein Hass, keine Drohungen.</string>
     <string name="rule_share">Poste nur, was du teilen darfst: keine illegalen Inhalte und keine privaten Informationen anderer.</string>
     <string name="rule_spam">Kein Spam und keine Werbung.</string>
@@ -150,11 +150,11 @@
     <string name="age_confirm">Ich bin 16 oder älter</string>
     <string name="age_younger">Ich bin jünger als 16</string>
     <string name="age_younger_title">Jünger als 16</string>
-    <string name="age_younger_message">Wingspot-Konten sind für Menschen ab 16. Du kannst Wingspot ohne Konto weiter nutzen: Deine Check-ins bleiben auf diesem Handy.</string>
+    <string name="age_younger_message">Wingspotted-Konten sind für Menschen ab 16. Du kannst Wingspotted ohne Konto weiter nutzen: Deine Check-ins bleiben auf diesem Handy.</string>
     <string name="age_younger_delete_hint">Beim Löschen des Kontos werden auch seine Check-ins auf diesem Handy entfernt. Wenn du sie behalten möchtest, mach vorher in den Einstellungen ein Backup.</string>
     <string name="age_delete_my_account">Mein Konto löschen</string>
-    <string name="update_title">Bitte aktualisiere Wingspot</string>
-    <string name="update_message">Diese Version von Wingspot ist zu alt für den Feed, Personen und das Teilen. Dein Logbuch funktioniert weiter.</string>
+    <string name="update_title">Bitte aktualisiere Wingspotted</string>
+    <string name="update_message">Diese Version von Wingspotted ist zu alt für den Feed, Personen und das Teilen. Dein Logbuch funktioniert weiter.</string>
     <string name="update_button">Aktualisieren</string>
     <string name="i_agree">Ich stimme zu</string>
     <string name="setup_title">Wähle einen Benutzernamen</string>
@@ -219,7 +219,7 @@
     <string name="profile_signed_out">Melde dich an, um deine Check-ins zu sichern und anderen Spottern zu folgen. Bis dahin bleiben deine Check-ins auf diesem Telefon.</string>
     <string name="collections">Sammlungen</string>
     <string name="edit_profile">Profil bearbeiten</string>
-    <string name="legal_about">Über Wingspot</string>
+    <string name="legal_about">Über Wingspotted</string>
     <string name="legal_privacy">Datenschutzerklärung</string>
     <string name="legal_terms">Nutzungsbedingungen</string>
     <string name="legal_imprint">Impressum</string>
@@ -318,7 +318,7 @@
     <string name="channel_name">Aktivität</string>
     <string name="notifications_title">Mitteilungen</string>
     <string name="push_not_in_build">Diese Version kann noch keine Push-Mitteilungen empfangen.</string>
-    <string name="notifications_denied">Mitteilungen sind für Wingspot auf diesem Telefon ausgeschaltet.</string>
+    <string name="notifications_denied">Mitteilungen sind für Wingspotted auf diesem Telefon ausgeschaltet.</string>
     <string name="open_phone_settings">Telefoneinstellungen öffnen</string>
     <string name="notify_followers">Neue Follower</string>
     <string name="notify_salutes">Salutes</string>
@@ -390,7 +390,7 @@
     <string name="scan_needs_data">Zum Lesen einer Bordkarte ist einmal ein Download mit Internet nötig.</string>
     <string name="camera_needed">Kamera nötig</string>
     <string name="camera_why">Die Kamera liest den Barcode deiner Bordkarte. Es wird kein Bild aufgenommen oder gespeichert, und der Barcode wird auf diesem Telefon gelesen.</string>
-    <string name="camera_denied">Die Kamera ist für Wingspot ausgeschaltet. Du kannst sie in den Telefoneinstellungen erlauben oder die Bordkarte aus einem Bild lesen.</string>
+    <string name="camera_denied">Die Kamera ist für Wingspotted ausgeschaltet. Du kannst sie in den Telefoneinstellungen erlauben oder die Bordkarte aus einem Bild lesen.</string>
     <string name="allow_camera">Kamera erlauben</string>
     <string name="scan_aim">Halte den Barcode ins Bild</string>
     <string name="ok">OK</string>
@@ -400,7 +400,7 @@
     <string name="distance_label">Entfernung</string>
     <string name="lookup_flight">Flug auf Flightradar24 nachschlagen</string>
     <string name="lookup_aircraft">Flugzeug auf Flightradar24 nachschlagen</string>
-    <string name="lookup_footer">Öffnet Flightradar24 im Browser. Wingspot sendet dorthin nichts.</string>
+    <string name="lookup_footer">Öffnet Flightradar24 im Browser. Wingspotted sendet dorthin nichts.</string>
     <string name="close">Schließen</string>
     <string name="salute_action">Salute</string>
     <string name="sort_checked_in">Check-in-Datum</string>
@@ -486,7 +486,7 @@
     <string name="invite_your_code">Dein Einladungscode</string>
     <string name="invite_your_code_hint">Wer den Link öffnet, den Code scannt oder eintippt, kann dir in einem Schritt folgen.</string>
     <string name="invite_share">Teilen</string>
-    <string name="invite_share_text">Komm zu Wingspot! Mein Einladungscode ist %1$s, oder öffne %2$s</string>
+    <string name="invite_share_text">Komm zu Wingspotted! Mein Einladungscode ist %1$s, oder öffne %2$s</string>
     <string name="invite_qr">QR-Code deines Einladungslinks</string>
     <string name="invite_add_by_code">Freund per Code hinzufügen</string>
     <string name="invite_code_hint">Code von einem Freund</string>
@@ -501,16 +501,16 @@
     <string name="invite_new_code_title">Neuen Einladungscode erstellen?</string>
     <string name="invite_new_code_message">Der alte Link und Code funktionieren dann nicht mehr.</string>
     <string name="invite_follow_title">%1$s folgen?</string>
-    <string name="invite_follow_message">Die Person hat dich zu Wingspot eingeladen. Du kannst jederzeit entfolgen.</string>
+    <string name="invite_follow_message">Die Person hat dich zu Wingspotted eingeladen. Du kannst jederzeit entfolgen.</string>
     <string name="not_now">Nicht jetzt</string>
     <string name="share_flown">Geflogen</string>
     <string name="share_airport">Flughafen</string>
     <string name="share_spotted">Gespottet</string>
     <string name="share_level">Level</string>
     <string name="share_badge">Badge</string>
-    <string name="share_level_message">Ich habe Level %1$d bei Wingspot erreicht.</string>
+    <string name="share_level_message">Ich habe Level %1$d bei Wingspotted erreicht.</string>
     <string name="share_level_caption">%1$d XP · %2$d Badges</string>
-    <string name="share_badge_message">Ich habe das Badge %1$s bei Wingspot verdient.</string>
+    <string name="share_badge_message">Ich habe das Badge %1$s bei Wingspotted verdient.</string>
     <string name="spotting_locations">Spotting-Orte</string>
     <string name="spot_pending_short">Wartet auf Freigabe</string>
     <string name="spot_pending">Wartet auf Freigabe. Nur du siehst diesen Ort.</string>
@@ -619,7 +619,7 @@
     <string name="backup_restored">%1$d Routen und %2$d Check-ins wiederhergestellt.</string>
     <string name="backup_skipped">%1$d übersprungen, die schon da waren.</string>
     <string name="backup_keep_file">Bewahre die Backup-Datei sicher auf: Die Routen gibt es nur auf deinen Handys und in dieser Datei.</string>
-    <string name="backup_not_backup">Das ist kein Wingspot-Backup.</string>
-    <string name="backup_newer_version">Dieses Backup wurde mit einer neueren Version von Wingspot erstellt. Bitte aktualisiere die App.</string>
+    <string name="backup_not_backup">Das ist kein Wingspotted-Backup.</string>
+    <string name="backup_newer_version">Dieses Backup wurde mit einer neueren Version von Wingspotted erstellt. Bitte aktualisiere die App.</string>
     <string name="backup_damaged">Die Datei ist beschädigt.</string>
 </resources>

@@ -16,7 +16,10 @@ public struct BackupFile: Sendable, Identifiable, Equatable {
 /// tests a temporary one. Each device keeps two files, its latest backup and the one before it, so two phones never overwrite
 /// each other and a bad write never leaves nothing.
 public struct BackupFolder: Sendable {
-    public static let prefix = "Wingspot-backup-"
+    public static let prefix = "Wingspotted-backup-"
+    /// The prefix before the app was renamed to Wingspotted (docs/RENAME-WINGSPOTTED-PLAN.md). Files with it are still listed,
+    /// and a device's first backup under the new name takes its old files over.
+    public static let oldPrefix = "Wingspot-backup-"
     public static let fileExtension = "wingspotbackup"
 
     public let directory: URL
@@ -36,7 +39,7 @@ public struct BackupFolder: Sendable {
         return cleaned.isEmpty ? "iPhone" : String(cleaned.prefix(40))
     }
 
-    public static func fileName(device: String, previous: Bool = false) -> String {
+    public static func fileName(device: String, previous: Bool = false, prefix: String = prefix) -> String {
         "\(prefix)\(safe(device))\(previous ? "-previous" : "").\(fileExtension)"
     }
 
@@ -48,6 +51,7 @@ public struct BackupFolder: Sendable {
         let manager = FileManager.default
         try manager.createDirectory(at: directory, withIntermediateDirectories: true)
         let latest = url(Self.fileName(device: device)), previous = url(Self.fileName(device: device, previous: true))
+        adoptOldFiles(device: device)
         // Written outside the folder first, so iCloud never sees a half-written file.
         let temporary = manager.temporaryDirectory.appending(path: "\(UUID().uuidString).\(Self.fileExtension)", directoryHint: .notDirectory)
         defer { try? manager.removeItem(at: temporary) }
@@ -64,10 +68,24 @@ public struct BackupFolder: Sendable {
         }
     }
 
-    /// Removes both files of a device, for example after its label changed.
+    /// Renames this device's files from before the rename to Wingspotted to the new names, so the latest and the previous
+    /// backup carry on. Only while the device has no file under the new name yet.
+    private func adoptOldFiles(device: String) {
+        let manager = FileManager.default
+        for previous in [false, true] {
+            let old = url(Self.fileName(device: device, previous: previous, prefix: Self.oldPrefix))
+            let new = url(Self.fileName(device: device, previous: previous))
+            guard manager.fileExists(atPath: old.path), !manager.fileExists(atPath: new.path) else { continue }
+            try? coordinate(writing: [old, new]) { try manager.moveItem(at: old, to: new) }
+        }
+    }
+
+    /// Removes both files of a device, for example after its label changed, under the old name too.
     public func remove(device: String) {
-        let urls = [url(Self.fileName(device: device)), url(Self.fileName(device: device, previous: true))]
-        try? coordinate(writing: urls) { for url in urls { try? FileManager.default.removeItem(at: url) } }
+        for prefix in [Self.prefix, Self.oldPrefix] {
+            let urls = [url(Self.fileName(device: device, prefix: prefix)), url(Self.fileName(device: device, previous: true, prefix: prefix))]
+            try? coordinate(writing: urls) { for url in urls { try? FileManager.default.removeItem(at: url) } }
+        }
     }
 
     /// Every backup in the folder, newest first; the files iCloud has not downloaded yet included.
@@ -78,8 +96,9 @@ public struct BackupFolder: Sendable {
             var name = raw
             // iCloud keeps a file it has not downloaded as ".<name>.icloud".
             if name.hasPrefix("."), name.hasSuffix(".icloud") { name = String(name.dropFirst().dropLast(7)) }
-            guard name.hasPrefix(Self.prefix), name.hasSuffix(".\(Self.fileExtension)") else { continue }
-            var label = String(name.dropFirst(Self.prefix.count).dropLast(Self.fileExtension.count + 1))
+            guard let prefix = [Self.prefix, Self.oldPrefix].first(where: name.hasPrefix), name.hasSuffix(".\(Self.fileExtension)")
+            else { continue }
+            var label = String(name.dropFirst(prefix.count).dropLast(Self.fileExtension.count + 1))
             let isPrevious = label.hasSuffix("-previous")
             if isPrevious { label = String(label.dropLast(9)) }
             let modified = (try? url(raw).resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate

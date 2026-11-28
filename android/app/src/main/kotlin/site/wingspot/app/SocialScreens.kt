@@ -928,9 +928,9 @@ private fun shareCardOf(item: site.wingspot.core.FeedItem, flown: String, airpor
             val from = item.originCode ?: return null
             val to = item.destinationCode ?: return null
             ShareCardModel(flown, "$from → $to", item.distanceKm?.let { java.text.NumberFormat.getIntegerInstance().format(it) + " km" },
-                listOfNotNull(item.flightNumber, item.typeName, date).joinToString(" · "), "$from → $to (Wingspot)")
+                listOfNotNull(item.flightNumber, item.typeName, date).joinToString(" · "), "$from → $to (Wingspotted)")
         }
-        "airport" -> item.airportCode?.let { ShareCardModel(airport, it, null, date, "$it (Wingspot)") }
-        else -> (item.registration ?: item.typeIcao)?.let { ShareCardModel(spotted, it, item.typeName, date, "$it (Wingspot)") }
+        "airport" -> item.airportCode?.let { ShareCardModel(airport, it, null, date, "$it (Wingspotted)") }
+        else -> (item.registration ?: item.typeIcao)?.let { ShareCardModel(spotted, it, item.typeName, date, "$it (Wingspotted)") }
     }
 }

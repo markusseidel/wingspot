@@ -51,7 +51,7 @@ struct BadgesScreen: View {
                 ShareCardButton(model: ShareCardModel(
                     kicker: String(localized: "Level"), headline: String(localized: "Level \(progress.level)"), figure: String(localized: Rank(level: progress.level).title),
                     caption: String(localized: "\(progress.xp) XP · \(progress.earnedCount) badges"), name: myName,
-                    message: String(localized: "I reached level \(progress.level) on Wingspot.")
+                    message: String(localized: "I reached level \(progress.level) on Wingspotted.")
                 ))
                 Picker("Show", selection: $filter) {
                     ForEach(BadgeFilter.allCases, id: \.self) { Text($0.title).tag($0) }
@@ -179,7 +179,7 @@ struct BadgeRow: View {
             if let shareName, badge.level > 0, !badge.isHidden {
                 ShareCardButton(model: ShareCardModel(
                     kicker: String(localized: "Badge"), headline: localized(badge.name), figure: badge.isSingle ? nil : String(localized: "Level \(badge.level)"),
-                    caption: nil, name: shareName, message: String(localized: "I earned the badge \(localized(badge.name)) on Wingspot.")
+                    caption: nil, name: shareName, message: String(localized: "I earned the badge \(localized(badge.name)) on Wingspotted.")
                 ))
                 .tint(.accentColor)
             }

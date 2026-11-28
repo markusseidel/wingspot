@@ -70,8 +70,8 @@ private func pendingCheckIn(_ id: UUID = UUID()) -> LocalCheckIn {
     try folder.write(Data("three".utf8), device: "iPhone A")
     try folder.write(Data("other".utf8), device: "iPhone/B")
 
-    let latest = folder.directory.appending(path: "Wingspot-backup-iPhone A.wingspotbackup")
-    let previous = folder.directory.appending(path: "Wingspot-backup-iPhone A-previous.wingspotbackup")
+    let latest = folder.directory.appending(path: "Wingspotted-backup-iPhone A.wingspotbackup")
+    let previous = folder.directory.appending(path: "Wingspotted-backup-iPhone A-previous.wingspotbackup")
     #expect(try Data(contentsOf: latest) == Data("three".utf8))
     #expect(try Data(contentsOf: previous) == Data("two".utf8))
 
@@ -92,7 +92,7 @@ private func pendingCheckIn(_ id: UUID = UUID()) -> LocalCheckIn {
     defer { try? FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: folder.directory.path) }
 
     #expect(throws: (any Error).self) { try folder.write(Data("new".utf8), device: "iPhone") }
-    let latest = folder.directory.appending(path: "Wingspot-backup-iPhone.wingspotbackup")
+    let latest = folder.directory.appending(path: "Wingspotted-backup-iPhone.wingspotbackup")
     #expect(try Data(contentsOf: latest) == Data("good".utf8))
 }
 
@@ -104,6 +104,26 @@ private func pendingCheckIn(_ id: UUID = UUID()) -> LocalCheckIn {
     let files = BackupFolder(directory: directory, coordinated: false).backups()
     #expect(files.map(\.device) == ["iPad"])
     #expect(files.first?.url.lastPathComponent == "Wingspot-backup-iPad.wingspotbackup")
+}
+
+@Test func backupsFromBeforeTheRenameAreListedAndTakenOver() throws {
+    let folder = BackupFolder(directory: temporaryDirectory("backup"), coordinated: false)
+    try FileManager.default.createDirectory(at: folder.directory, withIntermediateDirectories: true)
+    try Data("old latest".utf8).write(to: folder.directory.appending(path: "Wingspot-backup-iPhone.wingspotbackup"))
+    try Data("old previous".utf8).write(to: folder.directory.appending(path: "Wingspot-backup-iPhone-previous.wingspotbackup"))
+    try Data("other".utf8).write(to: folder.directory.appending(path: "Wingspot-backup-iPad.wingspotbackup"))
+    #expect(folder.backups().count == 3)
+
+    try folder.write(Data("new".utf8), device: "iPhone")
+    let names = Set(try FileManager.default.contentsOfDirectory(atPath: folder.directory.path))
+    #expect(names == ["Wingspotted-backup-iPhone.wingspotbackup", "Wingspotted-backup-iPhone-previous.wingspotbackup",
+                      "Wingspot-backup-iPad.wingspotbackup"])
+    let previous = folder.directory.appending(path: "Wingspotted-backup-iPhone-previous.wingspotbackup")
+    #expect(try Data(contentsOf: previous) == Data("old latest".utf8))
+    #expect(Set(folder.backups().map(\.device)) == ["iPhone", "iPad"])
+
+    folder.remove(device: "iPad")
+    #expect(folder.backups().map(\.device) == ["iPhone", "iPhone"])
 }
 
 @MainActor

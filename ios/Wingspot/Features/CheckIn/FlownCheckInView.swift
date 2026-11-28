@@ -235,7 +235,7 @@ struct FlownCheckInView: View {
                 } else if origin != nil, origin?.id == destination?.id {
                     Text("Choose two different airports.")
                 } else if let assumedYear, Calendar.current.component(.year, from: date) == assumedYear {
-                    Text("A boarding pass has the day but not the year, so Wingspot used \(String(assumedYear)). If the flight was in an earlier year, change the date.")
+                    Text("A boarding pass has the day but not the year, so Wingspotted used \(String(assumedYear)). If the flight was in an earlier year, change the date.")
                 }
             }
 

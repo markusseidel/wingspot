@@ -1,6 +1,6 @@
 # The Wingspot backup file
 
-A Wingspot backup (`Wingspot-backup-2026-11-26.wingspotbackup`) holds the whole logbook of the phone: every check-in and the routes of imported KML flights (schema 2; schema 1 files held only what the server did not have yet, #391). It is written so that **nobody needs Wingspot to read it back**. Plan and decisions: [BACKUP-PLAN.md](BACKUP-PLAN.md), issue #310.
+A Wingspot backup (`Wingspotted-backup-2026-11-26.wingspotbackup`; files from before the rename are named `Wingspot-backup-…`) holds the whole logbook of the phone: every check-in and the routes of imported KML flights (schema 2; schema 1 files held only what the server did not have yet, #391). It is written so that **nobody needs Wingspot to read it back**. Plan and decisions: [BACKUP-PLAN.md](BACKUP-PLAN.md), issue #310.
 
 ## Reading it without the app
 

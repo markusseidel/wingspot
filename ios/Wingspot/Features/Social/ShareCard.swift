@@ -30,7 +30,7 @@ struct ShareCardView: View {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Image(systemName: "scope").font(.title2.bold()).foregroundStyle(orange)
-                    Text(verbatim: "Wingspot").font(.title3.weight(.heavy)).foregroundStyle(.white)
+                    Text(verbatim: "Wingspotted").font(.title3.weight(.heavy)).foregroundStyle(.white)
                     Spacer()
                     Text(verbatim: model.kicker.uppercased())
                         .font(.caption.weight(.bold))
@@ -95,6 +95,6 @@ struct ShareCardButton: View {
 
     private var message: String {
         guard let code, let link = InviteLink.url(for: code) else { return model.message }
-        return model.message + " " + String(localized: "Join me on Wingspot! My invite code is \(code), or open \(link.absoluteString)")
+        return model.message + " " + String(localized: "Join me on Wingspotted! My invite code is \(code), or open \(link.absoluteString)")
     }
 }

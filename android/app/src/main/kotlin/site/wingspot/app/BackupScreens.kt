@@ -92,9 +92,9 @@ fun BackupSection(app: WingspotApp) {
 /** Writes the backup into the cache, where only the share sheet can reach it, and opens the share sheet. The last one is replaced next time. */
 private suspend fun share(app: WingspotApp, context: Context) {
     val uri = withContext(Dispatchers.IO) {
-        val document = BackupService(app.checkIns, app.tracks).make("Wingspot ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})")
+        val document = BackupService(app.checkIns, app.tracks).make("Wingspotted ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})")
         val folder = File(context.cacheDir, "share/backup").also { it.deleteRecursively(); it.mkdirs() }
-        val file = File(folder, "Wingspot-backup-${LocalDate.now()}.wingspotbackup")
+        val file = File(folder, "Wingspotted-backup-${LocalDate.now()}.wingspotbackup")
         file.writeBytes(BackupCodec.encode(document))
         FileProvider.getUriForFile(context, "${context.packageName}.files", file)
     }

@@ -388,19 +388,19 @@
         }
       }
     },
-    "A boarding pass has the day but not the year, so Wingspot used %@. If the flight was in an earlier year, change the date." : {
+    "A boarding pass has the day but not the year, so Wingspotted used %@. If the flight was in an earlier year, change the date." : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Boardingpass enthält den Tag, aber nicht das Jahr. Wingspot hat %@ angenommen. Wenn der Flug in einem früheren Jahr war, ändere das Datum."
+            "value" : "Ein Boardingpass enthält den Tag, aber nicht das Jahr. Wingspotted hat %@ angenommen. Wenn der Flug in einem früheren Jahr war, ändere das Datum."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A boarding pass has the day but not the year, so Wingspot used %@. If the flight was in an earlier year, change the date."
+            "value" : "A boarding pass has the day but not the year, so Wingspotted used %@. If the flight was in an earlier year, change the date."
           }
         }
       }
@@ -502,7 +502,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Über Wingspot"
+            "value" : "Über Wingspotted"
           }
         },
         "en" : {
@@ -2869,58 +2869,58 @@
         }
       }
     },
-    "I earned the badge %@ on Wingspot." : {
+    "I earned the badge %@ on Wingspotted." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ich habe das Badge %@ bei Wingspot verdient."
+            "value" : "Ich habe das Badge %@ bei Wingspotted verdient."
           }
         }
       }
     },
-    "I flew %@ → %@ (Wingspot)." : {
+    "I flew %@ → %@ (Wingspotted)." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ich bin %1$@ → %2$@ geflogen (Wingspot)."
+            "value" : "Ich bin %1$@ → %2$@ geflogen (Wingspotted)."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "I flew %1$@ → %2$@ (Wingspot)."
+            "value" : "I flew %1$@ → %2$@ (Wingspotted)."
           }
         }
       }
     },
-    "I reached level %lld on Wingspot." : {
+    "I reached level %lld on Wingspotted." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ich habe Level %lld bei Wingspot erreicht."
+            "value" : "Ich habe Level %lld bei Wingspotted erreicht."
           }
         }
       }
     },
-    "I spotted %@ (Wingspot)." : {
+    "I spotted %@ (Wingspotted)." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ich habe %@ gespottet (Wingspot)."
+            "value" : "Ich habe %@ gespottet (Wingspotted)."
           }
         }
       }
     },
-    "I was at %@ (Wingspot)." : {
+    "I was at %@ (Wingspotted)." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ich war in %@ (Wingspot)."
+            "value" : "Ich war in %@ (Wingspotted)."
           }
         }
       }
@@ -3052,18 +3052,18 @@
         }
       }
     },
-    "Join me on Wingspot! My invite code is %@, or open %@" : {
+    "Join me on Wingspotted! My invite code is %@, or open %@" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Komm zu Wingspot! Mein Einladungscode ist %1$@, oder öffne %2$@"
+            "value" : "Komm zu Wingspotted! Mein Einladungscode ist %1$@, oder öffne %2$@"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Join me on Wingspot! My invite code is %1$@, or open %2$@"
+            "value" : "Join me on Wingspotted! My invite code is %1$@, or open %2$@"
           }
         }
       }
@@ -3494,12 +3494,12 @@
         }
       }
     },
-    "New activity on Wingspot" : {
+    "New activity on Wingspotted" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neue Aktivität in Wingspot"
+            "value" : "Neue Aktivität in Wingspotted"
           }
         }
       }
@@ -3951,12 +3951,12 @@
         }
       }
     },
-    "Notifications are off for Wingspot in the system settings." : {
+    "Notifications are off for Wingspotted in the system settings." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitteilungen sind für Wingspot in den Systemeinstellungen ausgeschaltet."
+            "value" : "Mitteilungen sind für Wingspotted in den Systemeinstellungen ausgeschaltet."
           }
         }
       }
@@ -4135,12 +4135,12 @@
         }
       }
     },
-    "Opens Flightradar24 in your browser. Nothing from Wingspot is sent there." : {
+    "Opens Flightradar24 in your browser. Nothing from Wingspotted is sent there." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Öffnet Flightradar24 im Browser. Wingspot sendet dorthin nichts."
+            "value" : "Öffnet Flightradar24 im Browser. Wingspotted sendet dorthin nichts."
           }
         }
       }
@@ -5805,22 +5805,22 @@
         }
       }
     },
-    "They invited you to Wingspot. You can unfollow any time." : {
+    "They invited you to Wingspotted. You can unfollow any time." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Person hat dich zu Wingspot eingeladen. Du kannst jederzeit entfolgen."
+            "value" : "Die Person hat dich zu Wingspotted eingeladen. Du kannst jederzeit entfolgen."
           }
         }
       }
     },
-    "This backup was made by a newer version of Wingspot. Please update the app." : {
+    "This backup was made by a newer version of Wingspotted. Please update the app." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieses Backup wurde mit einer neueren Version von Wingspot erstellt. Bitte aktualisiere die App."
+            "value" : "Dieses Backup wurde mit einer neueren Version von Wingspotted erstellt. Bitte aktualisiere die App."
           }
         }
       }
@@ -5875,12 +5875,12 @@
         }
       }
     },
-    "This is not a Wingspot backup." : {
+    "This is not a Wingspotted backup." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das ist kein Wingspot-Backup."
+            "value" : "Das ist kein Wingspotted-Backup."
           }
         }
       }
@@ -6383,22 +6383,22 @@
         }
       }
     },
-    "Wingspot can tell you when someone follows you, or salutes or comments on one of your check-ins. You can change this in Settings." : {
+    "Wingspotted can tell you when someone follows you, or salutes or comments on one of your check-ins. You can change this in Settings." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wingspot kann dir sagen, wenn dir jemand folgt oder einen deiner Check-ins salutiert oder kommentiert. Du kannst das in den Einstellungen ändern."
+            "value" : "Wingspotted kann dir sagen, wenn dir jemand folgt oder einen deiner Check-ins salutiert oder kommentiert. Du kannst das in den Einstellungen ändern."
           }
         }
       }
     },
-    "Wingspot is for people who love aircraft. To keep it friendly, please agree to these rules before you follow people, see the feed, or share your check-ins." : {
+    "Wingspotted is for people who love aircraft. To keep it friendly, please agree to these rules before you follow people, see the feed, or share your check-ins." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wingspot ist für Menschen, die Flugzeuge lieben. Damit es freundlich bleibt, stimme bitte diesen Regeln zu, bevor du Leuten folgst, den Feed siehst oder deine Check-ins teilst."
+            "value" : "Wingspotted ist für Menschen, die Flugzeuge lieben. Damit es freundlich bleibt, stimme bitte diesen Regeln zu, bevor du Leuten folgst, den Feed siehst oder deine Check-ins teilst."
           }
         }
       }
@@ -6907,12 +6907,12 @@
         }
       }
     },
-    "Wingspot accounts are for people 16 and older. You can keep using Wingspot without an account: your check-ins stay on this iPhone." : {
+    "Wingspotted accounts are for people 16 and older. You can keep using Wingspotted without an account: your check-ins stay on this iPhone." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wingspot-Konten sind für Menschen ab 16. Du kannst Wingspot ohne Konto weiter nutzen: Deine Check-ins bleiben auf diesem iPhone."
+            "value" : "Wingspotted-Konten sind für Menschen ab 16. Du kannst Wingspotted ohne Konto weiter nutzen: Deine Check-ins bleiben auf diesem iPhone."
           }
         }
       }
@@ -6947,22 +6947,22 @@
         }
       }
     },
-    "Please update Wingspot" : {
+    "Please update Wingspotted" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bitte aktualisiere Wingspot"
+            "value" : "Bitte aktualisiere Wingspotted"
           }
         }
       }
     },
-    "This version of Wingspot is too old for the feed, people and sharing. Your logbook keeps working." : {
+    "This version of Wingspotted is too old for the feed, people and sharing. Your logbook keeps working." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Version von Wingspot ist zu alt für den Feed, Personen und das Teilen. Dein Logbuch funktioniert weiter."
+            "value" : "Diese Version von Wingspotted ist zu alt für den Feed, Personen und das Teilen. Dein Logbuch funktioniert weiter."
           }
         }
       }
@@ -7017,12 +7017,12 @@
         }
       }
     },
-    "iCloud Drive is off for Wingspot. Turn it on in the Settings app under your name > iCloud." : {
+    "iCloud Drive is off for Wingspotted. Turn it on in the Settings app under your name > iCloud." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "iCloud Drive ist für Wingspot aus. Schalte es in der Einstellungen-App unter deinem Namen > iCloud ein."
+            "value" : "iCloud Drive ist für Wingspotted aus. Schalte es in der Einstellungen-App unter deinem Namen > iCloud ein."
           }
         }
       }
@@ -7157,12 +7157,12 @@
         }
       }
     },
-    "A full backup of your check-ins and routes, in the Wingspot folder of your iCloud Drive. Wingspot keeps the latest backup and the one before it. Apple stores it; Wingspot can't read it. Each iPhone writes its own file, named after it." : {
+    "A full backup of your check-ins and routes, in the Wingspotted folder of your iCloud Drive. Wingspotted keeps the latest backup and the one before it. Apple stores it; Wingspotted can't read it. Each iPhone writes its own file, named after it." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein vollständiges Backup deiner Check-ins und Routen im Ordner Wingspot in deinem iCloud Drive. Wingspot behält das neueste Backup und das davor. Apple speichert es; Wingspot kann es nicht lesen. Jedes iPhone schreibt eine eigene Datei mit seinem Namen."
+            "value" : "Ein vollständiges Backup deiner Check-ins und Routen im Ordner Wingspotted in deinem iCloud Drive. Wingspotted behält das neueste Backup und das davor. Apple speichert es; Wingspotted kann es nicht lesen. Jedes iPhone schreibt eine eigene Datei mit seinem Namen."
           }
         }
       }
@@ -7207,12 +7207,12 @@
         }
       }
     },
-    "The last backup failed. Wingspot tries again next time." : {
+    "The last backup failed. Wingspotted tries again next time." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das letzte Backup ist fehlgeschlagen. Wingspot versucht es beim nächsten Mal erneut."
+            "value" : "Das letzte Backup ist fehlgeschlagen. Wingspotted versucht es beim nächsten Mal erneut."
           }
         }
       }

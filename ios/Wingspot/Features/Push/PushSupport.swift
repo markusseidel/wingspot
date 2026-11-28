@@ -49,7 +49,7 @@ final class PushAppDelegate: NSObject, UIApplicationDelegate, UNUserNotification
         // and the text, until the iPhone is unlocked.
         let activity = UNNotificationCategory(
             identifier: "WINGSPOT_ACTIVITY", actions: [], intentIdentifiers: [],
-            hiddenPreviewsBodyPlaceholder: String(localized: "New activity on Wingspot"), options: []
+            hiddenPreviewsBodyPlaceholder: String(localized: "New activity on Wingspotted"), options: []
         )
         // The alert about someone's new check-in can be saluted with a long press, without opening the app.
         let salute = UNNotificationAction(
@@ -58,7 +58,7 @@ final class PushAppDelegate: NSObject, UIApplicationDelegate, UNUserNotification
         )
         let checkIn = UNNotificationCategory(
             identifier: "WINGSPOT_CHECKIN", actions: [salute], intentIdentifiers: [],
-            hiddenPreviewsBodyPlaceholder: String(localized: "New activity on Wingspot"), options: []
+            hiddenPreviewsBodyPlaceholder: String(localized: "New activity on Wingspotted"), options: []
         )
         UNUserNotificationCenter.current().setNotificationCategories([activity, checkIn])
         return true
@@ -174,7 +174,7 @@ struct NotificationsSection: View {
             case .notDetermined:
                 Button("Turn on notifications") { Task { await push.enable() } }
             case .denied:
-                Text("Notifications are off for Wingspot in the system settings.")
+                Text("Notifications are off for Wingspotted in the system settings.")
                     .foregroundStyle(.secondary)
                 Button("Open system settings") {
                     if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }

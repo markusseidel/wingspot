@@ -8,13 +8,13 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wingspot scannt deine Bordkarte, um einen Flug auszufüllen. Dein Name und dein Buchungscode werden nie gespeichert."
+            "value": "Wingspotted scannt deine Bordkarte, um einen Flug auszufüllen. Dein Name und dein Buchungscode werden nie gespeichert."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wingspot scans your boarding pass to fill in a flight. Your name and booking code are never saved."
+            "value": "Wingspotted scans your boarding pass to fill in a flight. Your name and booking code are never saved."
           }
         }
       }
@@ -26,13 +26,13 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wingspot schlägt dir beim Check-in den Flughafen vor, an dem du gerade bist."
+            "value": "Wingspotted schlägt dir beim Check-in den Flughafen vor, an dem du gerade bist."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wingspot suggests the airport you're at when you check in."
+            "value": "Wingspotted suggests the airport you're at when you check in."
           }
         }
       }

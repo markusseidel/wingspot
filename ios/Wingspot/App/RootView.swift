@@ -76,7 +76,7 @@ struct RootView: View {
             Button("Turn on") { Task { await push.enable() } }
             Button("Not now", role: .cancel) {}
         } message: {
-            Text("Wingspot can tell you when someone follows you, or salutes or comments on one of your check-ins. You can change this in Settings.")
+            Text("Wingspotted can tell you when someone follows you, or salutes or comments on one of your check-ins. You can change this in Settings.")
         }
         // A tapped notification opens the Feed tab, which takes it from there.
         .onChange(of: router.destination) {
