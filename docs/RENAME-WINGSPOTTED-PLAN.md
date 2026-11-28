@@ -38,21 +38,26 @@ it stays `wingspot`.**
 
 These steps happen outside the repo. Some of them take days, so they come first.
 
-- [ ] **Domain:** pick and register the domain (for example `wingspotted.app` or `wingspotted.com`), and note it in this file.
-  The rest of the plan writes **`<domain>`** for it.
+- [x] **Domain:** **`wingspotted.app`** (owner, 2026-11-28). On 2026-11-28 it had no DNS records yet (no NS, A or MX).
+  - `.app` is on the browsers' HSTS preload list: the site is reachable **only over HTTPS**. There's no plain-HTTP
+    fallback, so the host must serve a valid certificate before any link to the site goes out (in the apps, App Store
+    Connect or the legal texts).
+  - Mail is not affected by this.
+- [ ] **Second domain (optional):** `wingspotted.com` and/or `wingspotted.de`, pointing to `wingspotted.app`, so nobody else
+  takes them. Hosting Basic includes 3 domains.
 - [ ] **Trademark check:** check "Wingspotted" in the EUIPO and DPMA registers (docs/PROTECTING-WINGSPOT-PLAN.md), and secure the
   name in the same classes as planned for Wingspot.
 - [ ] **Handles:** reserve `wingspotted` on the other networks of docs/SOCIAL-PLAN.md (TikTok, YouTube, Threads, X,
   Bluesky, Mastodon) where it is still free. Instagram is done.
-- [ ] **Email:** set up `support@<domain>` and `review@<domain>`, plus `planepal@<domain>` for the review seed.
+- [ ] **Email:** set up `support@wingspotted.app` and `review@wingspotted.app`, plus `planepal@wingspotted.app` for the review seed.
   - A domain alone has no mailboxes. `support@` needs a STRATO mail package, a forward (if the contract offers one) or
     another mail provider whose MX and SPF records are set at STRATO.
   - `review@` and `planepal@` need no mailbox, only the domain.
   - The sign-in mails from Supabase already go out through **Resend**, which is verified on `wingspot.site`. Moving it to
-    `<domain>` is in section 5 and must be done before `wingspot.site` is cancelled (section 8a).
+    `wingspotted.app` is in section 5 and must be done before `wingspot.site` is cancelled (section 8a).
   - So for now the new domain needs no hosting package: a domain-only contract plus Resend covers the sign-in mails.
     A mailbox (Hosting Basic or another mail provider) only becomes necessary for `support@` and the website.
-- [ ] **Hosting:** serve `<domain>` from a static host, with the DNS records kept at STRATO (docs/WEBSITE-PLAN.md option B).
+- [ ] **Hosting:** serve `wingspotted.app` from a static host, with the DNS records kept at STRATO (docs/WEBSITE-PLAN.md option B).
   No redirect from `wingspot.site`: it gets cancelled (section 8a).
 
 ## 4. Phase 1: the apps (one PR, iOS and Android together)
@@ -95,11 +100,11 @@ These steps happen outside the repo. Some of them take days, so they come first.
 
 ### 4.4 Links to the website
 
-- `LegalLinks.swift` and `LegalLinks.kt`: `https://<domain>/privacy`, `/terms`, `/imprint` and `support@<domain>`.
-  Only once `<domain>` serves the pages (Phase 0). The old links in today's builds go nowhere today, and nothing will
+- `LegalLinks.swift` and `LegalLinks.kt`: `https://wingspotted.app/privacy`, `/terms`, `/imprint` and `support@wingspotted.app`.
+  Only once `wingspotted.app` serves the pages (Phase 0). The old links in today's builds go nowhere today, and nothing will
   redirect them.
-- Universal Links and App Links are not built yet (docs/WEBSITE-PLAN.md section 7). When they are built, use **`<domain>`**
-  straight away: `applinks:<domain>`, and the intent filter host `<domain>`. Update WEBSITE-PLAN.md now so that work starts
+- Universal Links and App Links are not built yet (docs/WEBSITE-PLAN.md section 7). When they are built, use **`wingspotted.app`**
+  straight away: `applinks:wingspotted.app`, and the intent filter host `wingspotted.app`. Update WEBSITE-PLAN.md now so that work starts
   with the right domain.
 
 ### 4.5 Push texts
@@ -112,7 +117,7 @@ These steps happen outside the repo. Some of them take days, so they come first.
 
 - Register it in addition to `wingspot://` (Info.plist `CFBundleURLSchemes`, an Android intent filter), and parse both in
   `InviteLink`.
-- New invite links and QR codes keep using `wingspot://` until the website serves invite links on `https://<domain>/invite/…`.
+- New invite links and QR codes keep using `wingspot://` until the website serves invite links on `https://wingspotted.app/invite/…`.
   At that point they move to the web link, not to the new scheme. **Recommendation: skip this step**, because nobody sees the
   scheme.
 
@@ -127,23 +132,23 @@ These steps happen outside the repo. Some of them take days, so they come first.
 
 - [ ] **Report alert:** `'Wingspot: new report about a ' || …` in the functions of migrations `20261110200000` and
   `20261115200000`. A new migration redefines the function with `Wingspotted:`. Old migrations are never edited.
-- [ ] **Welcome message in the review seed:** `backend/scripts/seed-review-account.sh` gets `review@<domain>`,
-  `planepal@<domain>`, "Welcome to Wingspotted." and the comment line.
+- [ ] **Welcome message in the review seed:** `backend/scripts/seed-review-account.sh` gets `review@wingspotted.app`,
+  `planepal@wingspotted.app`, "Welcome to Wingspotted." and the comment line.
   - Run it once on production after the owner's yes, then store the new demo account in App Store Connect > App Review.
   - The test `AccountStoreTests.swift:425` keeps its value; it only checks the whitespace trim.
 - [ ] **Release notes and announcements:** the existing rows stay as they are (history). New rows use the new name.
 - [ ] **Auth (Supabase dashboard, owner):**
   - the sender name of the auth emails becomes "Wingspotted";
   - the email templates (confirm, magic link, reset), with the subjects in German and English;
-  - Site URL `https://<domain>`;
-  - the redirect URL `https://<domain>/auth/callback` replaces the planned `wingspot.site` one (backend/README.md:53);
+  - Site URL `https://wingspotted.app`;
+  - the redirect URL `https://wingspotted.app/auth/callback` replaces the planned `wingspot.site` one (backend/README.md:53);
   - `wingspot://auth-callback` stays.
-- [ ] **Resend (owner): move the sign-in mails to `<domain>`.** Today Resend sends them from `wingspot.site`. That domain has
+- [ ] **Resend (owner): move the sign-in mails to `wingspotted.app`.** Today Resend sends them from `wingspot.site`. That domain has
   DNS records at STRATO for `resend._domainkey`, `send.wingspot.site` (MX and SPF) and `_dmarc` (`p=reject`).
-  1. In Resend, add `<domain>`, in the EU region if offered.
-  2. At STRATO, set the records Resend shows for `<domain>`: DKIM, the `send.` subdomain, and a DMARC record like the old
+  1. In Resend, add `wingspotted.app`, in the EU region if offered.
+  2. At STRATO, set the records Resend shows for `wingspotted.app`: DKIM, the `send.` subdomain, and a DMARC record like the old
      one. Wait until Resend shows the domain as verified.
-  3. In Supabase, Authentication → SMTP: set the sender to `Wingspotted <login@<domain>>` (or the address used today, on the
+  3. In Supabase, Authentication → SMTP: set the sender to `Wingspotted <login@wingspotted.app>` (or the address used today, on the
      new domain). The host, port, user and API key stay the same.
   4. Send test sign-in mails to Gmail, iCloud and GMX/web.de and check the spam folders.
   5. Only then remove `wingspot.site` from Resend. The free plan may allow only one domain; in that case do steps 1 to 4 in
@@ -155,16 +160,16 @@ These steps happen outside the repo. Some of them take days, so they come first.
 
 | Service | What to change |
 |---|---|
-| App Store Connect | Name is already Wingspotted. Check the subtitle, description, keywords (drop "wingspot"? keep it as a search keyword), what's new, screenshots that show the old name, the support URL, the marketing URL, the privacy URL `<domain>/privacy`, the review demo account (Phase 2), the copyright line. |
-| TestFlight | The test information, the beta description, the feedback email `support@<domain>`. |
+| App Store Connect | Name is already Wingspotted. Check the subtitle, description, keywords (drop "wingspot"? keep it as a search keyword), what's new, screenshots that show the old name, the support URL, the marketing URL, the privacy URL `wingspotted.app/privacy`, the review demo account (Phase 2), the copyright line. |
+| TestFlight | The test information, the beta description, the feedback email `support@wingspotted.app`. |
 | Google Play Console (when it is set up) | The app name Wingspotted, the listing in German and English, the developer email and website, the privacy policy URL. |
 | Firebase (FCM and App Distribution) | The project's public name and the app nickname shown to testers: "Wingspotted". The project ID stays. |
-| Google Cloud OAuth consent screen | The app name "Wingspotted", the logo, the home page, privacy and terms links on `<domain>`, and `<domain>` as an authorized domain. This is the name on Google's sign-in screen. |
-| Apple Developer: Sign in with Apple | The Services ID description (if it exists) and the email relay: register `support@<domain>` as a sender domain, otherwise mail to `privaterelay` addresses bounces. |
+| Google Cloud OAuth consent screen | The app name "Wingspotted", the logo, the home page, privacy and terms links on `wingspotted.app`, and `wingspotted.app` as an authorized domain. This is the name on Google's sign-in screen. |
+| Apple Developer: Sign in with Apple | The Services ID description (if it exists) and the email relay: register `support@wingspotted.app` as a sender domain, otherwise mail to `privaterelay` addresses bounces. |
 | Apple Developer: iCloud container | Nothing to change. Its description is internal. |
-| Maps API key restrictions | Nothing to change, because they are tied to the app IDs. Add `<domain>` once the website uses maps. |
-| GitHub | The repo stays `wingspot` (decision 4). Optionally set the repo description and website to Wingspotted and `<domain>`. |
-| Instagram and the other networks | Bio link `<domain>`. |
+| Maps API key restrictions | Nothing to change, because they are tied to the app IDs. Add `wingspotted.app` once the website uses maps. |
+| GitHub | The repo stays `wingspot` (decision 4). Optionally set the repo description and website to Wingspotted and `wingspotted.app`. |
+| Instagram and the other networks | Bio link `wingspotted.app`. |
 
 ## 7. Phase 4: docs, legal texts and website
 
@@ -175,11 +180,11 @@ These steps happen outside the repo. Some of them take days, so they come first.
   - These are live documents, so publish them at the same time as the app build of Phase 1.
 - [ ] **Website** (docs/WEBSITE-PLAN.md):
   - name, title, meta tags, the Open Graph image and the favicon text;
-  - `<domain>` as the canonical URL;
-  - the `/.well-known/apple-app-site-association` and `assetlinks.json` on `<domain>`, with the unchanged app IDs.
+  - `wingspotted.app` as the canonical URL;
+  - the `/.well-known/apple-app-site-association` and `assetlinks.json` on `wingspotted.app`, with the unchanged app IDs.
 - [ ] **Docs in the repo:**
   - "Wingspot" becomes "Wingspotted" in the running text of all about 30 files in `docs/` and in `README` files;
-  - `wingspot.site` becomes `<domain>`;
+  - `wingspot.site` becomes `wingspotted.app`;
   - code identifiers stay in backticks unchanged (`site.wingspot.ios`, `WingspotCore`, `.wingspotbackup`);
   - file names stay (decision 4);
   - one sentence at the top of docs/CONCEPT.md: "Wingspotted (code name and repo: wingspot)".
@@ -188,8 +193,8 @@ These steps happen outside the repo. Some of them take days, so they come first.
 
 ## 8. Order
 
-1. Phase 0 (owner): domain, emails, hosting. **Phase 1 waits for this**, because the apps link to `<domain>`.
-2. Phase 4, legal texts and website live on `<domain>`.
+1. Phase 0 (owner): domain, emails, hosting. **Phase 1 waits for this**, because the apps link to `wingspotted.app`.
+2. Phase 4, legal texts and website live on `wingspotted.app`.
 3. Phase 1 app PR and Phase 2 backend PR, merged and built together. Release notes go out.
 4. Phase 3 store texts, changed when the build goes out for review.
 5. Phase 4 docs PR, at any time; it doesn't touch code.
@@ -199,17 +204,17 @@ These steps happen outside the repo. Some of them take days, so they come first.
 
 Once the domain is cancelled, anyone can register it. So nothing may still point to it at that point.
 
-- [ ] The review demo accounts `review@wingspot.site` and `planepal@wingspot.site` are moved to `<domain>` (Phase 2 seed
+- [ ] The review demo accounts `review@wingspot.site` and `planepal@wingspot.site` are moved to `wingspotted.app` (Phase 2 seed
   script, run on production after the owner's yes). Otherwise a new owner of the domain could get the password-reset
   mails for them.
   - Check, read-only: `select email from auth.users where email like '%@wingspot.site'` returns no rows.
 - [ ] App Store Connect (privacy, support and marketing URL, review contact) and TestFlight (feedback email) use
-  `<domain>`.
+  `wingspotted.app`.
 - [ ] The Supabase Auth site URL and redirect URLs don't name `wingspot.site`.
-- [ ] **Sign-in mails:** Supabase sends through Resend from `<domain>`, and a test sign-in mail has arrived (section 5).
+- [ ] **Sign-in mails:** Supabase sends through Resend from `wingspotted.app`, and a test sign-in mail has arrived (section 5).
   Otherwise cancelling `wingspot.site` breaks every sign-in by email.
-  - Check: `dig +short TXT resend._domainkey.<domain>` gives the key, and the Resend dashboard shows `<domain>` as verified.
-- [ ] The first iOS and Android build with `<domain>` links is out. Ideally, the TestFlight builds with the old links
+  - Check: `dig +short TXT resend._domainkey.wingspotted.app` gives the key, and the Resend dashboard shows `wingspotted.app` as verified.
+- [ ] The first iOS and Android build with `wingspotted.app` links is out. Ideally, the TestFlight builds with the old links
   have expired too (90 days after upload; the last one is 0.3.0 2026112702, from 2026-11-27, so it expires around
   2027-02-25). Cancelling sooner only exposes the testers: a new owner of the domain could put a page or a mailbox behind
   the old links.
@@ -221,17 +226,16 @@ Once the domain is cancelled, anyone can register it. So nothing may still point
 - `git grep -n 'Wingspot\b' -- ios android backend ':!*.xcstrings'` shows only identifiers like `WingspotCore`, `Wingspot.xcodeproj` or `WINGSPOT_`, never visible text.
 - On the iPhone and the Android phone:
   - the home screen name;
-  - Settings > About, the legal links (they open on `<domain>`), the contact email;
+  - Settings > About, the legal links (they open on `wingspotted.app`), the contact email;
   - a push without a place shows "Wingspotted".
 - iCloud Drive in the Files app shows the folder "Wingspotted":
   - a new backup is named `Wingspotted-backup-…`;
   - an old `Wingspot-backup-…` file shows in the restore list and is removed after the next backup.
 - An old invite QR code (`wingspot://invite/…`) still opens the app.
-- `curl -sI https://<domain>/privacy` gives a 200, and so do `/terms`, `/imprint` and the two `/.well-known` files.
+- `curl -sI https://wingspotted.app/privacy` gives a 200, and so do `/terms`, `/imprint` and the two `/.well-known` files.
 - The Google and Apple sign-in screens and the auth emails say Wingspotted.
 
 ## 10. Open points
 
-- The domain: which TLD (Phase 0).
 - Does the App Store keyword field keep "wingspot", so people who heard the old name still find the app?
 - Should the app icon or the logo show the name? If so, the icon assets and the website images change too.
