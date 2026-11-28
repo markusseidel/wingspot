@@ -2,7 +2,7 @@
 
 The name "Wingspot" was already taken in the App Store, so the app is listed as **Wingspotted**. The Instagram handle is
 `wingspotted` too. Today the apps, the website, the emails and the docs still say "Wingspot". This plan changes every name
-people **see** to Wingspotted, keeps every technical ID, and moves the website to a new Wingspotted domain.
+people **see** to Wingspotted, keeps every technical ID, moves the website to a new Wingspotted domain, and then cancels `wingspot.site`.
 
 ## 1. Decisions (owner, 2026-11-28)
 
@@ -10,7 +10,7 @@ people **see** to Wingspotted, keeps every technical ID, and moves the website t
 |---|---|---|
 | 1 | Spelling | **Wingspotted** (capital W, the rest in lower case). In IDs and handles it is `wingspotted`. |
 | 2 | Technical IDs | **Keep them.** Users never see these IDs. Apple and Google don't let an existing app change its bundle ID or applicationId, so changing them would mean a new store entry, and testers would lose their data. |
-| 3 | Domain | **A new Wingspotted domain** becomes the main domain. `wingspot.site` stays registered and redirects to it. |
+| 3 | Domain | **A new Wingspotted domain** becomes the only domain. `wingspot.site` is a domain-only STRATO contract (no mail, no webspace) and gets **cancelled**, with no redirect, once the steps in section 8a are done. On 2026-11-28 it served no website (HTTPS doesn't answer) and its MX record was only STRATO's default. |
 | 4 | Internal code names | **Keep them.** That covers the repo, the Xcode target, the modules, folders and file names, the Supabase project name and the env var names. |
 
 The rule for every place in this plan: **if a person can see it, it says Wingspotted. If only code or a store backend sees it,
@@ -44,10 +44,13 @@ These steps happen outside the repo. Some of them take days, so they come first.
   name in the same classes as planned for Wingspot.
 - [ ] **Handles:** reserve `wingspotted` on the other networks of docs/SOCIAL-PLAN.md (TikTok, YouTube, Threads, X,
   Bluesky, Mastodon) where it is still free. Instagram is done.
-- [ ] **Email:** set up `support@<domain>` and `review@<domain>`, plus `planepal@<domain>` for the review seed. Keep
-  `support@wingspot.site` as a forwarding address for at least a year, because older app versions and older mails show it.
-- [ ] **Hosting:** serve `<domain>` from the same hosting as the website. Redirect `wingspot.site` with HTTP 301, keeping the
-  path (`wingspot.site/privacy` → `<domain>/privacy`).
+- [ ] **Email:** set up `support@<domain>` and `review@<domain>`, plus `planepal@<domain>` for the review seed.
+  - A domain alone has no mailboxes. `support@` needs a STRATO mail package, a forward (if the contract offers one) or
+    another mail provider whose MX and SPF records are set at STRATO.
+  - `review@` and `planepal@` need no mailbox, only the domain.
+  - The sign-in mails from Supabase need a separate mail-sending service (docs/WEBSITE-PLAN.md section 7).
+- [ ] **Hosting:** serve `<domain>` from a static host, with the DNS records kept at STRATO (docs/WEBSITE-PLAN.md option B).
+  No redirect from `wingspot.site`: it gets cancelled (section 8a).
 
 ## 4. Phase 1: the apps (one PR, iOS and Android together)
 
@@ -90,7 +93,8 @@ These steps happen outside the repo. Some of them take days, so they come first.
 ### 4.4 Links to the website
 
 - `LegalLinks.swift` and `LegalLinks.kt`: `https://<domain>/privacy`, `/terms`, `/imprint` and `support@<domain>`.
-  Only once `<domain>` serves the pages (Phase 0). Until then `wingspot.site` redirects, so old builds keep working.
+  Only once `<domain>` serves the pages (Phase 0). The old links in today's builds go nowhere today, and nothing will
+  redirect them.
 - Universal Links and App Links are not built yet (docs/WEBSITE-PLAN.md section 7). When they are built, use **`<domain>`**
   straight away: `applinks:<domain>`, and the intent filter host `<domain>`. Update WEBSITE-PLAN.md now so that work starts
   with the right domain.
@@ -172,11 +176,30 @@ These steps happen outside the repo. Some of them take days, so they come first.
 
 ## 8. Order
 
-1. Phase 0 (owner): domain, emails, redirect. **Phase 1 waits for this**, because the apps link to `<domain>`.
+1. Phase 0 (owner): domain, emails, hosting. **Phase 1 waits for this**, because the apps link to `<domain>`.
 2. Phase 4, legal texts and website live on `<domain>`.
 3. Phase 1 app PR and Phase 2 backend PR, merged and built together. Release notes go out.
 4. Phase 3 store texts, changed when the build goes out for review.
 5. Phase 4 docs PR, at any time; it doesn't touch code.
+6. Cancel `wingspot.site` (section 8a), last.
+
+## 8a. Cancelling wingspot.site
+
+Once the domain is cancelled, anyone can register it. So nothing may still point to it at that point.
+
+- [ ] The review demo accounts `review@wingspot.site` and `planepal@wingspot.site` are moved to `<domain>` (Phase 2 seed
+  script, run on production after the owner's yes). Otherwise a new owner of the domain could get the password-reset
+  mails for them.
+  - Check, read-only: `select email from auth.users where email like '%@wingspot.site'` returns no rows.
+- [ ] App Store Connect (privacy, support and marketing URL, review contact) and TestFlight (feedback email) use
+  `<domain>`.
+- [ ] The Supabase Auth site URL and redirect URLs don't name `wingspot.site`.
+- [ ] The first iOS and Android build with `<domain>` links is out. Ideally, the TestFlight builds with the old links
+  have expired too (90 days after upload; the last one is 0.3.0 2026112702, from 2026-11-27, so it expires around
+  2027-02-25). Cancelling sooner only exposes the testers: a new owner of the domain could put a page or a mailbox behind
+  the old links.
+- [ ] `git grep -n "wingspot\.site"` shows no hits outside the history in docs.
+- [ ] Owner: cancel the domain in the STRATO customer login.
 
 ## 9. Checks after the change
 
@@ -189,7 +212,7 @@ These steps happen outside the repo. Some of them take days, so they come first.
   - a new backup is named `Wingspotted-backup-…`;
   - an old `Wingspot-backup-…` file shows in the restore list and is removed after the next backup.
 - An old invite QR code (`wingspot://invite/…`) still opens the app.
-- `curl -sI https://wingspot.site/privacy` gives a 301 to `https://<domain>/privacy`.
+- `curl -sI https://<domain>/privacy` gives a 200, and so do `/terms`, `/imprint` and the two `/.well-known` files.
 - The Google and Apple sign-in screens and the auth emails say Wingspotted.
 
 ## 10. Open points
