@@ -48,7 +48,10 @@ These steps happen outside the repo. Some of them take days, so they come first.
   - A domain alone has no mailboxes. `support@` needs a STRATO mail package, a forward (if the contract offers one) or
     another mail provider whose MX and SPF records are set at STRATO.
   - `review@` and `planepal@` need no mailbox, only the domain.
-  - The sign-in mails from Supabase need a separate mail-sending service (docs/WEBSITE-PLAN.md section 7).
+  - The sign-in mails from Supabase already go out through **Resend**, which is verified on `wingspot.site`. Moving it to
+    `<domain>` is in section 5 and must be done before `wingspot.site` is cancelled (section 8a).
+  - So for now the new domain needs no hosting package: a domain-only contract plus Resend covers the sign-in mails.
+    A mailbox (Hosting Basic or another mail provider) only becomes necessary for `support@` and the website.
 - [ ] **Hosting:** serve `<domain>` from a static host, with the DNS records kept at STRATO (docs/WEBSITE-PLAN.md option B).
   No redirect from `wingspot.site`: it gets cancelled (section 8a).
 
@@ -135,8 +138,17 @@ These steps happen outside the repo. Some of them take days, so they come first.
   - Site URL `https://<domain>`;
   - the redirect URL `https://<domain>/auth/callback` replaces the planned `wingspot.site` one (backend/README.md:53);
   - `wingspot://auth-callback` stays.
-- [ ] **SMTP sender:** if a custom SMTP is set up, the sender address becomes `…@<domain>`, with SPF, DKIM and DMARC records
-  for the new domain.
+- [ ] **Resend (owner): move the sign-in mails to `<domain>`.** Today Resend sends them from `wingspot.site`. That domain has
+  DNS records at STRATO for `resend._domainkey`, `send.wingspot.site` (MX and SPF) and `_dmarc` (`p=reject`).
+  1. In Resend, add `<domain>`, in the EU region if offered.
+  2. At STRATO, set the records Resend shows for `<domain>`: DKIM, the `send.` subdomain, and a DMARC record like the old
+     one. Wait until Resend shows the domain as verified.
+  3. In Supabase, Authentication → SMTP: set the sender to `Wingspotted <login@<domain>>` (or the address used today, on the
+     new domain). The host, port, user and API key stay the same.
+  4. Send test sign-in mails to Gmail, iCloud and GMX/web.de and check the spam folders.
+  5. Only then remove `wingspot.site` from Resend. The free plan may allow only one domain; in that case do steps 1 to 4 in
+     one go, so the sign-in mails are never down.
+- [ ] Privacy text: name Resend as a processor (and its region), if it isn't named yet.
 - [ ] `backend/README.md` and the comment in `post_announcement.sh`: the name in the text.
 
 ## 6. Phase 3: stores and outside services (owner, no code)
@@ -194,6 +206,9 @@ Once the domain is cancelled, anyone can register it. So nothing may still point
 - [ ] App Store Connect (privacy, support and marketing URL, review contact) and TestFlight (feedback email) use
   `<domain>`.
 - [ ] The Supabase Auth site URL and redirect URLs don't name `wingspot.site`.
+- [ ] **Sign-in mails:** Supabase sends through Resend from `<domain>`, and a test sign-in mail has arrived (section 5).
+  Otherwise cancelling `wingspot.site` breaks every sign-in by email.
+  - Check: `dig +short TXT resend._domainkey.<domain>` gives the key, and the Resend dashboard shows `<domain>` as verified.
 - [ ] The first iOS and Android build with `<domain>` links is out. Ideally, the TestFlight builds with the old links
   have expired too (90 days after upload; the last one is 0.3.0 2026112702, from 2026-11-27, so it expires around
   2027-02-25). Cancelling sooner only exposes the testers: a new owner of the domain could put a page or a mailbox behind
