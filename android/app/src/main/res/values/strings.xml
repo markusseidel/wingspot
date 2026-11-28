@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Wingspot</string>
+    <string name="app_name">Wingspotted</string>
     <string name="sign_in_title">Sign in</string>
     <string name="email_label">Email address</string>
     <string name="send_link">Send link</string>
